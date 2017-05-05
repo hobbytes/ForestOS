@@ -1,0 +1,68 @@
+@import url(https://fonts.googleapis.com/css?family=Raleway:300);
+#DagomysWeather
+{
+  text-shadow: 1px 1px 1px rgba(0,0,0,0.2);
+  filter: progid:dximagetransform.microsoft.gradient(startColorstr='#ffffffff', endColorstr='#fff2f2f2', GradientType=0);
+  margin: auto;
+  background-color: #fafafa;
+	background-attachment: fixed;
+  height: auto;
+  width: auto;
+  -webkit-animation-duration: 1s;
+  animation-duration: 1s;
+  animation-name: blurOut;
+  white-space: nowrap;
+}
+
+@font-face
+{
+  font-family: 'MeteoconsRegular';
+  src:url('meteocons-webfont.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+.icon
+{
+  font-family: 'MeteoconsRegular';
+  content: attr(data-icon);
+}
+
+@keyframes blurOut
+{
+  from  {
+  filter: blur(5px);
+  filter: url("blur.svg#gaussian_blur");
+  -webkit-filter: blur(5px);
+        }
+  to    {
+  filter: blur(0px);
+  filter: url("blur.svg#gaussian_blur");
+  -webkit-filter: blur(0px);
+        }
+}
+
+.temp
+{
+color: #f2f2f2;
+margin: auto;
+text-align:	center;
+}
+
+.humidity
+{
+  text-align: right;
+  font-size:	20px;
+  color:#f2f2f2;
+  font-family: "Helvetica Neue", Helvetica, Arial, monospace;
+  font-weight: 200;
+}
+
+#weather
+{
+  font-size:100px;
+  text-align:	center;
+  padding-bottom:6%;
+  font-family: "Helvetica Neue", Helvetica, Arial, monospace;
+  font-weight: 200;
+}

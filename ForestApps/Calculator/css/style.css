@@ -1,0 +1,61 @@
+table {
+    width: 50%;
+    height: 300px;
+    border-collapse: collapse;
+    font-family: arial, sans-serif;
+}
+td {
+    padding: 5px;
+    text-align: center;
+}
+input[type=text] {
+    width: 100%;
+    height: 50px;
+    text-align: right;
+    font-family: monospace;
+    font-size: 3em;
+    font-weight: bold;
+    border-color: gray;
+    border-width: 1px;
+    border-style: solid;
+    opacity: 0.5;
+}
+input[type=text]:hover {
+    opacity: 1;
+}
+input[type=button] {
+    opacity: 0.8;
+    background-color: #f5f5f5;
+    background-image: linear-gradient(top, #f5f5f5, #f1f1f1);
+    border: 1px solid #dedede;
+    color: #444;
+    height: 45px;
+    width: 65px;
+    text-align: center;
+    font-size: 1.2em;
+    font-weight: normal;
+}
+input[type=button]:hover {
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+    background-image: linear-gradient(top, #f8f8f8, #f1f1f1);
+    opacity: 1;
+    border: 1px solid #c6c6c6;
+    color: #222;
+    cursor: pointer;
+}
+input[name=equal] {
+    background-color: #4d90fe;
+    background-image: linear-gradient(top, #4d90fe, #4787ed);
+    border: 1px solid #3079ed;
+    color: #fefefe;
+}
+input[name=equal]:hover {
+    background-color: #4d90fe;
+    background-image: linear-gradient(top, #4d90fe, #357ae8);
+    border: 1px solid #2f5bb7;
+    color: #fefefe;
+}
+input[name=operator] {
+    border: 1px solid #c6c6c6;
+    background-color: #d6d6d6;
+}

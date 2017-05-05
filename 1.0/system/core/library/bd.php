@@ -1,9 +1,9 @@
 <?php
 /*FOREST BD_A*/
 //Глобальные переменные
-define("DB_DSN","mysql:host=mysql.hostinger.ru;dbname=u588238148_fos");
-define("DB_USERNAME","u588238148_root");
-define("DB_PASSWORD","PLUton369147258");
+define("DB_DSN","mysql:host=;dbname=");
+define("DB_USERNAME","");
+define("DB_PASSWORD","");
 //класс чтения из БД
 class readbd{
 public static function read($data){
