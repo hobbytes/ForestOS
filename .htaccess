@@ -1,0 +1,30 @@
+# Do not remove this line or mod_rewrite rules and search engine friendly URLs will stop working
+RewriteBase /
+DirectoryIndex os.php
+Options All +ExecCGI -Indexes -Includes +FollowSymLinks
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresDefault "access plus 1 month"
+    ExpiresByType image/jpeg "access plus 10 days"
+    ExpiresByType image/png "access plus 10 days"
+</IfModule>
+<IfModule mod_rewrite.c>
+RewriteEngine on
+RewriteCond %{THE_REQUEST} ^[A-Z]{3,9}\ /os\.php\ HTTP/
+RewriteRule ^os\.php$ http://%{HTTP_HOST}/ [R=301,L]
+RewriteBase /
+RewriteCond %{HTTPS} !on
+RewriteCond %{THE_REQUEST} ^[A-Z]{3,9}\ /os\.php\ HTTP/
+RewriteRule ^os\.php$ http://%{HTTP_HOST}/ [R=301,L]
+RewriteCond %{THE_REQUEST} ^[A-Z]{3,9}\ /([^.]+)\.php\ HTTP
+RewriteRule ^([^.]+)\.php$ http://%{HTTP_HOST}/$1 [R=301,L]
+RewriteCond %{REQUEST_URI} !(\.[^./]+)$
+RewriteCond %{REQUEST_fileNAME} !-d
+RewriteCond %{REQUEST_fileNAME} !-f
+RewriteRule (.*) /$1.php [L]
+</IfModule>
+<ifModule mod_deflate.c>
+	AddOutputFilterByType DEFLATE text/html text/plain text/xml application/xml application/xhtml+xml text/css text/javascript application/javascript application/x-javascript
+</ifModule>
+ServerSignature Off
+AddDefaultCharset UTF-8

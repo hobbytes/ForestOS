@@ -1,0 +1,9 @@
+[AppExt]
+
+png=system/apps/Image_Viewer/main.php
+jpg=system/apps/Image_Viewer/main.php
+
+[AppKeys]
+
+png_key=photoviewload
+jpg_key=photoviewload
