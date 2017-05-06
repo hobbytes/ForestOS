@@ -85,18 +85,18 @@ function newnotification($name, $title, $text,$time){
   $name=$name.md5(date('dmyhis'));
   ?>
 
-  <div id="notification_<?echo $name;?>" class="topbartheme" onmouseover="document.getElementById('closenot_<?echo $name;?>').style.opacity='1';" onmouseout="document.getElementById('closenot_<?echo $name;?>').style.opacity='0';" style="width:300px; margin:5px; height:auto; max-height:300px; padding:15px; text-align:left; opacity:0; transition:all 0.2s ease; overflow:auto; border-radius:10px;">
-  <div id="closenot_<?echo $name;?>" onclick="document.getElementById('notification_<?echo $name;?>').remove();" class="topbartheme" style="position:relative; opacity:0; left:95%; width:8px; background-color:transparent; cursor:pointer; transition:all 0.2s ease;">x</div>
-<span style="font-size:17px; filter:contrast(130%);"><?echo '<b>'.$title.'</b> <span style="font-size:14px;">'.date('H:i, d.m').'</span>'?></span><br><br>
-    <?echo $text;?>
+  <div id="notification_<?echo $name;?>" class="topbartheme notificationclass" onmouseover="document.getElementById('closenot_<?echo $name;?>').style.opacity='1';" onmouseout="document.getElementById('closenot_<?echo $name;?>').style.opacity='0';" style="right:0; width:300px; margin:10px 10px 20px 10px; height:auto; max-height:300px; text-align:left; transition:all 0.2s ease; overflow:auto; border-radius:10px; ">
+  <div id="closenot_<?echo $name;?>" onclick="document.getElementById('notification_<?echo $name;?>').remove();" class="topbartheme" style="position:relative; opacity:0; left:95%; width:8px; background-color:transparent; cursor:pointer; transition:all 0.2s ease; margin:10px 0px 0px -10px;">x</div>
+<span style="font-size:17px; padding: 10px;"><?echo '<b>'.$title.'</b> <span style="font-size:14px;">'.date('H:i, d.m').'</span>'?></span><br><br>
+    <div style="background-color: #d6d6d6;color: #000;padding: 10px;"><?echo $text;?></div>
 
     <script>
-    var test=document.getElementById('notifications');
-    var test2=document.getElementById('notification_<?echo $name;?>');
-    test.appendChild(test2);
-    setTimeout(function() {$("#notification_<?echo $name;?>").css('opacity','0.95'),1000});
+    var notcenter=document.getElementById('notifications');
+    var notcontent=document.getElementById('notification_<?echo $name;?>');
+    notcenter.appendChild(notcontent);
+    setTimeout(function() {$("#notification_<?echo $name;?>").css('opacity','0.97'),1000});
     <?if($time!='infinite'){?>
-    setTimeout(function() {$("#notification_<?echo $name;?>").hide('fade',500,function(){$("#notification_<?echo $name;?>").remove();});},<?echo $time;?>);
+  setTimeout(function() {$("#notification_<?echo $name;?>").css('opacity','0');},<?echo $time;?>);
 <?}?>
     </script>
     </div>

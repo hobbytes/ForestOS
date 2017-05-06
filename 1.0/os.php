@@ -26,13 +26,14 @@ $prepare->themeload();
 if(isset($_SESSION['loginuser'])){
 ?>
 <div class="welcomescreen" style="position:absolute; width:100%; height:100%; top:0; left:0; background-image: linear-gradient(180deg, #051f27, #153333);text-align:center; color:#fff;"><div class="spinner"></div></div>
-<div id="topbar" class="ui-widget-content topbartheme" style="display:none; z-index:9999; height:20px;">
-  <span id="hideall" class="topbaractbtn" style="cursor:pointer; display:none; background-color:#5ca556; color:#fff; width:12px; height:100%; float:right; text-align:center; width:15px;">-</span>
-  <span id="closeall" class="topbaractbtn" style="cursor:pointer; display:none; background-color:#bf5a5a; color:#fff; float:right; height:100%; text-align:center; width:15px;" onclick="$('.process').remove(); $('.topbaractbtn').css('display','none');">x</span>
+<div id="topbar" class="ui-widget-content topbartheme" style="display:none; z-index:9999; height:22px; padding-top:4px;">
+  <span id="hideall" class="topbaractbtn" style="cursor:pointer; display:none; background-color:#5ca556; color:#fff; width:12px; float:right; text-align:center; width:15px; margin-right: 8px;">-</span>
+  <span id="closeall" class="topbaractbtn" style="cursor:pointer; display:none; background-color:#bf5a5a; color:#fff; float:right; text-align:center; width:15px;" onclick="$('.process').remove(); $('.topbaractbtn').css('display','none');">x</span>
   <div class="date" style="float:right; font-size:15px; padding-right:10px; user-select: none; cursor: default;">
       <?php echo $object->getDayRus().' '.date('d').',';?>
     <span id="time"></span>
       </div>
+      <div id="notificationsbtn" style="float:right; font-size: 11px; margin-right: 10px; padding: 2px; user-select: none; border: 1px solid #fff; border-radius: 4px; cursor: default;">N</div>
   <script type="text/javascript">showTime();</script>
   <div id="menu1" onmouseover="document.getElementById('aboutmenu').style.display='block';" onmouseout="document.getElementById('aboutmenu').style.display='none';" style="z-index:9999; user-select: none; cursor: default; text-align:center; width:50px; font-size:19px; ">=</div>
 </div>
@@ -55,7 +56,7 @@ foreach (glob("system/users/$login/desktop/*.link") as $filename)
 }
 $_SESSION['appid']=-1;
 ?>
-<div id="notifications" style="display:block; position:absolute; right:0%; height:auto;">
+<div id="notifications" class="notificationhide" style="display:block; position:absolute; right: 0; height: 100%; padding: 10px; transition:all 0.2s ease;">
 </div>
 </div>
 <script>
@@ -69,6 +70,18 @@ function makeprocess2(dest,param,key){
 $('.ui-body').append("<div id=\"process"+(id=id+1)+"\" class='process' style='display:none;'></div>"); $("#process"+id+"").show('drop',500); $("#process"+id+"" ).load("makeprocess2.php?id=<?echo md5(rand(0,10000).date('d.m.y.h.i.s'));?>"+id+"&d="+dest+"/&i="+id+"&p="+param+"&k="+key+"");
 checkwindows();};
 $( function() {
+$( "#notificationsbtn" ).on( "click", function() {
+  $('.notificationclass').css('opacity','0');
+  if($( "#notifications" ).hasClass("notificationshow"))
+  {
+    $('.notificationclass').css('opacity','0');
+  }
+  else
+  {
+    $('.notificationclass').css('opacity','0.97');
+  }
+  $( ".notificationhide" ).toggleClass( "notificationshow", 100 );
+});
 $( "#topbar" ).on( "dblclick", function() { $( ".blurwindowpassive" ).toggleClass( "blurwindowactive", 100 );});
 function runEffect() {
 var options = {};
