@@ -35,7 +35,7 @@ wallchange();
 if ($theme!=''){
   session_start();
   if(copy('../../../system/core/design/themes/'.$theme.'','../../../system/users/'.$_SESSION["loginuser"].'/settings/etc/theme.fth'))  {
-  $newgui->newnotification($appname,"Персонализация","Цветовая тема изменена на <b>$theme</b>. Перезагрузите систему, чтобы изменения вступили в силу");
+  $newgui->newnotification($appname,"Персонализация","Цветовая тема изменена на <b>$theme</b>. Перезагрузите систему, чтобы изменения вступили в силу<br><span id='restart' style='margin-left: 25%;' class='ui-button ui-widget ui-corner-all'>Перезагрузить</span>");
 }else{$newgui->newnotification($appname,"Персонализация","Произошла ошибка! Тема не установлена");}
 }
 $version='0.1';
@@ -86,6 +86,7 @@ $version='0.1';
 </div>
 <script>
 $(function(){$("#tabssettings<?echo $appid;?>").tabs();});
+$( "#restart" ).on( "click", function() {return location.href = 'os.php';});
 function loadwall<?echo $appid;?>(el){$("#<?echo $appid;?>").load("<?echo $folder?>screen.php?wall="+el.id+"&id=<?echo rand(0,10000).'&appname='.$appname.'&destination='.$folder.'&appid='.$appid;?>")};
 function loadtheme<?echo $appid;?>(el2){$("#<?echo $appid;?>").load("<?echo $folder?>screen.php?theme="+el2.id+"&id=<?echo rand(0,10000).'&appname='.$appname.'&destination='.$folder.'&appid='.$appid;?>")};
 function back<?echo $appid;?>(el){$("#<?echo $appid;?>").load("<?echo $folder?>main.php?id=<?echo rand(0,10000).'&destination='.$folder.'&appname='.$appname.'&appid='.$appid;?>")};

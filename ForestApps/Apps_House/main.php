@@ -15,7 +15,7 @@ $fo = new filecalc;
 session_start();
 //Логика
 if($appdownload!=''){
-  if($type=="app_h"){?><script>makeprocess2('system/apps/installer/main.php','<?echo $appdownload; ?>','appdownload');</script><?}else{$link='walls/'.$appdownload; $l='.jpg';}
+  if($type=="app_h"){$_SESSION['appversion']=$_GET['v'];?><script>makeprocess2('system/apps/installer/main.php','<?echo $appdownload; ?>','appdownload');</script><?}else{$link='walls/'.$appdownload; $l='.jpg';}
  $ch=curl_init('http://forest.hobbytes.com/media/os/'.$link.$l);
   if(!is_dir('./temp/')){mkdir('./temp/');}
   $temphash=md5(date('d.m.y.h.i.s').$appdownload);
@@ -66,14 +66,17 @@ $arrayw=json_decode($filew,TRUE);
   <div id="apptab<?echo $appid;?>">
 <?
 $appcounter=0;
+$ini_array = parse_ini_file('../../core/appinstall.foc', true);
 if($array!=''){
 foreach ($array as $key)
 {
 $appcounter=$appcounter+1;
 $fo->format($key['size']*1024);
+if (array_key_exists($key['file'], $ini_array))
+{$btncolor='777777';$btntext='Установлено';$btnaction='';}else{$btncolor='54c45c';$btntext='Установить';$btnaction='onClick="downloadapp(this,'.$key['version'].');"';}
 $name=str_replace('_',' ',$key['file']);
 echo '
-<span class="ui-button ui-widget ui-corner-all" style="height:auto; width:200px; position:relative; text-align:center;  margin:5px;"> <span onClick="fullhouse('.$appcounter.');" ><div style="background-image: url(http://forest.hobbytes.com/media/os/apps/'.$key['file'].'/app.png); background-size:cover; margin:auto; height:64px; width:64px;"></div><div style="text-align:center;">'.$name.'<br><span style="font-size:10px;">версия: '.$key['version'].'<br>размер: '.$format.'</span></div></span><br><div id="'.$key['file'].'" class="app_h" onClick="downloadapp(this,'.$key['version'].');" style="background-color:#54c45c; color:#fff; font-size:13px; padding:5px;">Установить</div></span><div class="apphouseinfohide" id="apphouseinfo'.$appcounter.'" style="height:250px; width:97%; position:relative; background-color:#d4d4d4; padding:10px; border:2px solid #415678; display:none;"><div style="background-image: url(http://forest.hobbytes.com/media/os/apps/'.$key['file'].'/app.png); background-size:cover; margin-bottom:10px; height:80px; width:80px;"></div>
+<span class="ui-button ui-widget ui-corner-all" style="height:auto; width:200px; position:relative; text-align:center;  margin:5px;"> <span onClick="fullhouse('.$appcounter.');" ><div style="background-image: url(http://forest.hobbytes.com/media/os/apps/'.$key['file'].'/app.png); background-size:cover; margin:auto; height:64px; width:64px;"></div><div style="text-align:center;">'.$name.'<br><span style="font-size:10px;">версия: '.$key['version'].'<br>размер: '.$format.'</span></div></span><br><div id="'.$key['file'].'" class="app_h" '.$btnaction.' style="background-color:#'.$btncolor.'; color:#fff; font-size:13px; padding:5px;">'.$btntext.'</div></span><div class="apphouseinfohide" id="apphouseinfo'.$appcounter.'" style="height:250px; width:97%; position:relative; background-color:#d4d4d4; padding:10px; border:2px solid #415678; display:none;"><div style="background-image: url(http://forest.hobbytes.com/media/os/apps/'.$key['file'].'/app.png); background-size:cover; margin-bottom:10px; height:80px; width:80px;"></div>
   <span style="font-size:15px; font-weight:900; color:#363636; text-transform: uppercase;" >'.$key['name'].'</span><br><span style="font-size:13px; color:#464646;">'.$key['namelat'].' by '.$key['designer'].', version: '.$key['version'].'</span>
   <br><br><span style="font-size:13px; color:#464646; font-weight:600;">Описание</span><br><span style="font-size:13px; color:#464646;">'.$key['description'].'</span>
   </div>';

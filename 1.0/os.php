@@ -33,7 +33,7 @@ if(isset($_SESSION['loginuser'])){
       <?php echo $object->getDayRus().' '.date('d').',';?>
     <span id="time"></span>
       </div>
-      <div id="notificationsbtn" style="float:right; font-size: 11px; margin-right: 10px; padding: 2px; user-select: none; border: 1px solid #fff; border-radius: 4px; cursor: default;">N</div>
+      <div id="notificationsbtn" style="float:right; font-size: 11px; margin-right: 10px; padding: 1px; user-select: none; border: 2px solid #fff; border-radius: 4px; cursor: default;">N</div>
   <script type="text/javascript">showTime();</script>
   <div id="menu1" onmouseover="document.getElementById('aboutmenu').style.display='block';" onmouseout="document.getElementById('aboutmenu').style.display='none';" style="z-index:9999; user-select: none; cursor: default; text-align:center; width:50px; font-size:19px; ">=</div>
 </div>

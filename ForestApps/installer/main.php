@@ -33,11 +33,8 @@ $myfile=fopen('../../users/'.$_SESSION["loginuser"].'/desktop/'.$appinstall.'.li
 $content="[link]\ndestination=".$_GET['appinstdest']."/\nfile=main\nkey=\nparam=\nname='$appinstall'\nlinkname='$appinstall'\n";
 fwrite($myfile,$content);fclose($myfile);
 
-//$myfile=fopen('../../core/appinstall.foc',"w");
-//$content='name='.$appinstall.'|'.$_GET['v'];
-//fwrite($myfile,PHP_EOL.$content);fclose($myfile);
-
-
+$content='['.$appinstall.']'.PHP_EOL.'version='.$_SESSION['appversion'].PHP_EOL.'destination='.$_GET['appinstdest'].PHP_EOL;
+fwrite($myfile,PHP_EOL.$content);fclose($myfile);
 unlink('./temp/'.$appinstall.$temphash.'.zip');
 $gui->newnotification($appname,'Установка','Приложение '.$appinstall.' установлено!');?><script>$(function(){$("#process<?echo $appid;?>").remove();});</script><?}else{$gui->newnotification($appname,'Установка','Приложение '.$appinstall.' не установлено!'); ?><script>$(function(){$("#process<?echo $appid;?>").remove();});</script><?}
 }
