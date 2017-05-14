@@ -14,6 +14,21 @@ $nameappdownload=str_replace('_',' ',$appdownload);
 session_start();
 //Логика
 $appinstall=$_GET['appinstall'];
+
+function config_set($config_file, $section, $key, $value) {
+    $config_data = parse_ini_file($config_file, true);
+    $config_data[$section][$key] = $value;
+    $new_content = '';
+    foreach ($config_data as $section => $section_content) {
+        $section_content = array_map(function($value, $key) {
+            return "$key=$value";
+        }, array_values($section_content), array_keys($section_content));
+        $section_content = implode("\n", $section_content);
+        $new_content .= "[$section]\n$section_content\n";
+    }
+    file_put_contents($config_file, $new_content);
+}
+
 if(isset($appinstall)){
   $ch=curl_init('http://forest.hobbytes.com/media/os/apps/'.$appinstall.'/app.zip');
   if(!is_dir('./temp/')){mkdir('./temp/');}
@@ -33,10 +48,23 @@ $myfile=fopen('../../users/'.$_SESSION["loginuser"].'/desktop/'.$appinstall.'.li
 $content="[link]\ndestination=".$_GET['appinstdest']."/\nfile=main\nkey=\nparam=\nname='$appinstall'\nlinkname='$appinstall'\n";
 fwrite($myfile,$content);fclose($myfile);
 
+
+$ini_array = parse_ini_file('../../core/appinstall.foc', true);
+if (array_key_exists($appinstall, $ini_array))
+{
+  config_set('../../core/appinstall.foc', $appinstall, 'version', $_SESSION['appversion']);
+  $type="обнолено"; $type2="Обновление";
+}
+else
+{
+$myfile=fopen('../../core/appinstall.foc',"a");
 $content='['.$appinstall.']'.PHP_EOL.'version='.$_SESSION['appversion'].PHP_EOL.'destination='.$_GET['appinstdest'].PHP_EOL;
 fwrite($myfile,PHP_EOL.$content);fclose($myfile);
 unlink('./temp/'.$appinstall.$temphash.'.zip');
-$gui->newnotification($appname,'Установка','Приложение '.$appinstall.' установлено!');?><script>$(function(){$("#process<?echo $appid;?>").remove();});</script><?}else{$gui->newnotification($appname,'Установка','Приложение '.$appinstall.' не установлено!'); ?><script>$(function(){$("#process<?echo $appid;?>").remove();});</script><?}
+$type="установлено"; $type2="Установка";
+}
+$gui->newnotification($appname,$type2,'Приложение '.$appinstall.' '.$type.'!');?><script>$(function(){$("#process<?echo $appid;?>").remove();});</script><?}else{$gui->newnotification($appname,'Установка','Приложение '.$appinstall.' не установлено!'); ?>
+<script>$(function(){$("#process<?echo $appid;?>").remove();});</script><?}
 }
 else{
 ?>
