@@ -54,6 +54,11 @@ $array=json_decode($file,TRUE);
 $urlw='http://forest.hobbytes.com/media/os/wall.php';
 $filew=file_get_contents($urlw);
 $arrayw=json_decode($filew,TRUE);
+
+$urlu='http://forest.hobbytes.com/media/os/update.php';
+$fileu=file_get_contents($urlu);
+$arrayu=json_decode($fileu,TRUE);
+
 ?>
 <div id="tabs<?echo $appid;?>">
   <ul>
@@ -96,7 +101,27 @@ echo '
 
 <div id="updatetab<?echo $appid;?>">
   <?
+  $upd_array = parse_ini_file('../../core/osinfo.foc', false);
   $appcounter=0;
+  if($arrayu!=''){
+  foreach ($arrayu as $key)
+  {
+    if($upd_array['revision']!=$key['file']){
+      $fo->format($key['size']*1024);
+      echo '
+      <span class="ui-button ui-widget ui-corner-all" style="height:auto; width:90%; position:relative; text-align:left;  margin:5px;"> <span>
+      <p style="text-align:left; background-image: url(http://forest.hobbytes.com/media/os/updates/uplogo.png); background-size:cover; height:80px; width:80px;"></p>
+      <div style="text-align:left;">Обновление системы<br><br/>
+        <span style="font-size:17px;"><b>Forest OS</b> '.$key['codename'].'</span><br>
+      <span style="font-size:12px; font-weight:900; " >сборка: <span style="color:#363636; text-transform: uppercase;">'.$key['file'].'</span></span><br>
+      <span style="font-size:12px; ">версия: '.$key['version'].'<br>размер: '.$format.'</span></div></span><span style="font-size:15px; color:#464646;">'.$key['description'].'</span>
+      <div id="'.$key['file'].'" class="app_h" onClick="update'.$appid.'()" style="background-color:#245896; color:#fff; width:30%; margin: 10px auto 10px auto; font-size:13px; padding:5px; text-align:center;">Обновить</div></span>
+      ';
+      }
+    }
+
+}
+
   $ini_array = parse_ini_file('../../core/appinstall.foc', true);
   if($array!=''){
   foreach ($array as $key)
@@ -127,6 +152,9 @@ $(function(){$("#tabs<?echo $appid;?>").tabs();});
 function downloadapp(el,el3){$("#<?echo $appid;?>").load("<?echo $folder;?>main.php?appdownload="+el.id+"&v="+el3+"&type="+el.className+"&id=<?echo rand(0,10000).'&appname='.$appname.'&appid='.$appid.'&destination='.$folder;?>")};
 function fullhouse<?echo $appid;?>(el2){$(".apphouseinfohide").css('display','none'); $("#<?echo $appid;?>apphouseinfo"+el2).show('clip',200); $("#<?echo $appid;?>apphouseinfo"+el2).css('display','block')};
 function fullhouseupd<?echo $appid;?>(el4){$(".apphouseinfohide").css('display','none'); $("#<?echo $appid;?>apphouseinfoupd"+el4).show('clip',200); $("#<?echo $appid;?>apphouseinfoupd"+el4).css('display','block')};
+function update<?echo $appid;?>(){
+  makeprocess('update','main','','');
+}
 </script>
 <?
 unset($appid);

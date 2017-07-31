@@ -3,6 +3,7 @@
 $appid=$_GET['appid'];
 $appname=$_GET['appname'];
 $folder=$_GET['destination'];
+$osinfo = parse_ini_file('../../core/osinfo.foc', false);
 ?>
 <div id="<?echo $appname.$appid;?>" style="background-color:#f2f2f2; height:100%; width:100%; padding-top:10px; border-radius:0px 0px 5px 5px; overflow:auto;">
 <div style="width:100%; text-align:left; padding-bottom:10px; font-size:30px; border-bottom:#d8d8d8 solid 2px; text-overflow:ellipsis; overflow:hidden;">
@@ -31,10 +32,10 @@ $fo->format($getdata);
 
 echo '<div style="text-align:left; margin-top:10px; margin-left:10px;"><b style="font-size:20px;">Издание Forest OS</b><br>';
 echo '<img style="width:128px; height:128px;" src="system/core/design/images/forestosicon.png"/>';
-echo '<div><b>Forest OS</b> Wet Stone<br>Версия 1.0</div></div><hr>';
+echo '<div><b>Forest OS</b> '.$osinfo['codename'].'<br>Версия '.$osinfo['version'].'<br><span style="font-size:13px; color:#313131;">сборка: <span style="text-transform:uppercase;">'.$osinfo['revision'].'</span></span></div></div><hr>';
 
 echo '<div style="text-align:left; margin-top:10px; margin-left:10px;"><b style="font-size:20px;">Пользователь</b>';
-echo '<div>Имя учетной записи: '.$_SESSION["loginuser"].'<br> FUID: '.$fuid.'</div></div><hr>';
+echo '<div style="padding-right:10px;">Имя учетной записи: '.$_SESSION["loginuser"].'<br> FUID: '.$fuid.'</div></div><hr>';
 
 echo '<div style="text-align:left; margin-top:10px; margin-left:10px;"><b style="font-size:20px;">Диск</b>';
 echo '<div>Всего: '.$format2 .'<br>Остаток: '.$format.'<br> Занято: '.$format3.'</div></div><hr>';
