@@ -78,6 +78,7 @@ try {
   mkdir('system/users/'.$reglogin.'/settings/');
   mkdir('system/users/'.$reglogin.'/settings/etc/');
   copy('system/core/design/walls/water.jpg','system/users/'.$reglogin.'/settings/etc/wall.jpg');
+
 }
 catch (PDOException $e){
   echo 'false: '.$e->getMessage().'\n';

@@ -1,9 +1,11 @@
 <?php
 /*FOREST BD_A*/
 //Глобальные переменные
+/*
 define("DB_DSN","mysql:host=;dbname=");
 define("DB_USERNAME","");
 define("DB_PASSWORD","");
+*/
 //класс чтения из БД
 class readbd{
 public static function read($data){
