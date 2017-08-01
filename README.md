@@ -1,6 +1,5 @@
-<img src="http://forest.hobbytes.com/media/os/updates/uplogo.png" width="128">
-
 # Forest OS 
+<img src="http://forest.hobbytes.com/media/os/updates/uplogo.png" width="128">
 
 # Русский
 
