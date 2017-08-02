@@ -119,7 +119,8 @@ function checkwindows(){
 
 function makeprocess(dest,file,param,key){
   $('.ui-body').append("<div id=\"process"+(id=id+1)+"\" class='process' style='display:none;'></div>");
-  $("#process"+id+"").show('drop',500); $("#process"+id+"" ).load("makeprocess.php?id=<?echo md5(rand(0,10000).date('d.m.y.h.i.s'));?>"+id+"&d=system/apps/"+dest+"/&i="+id+"&n="+dest+"&p="+param+"&f="+file+"&k="+key+"");
+  $("#process"+id+"").show('drop',500);
+  $("#process"+id+"" ).load("makeprocess.php?id=<?echo md5(rand(0,10000).date('d.m.y.h.i.s'));?>"+id+"&d=system/apps/"+dest+"/&i="+id+"&n="+dest+"&p="+param+"&f="+file+"&k="+key+"");
   checkwindows();
 };
 
