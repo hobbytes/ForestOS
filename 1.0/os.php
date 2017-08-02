@@ -1,8 +1,11 @@
+<!--
+   ____                 __    ____  ____
+  / __/__  _______ ___ / /_  / __ \/ __/
+ / _// _ \/ __/ -_|_-</ __/ / /_/ /\ \
+/_/  \___/_/  \__/___/\__/  \____/___/
+          WET STONE 1.0
+-->
 <?
-####################
-#     Forest OS    #
-# Wet Stone v 1.0  #
-####################
 include 'system/core/library/gui.php';
 include 'system/core/library/bd.php';
 include 'system/core/library/auth.php';
