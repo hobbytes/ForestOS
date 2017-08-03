@@ -148,7 +148,12 @@ while (false !== ($entry=$d->read())) {
 			}
 		}
 	}
-	if ($entry!='.' && !in_array($entry,$warfile) && realpath($entry).'/os'!=$_SERVER['DOCUMENT_ROOT']){
+	
+	$wardir = $_SERVER['DOCUMENT_ROOT'];
+	$wardir = stristr($wardir, 'public_html');
+	$wardir	= str_replace('public_html/','',$wardir);
+
+	if ($entry!='.' && !in_array($entry,$warfile) && realpath($entry).'/'.$wardir!=$_SERVER['DOCUMENT_ROOT']){
 		$name2="'".md5($name)."'";
 		$name3="'".realpath($entry)."'";
 		$name4="'".$type."'";

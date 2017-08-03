@@ -17,6 +17,7 @@ session_start();
 $urlu='http://forest.hobbytes.com/media/os/update.php';
 $fileu=file_get_contents($urlu);
 $arrayu=json_decode($fileu,TRUE);
+
 //разбираем массив
 if($arrayu!=''){
 foreach ($arrayu as $key)
@@ -59,10 +60,10 @@ foreach ($arrayu as $key)
   fclose($fp);
 $zip=new ZipArchive;
 if($zip->open('./temp/'.$updatefile.$temphash.'.zip') === TRUE){
-$zip->extractTo('../../../../');
+$zip->extractTo('../../../');
 $zip->close();
 
-$myfile=fopen('../../core/osinfo.foc',"a");
+$myfile=fopen('../../core/osinfo.foc',"w");
 $content='[forestos]'.PHP_EOL.PHP_EOL.'version='.$version.PHP_EOL.PHP_EOL.'revision='.$revision.PHP_EOL.PHP_EOL.'codename='.$codename;
 fwrite($myfile,PHP_EOL.$content);fclose($myfile);
 
