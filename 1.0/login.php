@@ -9,6 +9,7 @@ $date= date("d.m.y,H:i:s");
 $ip=$_SERVER["REMOTE_ADDR"];
 $browser=$infob->browser($_SERVER["HTTP_USER_AGENT"]);
 $status2=$_POST['logins'];
+
 if ($status2!='')
 {
 $loginin=strtolower(addslashes(strip_tags(htmlspecialchars($_POST['loginin']))));
@@ -36,7 +37,6 @@ global $loginin;
     $text='login:['.$date.'], browser:'.$browser.', ip:'.$ip;
 $infob->writestat('system/users/'.$_SESSION["loginuser"].'/settings/login.stat',$text);
   }
-
 
   $gui = new gui;
   $gui->formstart('POST');
@@ -102,6 +102,3 @@ showTime();
 <?
 if($action=='login'){
 echo '<script>login()</script>';}
-
-if($action=='registration'){
-echo '<script>registration()</script>';}
