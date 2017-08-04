@@ -39,7 +39,11 @@ if($del!=''){
 	$faction->rmdir_recursive($del);
 }
 if($deleteforever!=''){
-	$faction->deleteDir($deleteforever);
+	if(is_dir($deleteforever)){
+		$faction->deleteDir($deleteforever);
+	}else{
+		unlink($deleteforever);
+	}
 }
 //Логика
 if($link!=''){

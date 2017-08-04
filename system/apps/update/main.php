@@ -72,9 +72,9 @@ $gui->newnotification($appname,'Установка обновления','Обн
 unlink('./temp/'.$updatefile.$temphash.'.zip');
 
 if(is_dir('../../../forestos-master/')){
-  echo 'ok';
-  $fileaction = new fileaction;
-  $fileaction->rcopy('../../../forestos-master/', './temp/');
+  //echo 'ok';
+  //$fileaction = new fileaction;
+  //$fileaction->rcopy('../../../forestos-master/', './temp/');
 }
 }
 }
