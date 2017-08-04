@@ -12,6 +12,7 @@ $fo = new filecalc;
 $faction = new fileaction;
 $dir = $_GET['dir'];
 $del = $_GET['del'];
+$deleteforever = $_GET['delf'];
 $link=$_GET['linkdir'];
 $linkname=$_GET['linkname'];
 $ico=$_GET['ico'];
@@ -33,12 +34,14 @@ if (isset($_GET['makedir'])){
 }
 //Запускаем сессию
 session_start();
-//обрабатываем кновку удаления
+//обрабатываем кнопки удаления и перемещения в корзину
 if($del!=''){
-		$faction->rmdir_recursive($del);
+	$faction->rmdir_recursive($del);
+}
+if($deleteforever!=''){
+	$faction->deleteDir($deleteforever);
 }
 //Логика
-
 if($link!=''){
 	if($linkname=='main.php'){
 		$destination=$link;
@@ -100,7 +103,8 @@ $pathmain= substr($pathmain,strpos($pathmain,'os')+strlen('os'));
 	<li><div <?echo 'id="'.$dir.'/" class="loadthis" onClick="load'.$appid.'(this);" ';?> >Открыть</div></li>
 	<li><div <?echo 'onClick="mkdirshow'.$appid.'();" ';?> >Создать папку</div></li>
 	<li><div <?echo 'id="'.$dir.'/" class="mklink" onClick="link'.$appid.'(this);" ';?> >Создать ярлык</div></li>
-	<li><div <?echo 'class="delete" onClick="deletes'.$appid.'(this);" ';?>>Удалить</div></li>
+	<li><div <?echo 'class="delete" onClick="deletes'.$appid.'(this);" ';?>>Отправить в корзину</div></li>
+	<li><div <?echo 'class="deleteforever" onClick="deleteforever'.$appid.'(this);" ';?>>Удалить</div></li>
 	<li><div <? echo 'id="'.$dir.'/" onClick="loadshow'.$appid.'(this);"';?>>Загрузить файл</div></li>
 </ul>
 </div>
@@ -127,10 +131,21 @@ while (false !== ($entry=$d->read())) {
 		$extension='';
 		$color	=	'#80abc6';
 		$type	=	$folder.'/assets/folderico.png';
+		$datecreate	=	'';
 	}else{
 		$color	=	'#ffee00';
 		$extension	=	'';
 		$type	=	$folder.'/assets/folderico.png';
+
+		try {
+			$fo->size_check(realpath(realpath($entry)));
+			$fo->format($size);
+			$format = '<br> Размер: '.$format;
+		} catch (Exception $e) {
+			echo $e->getMessage($e);
+		}
+
+		$datecreate = 'Дата: '.date('d.m.y H:i:s', filectime(realpath($entry))).$format;
 	}
 	if(is_file(realpath($entry))){
 		$color='#b5b5b5';
@@ -147,8 +162,10 @@ while (false !== ($entry=$d->read())) {
 				$extension	=	"";
 			}
 		}
+		$fo->format(filesize(realpath($entry)));
+		$datecreate = 'Дата: '.date('d.m.y H:i:s', filectime(realpath($entry))).'<br> Размер: '.$format;
 	}
-	
+
 	$wardir = $_SERVER['DOCUMENT_ROOT'];
 	$wardir = stristr($wardir, 'public_html');
 	$wardir	= str_replace('public_html/','',$wardir);
@@ -158,7 +175,8 @@ while (false !== ($entry=$d->read())) {
 		$name3="'".realpath($entry)."'";
 		$name4="'".$type."'";
 		$name5="'".$name."'";
-	echo('<div id="'.realpath($entry).'" class="'.md5($name).' select ui-button ui-widget ui-corner-all" onClick="select'.$appid.'('.$name2.','.$name3.','.$name4.','.$name5.');" on'.$click.'="load'.$appid.'(this);"  style="cursor:default; height:128px;margin:5px;text-align:center;width:128px;position:relative;display:block;text-overflow:ellipsis;overflow:hidden;float:left;" title="'.$name.'"><div style="cursor:default; width:80px; height:80px; background-image: url('.$type.'); background-size:cover; -webkit-user-select:none; user-select:none; padding:5px; background-color:'.$color.'; margin:auto; color:#d05858; font-size:25px;">'.$extension.'</div><div style="text-overflow: ellipsis;overflow: hidden;font-size: 15px;">'.$name.'</div></div>');
+	echo('<div id="'.realpath($entry).'" class="'.md5($name).' select ui-button ui-widget ui-corner-all" onClick="select'.$appid.'('.$name2.','.$name3.','.$name4.','.$name5.');" on'.$click.'="load'.$appid.'(this);"  style="cursor:default; height:128px;margin:5px;text-align:center;width:128px;position:relative;display:block;text-overflow:ellipsis;overflow:hidden;float:left;" title="'.$name.'"><div style="cursor:default; width:80px; height:80px; background-image: url('.$type.'); background-size:cover; -webkit-user-select:none; user-select:none; padding:5px; background-color:'.$color.'; margin:auto; color:#d05858; font-size:25px;">
+	'.$extension.'</div><div style="text-overflow: ellipsis;overflow: hidden;font-size: 15px;">'.$name.'<div style="font-size:10px; padding:5px; color:#688ad8;">'.$datecreate.'</div></div></div>');
 }
 }
 $dir->close;
@@ -191,6 +209,7 @@ function select<?echo $appid;?>(folder,folder2,folder3,folder4){
 	$(".select").css('background-color','transparent');
 	$('.'+folder).css('background-color','#b5b5b5');
 	$(".delete").attr("id",folder2);
+	$(".deleteforever").attr("id",folder2);
 	$(".loadthis").attr("id",folder2);
 	$(".mklink").attr("id",folder2);
 	$(".mklink").attr("ico",folder3);
@@ -198,6 +217,9 @@ function select<?echo $appid;?>(folder,folder2,folder3,folder4){
 };
 function deletes<?echo $appid;?>(del){
 	$("#<?echo $appid;?>").load("<?echo $folder;?>/main.php?del="+del.id+"&id=<?echo rand(0,10000).'&dir='.realpath($entry).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&destination='.$folder;?>")
+};
+function deleteforever<?echo $appid;?>(delf){
+	$("#<?echo $appid;?>").load("<?echo $folder;?>/main.php?delf="+delf.id+"&id=<?echo rand(0,10000).'&dir='.realpath($entry).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&destination='.$folder;?>")
 };
 function loadshow<?echo $appid;?>(divs){
 	$("#upload").load("<?echo $folder;?>/uploadwindow.php?where="+divs.id+"&id=<?echo rand(0,10000).'&appname='.$appname.'&destination='.$folder.'&mobile='.$click;?>")

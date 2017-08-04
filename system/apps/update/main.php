@@ -70,6 +70,12 @@ fwrite($myfile,PHP_EOL.$content);fclose($myfile);
 echo '<p>Обновление '.$updatefile.' установлено!</p>';
 $gui->newnotification($appname,'Установка обновления','Обновление '.$updatefile.' установлено!');
 unlink('./temp/'.$updatefile.$temphash.'.zip');
+
+if(is_dir('../../../forestos-master/')){
+  echo 'ok';
+  $fileaction = new fileaction;
+  $fileaction->rcopy('../../../forestos-master/', './temp/');
+}
 }
 }
   ?>
