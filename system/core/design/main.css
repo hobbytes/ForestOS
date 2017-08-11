@@ -20,21 +20,6 @@ body {
   overflow:auto;
 }
 
-.spinner{
-    width: 80px;
-    height: 80px;
-    border: 2px solid #651028;
-    border-top: 3px solid #e6e7f3;
-    border-radius: 100%;
-    position: absolute;
-    top:0;
-    bottom:0;
-    left:0;
-    right: 0;
-    margin: auto;
-    animation: spin 1s infinite linear;
-}
-
 .notificationhide{
 	overflow: visible;
 	background-color: rgba(20, 21, 21, 0);

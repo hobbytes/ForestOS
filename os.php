@@ -29,8 +29,7 @@ $prepare->themeload();
 if(isset($_SESSION['loginuser'])){
 ?>
 <div class="welcomescreen" style="position:absolute; width:100%; height:100%; top:0; left:0; background-color: #171717; text-align:center; color:#fff;">
-  <div class="spinner">
-  </div>
+  <img style="width:128; position:absolute; top:0; left:0; bottom:0; right:0; margin: auto;" src="system/core/design/images/forestosicon.png">
 </div>
 <div id="topbar" class="ui-widget-content topbartheme" style="display:none; z-index:9999; height:22px; padding-top:4px;">
 
