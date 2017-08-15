@@ -3,7 +3,7 @@
 
 # Русский
 
-Forest OS - операционная система в браузере, которая основана на технологиях PHP и JS
+Forest OS - это сетевая операционная система (оболочка) с открытым кодом, которая основана на технологиях PHP и JS.
 
 # Как установить:
 1. Скачать файл http://forest.hobbytes.com/media/os/installer.zip и распокавать в корень сайта 
@@ -11,7 +11,7 @@ Forest OS - операционная система в браузере, кот�
 
 # English
 
-Forest OS - an operating system in a browser that is based on PHP and JS technologies
+Forest OS is a network operating system (shell) with open source, which is based on PHP and JS technologies.
 
 # How to install:
 1. Download the file http://forest.hobbytes.com/media/os/installer.zip and unzip it into the root of the site
