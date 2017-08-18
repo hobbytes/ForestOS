@@ -23,8 +23,13 @@ if (isset($loginin) && isset($passwordin)) {
   if (!$auth->auth($loginin, $passwordin)) {
     echo "<h2 style=\"color:red;font-size:small;\">Логин или пароль введен не правильно!</h2>";
     $login_get=$loginin;
+    if(is_dir('system/users/'.$loginin)){
+      $text='WARNING! Wrong login/password:['.$date.'], browser:'.$browser.', ip:'.$ip;
+      $infob->writestat('system/users/'.$loginin.'/settings/login.stat',$text);
+    }
   }
 }
+
 if (isset($_GET["exit"])) {
   if ($_GET["exit"] == 1) {
         $auth->out(); header("Location: ?exit=0");
