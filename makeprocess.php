@@ -81,7 +81,8 @@ if(isset($_SESSION['loginuser'])){
     runEffect();
     if($( "#<?echo 'app'.$idprocess.'';?>" ).hasClass("ui-resizable")){
         $( "#<?echo 'app'.$idprocess.'';?>" ).resizable({disabled:true,containment:"body"});
-      }else{
+      }
+      if($( "#<?echo 'app'.$idprocess.'';?>" ).hasClass("windowborderhide")){
         $( "#<?echo 'app'.$idprocess.'';?>" ).resizable({disabled:false});
       }
     $( "#<?echo 'drag'.$idprocess;?>" ).toggleClass( "dragwindowtoggle", 500 );
