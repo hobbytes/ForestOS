@@ -31,8 +31,8 @@ $photo='('.$dest.')';
 
 <?echo ".photo".$appid;?> {
   background: url<?echo $photo;?> center center/cover no-repeat;
-  width: 70%;
-  height: 70%;
+  width: 100%;
+  height: 100%;
   min-width: 450px;
   min-height: 450px;
   top: 0;
@@ -40,13 +40,10 @@ $photo='('.$dest.')';
   left: 0;
   right: 0;
   margin: auto;
-  transition: all 0.3s ease-out;
-  margin-top:15%;
-  margin-bottom:15%;
+  transition: all 0.1s ease-out;
 }
 <?echo ".photo".$appid;?>:hover {
   box-shadow:rgba(16, 16, 22, 0.2) 0px 0px 1px 1px;
-
 }
 
 <?echo ".button".$appid;?> {

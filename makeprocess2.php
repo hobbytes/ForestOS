@@ -39,9 +39,11 @@ if(isset($_SESSION['loginuser'])){
   $pname=basename($destination);
   $style="'display','block'";
   $style2="'display','none'";
-  echo '<div id=app'.$idprocess.' style="max-width:'.$maxwidth.'; position:absolute; left:'.$left.'; top:'.$top.';" class="ui-widget-content window windownormal" ><div id=drag'.$idprocess.' class="ui-widget-header dragwindow"><span  style="cursor:default;"><div style="background-color:transparent;  background-image: url('.$appicon.'); background-size:cover; height:20px; width:20px; margin:0px 3px 0px 3px; float:left;"></div>'.$pname.' </span><span class="appwindowbutton"'; echo ' onClick=" $(';echo "'#"; echo 'process'.$idprocess; echo "'"; echo ').remove();';echo ' $(';echo "'#"; echo "app$idprocess"; echo "'"; echo ').css('; echo "$style2"; echo '); checkwindows();" style="
-  background-color:#ed2020;">x</span><span class="hidewindow'.$idprocess.' appwindowbutton"'; echo ' onClick="" style="
-  background-color:#37a22e;">-</span></div><div id='.$idprocess.' class="blurwindowpassive hideallclass" ></div></div></div>';
+  echo '<div id=app'.$idprocess.' style="width:auto; max-width:'.$maxwidth.'; position:absolute; left:'.$left.'; top:'.$top.';" class="ui-widget-content window windownormal" ><div id=drag'.$idprocess.' class="ui-widget-header dragwindow"><span  style="cursor:default;"><div style="background-color:transparent;  background-image: url('.$appicon.'); background-size:cover; height:20px; width:20px; margin:0px 3px 0px 3px; float:left;"></div>'.$pname.' </span>
+  <div class="appwindowbutton"'; echo ' onClick=" $(';echo "'#"; echo 'process'.$idprocess; echo "'"; echo ').remove();';echo ' $(';echo "'#"; echo "app$idprocess"; echo "'"; echo ').css('; echo "$style2"; echo '); checkwindows();" style="background-color:#ed2020;">x</div>
+  <div class="hidewindow'.$idprocess.' appwindowbutton" onClick="" style="background-color:#37a22e;">-</div>
+  <div class="reload'.$idprocess.' appwindowbutton" onClick="" style="background-color:#e09100;">o</div>
+  </div><div id='.$idprocess.' class="blurwindowpassive hideallclass" ></div></div></div>';
   ?>
   <div id="logic<?echo $idprocess;?>">
     <script async>
@@ -55,9 +57,18 @@ if(isset($_SESSION['loginuser'])){
       $("#<?echo $idprocess;?>" ).load("<? echo $destination.'?id='.rand(0,10000).'&appid='.$idprocess.'&appname='.$pname.'&destination='.$folder.'/&mobile='.$click.'&'.$key.'='.$param;?>");
     $(function() {$(".window").removeClass("windowactive");$("#<?echo 'app'.$idprocess.'';?>" ).addClass("windowactive")});
     function runEffect() {
-    var options = {};
-    $( "#<?echo $idprocess;?>" ).toggle( "slide", options, 100 );};
-    $( ".hidewindow<?echo $idprocess;?>" ).on( "click", function() {runEffect(); $( "#<?echo 'drag'.$idprocess;?>" ).toggleClass( "dragwindowtoggle", 500 );});
+      var options = {};
+      $( "#<?echo $idprocess;?>" ).toggle( "slide", options, 100 );
+  };
+    $( ".hidewindow<?echo $idprocess;?>" ).on( "click", function() {
+      runEffect();
+      $( "#<?echo 'drag'.$idprocess;?>" ).toggleClass( "dragwindowtoggle", 500 );
+      $( "#<?echo 'app'.$idprocess;?>" ).toggleClass( "windowborderhide", 500 );
+    });
+
+    $( ".reload<?echo $idprocess;?>" ).on( "click", function() {
+      $("#<?echo $idprocess;?>" ).load("<? echo $destination.$file.'.php?id='.rand(0,10000).'&appid='.$idprocess.'&appname='.$nameprocess.'&destination='.$folder.'&mobile='.$click.'&'.$key.'='.$param;?>");
+    });
     $( "#<?echo 'drag'.$idprocess.'';?>" ).on( "dblclick", function() { $( "#<?echo 'app'.$idprocess.'';?>" ).toggleClass( "windowfullscreen", 100 );});
       } );
     </script>
