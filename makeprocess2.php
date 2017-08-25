@@ -62,6 +62,12 @@ if(isset($_SESSION['loginuser'])){
   };
     $( ".hidewindow<?echo $idprocess;?>" ).on( "click", function() {
       runEffect();
+      if($( "#<?echo 'app'.$idprocess.'';?>" ).hasClass("ui-resizable")){
+          $( "#<?echo 'app'.$idprocess.'';?>" ).resizable({disabled:true,containment:"body"});
+        }
+        if($( "#<?echo 'app'.$idprocess.'';?>" ).hasClass("windowborderhide")){
+          $( "#<?echo 'app'.$idprocess.'';?>" ).resizable({disabled:false});
+        }
       $( "#<?echo 'drag'.$idprocess;?>" ).toggleClass( "dragwindowtoggle", 500 );
       $( "#<?echo 'app'.$idprocess;?>" ).toggleClass( "windowborderhide", 500 );
     });
