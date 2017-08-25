@@ -152,9 +152,11 @@ while (false !== ($entry=$d->read())) {
 		$datecreate = 'Дата: '.date('d.m.y H:i:s', filectime(realpath($entry))).$format;
 	}
 	if(is_file(realpath($entry))){
+		$object	=	$dialogexplorer;
 		$color='#b5b5b5';
 		if($name	==	'main.php'){
-			$type	=	$pathmain.'/app.png';
+			$hashfileprefix	= $faction->filehash('app.png');
+			$type	=	$pathmain.'/'.$hashfileprefix;
 			$extension	=	"";
 		}else{
 			$extension	=	stristr($name, '.');
@@ -162,7 +164,8 @@ while (false !== ($entry=$d->read())) {
 			$type	=	$folder.'/assets/fileico.png';
 			if($extension	==	'png'  || $extension	==	'jpg' || $extension	==	'bmp' || $extension	==	'gif'){
 				$color='#fff';
-				$type	=	$pathmain.'/'.$entry;
+				$hashfileprefix	= $faction->filehash($entry);
+				$type	=	$pathmain.'/'.$hashfileprefix;
 				$extension	=	"";
 			}
 		}

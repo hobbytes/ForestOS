@@ -76,7 +76,7 @@
       $appicon='system/core/design/images/app.png';
     }
     if(!file_exists($appicon)){$appicon='';}
-    if($linkicon==''){$linkicon=$hashfile->filehash($appicon);}else{$linkicon=$link['icon'];}
+    if($linkicon==''){$linkicon=$hashfile->filehash($appicon);}else{$linkicon=$hashfile->filehash('./'.$link['icon']);}
     ?>
 
     <div id="linklog<?echo $id;?>" class="<?echo $delclassname;?>">
