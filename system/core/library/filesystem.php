@@ -72,12 +72,17 @@ function size_check($path){
     rmdir($dirPath);
 }
 
-    function filehash($filehashdest){
-      global $object;
+    function filehash($filehashdest,$error){
       if (file_exists($filehashdest)){
-    return $filehashdest.'?h='.md5(date("dmyhis",filemtime($filehashdest)));}
-    else{$object->dialog("Файл <b>$filehashdest</b> не существует!","Function error: ".__FUNCTION__."","bounce");
-}
+        return $filehashdest.'?h='.md5(date("dmyhis",filemtime($filehashdest)));
+      }else{
+        if($error=='' || $error=='true'){
+          global $object;
+          $object->dialog("Файл <b>$filehashdest</b> не существует!","Function error: ".__FUNCTION__."","bounce");
+        }else{
+          echo '<script>console.log("Файл '.$filehashdest.' не существует!");</script>';
+        }
+      }
     }
 
     function rcopy($src,$dst) {

@@ -3,10 +3,19 @@
 <?php
 /*Image Viewer*/
 
+//Подключаем библиотеки
+include '../../core/library/filesystem.php';
+include '../../core/library/gui.php';
 //Инициализируем переменные
+$hash = new fileaction;
+$object = new gui;
 $click=$_GET['mobile'];
 $folder=$_GET['destination'];
-$photo='('.$_GET['photoviewload'].')';
+$dest = $hash->filehash('../../..'.$_GET['photoviewload'],'false');
+if($dest==''){
+  $dest = $_GET['photoviewload'];
+}
+$photo='('.$dest.')';
 //Логика
 ?>
 
@@ -22,8 +31,10 @@ $photo='('.$_GET['photoviewload'].')';
 
 <?echo ".photo".$appid;?> {
   background: url<?echo $photo;?> center center/cover no-repeat;
-  width: 400px;
-  height: 400px;
+  width: 70%;
+  height: 70%;
+  min-width: 450px;
+  min-height: 450px;
   top: 0;
   bottom: 0;
   left: 0;
@@ -34,9 +45,7 @@ $photo='('.$_GET['photoviewload'].')';
   margin-bottom:15%;
 }
 <?echo ".photo".$appid;?>:hover {
-  width: 408px;
-  height: 408px;
-  box-shadow: rgba(16, 16, 22, 0.2) 0px 2px 2px, rgba(16, 16, 22, 0.2) 0px 4px 4px, rgba(16, 16, 22, 0.2) 0px 8px 8px, rgba(16, 16, 22, 0.2) 0px 16px 16px;
+  box-shadow:rgba(16, 16, 22, 0.2) 0px 0px 1px 1px;
 
 }
 
@@ -83,8 +92,8 @@ $photo='('.$_GET['photoviewload'].')';
 var zoom = 0;
 $(document).ready(function(){
   $(window).mousewheel(function(event) {
-        if(event.deltaY > 0) zoom--;
-        else zoom++;
+        if(event.deltaY > 0) zoom++;
+        else zoom--;
         if(zoom <= 0) zoom = 0;
         else if(zoom > 15) zoom = 15;
         var k = parseFloat(1+zoom/5);

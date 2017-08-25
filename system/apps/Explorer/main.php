@@ -153,10 +153,14 @@ while (false !== ($entry=$d->read())) {
 	}
 	if(is_file(realpath($entry))){
 		$object	=	$dialogexplorer;
-		$color='#b5b5b5';
+		$color='rgba(0,0,0,0)';
 		if($name	==	'main.php'){
-			$hashfileprefix	= $faction->filehash('app.png');
-			$type	=	$pathmain.'/'.$hashfileprefix;
+			if(file_exists('app.png')){
+				$hashfileprefix	= $faction->filehash('app.png','false');
+				$type	=	$pathmain.'/'.$hashfileprefix;
+			}else{
+				$type	=	'system/core/design/images/app.png';
+			}
 			$extension	=	"";
 		}else{
 			$extension	=	stristr($name, '.');
@@ -164,7 +168,7 @@ while (false !== ($entry=$d->read())) {
 			$type	=	$folder.'/assets/fileico.png';
 			if($extension	==	'png'  || $extension	==	'jpg' || $extension	==	'bmp' || $extension	==	'gif'){
 				$color='#fff';
-				$hashfileprefix	= $faction->filehash($entry);
+				$hashfileprefix	= $faction->filehash($entry,'false');
 				$type	=	$pathmain.'/'.$hashfileprefix;
 				$extension	=	"";
 			}
