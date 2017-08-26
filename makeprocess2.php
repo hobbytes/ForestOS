@@ -39,7 +39,7 @@ if(isset($_SESSION['loginuser'])){
   $pname=basename($destination);
   $style="'display','block'";
   $style2="'display','none'";
-  echo '<div id=app'.$idprocess.' style="width:auto; max-width:'.$maxwidth.'; position:absolute; left:'.$left.'; top:'.$top.';" class="ui-widget-content window windownormal" ><div id=drag'.$idprocess.' class="ui-widget-header dragwindow"><span  style="cursor:default;"><div style="background-color:transparent;  background-image: url('.$appicon.'); background-size:cover; height:20px; width:20px; margin:0px 3px 0px 3px; float:left;"></div>'.$pname.' </span>
+  echo '<div id=app'.$idprocess.' style="max-width:'.$maxwidth.'; position:absolute; left:'.$left.'; top:'.$top.';" class="ui-widget-content window windownormal" ><div id=drag'.$idprocess.' class="ui-widget-header dragwindow"><span  style="cursor:default;"><div style="background-color:transparent;  background-image: url('.$appicon.'); background-size:cover; height:20px; width:20px; margin:0px 3px 0px 3px; float:left;"></div>'.$pname.' </span>
   <div class="appwindowbutton"'; echo ' onClick=" $(';echo "'#"; echo 'process'.$idprocess; echo "'"; echo ').remove();';echo ' $(';echo "'#"; echo "app$idprocess"; echo "'"; echo ').css('; echo "$style2"; echo '); checkwindows();" style="background-color:#ed2020;">x</div>
   <div class="hidewindow'.$idprocess.' appwindowbutton" onClick="" style="background-color:#37a22e;">-</div>
   <div class="reload'.$idprocess.' appwindowbutton" onClick="" style="background-color:#e09100;">o</div>
@@ -66,7 +66,7 @@ if(isset($_SESSION['loginuser'])){
           $( "#<?echo 'app'.$idprocess.'';?>" ).resizable({disabled:true,containment:"body"});
         }
         if($( "#<?echo 'app'.$idprocess.'';?>" ).hasClass("windowborderhide")){
-          $( "#<?echo 'app'.$idprocess.'';?>" ).resizable({disabled:false});
+          $( "#<?echo 'app'.$idprocess.'';?>" ).resizable({disabled:false,containment:"body",minHeight:$(window).height()*0.15,minWidth:$(window).width()*0.15,maxWidth:$(window).width()*<?echo $maxwidthm;?>,maxHeight:$(window).height()*0.95,autoHide:<?echo $autohide;?>,alsoResize:"#<?echo ''.$nameprocess.$idprocess.'';?>"});
         }
       $( "#<?echo 'drag'.$idprocess;?>" ).toggleClass( "dragwindowtoggle", 500 );
       $( "#<?echo 'app'.$idprocess;?>" ).toggleClass( "windowborderhide", 500 );

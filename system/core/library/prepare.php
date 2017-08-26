@@ -93,7 +93,7 @@
       $namejs="'".$name."'";$filejs="'".$file."'";$paramjs="'".$param."'";$keyjs="'".$key."'";
           echo'<div id="link'.$id.'" class="'.$delclassname.'" on'.$click.'="makeprocess('.$namejs.','.$filejs.','.$paramjs.','.$keyjs.');"><div id=icons'.$id.' class="ui-widget-header ui-widget-content ico clickme" style="z-index:-1000; height:auto; text-align:center; width:70px; position:relative; display:block; float:left;"><div style="background-color:transparent;  background-image: url('.$linkicon.'); background-size:cover; height:64px; width:64px; margin:auto; margin-top:17px; ">';
           echo '<div id=icon'.$id.' style="width:100%; height:auto;">';
-          echo '<div class="linktheme" style="white-space: pre-wrap; padding-top: 100%; text-overflow:ellipsis; cursor:default; overflow:hidden; font-size:13px; text-shadow:0px 0px 25px rgba(150,150,150,1);" >';
+          echo '<div class="linktheme" style="white-space: pre-wrap; padding-top: 100%; text-overflow:ellipsis; cursor:default; overflow:hidden; font-size:13px; text-shadow:0px 0px 4px rgba(0,0,0,0.9);" >';
           echo $linkname.'</div></div></div></div></div>';
     }
 

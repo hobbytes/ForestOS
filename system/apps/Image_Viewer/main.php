@@ -6,12 +6,17 @@
 //Подключаем библиотеки
 include '../../core/library/filesystem.php';
 include '../../core/library/gui.php';
+include '../../core/library/permissions.php';
 //Инициализируем переменные
 $hash = new fileaction;
 $object = new gui;
+$newpermission = new PermissionRequest;
 $click=$_GET['mobile'];
 $folder=$_GET['destination'];
 $dest = $hash->filehash('../../..'.$_GET['photoviewload'],'false');
+//Ассоциируем файлы
+$newpermission->fileassociate(array('png','jpg','bmp','gif'), $folder.'main.php', 'photoviewload', $appname);
+
 if($dest==''){
   $dest = $_GET['photoviewload'];
 }

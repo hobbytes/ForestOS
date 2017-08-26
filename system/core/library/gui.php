@@ -51,6 +51,9 @@ $name_day = $days[$num_day];
 function dialog($textdialog,$titledialog,$effectdialog){
   $hashid=md5(date('y.m.d.h.i.s'));
   switch($effectdialog){case "bounce": $icon="alert";break; case "highlight": $icon="notice";break; case "fade": $icon="info";break;case "": $icon="blank";break;}
+  echo '<div id="'.$hashid.'" title="'.$titledialog.'">
+    <p><span class="ui-icon ui-icon-'.$icon.'" style="float:left;margin:0 12px 0 0;"></span>'.$textdialog.'</p>
+  </div>';
 ?>
 <script>
 $(function(){
@@ -68,16 +71,17 @@ $(function(){
     buttons:{
       "ок":function(){
         $(this).dialog("close");
+        $(this).remove();
       }
     }
   });
 });
+
+$(".ui-dialog-titlebar-close").remove();
+$(".ui-dialog").css('z-index','9999');
 </script>
 
 <?
-echo '<div id="'.$hashid.'" title="'.$titledialog.'">
-  <p><span class="ui-icon ui-icon-'.$icon.'" style="float:left;margin:0 12px 0 0;"></span>'.$textdialog.'</p>
-</div>';
 }
 
 function newnotification($name, $title, $text,$time){
