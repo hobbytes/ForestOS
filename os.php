@@ -28,34 +28,29 @@ $prepare->themeload();
 <?
 if(isset($_SESSION['loginuser'])){
 ?>
-<div class="welcomescreen" style="position:absolute; width:100%; height:100%; top:0; left:0; background-color: #171717; text-align:center; color:#fff;">
-  <img style="width:128; position:absolute; top:0; left:0; bottom:0; right:0; margin: auto;" src="system/core/design/images/forestosicon.png">
+<div class="welcomescreen">
+  <img src="system/core/design/images/forestosicon.png">
 </div>
 <div id="topbar" class="ui-widget-content topbartheme" style="display:none; z-index:9999; height:22px; padding-top:4px;">
-
-<span id="hideall" class="topbaractbtn" style="cursor:pointer; display:none; background-color:#5ca556; color:#fff; width:12px; float:right; text-align:center; width:15px; margin-right: 8px;">
-  -
-</span>
-<span id="closeall" class="topbaractbtn" style="cursor:pointer; display:none; background-color:#bf5a5a; color:#fff; float:right; text-align:center; width:15px;" onclick="$('.process').remove(); $('.topbaractbtn').css('display','none');">
-  x
-</span>
-
-<div class="date" style="float:right; font-size:15px; padding-right:10px; user-select: none; cursor: default;">
-  <?php echo $object->getDayRus().' '.date('d').',';?>
-  <span id="time"></span>
-</div>
-
-<div id="notificationsbtn" style="float:right; font-size: 11px; margin-right: 10px; padding: 1px; user-select: none; border: 2px solid #fff; border-radius: 4px; cursor: default;">
-  N
-</div>
-
-<script type="text/javascript">
-showTime();
-</script>
-
-<div id="menu1" onmouseover="document.getElementById('aboutmenu').style.display='block';" onmouseout="document.getElementById('aboutmenu').style.display='none';" style="z-index:9999; user-select: none; cursor: default; text-align:center; width:50px; font-size:19px; ">
-  =
-</div>
+  <span id="hideall" class="topbaractbtn" style="cursor:pointer; display:none; background-color:#5ca556; color:#fff; width:12px; float:right; text-align:center; width:15px; margin-right: 8px;">
+    -
+  </span>
+  <span id="closeall" class="topbaractbtn" style="cursor:pointer; display:none; background-color:#bf5a5a; color:#fff; float:right; text-align:center; width:15px;" onclick="$('.process').remove(); $('.topbaractbtn').css('display','none');">
+    x
+  </span>
+  <div class="date" style="float:right; font-size:15px; padding-right:10px; user-select: none; cursor: default;">
+    <?php echo $object->getDayRus().' '.date('d').',';?>
+    <span id="time"></span>
+  </div>
+  <div id="notificationsbtn" style="float:right; font-size: 11px; margin-right: 10px; padding: 1px; user-select: none; border: 2px solid #fff; border-radius: 4px; cursor: default;">
+    N
+  </div>
+  <script type="text/javascript">
+    showTime();
+  </script>
+  <div id="menu1" onmouseover="document.getElementById('aboutmenu').style.display='block';" onmouseout="document.getElementById('aboutmenu').style.display='none';" style="z-index:9999; user-select: none; cursor: default; text-align:center; width:50px; font-size:19px; ">
+    =
+  </div>
 </div>
 <div id="aboutmenu" class="ui-widget-content menutheme" onmouseover="document.getElementById('aboutmenu').style.display='block';" onmouseout="document.getElementById('aboutmenu').style.display='none';" style="z-index:9999; user-select:none; display:none; text-align:justify; width:150px; max-width:300px; position:absolute; text-overflow:hidden; overflow:ellipsis; padding:5px;">
 <span style="text-transform:uppercase; cursor:pointer;" onclick="makeprocess('Settings','users','<?echo $login;?>','selectuser');">

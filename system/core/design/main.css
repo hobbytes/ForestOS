@@ -31,12 +31,26 @@ body {
 }
 
 
-@keyframes spin {
-    from{
-        transform: rotate(0deg);
-    }to{
-        transform: rotate(360deg);
-    }
+.welcomescreen{
+	position:absolute;
+	width:100%;
+	height:100%;
+	top:0;
+	left:0;
+	background-color: #171717;
+	text-align:center;
+	color:#fff;
+}
+
+.welcomescreen img{
+	width:128px;
+	position:absolute;
+	top:0;
+	left:0;
+	bottom:0;
+	right:0;
+	margin: auto;
+	z-index: 9999;
 }
 
 .appwindowbutton

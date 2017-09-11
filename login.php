@@ -55,6 +55,14 @@ $gui->formend();
   <span style="font-size:35pt;" id="time"></span>
 </div>
 <script type="text/javascript">
-showTime();
+$( function() {
+  $(window).load(function(){
+    $(".welcomescreen").hide('fade',500);
+    showTime();
+  });
+});
 </script>
+<div class="welcomescreen">
+  <img src="system/core/design/images/forestosicon.png">
+</div>
 <?
