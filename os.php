@@ -6,24 +6,34 @@
           WET STONE 1.0
 -->
 <?
+function new_include($fileinclude){
+  if(file_exists($fileinclude) && is_readable($fileinclude) && include($fileinclude)){
+    ?>
+    <script>
+    alert('load: '<? echo $fileinclude?>);
+    </script>
+    <?
+  }
+}
+//new_include('system/core/library/gui.php');
 include 'system/core/library/gui.php';
 include 'system/core/library/bd.php';
 include 'system/core/library/auth.php';
 include 'system/core/library/etc.php';
 include 'system/core/library/filesystem.php';
 include 'system/core/library/prepare.php';
+session_start();
 $object = new gui;
 $infob = new info;
 $hashfile = new fileaction;
 $prepare = new prepare;
 $auth = new AuthClassUser();
-session_start();
 $auth->checkout();
 $prepare->start();
 $prepare->wall();
 $prepare->themeload();
+$prepare->trash();
 ?>
-
 <body class="ui-body backgroundtheme" style="position:relative; z-index:-2000; overflow-x:hidden; overflow-y:hidden; background: url(<?echo $mainwall;?>) 100% 100% no-repeat fixed; background-size:cover;">
 <?
 if(isset($_SESSION['loginuser'])){
@@ -42,7 +52,7 @@ if(isset($_SESSION['loginuser'])){
     <?php echo $object->getDayRus().' '.date('d').',';?>
     <span id="time"></span>
   </div>
-  <div id="notificationsbtn" style="float:right; font-size: 11px; margin-right: 10px; padding: 1px; user-select: none; border: 2px solid #fff; border-radius: 4px; cursor: default;">
+  <div id="notificationsbtn" style="float:right; font-size: 11px; margin-right: 10px; padding: 1px; user-select: none; border: 2px solid #fff; border-radius: 4px; cursor: default; color:#fff;">
     N
   </div>
   <script type="text/javascript">

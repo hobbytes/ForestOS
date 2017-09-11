@@ -7,18 +7,23 @@ include '../../core/library/filesystem.php';
 include '../../core/library/bd.php';
 include '../../core/library/gui.php';
 //Инициализируем переменные
-global $idp;
 $fo = new filecalc;
 $faction = new fileaction;
 $dir = $_GET['dir'];
 $del = $_GET['del'];
 $deleteforever = $_GET['delf'];
-$link=$_GET['linkdir'];
-$linkname=$_GET['linkname'];
-$ico=$_GET['ico'];
-$click=$_GET['mobile'];
-$folder=$_GET['destination'];
+$link	=	$_GET['linkdir'];
+$linkname	=	$_GET['linkname'];
+$ico	=	$_GET['ico'];
+$click	=	$_GET['mobile'];
+$folder	=	$_GET['destination'];
+$erasestatus	=	$_GET['erasestatus'];
 $dialogexplorer = new gui;
+
+if($erasestatus){
+$faction->deleteDir($dir);
+mkdir($dir);
+}
 
 if (isset($_GET['makedir'])){
 	if(!is_dir($dir.'/'.$_GET['makedir']))
@@ -100,7 +105,8 @@ if ($pathmain=='../../../'){
 }
 $pathmain= substr($pathmain,strpos($pathmain,'os')+strlen('os'));
 ?>
-<div style="cursor:default; width:30px;" onmouseover="document.getElementById('filemenu<?echo $appid;?>').style.display='block';" onmouseout="document.getElementById('filemenu<?echo $appid;?>').style.display='none';">
+<div >
+<div style="cursor:default; float:left; padding:5px 10px;" onmouseover="document.getElementById('filemenu<?echo $appid;?>').style.display='block';" onmouseout="document.getElementById('filemenu<?echo $appid;?>').style.display='none';">
 	<b>Файл</b>
 	<div id="filemenu<?echo $appid;?>" style="display:none; cursor:default; position:absolute; z-index:9000; background:#fff; width:auto;">
 <ul id="mmenu<?echo $appid;?>" >
@@ -111,6 +117,10 @@ $pathmain= substr($pathmain,strpos($pathmain,'os')+strlen('os'));
 	<li><div <?echo 'class="deleteforever" onClick="deleteforever'.$appid.'(this);" ';?>>Удалить</div></li>
 	<li><div <? echo 'id="'.$dir.'/" onClick="loadshow'.$appid.'(this);"';?>>Загрузить файл</div></li>
 </ul>
+</div>
+</div>
+<div id="erasetrash<?echo $appid;?>" onClick="erasetrash<?echo $appid;?>();" style="cursor:default; padding:5px 10px; float:left; display:none;">
+	<b style="background-color:#c73232; padding:2px; border-radius:5px; color:#fff; cursor:pointer;">Очистить корзину</b>
 </div>
 </div>
 <div id="mkdirdiv<?echo $appid;?>" style="width:43%; display:none; z-index:10; height:120px; padding:10px; background-color:#eaeaea; border: 1px solid #282828; position:absolute; margin-top:25%; text-align:center; overflow:hidden; left:25%;">
@@ -144,12 +154,22 @@ while (false !== ($entry=$d->read())) {
 		try {
 			$fo->size_check(realpath(realpath($entry)));
 			$fo->format($size);
+			if (empty($size)){
+				$format	= '0 Bytes';
+			}
 			$format = '<br> Размер: '.$format;
 		} catch (Exception $e) {
 			echo $e->getMessage($e);
 		}
 
 		$datecreate = 'Дата: '.date('d.m.y H:i:s', filectime(realpath($entry))).$format;
+	}
+	if(eregi($_SESSION["loginuser"].'/trash',$pathmain)){
+		?>
+		<script>
+		$('#erasetrash<?echo $appid;?>').css('display','block');
+		</script>
+		<?
 	}
 	if(is_file(realpath($entry))){
 		$object	=	$dialogexplorer;
@@ -228,6 +248,9 @@ function select<?echo $appid;?>(folder,folder2,folder3,folder4){
 };
 function deletes<?echo $appid;?>(del){
 	$("#<?echo $appid;?>").load("<?echo $folder;?>/main.php?del="+del.id+"&id=<?echo rand(0,10000).'&dir='.realpath($entry).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&destination='.$folder;?>")
+};
+function erasetrash<?echo $appid;?>(){
+	$("#<?echo $appid;?>").load("<?echo $folder;?>/main.php?dir=<?echo realpath($entry)?>&erasestatus=true&id=<?echo rand(0,10000).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&destination='.$folder;?>")
 };
 function deleteforever<?echo $appid;?>(delf){
 	$("#<?echo $appid;?>").load("<?echo $folder;?>/main.php?delf="+delf.id+"&id=<?echo rand(0,10000).'&dir='.realpath($entry).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&destination='.$folder;?>")
