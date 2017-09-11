@@ -63,15 +63,7 @@
       }
     }
     }
-    /*---------trash check---------*/
-        function trash(){
-          $file='system/users/'.$_SESSION["loginuser"].'/desktop/trash.link';
-          if(!is_file($file)){
-            $content="[link]\ndestination=system/apps/Explorer/\nfile=main\nkey=dir\nparam=/home/u588238148/public_html/forestos/system/users/".$_SESSION["loginuser"]."/trash\nname=Explorer\nlinkname=Корзина\nicon=system/apps/Explorer/assets/trashicon.png";
-            file_put_contents($file,$content);
-          }
-          unset($file,$content);
-        }
+
 /*---------load desktop---------*/
     function desktop($id,$filenames,$delclassname)
     {

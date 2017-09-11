@@ -6,22 +6,12 @@
           WET STONE 1.0
 -->
 <?
-function new_include($fileinclude){
-  if(file_exists($fileinclude) && is_readable($fileinclude) && include($fileinclude)){
-    ?>
-    <script>
-    alert('load: '<? echo $fileinclude?>);
-    </script>
-    <?
-  }
-}
-//new_include('system/core/library/gui.php');
-include 'system/core/library/gui.php';
-include 'system/core/library/bd.php';
-include 'system/core/library/auth.php';
-include 'system/core/library/etc.php';
-include 'system/core/library/filesystem.php';
-include 'system/core/library/prepare.php';
+require 'system/core/library/gui.php';
+require 'system/core/library/bd.php';
+require 'system/core/library/auth.php';
+require 'system/core/library/etc.php';
+require 'system/core/library/filesystem.php';
+require 'system/core/library/prepare.php';
 session_start();
 $object = new gui;
 $infob = new info;
@@ -32,7 +22,6 @@ $auth->checkout();
 $prepare->start();
 $prepare->wall();
 $prepare->themeload();
-$prepare->trash();
 ?>
 <body class="ui-body backgroundtheme" style="position:relative; z-index:-2000; overflow-x:hidden; overflow-y:hidden; background: url(<?echo $mainwall;?>) 100% 100% no-repeat fixed; background-size:cover;">
 <?

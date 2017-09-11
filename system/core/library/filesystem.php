@@ -100,7 +100,11 @@ function size_check($path){
         }
         closedir($dir);
     }
-
+    function makelink($linkdestination,$appdest,$appfile,$key,$param,$appname,$linkname,$icon){
+        $content="[link]\ndestination=$appdest\nfile=$appfile\nkey=$key\nparam=$param\nname=$appname\nlinkname=$linkname\nicon=$icon";
+        file_put_contents($linkdestination,$content);
+        unset($linkdestination,$content);
+    }
   }
 
 ?>

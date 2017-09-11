@@ -65,10 +65,8 @@ if($link!=''){
 		$puplicname=$linkname;
 		$newname='Explorer';
 	}
-	$content="[link]\ndestination=$destination\nfile=main\nkey=$param\nparam=$link\nname=$newname\nlinkname=$puplicname\nicon=$ico";
-	$myfile=fopen('../../users/'.$_SESSION["loginuser"].'/desktop/'.$puplicname.'_'.uniqid().'.link',"w");
-	fwrite($myfile,$content);
-	fclose($myfile);
+	$file = '../../users/'.$_SESSION["loginuser"].'/desktop/'.$puplicname.'_'.uniqid().'.link';
+	$faction->makelink($file,$destination,'main',$param,$link,$newname,$puplicname,$ico);
 }
 
 if ($dir==''){
