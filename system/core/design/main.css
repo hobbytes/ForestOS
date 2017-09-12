@@ -88,12 +88,17 @@ body {
 	width: 165px;
 	padding: 10 5 10 5;
 	border-radius: 10px 0px 0px 10px;
-	border-bottom: 1px solid #212121;;
+	border-bottom: 1px solid #212121;
 	word-break: break-all;
 	background: -webkit-linear-gradient(top,#2b2b2b 0%, #2b2b2b 100%);
 	text-overflow: ellipsis;
 	overflow: hidden;
 	white-space: nowrap;
+}
+
+.bordertoggle
+{
+	border:none!important;
 }
 
 .windownormal{

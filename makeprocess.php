@@ -90,6 +90,7 @@ if(isset($_SESSION['loginuser'])){
       }
     $( "#<?echo 'drag'.$idprocess;?>" ).toggleClass( "dragwindowtoggle", 500 );
     $( "#<?echo 'app'.$idprocess;?>" ).toggleClass( "windowborderhide", 500 );
+    $( "#<?echo 'app'.$idprocess;?>" ).toggleClass( "bordertoggle", 1 );
   });
 
   $( ".reload<?echo $idprocess;?>" ).on( "click", function() {

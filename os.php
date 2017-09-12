@@ -55,29 +55,29 @@ if(isset($_SESSION['loginuser'])){
 <span style="text-transform:uppercase; cursor:pointer;" onclick="makeprocess('Settings','users','<?echo $login;?>','selectuser');">
   <?echo $login;?>
 </span>
-<hr>
+<hr class="menulines">
 <span style="cursor:pointer;" onclick="makeprocess('Explorer','main','',''); document.getElementById('aboutmenu').style.display='none';">
   Проводник
 </span>
-<hr>
+<hr class="menulines">
 <span style="cursor:pointer;" onclick="makeprocess('Settings','main','',''); document.getElementById('aboutmenu').style.display='none';">
   Параметры
 </span>
-<hr>
+<hr class="menulines">
 <span style="cursor:pointer;" onclick="makeprocess('Apps_House','main','',''); document.getElementById('aboutmenu').style.display='none';">
   Магазин
 </span>
-<hr>
+<hr class="menulines">
 <span style="cursor:pointer;" onclick="makeprocess('Settings','about','',''); document.getElementById('aboutmenu').style.display='none';">
   О системе
 </span>
-<hr>
+<hr class="menulines">
 <b>
   <span style="cursor:pointer;" onclick="return location.href = 'os.php'">
     Перезагрузка
   </span>
 </b>
-<hr>
+<hr class="menulines">
 <b>
   <span style="cursor:pointer;" onclick="return location.href = '?action=logout'">
     Выйти

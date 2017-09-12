@@ -1,9 +1,12 @@
 <?
 //Инициализируем переменные
-$appid=$_GET['appid'];
-$erase=$_GET['erase'];
-$appname=$_GET['appname'];
-$folder=$_GET['destination'];
+$appid  = $_GET['appid'];
+$erase  = $_GET['erase'];
+$appname  = $_GET['appname'];
+$folder = $_GET['destination'];
+$oldpassword  = $_GET['oldpassword'];
+$newpassword  = $_GET['newpassword'];
+$checkpassword  = $_GET['checkpassword'];
 ?>
 <div id="<?echo $appname.$appid;?>" style="background-color:#f2f2f2; height:500px; max-height:95%; max-width:100%; width:800px; padding-top:10px; border-radius:0px 0px 5px 5px; overflow:auto;">
 <div style="width:100%; text-align:left; padding-bottom:10px; font-size:30px; border-bottom:#d8d8d8 solid 2px; text-overflow:ellipsis; overflow:hidden;">
@@ -13,17 +16,42 @@ $folder=$_GET['destination'];
 //Подключаем библиотеки
 include '../../core/library/filesystem.php';
 include '../../core/library/bd.php';
+include '../../core/library/gui.php';
 session_start();
 if($erase=='true'){
   file_put_contents('../../users/'.$_SESSION["loginuser"].'/settings/login.stat','');
 }
-$version='0.1';
 $settingsbd = new readbd;
-$settingsbd->readglobal2("fuid","forestusers","login",$_SESSION["loginuser"]);
-$fuid=$getdata;
+$gui = new gui;
+
+if(!empty($oldpassword) && !empty($newpassword) && !empty($checkpassword)){
+  $settingsbd->readglobal2("password","forestusers","login",$_SESSION["loginuser"]);
+  $bdpass=$getdata;
+
+  if($bdpass==md5($oldpassword)){
+    if($newpassword==$checkpassword){
+      $settingsbd->updatebd("forestusers",password,md5($newpassword),login,$_SESSION["loginuser"]);
+      echo 'Пароль изменен!';
+    }else{
+      echo 'Новые пароли не совпадают!';
+    }
+  }else{
+    echo 'Вы ввели неправильный старый пароль!';
+  }
+  unset($oldpassword,$newpassword,$checkpassword);
+}
 
 echo '<div style="text-align:left; margin-top:10px; margin-left:10px;"><b style="font-size:20px;">Изменение пароля</b>';
-echo '<div>123</div></div><hr>';
+
+  echo "<div>Введите старый пароль:</div>";
+  $gui->inputslabel('Логин', 'password', ''.$appid.'oldpassword', ''.$adduserlogin.'','50', 'старый пароль');
+  echo "<div>Введите новый пароль:</div>";
+  $gui->inputslabel('Пароль', 'password', ''.$appid.'newpassword', ''.$adduserpassword.'','50','придумайте новый пароль');
+  echo "<div>Введите новый пароль еще раз:</div>";
+  $gui->inputslabel('Пароль', 'password', ''.$appid.'checkpassword', ''.$adduserpassword.'','50','введите еще раз новый пароль');
+
+  echo '<span id="changepassword'.$appid.'" onClick="changepassword'.$appid.'();" class="ui-button ui-widget ui-corner-all">Поменять пароль</span><hr>';
+
 
 $text=file_get_contents('../../users/'.$_SESSION["loginuser"].'/settings/login.stat');
 echo '<div style="text-align:left; margin-top:10px; margin-left:10px;"><b style="font-size:20px;">Журнал</b>';
@@ -35,4 +63,5 @@ unset($settingsbd);
 <script>
 function back<?echo $appid;?>(el){$("#<?echo $appid;?>").load("<?echo $folder?>main.php?id=<?echo rand(0,10000).'&destination='.$folder.'&appname='.$appname.'&appid='.$appid;?>")};
 function eraselog<?echo $appid;?>(){$("#<?echo $appid;?>").load("<?echo $folder?>security.php?id=<?echo rand(0,10000).'&destination='.$folder.'&appname='.$appname.'&appid='.$appid.'&erase=true';?>")};
+function changepassword<?echo $appid;?>(){$("#<?echo $appid;?>").load("<?echo $folder?>security.php?id=<?echo rand(0,10000).'&destination='.$folder.'&appname='.$appname.'&appid='.$appid?>&oldpassword="+document.getElementById("<?echo $appid.'oldpassword';?>").value+"&newpassword="+document.getElementById("<?echo $appid.'newpassword';?>").value+"&checkpassword="+document.getElementById("<?echo $appid.'checkpassword';?>").value)};
 </script>

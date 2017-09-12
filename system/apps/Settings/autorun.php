@@ -12,10 +12,18 @@ $savestatus  = $_GET['save'];
 <?php
 /*Settings*/
 //Подключаем библиотеки
-include '../../core/library/filesystem.php';
+include '../../core/library/gui.php';
+$newgui = new gui;
 session_start();
 if($savestatus=='true'){
   file_put_contents('../../users/'.$_SESSION["loginuser"].'/settings/autorun.foc',$checked);
+  if(empty($checked)){
+    $text = "Теперь в менеджере автозапуска пусто";
+  }else{
+    $text = "Вы добавили в автозапуск: <b>$checked</b>";
+  }
+  $newgui->newnotification($appname,"Менеджер автозапуска",$text);
+  unset($text);
 }
 echo '<div class="checkboxfix" style="width:80%; text-align:left; margin:15px auto;"><fieldest>';
 $i=0;
@@ -24,8 +32,8 @@ foreach (glob("../*/main.php") as $filename)
   $i++;
   $name = str_replace(array('main.php','..','/'),'',$filename);
   $pubname  = str_replace('_',' ',$name);
-  echo '<label for="checkbox'.$name.'">'.$pubname.'</label>';
-  echo '<input type="checkbox" class="checkboxclass'.$appid.'" id="checkbox'.$name.'" name="'.$name.'">';
+  echo '<label for="checkbox'.$name.$appid.'">'.$pubname.'</label>';
+  echo '<input type="checkbox" class="checkboxclass'.$appid.'" id="checkbox'.$name.$appid.'" name="'.$name.'">';
 }
 echo '</fieldest></div>';
 echo '<hr><div onClick="saveautoset'.$appid.'();" class="ui-button ui-widget ui-corner-all" style="margin:10px auto;" >Сохранить</div>';
@@ -36,7 +44,7 @@ if($content){
   foreach ($array as $value){
     ?>
     <script>
-    $("#checkbox<?echo $value?>").prop("checked",true);
+    $("#checkbox<?echo $value.$appid?>").prop("checked",true);
     </script>
     <?
   }
@@ -58,3 +66,11 @@ function saveautoset<?echo $appid;?>(){
   $("#<?echo $appid;?>").load("<?echo $folder?>autorun.php?checked="+escape(checkboxradio<?echo $appid;?>)+"&save=true&id=<?echo rand(0,10000).'&destination='.$folder.'&appname='.$appname.'&appid='.$appid;?>");
 };
 </script>
+<style>
+.checkboxfix label{
+  padding:20px 5px;
+  margin: 5px;
+  width:100px;
+  border-radius: 10px;
+}
+</style>

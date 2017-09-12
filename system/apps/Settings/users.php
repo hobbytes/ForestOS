@@ -38,7 +38,7 @@ $id=$conn->query($sql);
       echo '<div id="'.$getdata.'" onClick="seluser'.$appid.'(this);" class="userselect" style="background:#2e2f31; cursor:pointer; border-radius:40px;40px;40px;40px; width:80px; height:50px; font-size:20px; text-align:center; padding-top:30px; color:#fff; float:left; overflow:hidden; text-overflow:ellipsis; display:block; position:relative; margin-left:10px;">'.$getdata.'</div>';
     }
 
-echo '<div id="newuser" onClick="seluser'.$appid.'(this);" class="userselect" style="background:#ababab; cursor:pointer; border:3px solid #2e2f31; border-radius:40px;40px;40px;40px; width:74px; height:44px; font-size:18px; text-align:center; padding-top:30px; color:#fff; float:left; overflow:hidden; text-overflow:ellipsis; display:block; position:relative; margin-left:10px;">+</div>';
+echo '<div id="newuser" onClick="seluser'.$appid.'(this);" class="userselect" style="background:#5ece5d; cursor:pointer; border:3px dashed #298c23; border-radius:40px;40px;40px;40px; width:74px; height:44px; font-size:18px; text-align:center; padding-top:30px; color:#fff; float:left; overflow:hidden; text-overflow:ellipsis; display:block; position:relative; margin-left:10px;">+</div>';
 
 
 if($adduserlogin!='' && $adduserpassword!='' && $adduserhdd!='')

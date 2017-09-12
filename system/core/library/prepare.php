@@ -107,38 +107,43 @@
       <style>
       .dragwindow
       {
-        background-color: <?echo $themeload['draggablebackcolor'];?>
-        color: <?echo $themeload['draggablefontcolor'];?>
+        background-color: <?echo $themeload['draggablebackcolor'];?>;
+        color: <?echo $themeload['draggablefontcolor'];?>;
       }
       .topbartheme
       {
-        background-color: <?echo $themeload['topbarbackcolor'];?>
-        color: <?echo $themeload['topbarfontcolor'];?>
+        background-color: <?echo $themeload['topbarbackcolor'];?>;
+        color: <?echo $themeload['topbarfontcolor'];?>;
       }
       .menutheme
       {
-        background-color: <?echo $themeload['menubackcolor'];?>
-        color: <?echo $themeload['menufontcolor'];?>
+        background-color: <?echo $themeload['menubackcolor'];?>;
+        color: <?echo $themeload['menufontcolor'];?>;
+      }
+      .menulines{
+        height: 2px;
+        border:none;
+        background-color: <?echo $themeload['topbarbackcolor'];?>;
+        color: <?echo $themeload['topbarbackcolor'];?>;
       }
       .backgroundtheme
       {
-        background-color: <?echo $themeload['backgroundcolor'];?>
+        background-color: <?echo $themeload['backgroundcolor'];?>;
       }
       .linktheme
       {
-        color: <?echo $themeload['backgroundfontcolor'];?>
+        color: <?echo $themeload['backgroundfontcolor'];?>;
       }
       .dragwindowtoggle
       {
-        color: <?echo $themeload['topbarfontcolor'];?>
+        color: <?echo $themeload['topbarfontcolor'];?>;
       }
-    /*  .windowborder
+      .windowborder
       {
         border: 3px solid <?echo $themeload['draggablebackcolor'];?>;
         border-radius: 6px 6px 8px 8px;
         border-top: 0;
       }
-  */
       </style>
 
       <?

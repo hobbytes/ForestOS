@@ -25,6 +25,12 @@ $getdata=$row[0];
 $conn=null;
 }
 
+public static function updatebd($table,$key,$value,$key_2,$value_2){
+$conn = new PDO (DB_DSN, DB_USERNAME, DB_PASSWORD);
+$sql="UPDATE $table SET $key='$value' WHERE $key_2='$value_2'";
+$conn->query($sql);
+}
+
 public static function readglobal2($globaldata,$from,$what,$like){
 global $getdata;
 $conn = new PDO (DB_DSN, DB_USERNAME, DB_PASSWORD);
