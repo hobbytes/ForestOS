@@ -41,7 +41,7 @@ if(isset($_SESSION['loginuser'])){
     <?php echo $object->getDayRus().' '.date('d').',';?>
     <span id="time"></span>
   </div>
-  <div id="notificationsbtn" style="float:right; font-size: 11px; margin-right: 10px; padding: 1px; user-select: none; border: 2px solid #fff; border-radius: 4px; cursor: default; color:#fff;">
+  <div id="notificationsbtn" style="float:right; font-size: 11px; margin-right: 10px; padding: 1px; user-select: none; border: 2px solid #fff; border-radius: 4px; cursor: default;">
     N
   </div>
   <script type="text/javascript">
@@ -164,6 +164,7 @@ $( "#hideall" ).on( "click", function() {
 </html>
 <?
 $_SESSION['appid']='<script>document.writeln(id)</script>';
+$prepare->autorun();
 }else{
 include 'login.php';
 }

@@ -51,7 +51,7 @@ $gui->formend();
 </div>
 </div>
 <div class="date" style="float:left; user-select: none; cursor: default; color:#fff; font-size:20pt; padding-left:30px; margin-bottom:10px; position:relative;">
-  <?php //echo $object->getDayRus().' '.date('d').'<br>';?>
+  <?php echo $object->getDayRus().' '.date('d').'<br>';?>
   <span style="font-size:35pt;" id="time"></span>
 </div>
 <script type="text/javascript">

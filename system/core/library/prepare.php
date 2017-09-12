@@ -163,5 +163,20 @@
        fclose($fp);
       }
     }
+
+    function autorun(){
+      global $login;
+      $content  = file_get_contents('system/users/'.$login.'/settings/autorun.foc');
+      if($content){
+        $array  = explode(",",$content);
+        foreach ($array as $value){
+          ?>
+          <script>
+          makeprocess2('system/apps/<?echo $value?>/main.php','','');
+          </script>
+          <?
+        }
+      }
+    }
   }
 ?>
