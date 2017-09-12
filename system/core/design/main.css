@@ -40,6 +40,7 @@ body {
 	background-color: #171717;
 	text-align:center;
 	color:#fff;
+	transition: all 0.1s ease;
 }
 
 .welcomescreen img{
@@ -51,6 +52,7 @@ body {
 	right:0;
 	margin: auto;
 	z-index: 9999;
+	transition: all 0.1s ease;
 }
 
 .appwindowbutton

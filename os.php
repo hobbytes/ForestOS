@@ -26,72 +26,12 @@ $prepare->themeload();
 <body class="ui-body backgroundtheme" style="position:relative; z-index:-2000; overflow-x:hidden; overflow-y:hidden; background: url(<?echo $mainwall;?>) 100% 100% no-repeat fixed; background-size:cover;">
 <?
 if(isset($_SESSION['loginuser'])){
+$prepare->welcomescreen();
+$prepare->topbar();
 ?>
-<div class="welcomescreen">
-  <img src="system/core/design/images/forestosicon.png">
-</div>
-<div id="topbar" class="ui-widget-content topbartheme" style="display:none; z-index:9999; height:22px; padding-top:4px;">
-  <span id="hideall" class="topbaractbtn" style="cursor:pointer; display:none; background-color:#5ca556; color:#fff; width:12px; float:right; text-align:center; width:15px; margin-right: 8px;">
-    -
-  </span>
-  <span id="closeall" class="topbaractbtn" style="cursor:pointer; display:none; background-color:#bf5a5a; color:#fff; float:right; text-align:center; width:15px;" onclick="$('.process').remove(); $('.topbaractbtn').css('display','none');">
-    x
-  </span>
-  <div class="date" style="float:right; font-size:15px; padding-right:10px; user-select: none; cursor: default;">
-    <?php echo $object->getDayRus().' '.date('d').',';?>
-    <span id="time"></span>
-  </div>
-  <div id="notificationsbtn" style="float:right; font-size: 11px; margin-right: 10px; padding: 1px; user-select: none; border: 2px solid #fff; border-radius: 4px; cursor: default;">
-    N
-  </div>
-  <script type="text/javascript">
-    showTime();
-  </script>
-  <div id="menu1" onmouseover="document.getElementById('aboutmenu').style.display='block';" onmouseout="document.getElementById('aboutmenu').style.display='none';" style="z-index:9999; user-select: none; cursor: default; text-align:center; width:50px; font-size:19px; ">
-    =
-  </div>
-</div>
-<div id="aboutmenu" class="ui-widget-content menutheme" onmouseover="document.getElementById('aboutmenu').style.display='block';" onmouseout="document.getElementById('aboutmenu').style.display='none';" style="z-index:9999; user-select:none; display:none; text-align:justify; width:150px; max-width:300px; position:absolute; text-overflow:hidden; overflow:ellipsis; padding:5px;">
-<span style="text-transform:uppercase; cursor:pointer;" onclick="makeprocess('Settings','users','<?echo $login;?>','selectuser');">
-  <?echo $login;?>
-</span>
-<hr class="menulines">
-<span style="cursor:pointer;" onclick="makeprocess('Explorer','main','',''); document.getElementById('aboutmenu').style.display='none';">
-  Проводник
-</span>
-<hr class="menulines">
-<span style="cursor:pointer;" onclick="makeprocess('Settings','main','',''); document.getElementById('aboutmenu').style.display='none';">
-  Параметры
-</span>
-<hr class="menulines">
-<span style="cursor:pointer;" onclick="makeprocess('Apps_House','main','',''); document.getElementById('aboutmenu').style.display='none';">
-  Магазин
-</span>
-<hr class="menulines">
-<span style="cursor:pointer;" onclick="makeprocess('Settings','about','',''); document.getElementById('aboutmenu').style.display='none';">
-  О системе
-</span>
-<hr class="menulines">
-<b>
-  <span style="cursor:pointer;" onclick="return location.href = 'os.php'">
-    Перезагрузка
-  </span>
-</b>
-<hr class="menulines">
-<b>
-  <span style="cursor:pointer;" onclick="return location.href = '?action=logout'">
-    Выйти
-  </span>
-</b>
-</div>
-
 <div id="desktop">
 <?
-$count=0;
-foreach (glob("system/users/$login/desktop/*.link") as $filename)
-{
-  $prepare->desktop($count=$count+1,$filename,"refdiv");
-}
+$prepare->desktop("linkdiv");
 $_SESSION['appid']=-1;
 ?>
 <div id="notifications" class="notificationhide" style="display:block; position:absolute; right: 0; height: 100%; padding: 10px; transition:all 0.2s ease;">

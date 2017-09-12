@@ -213,7 +213,7 @@ $dir->close;
 <div id="upload">
 </div>
 
-<div style="padding:0 10px; width:100%; position:absolute; top:96%; word-wrap:break-word;">
+<div style="padding:0 10px; background-color:#f2f2f2; width:97%; position:absolute; top:96%; word-wrap:break-word;">
 <?
 $fo->size_check(dirname(dirname(dirname(__DIR__))));
 $explorerbd = new readbd;

@@ -1,7 +1,4 @@
 <?
-//$test="system/apps/Test_test";
-//$pieces = explode("Test_test",$test);
-//echo $pieces[0];
 session_start();
 if(isset($_SESSION['loginuser'])){
   include 'system/core/library/etc.php';
@@ -16,15 +13,15 @@ if(isset($_SESSION['loginuser'])){
   if($mobile=='true'){
     $click='click';
     $autohide='false';
-    $top='20px';
+    $top='30px';
     $left='0px';
     $maxwidthm='1';
-    $maxwidth='100%';
+    $maxwidth='97%';
   }else{
     $click='dblclick';
     $autohide='true';
-    $top='25%';
-    $left='25%';
+    $top='2'.rand(4,9).'%';
+    $left='2'.rand(4,9).'%';
     $maxwidth='95%';
     $maxwidthm='0.95';
   }
