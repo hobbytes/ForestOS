@@ -13,7 +13,7 @@ $adduserhdd=$_GET['adduserhdd'];
 
 <div id="<?echo $appname.$appid;?>" style="background-color:#f2f2f2; height:500px; max-height:95%; max-width:100%; width:800px; padding-top:10px; border-radius:0px 0px 5px 5px; overflow:auto;">
 <div style="width:100%; text-align:left; padding-bottom:10px; font-size:30px; border-bottom:#d8d8d8 solid 2px; text-overflow:ellipsis; overflow:hidden;">
-<span onClick="back<?echo $appid;?>();" style="background-color:#d8d8d8; color:#000; border-radius:30%; cursor:pointer; font-size:25px; margin-left:5px;"> &#9668 </span>Учетные записи</div>
+<span onClick="back<?echo $appid;?>();" class="ui-forest" style="background-color:#d8d8d8; color:#000; border-radius:30%; cursor:pointer; font-size:25px; margin-left:5px;"> &#9668 </span>Учетные записи</div>
 <?php
 /*Settings*/
 //Подключаем библиотеки
@@ -75,7 +75,7 @@ if($selectuser!=''){
   $fuid=$getdata;
   echo '<div style="text-align:left; margin-top:100px; "><b style="font-size:35px; text-transform:uppercase;">'.$selectuser.'</b>';
   echo '<div><br> FUID: '.$fuid.'</div></div>';
-  echo '<span id="'.$selectuser.'" onClick="deleteuser'.$appid.'(this);" class="ui-button ui-widget ui-corner-all">Удалить пользователя</span>';
+  echo '<div id="'.$selectuser.'" onClick="deleteuser'.$appid.'(this);" class="ui-forest-button ui-forest-cancel">Удалить пользователя</div>';
 }
 else
 {
@@ -87,7 +87,7 @@ echo "<div>Введите пароль:</div>";
   $gui->inputslabel('Пароль', 'password', ''.$appid.'regpassword', ''.$adduserpassword.'','50','придумайте пароль');
 echo "<div>Укажите место на диске:</div>";
   $gui->inputslabel('Место на диске', 'text', ''.$appid.'reghdd', '60000' ,'50','укажите место на диске');
-  echo '<span id="addbtnuser'.$appid.'" onClick="adduser'.$appid.'();" class="ui-button ui-widget ui-corner-all">Добавить пользователя</span>';
+  echo '<div id="addbtnuser'.$appid.'" onClick="adduser'.$appid.'();" class="ui-forest-button ui-forest-accept">Добавить пользователя</div>';
 }
 }
 

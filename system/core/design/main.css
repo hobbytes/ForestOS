@@ -98,6 +98,44 @@ body {
 	white-space: nowrap;
 }
 
+.ui-forest{
+	transition: all 0.2s ease;
+}
+
+.ui-forest:hover{
+	filter: drop-shadow(0px 0px 3px #888);
+}
+
+.ui-forest-button{
+	color:	#fff;
+	padding: 10px;
+	text-transform: uppercase;
+	max-width: 200px;
+	border-radius: 5px;
+	transition: all 0.2s ease;
+	cursor: pointer;
+	text-align: center;
+	font-size: 14px;
+}
+
+.ui-forest-button:hover{
+	filter: brightness(110%);
+}
+
+.ui-forest-center{
+	margin: 10px auto;
+}
+
+.ui-forest-accept{
+	background: linear-gradient(45deg,	#6b99fe 30%,	#53b8ff 90%);
+}
+
+.ui-forest-cancel{
+	background: linear-gradient(45deg,	#fe6b6b 30%,	#f5b386 90%);
+
+}
+
+
 .bordertoggle
 {
 	border:none!important;

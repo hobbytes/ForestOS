@@ -115,23 +115,23 @@ function topbar(){
   global $object;
   ?>
   <div id="topbar" class="ui-widget-content topbartheme" style="display:none; z-index:9999; height:22px; padding-top:4px;">
-    <span id="hideall" class="topbaractbtn" style="cursor:pointer; display:none; background-color:#5ca556; color:#fff; width:12px; float:right; text-align:center; width:15px; margin-right: 8px;">
+    <span id="hideall" class="topbaractbtn ui-forest" style="cursor:pointer; display:none; background-color:#5ca556; color:#fff; width:12px; float:right; text-align:center; width:15px; margin-right: 8px;">
       -
     </span>
-    <span id="closeall" class="topbaractbtn" style="cursor:pointer; display:none; background-color:#bf5a5a; color:#fff; float:right; text-align:center; width:15px;" onclick="$('.process').remove(); $('.topbaractbtn').css('display','none');">
+    <span id="closeall" class="topbaractbtn ui-forest" style="cursor:pointer; display:none; background-color:#bf5a5a; color:#fff; float:right; text-align:center; width:15px;" onclick="$('.process').remove(); $('.topbaractbtn').css('display','none');">
       x
     </span>
-    <div class="date" style="float:right; font-size:15px; padding-right:10px; user-select: none; cursor: default;">
+    <div class="date " style="float:right; font-size:15px; padding-right:10px; user-select: none; cursor: default;">
       <?php echo $object->getDayRus().' '.date('d').',';?>
       <span id="time"></span>
     </div>
-    <div id="notificationsbtn" style="float:right; font-size: 11px; margin-right: 10px; padding: 1px; user-select: none; border: 2px solid #fff; border-radius: 4px; cursor: default;">
+    <div id="notificationsbtn" class="ui-forest" style="float:right; font-size: 11px; margin-right: 10px; padding: 1px; user-select: none; border: 2px solid #fff; border-radius: 4px; cursor: default;">
       N
     </div>
     <script type="text/javascript">
       showTime();
     </script>
-    <div id="menu1" onmouseover="document.getElementById('aboutmenu').style.display='block';" onmouseout="document.getElementById('aboutmenu').style.display='none';" style="z-index:9999; user-select: none; cursor: default; text-align:center; width:50px; font-size:19px; ">
+    <div id="menu1" class="ui-forest" onmouseover="document.getElementById('aboutmenu').style.display='block';" onmouseout="document.getElementById('aboutmenu').style.display='none';" style="z-index:9999; user-select: none; cursor: default; text-align:center; width:50px; font-size:19px; ">
       =
     </div>
   </div>

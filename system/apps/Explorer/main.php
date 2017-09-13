@@ -117,8 +117,8 @@ $pathmain= substr($pathmain,strpos($pathmain,'os')+strlen('os'));
 </ul>
 </div>
 </div>
-<div id="erasetrash<?echo $appid;?>" onClick="erasetrash<?echo $appid;?>();" style="cursor:default; padding:5px 10px; float:left; display:none;">
-	<b style="background-color:#c73232; padding:2px; border-radius:5px; color:#fff; cursor:pointer;">Очистить корзину</b>
+<div id="erasetrash<?echo $appid;?>" onClick="erasetrash<?echo $appid;?>();" class="ui-forest-button ui-forest-cancel" style="margin:3px auto; padding:5px 10px; float:left; display:none;">
+	<b>Очистить корзину</b>
 </div>
 </div>
 <div id="mkdirdiv<?echo $appid;?>" style="width:43%; display:none; z-index:10; height:120px; padding:10px; background-color:#eaeaea; border: 1px solid #282828; position:absolute; margin-top:25%; text-align:center; overflow:hidden; left:25%;">
