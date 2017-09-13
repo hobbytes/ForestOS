@@ -84,7 +84,7 @@ if(!is_dir($dir)){
 	}else{
 		$ini_array=parse_ini_file("../../core/extconfiguration.foc");
 		$dest=$ini_array[$ext];
-		$param=substr($dir,strpos($dir,'os')+strlen('os'));
+		$param	= str_replace($_SERVER['DOCUMENT_ROOT'],'',$dir);
 		$keys=$ini_array[$ext.'_key'];
 		$dir=dirname($dir);
 	}
