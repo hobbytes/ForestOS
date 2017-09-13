@@ -81,11 +81,22 @@ if (array_key_exists($key['file'], $ini_array))
 {$btncolor='777777';$btntext='Установлено';$btnaction='';}else{$btncolor='54c45c';$btntext='Установить';$btnaction='onClick="downloadapp(this,'.$key['version'].');"';}
 $name=str_replace('_',' ',$key['file']);
 echo '
-<span class="ui-button ui-widget ui-corner-all" style="height:auto; width:200px; position:relative; text-align:center;  margin:5px;"> <span onClick="fullhouse'.$appid.'('.$appcounter.');" ><div style="background-image: url(http://forest.hobbytes.com/media/os/apps/'.$key['file'].'/app.png); background-size:cover; margin:auto; height:64px; width:64px;">
-</div><div style="text-align:center;">'.$name.'<br><span style="font-size:10px;">версия: '.$key['version'].'<br>размер: '.$format.'</span></div></span><br><div id="'.$key['file'].'" class="app_h" '.$btnaction.' style="background-color:#'.$btncolor.'; color:#fff; font-size:13px; padding:5px;">'.$btntext.'</div></span><div class="apphouseinfohide" id="'.$appid.'apphouseinfo'.$appcounter.'" style="height:250px; width:97%; position:relative; background-color:#d4d4d4; padding:10px; border:2px solid #415678; display:none;"><div style="background-image: url(http://forest.hobbytes.com/media/os/apps/'.$key['file'].'/app.png); background-size:cover; margin-bottom:10px; height:80px; width:80px;"></div>
-  <span style="font-size:15px; font-weight:900; color:#363636; text-transform: uppercase;" >'.$key['name'].'</span><br><span style="font-size:13px; color:#464646;">'.$key['namelat'].' by '.$key['designer'].', version: '.$key['version'].'</span>
-  <br><br><span style="font-size:13px; color:#464646; font-weight:600;">Описание</span><br><span style="font-size:13px; color:#464646;">'.$key['description'].'</span>
-  </div>';
+<span class="ui-button ui-widget ui-corner-all" style="height:auto; width:200px; position:relative; text-align:center;  margin:5px;">
+<span onClick="fullhouse'.$appid.'('.$appcounter.');" >
+<div style="background-image: url(http://forest.hobbytes.com/media/os/apps/'.$key['file'].'/app.png); background-size:cover; margin:auto; height:64px; width:64px;">
+</div>
+<div style="text-align:center;">'.$name.'<br>
+<span style="font-size:10px;">версия: '.$key['version'].'<br>размер: '.$format.'</span>
+</div>
+</span><br>
+<div id="'.$key['file'].'" class="app_h" '.$btnaction.' style="background-color:#'.$btncolor.'; color:#fff; font-size:13px; padding:5px;">'.$btntext.'</div></span>
+<div class="apphouseinfohide" id="'.$appid.'apphouseinfo'.$appcounter.'">
+<div style="background-image: url(http://forest.hobbytes.com/media/os/apps/'.$key['file'].'/app.png); background-size:cover; margin-bottom:10px; height:80px; width:80px;"></div>
+<span style="font-size:15px; font-weight:900; color:#363636; text-transform: uppercase;" >'.$key['name'].'</span><br>
+<span style="font-size:13px; color:#464646;">'.$key['namelat'].' by '.$key['designer'].', version: '.$key['version'].'</span>
+<br><br>
+<span style="font-size:13px; color:#464646; font-weight:600;">Описание</span><br><span style="font-size:13px; color:#464646;">'.$key['description'].'</span>
+</div>';
 }}else{echo 'Приложения не найдены!';}?>
 </div>
 
@@ -114,7 +125,7 @@ echo '
       <div style="text-align:left;">Обновление системы<br><br/>
         <span style="font-size:17px;"><b>Forest OS</b> '.$key['codename'].'</span><br>
       <span style="font-size:12px; font-weight:900; " >сборка: <span style="color:#363636; text-transform: uppercase;">'.$key['file'].'</span></span><br>
-      <span style="font-size:12px; ">версия: '.$key['version'].'<br>размер: '.$format.'</span></div></span><span style="font-size:15px; color:#464646;">'.$key['description'].'</span>
+      <span style="font-size:12px; ">версия: '.$key['version'].'<br>размер: '.$format.'</span></div></span><span style="font-size:15px; color:#464646; white-space:pre;">'.$key['description'].'</span>
       <div id="'.$key['file'].'" class="app_h" onClick="update'.$appid.'()" style="background-color:#245896; color:#fff; width:30%; margin: 10px auto 10px auto; font-size:13px; padding:5px; text-align:center;">Обновить</div></span>
       ';
       }
@@ -136,9 +147,9 @@ echo '
         $name=str_replace('_',' ',$key['file']);
         echo '
         <span class="ui-button ui-widget ui-corner-all" style="height:auto; width:200px; position:relative; text-align:center;  margin:5px;"> <span onClick="fullhouseupd'.$appid.'('.$appcounter.');" ><div style="background-image: url(http://forest.hobbytes.com/media/os/apps/'.$key['file'].'/app.png); background-size:cover; margin:auto; height:64px; width:64px;"></div><div style="text-align:center;">'.$name.'<br><span style="font-size:10px;">версия: '.$key['version'].'<br>размер: '.$format.'</span></div></span><br><div id="'.$key['file'].'" class="app_h" onClick="downloadapp(this,'.$newversion.');" style="background-color:#245896; color:#fff; font-size:13px; padding:5px;">Обновить</div></span>
-        <div class="apphouseinfohide" id="'.$appid.'apphouseinfoupd'.$appcounter.'" style="height:250px; width:97%; position:relative; background-color:#d4d4d4; padding:10px; border:2px solid #415678; display:none;"><div style="background-image: url(http://forest.hobbytes.com/media/os/apps/'.$key['file'].'/app.png); background-size:cover; margin-bottom:10px; height:80px; width:80px;"></div>
+        <div class="apphouseinfohide" id="'.$appid.'apphouseinfoupd'.$appcounter.'"><div style="background-image: url(http://forest.hobbytes.com/media/os/apps/'.$key['file'].'/app.png); background-size:cover; margin-bottom:10px; height:80px; width:80px;"></div>
           <span style="font-size:15px; font-weight:900; color:#363636; text-transform: uppercase;" >'.$key['name'].'</span><br><span style="font-size:13px; color:#464646;">'.$key['namelat'].' by '.$key['designer'].', version: '.$key['version'].'</span>
-          <br><br><span style="font-size:13px; color:#464646; font-weight:600;">Описание</span><br><span style="font-size:13px; color:#464646;">'.$key['description'].'</span>
+          <br><br><span style="font-size:13px; color:#464646; font-weight:600;">Описание</span><br><span style="font-size:13px; color:#464646; white-space:pre;">'.$key['description'].'</span>
           </div>';
       }
     }

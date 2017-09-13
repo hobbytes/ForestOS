@@ -55,6 +55,16 @@ body {
 	transition: all 0.1s ease;
 }
 
+.apphouseinfohide{
+	height:auto;
+	width:97%;
+	position:relative;
+	background-color:#f3f3f3;
+	padding:10px;
+	border:2px solid #415678;
+	display:none;
+}
+
 .appwindowbutton
 {
 	float: right;
@@ -131,7 +141,7 @@ body {
 }
 
 .ui-forest-cancel{
-	background: linear-gradient(45deg,	#fe6b6b 30%,	#f5b386 90%);
+	background: linear-gradient(45deg,	#fe6b6b 30%,	#ff7171 90%);
 
 }
 
