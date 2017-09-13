@@ -1,11 +1,3 @@
 [AppExt]
-gif=system/apps/Image_Viewer/main.php
-bmp=system/apps/Image_Viewer/main.php
-jpg=system/apps/Image_Viewer/main.php
-png=system/apps/Image_Viewer/main.php
 
 [AppKeys]
-gif_key=photoviewload
-bmp_key=photoviewload
-jpg_key=photoviewload
-png_key=photoviewload
