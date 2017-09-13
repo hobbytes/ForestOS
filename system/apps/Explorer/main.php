@@ -101,7 +101,7 @@ $pathmain=$d->path;
 if ($pathmain=='../../../'){
 	$pathmain=realpath($entry);
 }
-$pathmain= substr($pathmain,strpos($pathmain,'os')+strlen('os'));
+$pathmain = str_replace($_SERVER['DOCUMENT_ROOT'],'',$pathmain);
 ?>
 <div >
 <div style="cursor:default; float:left; padding:5px 10px;" onmouseover="document.getElementById('filemenu<?echo $appid;?>').style.display='block';" onmouseout="document.getElementById('filemenu<?echo $appid;?>').style.display='none';">
