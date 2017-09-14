@@ -1,6 +1,8 @@
 <?
 session_start();
 if(isset($_SESSION['loginuser'])){
+  if (function_exists('date_default_timezone_set'))
+  date_default_timezone_set('Europe/Moscow');
   include 'security.php';
   include '../bd.php';
   global $getdata;
@@ -11,7 +13,7 @@ if(isset($_SESSION['loginuser'])){
   $content = $_POST['content'];
   $id = $_POST['appid'];
   $content = $security->__encode($content, $key);
-  $content  = "[info]\rtime_stamp = ".date('d.m.Y h:i:s')."\rlast_app_id = $id\rstate="."'$content'";
+  $content  = "[info]\rtime_stamp = ".date('d.m.y, H:i:s')."\rlast_app_id = $id\rstate="."'$content'";
   file_put_contents('../../../users/'.$_SESSION['loginuser'].'/settings/state.hdf',$content);
 }else{
   exit;

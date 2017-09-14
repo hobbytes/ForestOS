@@ -42,6 +42,8 @@ $_SESSION['appid']=-1;
   $prepare->hibernation();
   ?>
 </div>
+</body>
+</html>
 <script>
 var id=<?echo $_SESSION['appid']=$_SESSION['appid']+1?>;
 
@@ -56,7 +58,9 @@ function  hibernation(logout){
     }
   }).done(function(o) {
     if(logout == 'true'){
-      return location.href = '?action=logout'
+      return location.href = '?action=logout';
+    }else{
+      return location.href = 'os.php';
     }
 });
 }
@@ -121,8 +125,6 @@ $( "#hideall" ).on( "click", function() {
     });
   });
 </script>
-</body>
-</html>
 <?
 $_SESSION['appid']  = '<script>document.writeln(id)</script>';
 $prepare->autorun();

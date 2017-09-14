@@ -93,7 +93,6 @@ if(isset($_SESSION['loginuser'])){
   $( ".reload<?echo $idprocess;?>" ).on( "click", function() {
     $("#<?echo $idprocess;?>" ).load("<? echo $destination.$file.'.php?id='.rand(0,10000).'&appid='.$idprocess.'&appname='.$nameprocess.'&destination='.$folder.'&mobile='.$click.'&'.$key.'='.$param;?>");
   });
-
   $( "#<?echo 'drag'.$idprocess.'';?>" ).on( "dblclick", function() {
      $( "#<?echo 'app'.$idprocess.'';?>" ).toggleClass( "windowfullscreen", 100 );
    });

@@ -41,6 +41,7 @@ body {
 	text-align:center;
 	color:#fff;
 	transition: all 0.1s ease;
+	z-index: 9998;
 }
 
 .welcomescreen img{
