@@ -44,7 +44,7 @@ $gui = new gui;
 $gui->formstart('POST');
 $gui->inputslabel('Логин', 'text', 'loginin', "$login_get",'70', 'введите логин');
 $gui->inputslabel('Пароль', 'password', 'passwordin', '','70','введите пароль');
-$gui->button('Войти', '#fff', '#16638e', '30','logins');
+$gui->button('Войти', '#fff', '#092738', '30','logins');
 $gui->formend();
 ?>
 </div>

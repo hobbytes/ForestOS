@@ -97,6 +97,7 @@ if(isset($_SESSION['loginuser'])){
   $( "#<?echo 'drag'.$idprocess.'';?>" ).on( "dblclick", function() {
      $( "#<?echo 'app'.$idprocess.'';?>" ).toggleClass( "windowfullscreen", 100 );
    });
+   $("#process<?echo $idprocess;?>" ).appendTo("#proceses");
     });
   </script>
   </div>

@@ -37,8 +37,29 @@ $_SESSION['appid']=-1;
 <div id="notifications" class="notificationhide" style="display:block; position:absolute; right: 0; height: 100%; padding: 10px; transition:all 0.2s ease;">
 </div>
 </div>
+<div id="proceses">
+  <?
+  $prepare->hibernation();
+  ?>
+</div>
 <script>
 var id=<?echo $_SESSION['appid']=$_SESSION['appid']+1?>;
+
+function  hibernation(logout){
+  var savestate = ($('#proceses').html());
+  $.ajax({
+    type: "POST",
+    url: "system/core/library/etc/hibernation",
+    data: {
+       content:savestate,
+       appid:id
+    }
+  }).done(function(o) {
+    if(logout == 'true'){
+      return location.href = '?action=logout'
+    }
+});
+}
 function checkwindows(){
   closestyle="";
   var prc=$(".process").length;
@@ -103,7 +124,7 @@ $( "#hideall" ).on( "click", function() {
 </body>
 </html>
 <?
-$_SESSION['appid']='<script>document.writeln(id)</script>';
+$_SESSION['appid']  = '<script>document.writeln(id)</script>';
 $prepare->autorun();
 }else{
 include 'login.php';

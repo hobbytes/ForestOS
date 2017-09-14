@@ -110,6 +110,27 @@ function welcomescreen(){
   <?
 }
 
+/*---------check and load hibernation---------*/
+function hibernation(){
+  global $login,$getdata;
+  $file = 'system/users/'.$login.'/settings/state.hdf';
+  if(file_exists($file)){
+    $content = parse_ini_file($file);
+    if(!empty($content)){
+      session_start();
+      $_SESSION['appid']  = $content['last_app_id']-1;
+      require 'system/core/library/etc/security.php';
+      $bds= new readbd;
+  		$bds->readglobalfunction(password,users,login,$login);
+      $security = new security;
+      $key=$getdata;
+      echo $security->__decode($content['state'], $key);
+      file_put_contents('system/users/'.$login.'/settings/state.hdf','');
+    }
+  }
+  unset($content,$bds,$security,$key,$getdata);
+}
+
 /*---------topbar load---------*/
 function topbar(){
   global $object, $login;
@@ -136,7 +157,7 @@ function topbar(){
     </div>
   </div>
   <div id="aboutmenu" class="ui-widget-content menutheme" onmouseover="document.getElementById('aboutmenu').style.display='block';" onmouseout="document.getElementById('aboutmenu').style.display='none';" style="z-index:9999; user-select:none; display:none; text-align:justify; min-width:170px; max-width:300px; position:absolute; text-overflow:hidden; overflow:ellipsis; padding:14px 0;">
-  <span style="text-transform:uppercase; cursor:pointer;  padding:5px;" onclick="makeprocess('Settings','users','<?echo $login;?>','selectuser');">
+  <span style="text-transform:uppercase; cursor:pointer;  padding:5px;" onclick="makeprocess('Settings','users','<?echo $login;?>','selectuser'); document.getElementById('aboutmenu').style.display='none';">
     <?echo $login;?>
   </span>
   <hr class="menulines">
@@ -156,10 +177,10 @@ function topbar(){
     О системе
   </span>
   <hr class="menulines">
-    <div style="text-align:center;">
+    <div style="text-align:center; margin-top: 14px;">
     <span style="cursor:pointer; font-size:26px; width:26px;">
     <b class="ui-forest" style="border:2px solid; padding:0 6px; margin:3px; border-radius:5px;" onclick="return location.href = 'os.php'">R</b>
-    <b class="ui-forest" style="border:2px solid; padding:0 6px; margin:3px; border-radius:5px;" onclick="">G</b>
+    <b class="ui-forest" style="border:2px solid; padding:0 6px; margin:3px; border-radius:5px;" onclick="hibernation('true')">H</b>
     <b class="ui-forest" style="border:2px solid; padding:0 6px; margin:3px; border-radius:5px;" onclick="return location.href = '?action=logout'">E</b>
   </span>
   </div>

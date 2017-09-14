@@ -59,7 +59,7 @@ $version='0.1';
       $name2=$entry2;
       $color2='#80abc6';
       if ($entry2!='.' && $entry2!='..'){
-        $themeloadset=parse_ini_file('../../core/design/themes/'.$name2.'');
+        $themeloadset=parse_ini_file('../../core/design/themes/'.$name2);
       echo('<div id="'.$name2.'" class="ui-button ui-widget ui-corner-all" onClick="loadtheme'.$appid.'(this);" style="-webkit-user-select:none; cursor:pointer; user-select:none; padding:5px; background-color:'.$themeloadset['backgroundcolor'].'; margin:5px; color:'.$themeloadset['backgroundfontcolor'].'; width:80px; height:80px; word-wrap:break-word; text-overflow:ellipsis; overflow:hidden; text-transform:uppercase; "><div style="height:15%; background-color:'.$themeloadset['topbarbackcolor'].';"></div><div style="height:15%; background-color:'.$themeloadset['draggablebackcolor'].'; margin-bottom: 5px;"></div>'.$themeloadset['Name'].'</div>');
     }}
     $dir2->close;

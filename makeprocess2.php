@@ -77,7 +77,8 @@ if(isset($_SESSION['loginuser'])){
       $("#<?echo $idprocess;?>" ).load("<? echo $destination.$file.'.php?id='.rand(0,10000).'&appid='.$idprocess.'&appname='.$nameprocess.'&destination='.$folder.'&mobile='.$click.'&'.$key.'='.$param;?>");
     });
     $( "#<?echo 'drag'.$idprocess.'';?>" ).on( "dblclick", function() { $( "#<?echo 'app'.$idprocess.'';?>" ).toggleClass( "windowfullscreen", 100 );});
-      } );
+    $("#process<?echo $idprocess;?>" ).appendTo("#proceses");
+      });
     </script>
     </div>
     <?

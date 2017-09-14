@@ -31,11 +31,11 @@ class gui{
   //для кнопочек
   function button($article, $textcolor, $backgroundcolor, $size,$name)
   {
-    echo '<input class="buttoncustom" style="-webkit-appearance:none; background-color:'.$backgroundcolor.'; border:none; width:'.$size.'%; color:'.$textcolor.'; padding:10px 20px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; margin: 0; cursor: pointer;" type="submit" name="'.$name.'" value="'.$article.'" /><br/><br/>';
+    echo '<input class="buttoncustom" style="-webkit-appearance:none; background-color:'.$backgroundcolor.'; border:none; width:'.$size.'%; color:'.$textcolor.'; padding:10px 20px; border-radius:5px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; margin: 0; cursor: pointer;" type="submit" name="'.$name.'" value="'.$article.'" /><br/><br/>';
   }
   function inputslabel($article, $type, $name, $value, $size, $placeholder)
   {
-    echo '<input class="'.$name.'" id="'.$name.'" placeholder="'.$placeholder.'"style="width:'.$size.'%; -webkit-appearance:none; padding:10px; font-size:15px; margin:auto; background-color:#fff; float:none; border:1px solid #ccc; color:#3a3a3a;" type="'.$type.'" name="'.$name.'" value="'.$value.'" /></br></br>';
+    echo '<input class="'.$name.'" id="'.$name.'" placeholder="'.$placeholder.'"style="width:'.$size.'%; -webkit-appearance:none; padding:10px; font-size:15px; border-radius:3px; margin:auto; background-color:#fff; float:none; border:1px solid #ccc; color:#3a3a3a;" type="'.$type.'" name="'.$name.'" value="'.$value.'" /></br></br>';
   }
 function getDayRus(){
  $days = array(
