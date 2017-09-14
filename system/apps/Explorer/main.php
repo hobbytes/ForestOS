@@ -185,7 +185,7 @@ while (false !== ($entry=$d->read())) {
 			$extension	=	str_replace('.','',$extension);
 			$type	=	$folder.'/assets/fileico.png';
 			if($extension	==	'png'  || $extension	==	'jpg' || $extension	==	'bmp' || $extension	==	'gif'){
-				$color='#fff';
+				$color='transparent';
 				$hashfileprefix	= $faction->filehash($entry,'false');
 				$type	=	$pathmain.'/'.$hashfileprefix;
 				$extension	=	"";
@@ -210,7 +210,7 @@ while (false !== ($entry=$d->read())) {
 }
 $dir->close;
 ?>
-<div id="upload">
+<div id="upload<?echo $appid;?>" style="position:fixed; display:none; width:350px; top:25%; left:25%; background-color:#f9f9f9; border:5px solid #505050; padding:20px; border-radius:10px;">
 </div>
 
 <div style="padding:0 10px; background-color:#f2f2f2; width:97%; position:absolute; top:96%; word-wrap:break-word;">
@@ -254,7 +254,8 @@ function deleteforever<?echo $appid;?>(delf){
 	$("#<?echo $appid;?>").load("<?echo $folder;?>/main.php?delf="+delf.id+"&id=<?echo rand(0,10000).'&dir='.realpath($entry).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&destination='.$folder;?>")
 };
 function loadshow<?echo $appid;?>(divs){
-	$("#upload").load("<?echo $folder;?>/uploadwindow.php?where="+divs.id+"&id=<?echo rand(0,10000).'&appname='.$appname.'&destination='.$folder.'&mobile='.$click;?>")
+	$("#upload<?echo $appid;?>").load("<?echo $folder;?>/uploadwindow.php?where="+divs.id+"&id=<?echo rand(0,10000).'&appname='.$appname.'&appid='.$appid.'&destination='.$folder.'&mobile='.$click;?>")
+	$("#upload<?echo $appid;?>").css('display', 'block');
 };
 function mkdirshow<?echo $appid;?>(){
 	$("#mkdirdiv<?echo $appid;?>").css('display','block')
