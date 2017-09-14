@@ -112,7 +112,7 @@ function welcomescreen(){
 
 /*---------topbar load---------*/
 function topbar(){
-  global $object;
+  global $object, $login;
   ?>
   <div id="topbar" class="ui-widget-content topbartheme" style="display:none; z-index:9999; height:22px; padding-top:4px;">
     <span id="hideall" class="topbaractbtn ui-forest" style="cursor:pointer; display:none; background-color:#5ca556; color:#fff; width:12px; float:right; text-align:center; width:15px; margin-right: 8px;">
@@ -125,7 +125,7 @@ function topbar(){
       <?php echo $object->getDayRus().' '.date('d').',';?>
       <span id="time"></span>
     </div>
-    <div id="notificationsbtn" class="ui-forest" style="float:right; font-size: 11px; margin-right: 10px; padding: 1px; user-select: none; border: 2px solid #fff; border-radius: 4px; cursor: default;">
+    <div id="notificationsbtn" class="ui-forest" style="float:right; font-size: 11px; margin-right: 10px; padding: 1px; user-select: none; border: 2px outset #fff; border-radius: 4px; cursor: default;">
       N
     </div>
     <script type="text/javascript">
@@ -135,38 +135,34 @@ function topbar(){
       =
     </div>
   </div>
-  <div id="aboutmenu" class="ui-widget-content menutheme" onmouseover="document.getElementById('aboutmenu').style.display='block';" onmouseout="document.getElementById('aboutmenu').style.display='none';" style="z-index:9999; user-select:none; display:none; text-align:justify; width:150px; max-width:300px; position:absolute; text-overflow:hidden; overflow:ellipsis; padding:5px;">
-  <span style="text-transform:uppercase; cursor:pointer;" onclick="makeprocess('Settings','users','<?echo $login;?>','selectuser');">
+  <div id="aboutmenu" class="ui-widget-content menutheme" onmouseover="document.getElementById('aboutmenu').style.display='block';" onmouseout="document.getElementById('aboutmenu').style.display='none';" style="z-index:9999; user-select:none; display:none; text-align:justify; min-width:170px; max-width:300px; position:absolute; text-overflow:hidden; overflow:ellipsis; padding:14px 0;">
+  <span style="text-transform:uppercase; cursor:pointer;  padding:5px;" onclick="makeprocess('Settings','users','<?echo $login;?>','selectuser');">
     <?echo $login;?>
   </span>
   <hr class="menulines">
-  <span style="cursor:pointer;" onclick="makeprocess('Explorer','main','',''); document.getElementById('aboutmenu').style.display='none';">
+  <span style="cursor:pointer; padding:5px;" onclick="makeprocess('Explorer','main','',''); document.getElementById('aboutmenu').style.display='none';">
     Проводник
   </span>
   <hr class="menulines">
-  <span style="cursor:pointer;" onclick="makeprocess('Settings','main','',''); document.getElementById('aboutmenu').style.display='none';">
+  <span style="cursor:pointer; padding:5px;" onclick="makeprocess('Settings','main','',''); document.getElementById('aboutmenu').style.display='none';">
     Параметры
   </span>
   <hr class="menulines">
-  <span style="cursor:pointer;" onclick="makeprocess('Apps_House','main','',''); document.getElementById('aboutmenu').style.display='none';">
+  <span style="cursor:pointer; padding:5px;" onclick="makeprocess('Apps_House','main','',''); document.getElementById('aboutmenu').style.display='none';">
     Магазин
   </span>
   <hr class="menulines">
-  <span style="cursor:pointer;" onclick="makeprocess('Settings','about','',''); document.getElementById('aboutmenu').style.display='none';">
+  <span style="cursor:pointer; padding:5px;" onclick="makeprocess('Settings','about','',''); document.getElementById('aboutmenu').style.display='none';">
     О системе
   </span>
   <hr class="menulines">
-  <b>
-    <span style="cursor:pointer;" onclick="return location.href = 'os.php'">
-      Перезагрузка
-    </span>
-  </b>
-  <hr class="menulines">
-  <b>
-    <span style="cursor:pointer;" onclick="return location.href = '?action=logout'">
-      Выйти
-    </span>
-  </b>
+    <div style="text-align:center;">
+    <span style="cursor:pointer; font-size:26px; width:26px;">
+    <b class="ui-forest" style="border:2px solid; padding:0 6px; margin:3px; border-radius:5px;" onclick="return location.href = 'os.php'">R</b>
+    <b class="ui-forest" style="border:2px solid; padding:0 6px; margin:3px; border-radius:5px;" onclick="">G</b>
+    <b class="ui-forest" style="border:2px solid; padding:0 6px; margin:3px; border-radius:5px;" onclick="return location.href = '?action=logout'">E</b>
+  </span>
+  </div>
   </div>
   <?
 }
