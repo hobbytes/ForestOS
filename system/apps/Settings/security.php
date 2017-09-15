@@ -18,14 +18,16 @@ include '../../core/library/filesystem.php';
 include '../../core/library/bd.php';
 include '../../core/library/gui.php';
 include '../../core/library/etc/security.php';
+include '../../core/library/etc.php';
 $security	=	new security;
 session_start();
 $security->appprepare();
 if($erase=='true'){
-  file_put_contents('../../users/'.$_SESSION["loginuser"].'/settings/login.stat','');
+  file_put_contents('../../core/journal.mcj','');
 }
 $settingsbd = new readbd;
 $gui = new gui;
+$infob  = new info;
 
 if(!empty($oldpassword) && !empty($newpassword) && !empty($checkpassword)){
   $settingsbd->readglobal2("password","forestusers","login",$_SESSION["loginuser"]);
@@ -56,7 +58,9 @@ echo '<div style="text-align:left; margin-top:10px; margin-left:10px;"><b style=
   echo '<div id="changepassword'.$appid.'" onClick="changepassword'.$appid.'();" class="ui-forest-button ui-forest-accept">Поменять пароль</div><hr>';
 
 
-$text=file_get_contents('../../users/'.$_SESSION["loginuser"].'/settings/login.stat');
+
+$infob->readstat('../../core/journal.mcj');
+$text=$getstat;
 echo '<div style="text-align:left; margin-top:10px; margin-left:10px;"><b style="font-size:20px;">Журнал</b>';
 echo '<div><textarea style="width:95%; max-width:95%;" rows="10" cols="80" >'.$text.'</textarea></div></div>';
 echo '<div onClick="eraselog'.$appid.'();" style="margin:10px;" class="ui-forest-button ui-forest-cancel">Отчистить журнал</div><hr>';

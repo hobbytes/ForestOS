@@ -51,11 +51,7 @@ class AuthClassUser {
         $login=$_SESSION["loginuser"];
         if ($_GET["action"] == 'logout')
         {
-          $date= date("d.m.y,H:i:s");
-          $ip=$_SERVER["REMOTE_ADDR"];
-          $browser=$infob->browser($_SERVER["HTTP_USER_AGENT"]);
-          $text='logout:['.$date.'], browser:'.$browser.', ip:'.$ip;
-          $infob->writestat('system/users/'.$_SESSION["loginuser"].'/settings/login.stat',$text);
+          $infob->writestat('Success Logout','system/core/journal.mcj');
           $auth->out(); header("Location: ?exit=0");
         }
       }

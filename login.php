@@ -6,8 +6,6 @@
 if (function_exists('date_default_timezone_set'))
 date_default_timezone_set('Europe/Moscow');
 $date= date("d.m.y,H:i:s");
-$ip=$_SERVER["REMOTE_ADDR"];
-$browser=$infob->browser($_SERVER["HTTP_USER_AGENT"]);
 $status2=$_POST['logins'];
 
 if ($status2!='')
@@ -24,8 +22,7 @@ if (isset($loginin) && isset($passwordin)) {
     echo "<h2 style=\"color:red;font-size:small;\">Логин или пароль введен не правильно!</h2>";
     $login_get=$loginin;
     if(is_dir('system/users/'.$loginin)){
-      $text='WARNING! Wrong login/password:['.$date.'], browser:'.$browser.', ip:'.$ip;
-      $infob->writestat('system/users/'.$loginin.'/settings/login.stat',$text);
+      $infob->writestat('WARNING! Wrong login/password','system/core/journal.mcj');
     }
   }
 }
@@ -37,8 +34,7 @@ if (isset($_GET["exit"])) {
 }
   if ($auth->isAuth()) {
     header("Location:os.php");
-    $text='login:['.$date.'], browser:'.$browser.', ip:'.$ip;
-    $infob->writestat('system/users/'.$_SESSION["loginuser"].'/settings/login.stat',$text);
+    $infob->writestat('Success Login','system/core/journal.mcj');
 }
 $gui = new gui;
 $gui->formstart('POST');

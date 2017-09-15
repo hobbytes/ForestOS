@@ -1,4 +1,6 @@
 <?
+if (function_exists('date_default_timezone_set'))
+date_default_timezone_set('Europe/Moscow');
 class info{
     function browser($agent) {
     	preg_match("/(MSIE|Opera|Firefox|Chrome|Version|Opera Mini|Netscape|Konqueror|SeaMonkey|Camino|Minefield|Iceweasel|K-Meleon|Maxthon)(?:\/| )([0-9.]+)/", $agent, $browser_info); // регулярное выражение, которое позволяет отпределить 90% браузеров
@@ -18,10 +20,36 @@ class info{
             if (!$browser && strpos($agent, 'Gecko')) return 'Browser based on Gecko'; // для неопознанных браузеров проверяем, если они на движке Gecko, и возращаем сообщение об этом
             return $browser.' '.$version; // для всех остальных возвращаем браузер и версию
     }
-    function writestat($file,$text){
-      $fp=fopen($file,"a");
-      fwrite($fp,$text.PHP_EOL);
-      fclose($fp);
+    function writestat($alarmbody,$folder){
+
+      include 'etc/security.php';
+      include '../bd.php';
+      global $getdata, $getstat;
+      $security = new security;
+      $bd = new readbd;
+      $bd->readglobal2("password","forestusers","login",$_SESSION["loginuser"]);
+      $key=$getdata;
+      $date= date("d.m.y,H:i:s");
+      $ip = $_SERVER["REMOTE_ADDR"];
+      $browser  = $this->browser($_SERVER["HTTP_USER_AGENT"]);
+      $text = $alarmbody.': ['.$date.'] browser:'.$browser.', ip:'.$ip;
+      $this->readstat($folder);
+      $content  = $getstat.PHP_EOL.$text;
+      $text = $security->__encode($content, $key);
+      file_put_contents($folder,$text);
+    }
+
+    function readstat($folder){
+      session_start();
+      include './etc/security.php';
+      include '../bd.php';
+      global $getdata, $getstat;
+      $security = new security;
+      $bd = new readbd;
+      $bd->readglobal2("password","forestusers","login",$_SESSION["loginuser"]);
+      $key=$getdata;
+      $content  = file_get_contents($folder);
+      $getstat = $security->__decode($content, $key);
     }
 
     function ismobile(){
