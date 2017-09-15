@@ -177,7 +177,7 @@ body {
 }
 
 .windowactive{
-	z-index:9998;
+	z-index:9990;
 	box-shadow:rgba(0,0,0,0.3) 0px 0px 25px -4px;
 }
 

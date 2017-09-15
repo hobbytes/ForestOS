@@ -15,7 +15,7 @@ $click=$_GET['mobile'];
 $folder=$_GET['destination'];
 $dest = $hash->filehash('../../..'.$_GET['photoviewload'],'false');
 //Ассоциируем файлы
-$newpermission->fileassociate(array('png','jpg','bmp','gif'), $folder.'main.php', 'photoviewload', $appname);
+$newpermission->fileassociate(array('png','jpg','jpeg','bmp','gif'), $folder.'main.php', 'photoviewload', $appname);
 
 if($dest==''){
   $dest = $_GET['photoviewload'];
@@ -93,27 +93,18 @@ $photo='('.$dest.')';
 <script>
 var zoom = 0;
 $(document).ready(function(){
-  $(window).mousewheel(function(event) {
-        if(event.deltaY > 0) zoom++;
-        else zoom--;
-        if(zoom <= 0) zoom = 0;
-        else if(zoom > 15) zoom = 15;
-        var k = parseFloat(1+zoom/5);
-        $('.photo<?echo $appid;?>').css('transform','scale('+k+')');
-
-  });
 
   $('.zoom-in<?echo $appid;?>').click(function(){
-    zoom-=2;
+    zoom-=1;
     if(zoom <= 0) zoom = 0;
     if(zoom > 15) zoom = 15;
     var k = parseFloat(1+zoom/5);
     $('.photo<?echo $appid;?>').css('transform','scale('+k+')');
   });
   $('.zoom-out<?echo $appid;?>').click(function(){
-    zoom+=2;
+    zoom+=1;
     if(zoom <= 0) zoom = 0;
-    if(zoom > 15) zoom = 15;
+    if(zoom > 20) zoom = 20;
     var k = parseFloat(1+zoom/5);
     $('.photo<?echo $appid;?>').css('transform','scale('+k+')');
   });

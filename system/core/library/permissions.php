@@ -4,6 +4,9 @@ class PermissionRequest{
 
   function fileassociate($array, $appdestination, $requestname, $appname){
     $file = '../../core/extconfiguration.foc';
+    if(!file_exists($file)){
+      file_put_contents('../../core/extconfiguration.foc',"[AppExt]\n\r[AppKeys]\n\r");
+    }
     $check = file_get_contents($file);
     if(!eregi($appdestination, $check) || !eregi($requestname, $check)){
       $ini_array = parse_ini_file($file, true);

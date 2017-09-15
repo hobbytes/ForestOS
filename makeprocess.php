@@ -68,7 +68,9 @@ if(isset($_SESSION['loginuser'])){
     $( "#<?echo 'drag'.$idprocess.'';?>" ).click(function(){$("#<?echo 'app'.$idprocess.'';?>" ).addClass("windowactive")});
     $( "#<?echo 'drag'.$idprocess.'';?>" ).dblclick(function(){$("#<?echo 'app'.$idprocess.'';?>" ).css({top:"21px",left:"0"})});
     $( ".window" ).mouseup(function(){$(".window").removeClass("windowactive")});
-    $("#<?echo $idprocess;?>" ).load("<? echo $destination.$file.'.php?id='.rand(0,10000).'&appid='.$idprocess.'&appname='.$nameprocess.'&destination='.$folder.'&mobile='.$click.'&'.$key.'='.$param;?>");
+    if(!$("#process<?echo $idprocess;?>").hasClass('hibernatethis')){
+        $("#<?echo $idprocess;?>" ).load("<? echo $destination.$file.'.php?id='.rand(0,10000).'&appid='.$idprocess.'&appname='.$nameprocess.'&destination='.$folder.'&mobile='.$click.'&'.$key.'='.$param;?>");
+    }
   $(function() {
     $(".window").removeClass("windowactive");
     $("#<?echo 'app'.$idprocess.'';?>" ).addClass("windowactive");

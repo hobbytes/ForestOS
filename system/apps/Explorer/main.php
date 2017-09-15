@@ -89,7 +89,10 @@ if(!is_dir($dir)){
 		$dir=dirname($dir);
 	}
 	if ($dest!=''){
-		?><script>makeprocess2('<?echo $dest?>','<?echo $param;?>','<?echo $keys;?>');</script>
+		?>
+		<div id="makeprocess">
+			<script>makeprocess2('<?echo $dest?>','<?echo $param;?>','<?echo $keys;?>');</script>
+		</div>
 		<?}else{
 			$dialogexplorer->dialog("Не могу открыть файл с расширением <b style='text-transform:uppercase;'>$ext</b>","Ошибка запуска","bounce");
 		}
@@ -184,7 +187,7 @@ while (false !== ($entry=$d->read())) {
 			$extension	=	stristr($name, '.');
 			$extension	=	str_replace('.','',$extension);
 			$type	=	$folder.'/assets/fileico.png';
-			if($extension	==	'png'  || $extension	==	'jpg' || $extension	==	'bmp' || $extension	==	'gif'){
+			if($extension	==	'png'  || $extension	==	'jpg' || $extension	==	'jpeg' || $extension	==	'bmp' || $extension	==	'gif'){
 				$color='transparent';
 				$hashfileprefix	= $faction->filehash($entry,'false');
 				$type	=	$pathmain.'/'.$hashfileprefix;
@@ -265,6 +268,7 @@ function mkdirbtn<?echo $appid;?>(){
 };
 $(function(){
 	$("#mmenu<?echo $appid;?>").menu();
+	$("#makeprocess").remove();
 });
 </script>
 <style>.ui-menu{width: 150px;}</style>

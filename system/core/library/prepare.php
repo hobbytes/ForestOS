@@ -181,11 +181,11 @@ function topbar(){
   </span>
   <hr class="menulines">
     <div style="text-align:center; margin-top: 14px;">
-    <span style="cursor:pointer; font-size:26px; width:26px;">
-    <b class="ui-forest" style="border:2px solid; padding:0 6px; margin:3px; border-radius:5px;" onclick="return location.href = 'os.php'">R</b>
-    <b class="ui-forest" style="border:2px solid; padding:0 6px; margin:3px; border-radius:5px;" onclick="hibernation('false')">M</b>
-    <b class="ui-forest" style="border:2px solid; padding:0 6px; margin:3px; border-radius:5px;" onclick="hibernation('true')">H</b>
-    <b class="ui-forest" style="border:2px solid; padding:0 6px; margin:3px; border-radius:5px;" onclick="return location.href = '?action=logout'">E</b>
+    <span style="font-size:26px; cursor:default; width:26px;">
+    <b class="ui-forest" style="border:2px solid; cursor:pointer; padding:0 6px; margin:3px; border-radius:5px;" onclick="return location.href = 'os.php'">R</b>
+    <b class="ui-forest" style="border:2px solid; cursor:pointer; padding:0 6px; margin:3px; border-radius:5px;" onclick="hibernation('false')">M</b>
+    <b class="ui-forest" style="border:2px solid; cursor:pointer; padding:0 6px; margin:3px; border-radius:5px;" onclick="hibernation('true')">H</b>
+    <b class="ui-forest" style="border:2px solid; cursor:pointer; padding:0 6px; margin:3px; border-radius:5px;" onclick="return location.href = '?action=logout'">E</b>
   </span>
   </div>
   </div>

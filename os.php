@@ -48,6 +48,7 @@ $_SESSION['appid']=-1;
 var id=<?echo $_SESSION['appid']=$_SESSION['appid']+1?>;
 
 function  hibernation(logout){
+  $('.process').addClass('hibernatethis');
   var savestate = ($('#proceses').html());
   $.ajax({
     type: "POST",
