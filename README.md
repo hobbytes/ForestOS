@@ -21,6 +21,6 @@ Forest OS is a network operating system (shell) with open source code, which is 
 
 <img src="http://forest.hobbytes.com/media/os/screenshot/login.png" width="512">
 <img src="http://forest.hobbytes.com/media/os/screenshot/workplace.png" width="512">
-<img src="http://forest.hobbytes.com/media/os/screenshot/themes.png" width="512">
-<img src="http://forest.hobbytes.com/media/os/screenshot/mobile.png" width="256">
-<img src="http://forest.hobbytes.com/media/os/screenshot/mobile2.png" width="256">
+<img src="http://forest.hobbytes.com/media/os/screenshot/workplace_2.png" width="512">
+<img src="http://forest.hobbytes.com/media/os/screenshot/workplace_mobile.png" width="256">
+<img src="http://forest.hobbytes.com/media/os/screenshot/workplace_mobile_2.png" width="256">
