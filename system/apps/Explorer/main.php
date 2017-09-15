@@ -117,6 +117,7 @@ $pathmain = str_replace($_SERVER['DOCUMENT_ROOT'],'',$pathmain);
 	<li><div <?echo 'class="delete" onClick="deletes'.$appid.'(this);" ';?>>Отправить в корзину</div></li>
 	<li><div <?echo 'class="deleteforever" onClick="deleteforever'.$appid.'(this);" ';?>>Удалить</div></li>
 	<li><div <? echo 'id="'.$dir.'/" onClick="loadshow'.$appid.'(this);"';?>>Загрузить файл</div></li>
+	<li><div <? echo 'id="'.$dir.'/" class="loadthis" onClick="getproperty'.$appid.'(this);"';?>>Свойства</div></li>
 </ul>
 </div>
 </div>
@@ -232,10 +233,13 @@ echo 'Свободно: '.$format .' из '.$format2 ;
 </div>
 <script>
 function load<?echo $appid;?>(el){
-	$("#<?echo $appid;?>").load("<?echo $folder;?>/main.php?dir="+el.id+"&id=<?echo rand(0,10000).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&destination='.$folder;?>")
+	$("#<?echo $appid;?>").load("<?echo $folder;?>main.php?dir="+el.id+"&id=<?echo rand(0,10000).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&destination='.$folder;?>")
 };
 function link<?echo $appid;?>(el2){
-	$("#<?echo $appid;?>").load("<?echo $folder;?>/main.php?linkdir="+el2.id+"&ico="+el2.getAttribute('ico')+"&linkname="+el2.getAttribute('link')+"&id=<?echo rand(0,10000).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&dir='.realpath($entry).'&destination='.$folder;?>")
+	$("#<?echo $appid;?>").load("<?echo $folder;?>main.php?linkdir="+el2.id+"&ico="+el2.getAttribute('ico')+"&linkname="+el2.getAttribute('link')+"&id=<?echo rand(0,10000).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&dir='.realpath($entry).'&destination='.$folder;?>")
+};
+function getproperty<?echo $appid;?>(obj){
+	makeprocess2('<?echo $folder?>property.php',obj.id,'object');
 };
 function select<?echo $appid;?>(folder,folder2,folder3,folder4){
 	$(".select").css('background-color','transparent');
