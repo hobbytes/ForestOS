@@ -12,6 +12,9 @@ $version='0.1';
 //Подключаем библиотеки
 include '../../core/library/filesystem.php';
 include '../../core/library/bd.php';
+include '../../core/library/etc/security.php';
+$security	=	new security;
+$security->appprepare();
 
 echo '<div style="width:100%; height:auto; padding:10px; float:left; border-bottom:1px solid #d6d6d6;">';
 echo('<div id="about" class="ui-button ui-widget ui-corner-all" onClick="loadsettings'.$appid.'(this);" style="word-wrap:break-word; text-overflow:ellipsis; text-align:center; position:relative; display:block; float:left; margin:5px; color:#000; width:80px; height:80px; padding:5px; font-size:12px; height:auto; background-color:#d8d8d8; cursor:pointer;"><div style="-webkit-user-select:none; margin:auto; user-select:none; background-image: url('.$folder.'/icons/about.png); background-size:cover; height:50px; width:50px;"></div><div>О системе</div></div>');

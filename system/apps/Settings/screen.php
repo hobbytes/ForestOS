@@ -15,9 +15,12 @@ $folder=$_GET['destination'];
 include '../../core/library/filesystem.php';
 include '../../core/library/bd.php';
 include '../../core/library/gui.php';
+include '../../core/library/etc/security.php';
+$security	=	new security;
 $newgui = new gui;
+session_start();
+$security->appprepare();
 if($wall!=''){
-  session_start();
   if(copy('../../../system/core/design/walls/'.$wall.'','../../../system/users/'.$_SESSION["loginuser"].'/settings/etc/wall.jpg'))  {?>
   <script>
   function getRandomInt(min,max){

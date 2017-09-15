@@ -5,14 +5,18 @@
 //Подключаем библиотеки
 include '../../core/library/filesystem.php';
 include '../../core/library/gui.php';
+include '../../core/library/etc/security.php';
+
 //Инициализируем переменные
 $gui=new gui;
 $fo = new filecalc;
+$security	=	new security;
 $click=$_GET['mobile'];
 $folder=$_GET['destination'];
 $updatefile=$_GET['updatefile'];
 //Запускаем сессию
 session_start();
+$security->appprepare();
 //Логика
 $urlu='http://forest.hobbytes.com/media/os/update.php';
 $fileu=file_get_contents($urlu);

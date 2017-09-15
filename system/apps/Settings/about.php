@@ -3,7 +3,6 @@
 $appid=$_GET['appid'];
 $appname=$_GET['appname'];
 $folder=$_GET['destination'];
-$osinfo = parse_ini_file('../../core/osinfo.foc', false);
 ?>
 <div id="<?echo $appname.$appid;?>" style="background-color:#f2f2f2; height:100%; width:100%; padding-top:10px; border-radius:0px 0px 5px 5px; overflow:auto;">
 <div style="width:100%; text-align:left; padding-bottom:10px; font-size:30px; border-bottom:#d8d8d8 solid 2px; text-overflow:ellipsis; overflow:hidden;">
@@ -13,9 +12,13 @@ $osinfo = parse_ini_file('../../core/osinfo.foc', false);
 //Подключаем библиотеки
 include '../../core/library/filesystem.php';
 include '../../core/library/bd.php';
-session_start();
+include '../../core/library/etc/security.php';
 $settingsbd = new readbd;
 $fo = new filecalc;
+$security	=	new security;
+session_start();
+$security->appprepare();
+$osinfo = parse_ini_file('../../core/osinfo.foc', false);
 $fo->size_check(dirname(dirname(dirname(__DIR__))));
 session_start();
 $settingsbd->readglobal2("fuid","forestusers","login",$_SESSION["loginuser"]);

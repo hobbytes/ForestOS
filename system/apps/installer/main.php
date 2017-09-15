@@ -4,14 +4,17 @@
 /*Application Installer*/
 //Подключаем библиотеки
 include '../../core/library/gui.php';
+include '../../core/library/etc/security.php';
 //Инициализируем переменные
 $gui=new gui;
+$security	=	new security;
 $click=$_GET['mobile'];
 $folder=$_GET['destination'];
 $appdownload=$_GET['appdownload'];
 $nameappdownload=str_replace('_',' ',$appdownload);
 //Запускаем сессию
 session_start();
+$security->appprepare();
 //Логика
 $appinstall=$_GET['appinstall'];
 

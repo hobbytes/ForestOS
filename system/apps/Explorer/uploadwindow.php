@@ -1,4 +1,8 @@
 <?
+include '../../core/library/etc/security.php';
+$security	=	new security;
+session_start();
+$security->appprepare();
 $where=$_GET['where'];
 $appname=$_GET['appname'];
 $appid=$_GET['appid'];

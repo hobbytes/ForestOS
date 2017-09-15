@@ -7,12 +7,15 @@
 include '../../core/library/filesystem.php';
 include '../../core/library/gui.php';
 include '../../core/library/permissions.php';
+include '../../core/library/etc/security.php';
 //Инициализируем переменные
 $hash = new fileaction;
 $object = new gui;
 $newpermission = new PermissionRequest;
+$security	=	new security;
 $click=$_GET['mobile'];
 $folder=$_GET['destination'];
+$security->appprepare();
 $dest = $hash->filehash('../../..'.$_GET['photoviewload'],'false');
 //Ассоциируем файлы
 $newpermission->fileassociate(array('png','jpg','jpeg','bmp','gif'), $folder.'main.php', 'photoviewload', $appname);

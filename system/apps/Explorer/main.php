@@ -6,9 +6,11 @@
 include '../../core/library/filesystem.php';
 include '../../core/library/bd.php';
 include '../../core/library/gui.php';
+include '../../core/library/etc/security.php';
 //Инициализируем переменные
 $fo = new filecalc;
 $faction = new fileaction;
+$security	=	new security;
 $dir = $_GET['dir'];
 $del = $_GET['del'];
 $deleteforever = $_GET['delf'];
@@ -20,6 +22,9 @@ $folder	=	$_GET['destination'];
 $erasestatus	=	$_GET['erasestatus'];
 $dialogexplorer = new gui;
 
+//Запускаем сессию
+session_start();
+$security->appprepare();
 if($erasestatus){
 $faction->deleteDir($dir);
 mkdir($dir);
@@ -37,8 +42,6 @@ if (isset($_GET['makedir'])){
 		echo 'Такая папка уже существует!';
 	}
 }
-//Запускаем сессию
-session_start();
 //обрабатываем кнопки удаления и перемещения в корзину
 if($del!=''){
 	$faction->rmdir_recursive($del);

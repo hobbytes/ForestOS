@@ -4,6 +4,7 @@
 /*Application Store*/
 //Подключаем библиотеки
 include '../../core/library/filesystem.php';
+include '../../core/library/etc/security.php';
 include '../../core/library/bd.php';
 //Инициализируем переменные
 $click=$_GET['mobile'];
@@ -11,8 +12,10 @@ $appdownload=$_GET['appdownload'];
 $type=$_GET['type'];
 $folder=$_GET['destination'];
 $fo = new filecalc;
+$security	=	new security;
 //Запускаем сессию
 session_start();
+$security->appprepare();
 //Логика
 if($appdownload!=''){
   if($type=="app_h"){$_SESSION['appversion']=$_GET['v'];?><script>makeprocess2('system/apps/installer/main.php','<?echo $appdownload; ?>','appdownload');</script><?}else{$link='walls/'.$appdownload; $l='.jpg';}

@@ -13,8 +13,11 @@ $savestatus  = $_GET['save'];
 /*Settings*/
 //Подключаем библиотеки
 include '../../core/library/gui.php';
+include '../../core/library/etc/security.php';
 $newgui = new gui;
+$security	=	new security;
 session_start();
+$security->appprepare();
 if($savestatus=='true'){
   file_put_contents('../../users/'.$_SESSION["loginuser"].'/settings/autorun.foc',$checked);
   if(empty($checked)){

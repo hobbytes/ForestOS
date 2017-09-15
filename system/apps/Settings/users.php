@@ -1,14 +1,8 @@
 <?
 //Инициализируем переменные
 $appid=$_GET['appid'];
-$erase=$_GET['erase'];
 $appname=$_GET['appname'];
 $folder=$_GET['destination'];
-$selectuser=$_GET['selectuser'];
-$deleteuser=$_GET['deleteuser'];
-$adduserlogin=$_GET['adduserlogin'];
-$adduserpassword=$_GET['adduserpassword'];
-$adduserhdd=$_GET['adduserhdd'];
 ?>
 
 <div id="<?echo $appname.$appid;?>" style="background-color:#f2f2f2; height:500px; max-height:95%; max-width:100%; width:800px; padding-top:10px; border-radius:0px 0px 5px 5px; overflow:auto;">
@@ -20,9 +14,18 @@ $adduserhdd=$_GET['adduserhdd'];
 include '../../core/library/filesystem.php';
 include '../../core/library/bd.php';
 include '../../core/library/gui.php';
+include '../../core/library/etc/security.php';
+$security	=	new security;
 session_start();
+$security->appprepare();
 $settingsbd = new readbd;
 $gui = new gui;
+$erase=$_GET['erase'];
+$selectuser=$_GET['selectuser'];
+$deleteuser=$_GET['deleteuser'];
+$adduserlogin=$_GET['adduserlogin'];
+$adduserpassword=$_GET['adduserpassword'];
+$adduserhdd=$_GET['adduserhdd'];
 $settingsbd->readglobal2("fuid","forestusers","login",$_SESSION["loginuser"]);
 $fuid=$getdata;
 

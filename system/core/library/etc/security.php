@@ -1,4 +1,6 @@
 <?
+if (function_exists('date_default_timezone_set'))
+date_default_timezone_set('Europe/Moscow');
 class security {
   function __encode($text, $key)
 {
@@ -43,6 +45,23 @@ function hexToStr($hex)
         $string .= chr(hexdec($hex[$i].$hex[$i+1]));
     }
     return $string;
+}
+
+function appprepare(){
+session_start();
+if(!isset($_SESSION['loginuser'])){
+  include '../../core/library/etc.php';
+  $infob = new info;
+  $date= date("d.m.y,H:i:s");
+  $ip=$_SERVER["REMOTE_ADDR"];
+  $browser=$infob->browser($_SERVER["HTTP_USER_AGENT"]);
+  $text = 'ALARM! Unauthorized app launch access: ['.$date.'] browser:'.$browser.', ip:'.$ip;
+  $infob->writestat('../../users/admin/settings/login.stat',$text);
+  exit;
+  ?>
+  <script>document.body.innerHTML = '';</script>
+  <?
+}
 }
 }
 ?>

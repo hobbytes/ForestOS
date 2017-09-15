@@ -17,7 +17,10 @@ $checkpassword  = $_GET['checkpassword'];
 include '../../core/library/filesystem.php';
 include '../../core/library/bd.php';
 include '../../core/library/gui.php';
+include '../../core/library/etc/security.php';
+$security	=	new security;
 session_start();
+$security->appprepare();
 if($erase=='true'){
   file_put_contents('../../users/'.$_SESSION["loginuser"].'/settings/login.stat','');
 }
