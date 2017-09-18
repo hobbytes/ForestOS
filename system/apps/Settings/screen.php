@@ -41,7 +41,6 @@ if ($theme!=''){
   $newgui->newnotification($appname,"Персонализация","Цветовая тема изменена на <b>$theme</b>. Перезагрузите систему, чтобы изменения вступили в силу<br><span id='restart' style='margin-left: 25%;' class='ui-button ui-widget ui-corner-all'>Перезагрузить</span>");
 }else{$newgui->newnotification($appname,"Персонализация","Произошла ошибка! Тема не установлена");}
 }
-$version='0.1';
     ?>
 
 <div id="tabssettings<?echo $appid;?>">
@@ -53,6 +52,8 @@ $version='0.1';
 
   <div id="themesettingtab<?echo $appid;?>">
 <?
+    $current_theme  = parse_ini_file('../../users/'.$_SESSION["loginuser"].'/settings/etc/theme.fth');
+    $current_theme  = $current_theme['Name'];
     $dir2='../../core/design/themes/';
     $d2=dir($dir2);
     chdir($d2->path2);
@@ -60,10 +61,15 @@ $version='0.1';
     while (false !== ($entry2=$d2->read())) {
       $path2=$d2->path2;
       $name2=$entry2;
-      $color2='#80abc6';
       if ($entry2!='.' && $entry2!='..'){
         $themeloadset=parse_ini_file('../../core/design/themes/'.$name2);
-      echo('<div id="'.$name2.'" class="ui-button ui-widget ui-corner-all" onClick="loadtheme'.$appid.'(this);" style="-webkit-user-select:none; cursor:pointer; user-select:none; padding:5px; background-color:'.$themeloadset['backgroundcolor'].'; margin:5px; color:'.$themeloadset['backgroundfontcolor'].'; width:80px; height:80px; word-wrap:break-word; text-overflow:ellipsis; overflow:hidden; text-transform:uppercase; "><div style="height:15%; background-color:'.$themeloadset['topbarbackcolor'].';"></div><div style="height:15%; background-color:'.$themeloadset['draggablebackcolor'].'; margin-bottom: 5px;"></div>'.$themeloadset['Name'].'</div>');
+        if($current_theme == $themeloadset['Name']){
+          $select_style  = 'border: 2px solid '.$themeloadset['draggablebackcolor'].';  box-shadow:0 0 5px '.$themeloadset['topbarbackcolor'].';';
+          $select_text  = '<span style="font-size:10px;">(текущая)</span>';
+        }
+        echo('<div id="'.$name2.'" class="ui-button ui-widget ui-corner-all" onClick="loadtheme'.$appid.'(this);" style="-webkit-user-select:none; cursor:pointer; '.$select_style.' user-select:none; padding:5px; background-color:'.$themeloadset['backgroundcolor'].'; margin:5px; color:'.$themeloadset['backgroundfontcolor'].'; width:80px; height:80px; word-wrap:break-word; text-overflow:ellipsis; overflow:hidden; text-transform:uppercase; "><div style="height:15%; background-color:'.$themeloadset['topbarbackcolor'].';"></div><div style="height:15%; background-color:'.$themeloadset['draggablebackcolor'].'; margin-bottom: 5px;"></div>'.$themeloadset['Name'].'<br>'.$select_text.'</div>');
+        $select_style  = '';
+        $select_text  = '';
     }}
     $dir2->close;
 ?>

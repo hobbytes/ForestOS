@@ -95,8 +95,10 @@ $( function() {
     if($( "#notifications" ).hasClass("notificationshow"))
     {
       $('.notificationclass').css('opacity','0');
+      $('.notificationclass').css('display','none');
     }else{
       $('.notificationclass').css('opacity','0.97');
+      $('.notificationclass').css('display','block');
     }
     $( ".notificationhide" ).toggleClass( "notificationshow", 100 );
   });

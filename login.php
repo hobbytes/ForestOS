@@ -13,17 +13,15 @@ if ($status2!='')
 $loginin=strtolower(addslashes(strip_tags(htmlspecialchars($_POST['loginin']))));
 $passwordin=md5(addslashes(strip_tags(htmlspecialchars($_POST['passwordin']))));
 }
-global $loginin;
+global $loginin, $infob;
 session_start();
 $auth = new AuthClassUser();
 $auth->construct('login',$loginin);
 if (isset($loginin) && isset($passwordin)) {
   if (!$auth->auth($loginin, $passwordin)) {
-    echo "<h2 style=\"color:red;font-size:small;\">Логин или пароль введен не правильно!</h2>";
+    echo "<h2 style=\"color:#fff; background-color:#ec6767; border:2px solid #791a1a; width:350px; padding:13px 0; margin:10px auto; font-size:small;\">Логин или пароль введен не правильно!</h2>";
     $login_get=$loginin;
-    if(is_dir('system/users/'.$loginin)){
-      $infob->writestat('WARNING! Wrong login/password','system/core/journal.mcj');
-    }
+    $infob->writestat('WARNING! Wrong login or password','system/core/journal.mcj');
   }
 }
 
