@@ -2,17 +2,17 @@
 Name="Flat"
 
 [topbar]
-topbarbackcolor="#2c3e50;"
+topbarbackcolor="#3498db;"
 topbarfontcolor="#f5f5f5;"
 
 [menu]
-menubackcolor="#145580;"
+menubackcolor="#2980b9;"
 menufontcolor="#f5f5f5;"
 
 [window]
-draggablebackcolor="#E74C3C;"
+draggablebackcolor="#2980b9;"
 draggablefontcolor="rgb(214, 214, 214);"
 
 [background]
 backgroundcolor="#0f161d;"
-backgroundfontcolor="rgb(242, 242, 242);"
+backgroundfontcolor="#95a5a6;"

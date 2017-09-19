@@ -73,6 +73,8 @@ if ($theme!=''){
     }}
     $dir2->close;
 ?>
+
+
 </div>
 
 <div id="wallsettingtab<?echo $appid;?>">

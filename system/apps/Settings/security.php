@@ -46,8 +46,7 @@ if(!empty($oldpassword) && !empty($newpassword) && !empty($checkpassword)){
   unset($oldpassword,$newpassword,$checkpassword);
 }
 
-echo '<div style="text-align:left; margin-top:10px; margin-left:10px;"><b style="font-size:20px;">Изменение пароля</b>';
-
+  echo '<div style="text-align:left; margin-top:10px; margin-left:10px;"><b style="font-size:20px;">Изменение пароля</b>';
   echo "<div>Введите старый пароль:</div>";
   $gui->inputslabel('Логин', 'password', ''.$appid.'oldpassword', ''.$adduserlogin.'','50', 'старый пароль');
   echo "<div>Введите новый пароль:</div>";
