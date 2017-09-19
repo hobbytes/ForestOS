@@ -67,6 +67,8 @@
         $prepare->changewall($file);
         $mainwall=$hashfile->filehash($file);
       }
+
+      $mainwall = 'background: url('.$mainwall.') 100% 100% no-repeat fixed;';
     }
     }
 
