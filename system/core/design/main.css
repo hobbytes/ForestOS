@@ -27,7 +27,8 @@ body {
 
 .notificationshow{
 	overflow: auto;
-	background-color: rgba(20, 21, 21, 0.95);
+	background-color: rgba(35, 37, 37, 0.6);
+	backdrop-filter:	blur(5px);
 }
 
 
@@ -92,6 +93,7 @@ body {
 	text-overflow: ellipsis;
 	overflow: hidden;
 	white-space: nowrap;
+	backdrop-filter:	blur(3px);
 }
 
 .dragwindowtoggle
@@ -179,6 +181,14 @@ body {
 .windowactive{
 	z-index:9990;
 	box-shadow:rgba(0,0,0,0.3) 0px 0px 25px -4px;
+}
+
+.topbartheme{
+	backdrop-filter:	blur(3px);
+}
+
+.menutheme{
+	backdrop-filter:	blur(3px);
 }
 
 ::-webkit-scrollbar {

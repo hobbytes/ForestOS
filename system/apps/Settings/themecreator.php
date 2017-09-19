@@ -22,7 +22,38 @@ $newgui = new gui;
 /*--------Запускаем сессию--------*/
 session_start();
 /*--------Логика--------*/
+$name = $_GET['name'];
+if(!empty($name)){
+  $topbarbackcolor = $_GET['topbarbackcolor'].';';
+  $topbarfontcolor = $_GET['topbarfontcolor'].';';
 
+  $menubackcolor = $_GET['menubackcolor'].';';
+  $menufontcolor = $_GET['menufontcolor'].';';
+
+  $draggablebackcolor = $_GET['draggablebackcolor'].';';
+  $draggablefontcolor = $_GET['draggablefontcolor'].';';
+
+  $backgroundcolor = $_GET['backgroundcolor'].';';
+  $backgroundfontcolor = $_GET['backgroundfontcolor'].';';
+
+  $theme_content = "[Info]\nName='$name'\n\r
+  [topbar]\n
+  topbarbackcolor='$topbarbackcolor'\n
+  topbarfontcolor='$topbarfontcolor'\n\r
+  [menu]\n
+  menubackcolor='$menubackcolor'\n
+  menufontcolor='$menufontcolor'\n\r
+  [window]\n
+  draggablebackcolor='$draggablebackcolor'\n
+  draggablefontcolor='$draggablefontcolor'\n\r
+  [background]\n
+  backgroundcolor='$backgroundcolor'\n
+  backgroundfontcolor='$backgroundfontcolor'\n\r
+  ";
+
+  $filename = str_replace(' ','',$name);
+  file_put_contents('../../core/design/themes/'.$filename.'.fth',$theme_content);
+}
 ?>
 <style>
 
@@ -282,18 +313,18 @@ session_start();
   echo "<div>Меню:</div>";
   echo '<div id="theme_backgroundmenu" selector="menuthemblock" object="menutheme" type="background-color" onClick="theme_button'.$appid.'(this);" class="ui-forest-button ui-forest-accept">Цвет меню</div>';
   echo '<div id="theme_fontcolormenu" selector="menuthemblock" object="menutheme" type="color" onClick="theme_button'.$appid.'(this);" class="ui-forest-button ui-forest-accept">Цвет текста</div>';
-  echo '<div id="theme_linescolormenu" selector="menuthemblock" object="menulines" type="background-color" onClick="theme_button'.$appid.'(this);" class="ui-forest-button ui-forest-accept">Цвет линии</div>';
   echo '</div>';
 
   echo '<div id="wallthemblock" class="theme_block">';
   echo "<div>Рабочий стол:</div>";
-  echo '<div id="theme_wall" selector="wallthemblock" object="linktheme" type="color" onClick="theme_button'.$appid.'(this);" class="ui-forest-button ui-forest-accept">Цвет фона</div>';
-  echo '<div id="theme_link" selector="wallthemblock" object="backgroundtheme" type="background-color" onClick="theme_button'.$appid.'(this);" class="ui-forest-button ui-forest-accept">Цвет текста</div>';
+  echo '<div id="theme_wall" selector="wallthemblock" object="backgroundtheme" type="background-color" onClick="theme_button'.$appid.'(this);" class="ui-forest-button ui-forest-accept">Цвет фона</div>';
+  echo '<div id="theme_link" selector="wallthemblock" object="linktheme" type="color" onClick="theme_button'.$appid.'(this);" class="ui-forest-button ui-forest-accept ui-forest-center">Цвет текста</div>';
   echo '</div>';
+    echo '<div onClick="theme_save'.$appid.'();" class="ui-forest-button ui-forest-cancel">Сохранить</div>';
   ?>
 </div>
 
-<div id="picker<?echo $appid?>" class="rgba-picker color-picker">
+<div id="picker<?echo $appid?>" class="rgba-picker color-picker" style="display:none;">
   <div class="sliders">
     <div class="red-slider short-slider">
       <input class="bar" type="range" id="rangeinput" value="250" max="255" onchange="setRgba()" oninput="setRgba()" />
@@ -323,8 +354,21 @@ session_start();
    obj  = $("#"+_obj).attr('object');
    type = $("#"+_obj).attr('type');
    selector = $("#"+_obj).attr('selector');
-
+   $("#picker<?echo $appid?>" ).css('display','block');
    $("#picker<?echo $appid?>" ).appendTo("#"+selector);
+   var obj_color = $('.'+obj).css(type);
+   channel  = obj_color.replace(/[^\d,]/g,'').split(',');
+   var _alpha = channel[3]/100;
+   if(!_alpha){
+     _alpha='1';
+   }
+   console.log(_alpha+' | '+obj_color);
+   document.querySelector('.rgba-picker .red-slider input').value = channel[0];
+   document.querySelector('.rgba-picker .green-slider input').value = channel[1];
+   document.querySelector('.rgba-picker .blue-slider input').value = channel[2];
+   document.querySelector('.rgba-picker .silver-slider input').value = _alpha * 100;
+   document.querySelector(".rgba-picker .color-preview .color").style.backgroundColor = obj_color;
+
   }
 
 function setRgba () {
@@ -337,13 +381,36 @@ function setRgba () {
   document.querySelector(".rgba-picker .color-preview .color").style.backgroundColor = color;
 
   if(obj!=''){
+      $("#aboutmenu").css('display','none');
       $("."+obj).css(type,color);
-      if(obj=='dragwindow'){
+      if(obj=='dragwindow' && type == 'background-color'){
         $(".windowborder").css('border','3px solid '+color);
+        $(".menulines").css('background-color',color);
+        $("#aboutmenu").css('display','block');
+      }
+      if(obj=='menutheme'){
+        $("#aboutmenu").css('display','block');
       }
   }
 }
 
+function theme_save<?echo $appid?>(){
+  var themename = $('.<?echo $appid?>themename').val();
+
+  var topbarbackcolor = $('.topbartheme').css('background-color');
+  var topbarfontcolor = $('.topbartheme').css('color');
+
+  var menubackcolor = $('.menutheme').css('background-color');
+  var menufontcolor = $('.menutheme').css('color');
+
+  var draggablebackcolor = $('.dragwindow').css('background-color');
+  var draggablefontcolor = $('.dragwindow').css('color');
+
+  var backgroundcolor = $('.backgroundtheme').css('background-color');
+  var backgroundfontcolor = $('.linktheme').css('color');
+
+  $("#<?echo $appid;?>").load("<?echo $folder?>themecreator.php?name="+escape(themename)+"&menubackcolor="+escape(menubackcolor)+"&menufontcolor="+escape(menufontcolor)+"&topbarbackcolor="+escape(topbarbackcolor)+"&topbarfontcolor="+escape(topbarfontcolor)+"&draggablebackcolor="+escape(draggablebackcolor)+"&draggablefontcolor="+escape(draggablefontcolor)+"&backgroundcolor="+escape(backgroundcolor)+"&backgroundfontcolor="+escape(backgroundfontcolor)+"&id=<?echo rand(0,10000).'&appname='.$appname.'&destination='.$folder.'&appid='.$appid;?>");
+}
 </script>
 <?
 unset($appid);//Очищаем переменную $appid
