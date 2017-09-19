@@ -23,7 +23,7 @@ $prepare->start();
 $prepare->wall();
 $prepare->themeload();
 ?>
-<body class="ui-body backgroundtheme" style="position:relative; z-index:-2000; overflow-x:hidden; overflow-y:hidden; background: url(<?echo $mainwall;?>) 100% 100% no-repeat fixed; background-size:cover;">
+<body class="ui-body backgroundtheme" style="position:relative; z-index:-2000; overflow-x:hidden; overflow-y:hidden; <?echo $mainwall?> background-size:cover;">
 <?
 if(isset($_SESSION['loginuser'])){
 $prepare->welcomescreen();

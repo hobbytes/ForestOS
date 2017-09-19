@@ -36,10 +36,14 @@
       global $auth,$mainwall,$hashfile,$prepare;
       if ($auth->isAuth())
     {
-        $mainwall=$hashfile->filehash('system/users/'.$_SESSION["loginuser"].'/settings/etc/wall.jpg');
-    }
-    else
-    {
+      $file_ = 'system/users/'.$_SESSION["loginuser"].'/settings/etc/wall.jpg';
+      if (file_exists($file_)){
+        $mainwall = $hashfile->filehash($file_);
+        $mainwall = 'background: url('.$mainwall.') 100% 100% no-repeat fixed;';
+      }else{
+        $mainwall = '';
+      }
+    }else{
       $file='system/core/design/images/webwall.jpg';
       if (file_exists($file))
       {

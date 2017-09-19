@@ -21,18 +21,24 @@ $newgui = new gui;
 session_start();
 $security->appprepare();
 if($wall!=''){
-  if(copy('../../../system/core/design/walls/'.$wall.'','../../../system/users/'.$_SESSION["loginuser"].'/settings/etc/wall.jpg'))  {?>
-  <script>
-  function getRandomInt(min,max){
-    return Math.floor(Math.random()*(max-min+1))+min;
+  if($wall=='none'){
+    if(unlink('../../../system/users/'.$_SESSION["loginuser"].'/settings/etc/wall.jpg')){
+      $newgui->newnotification($appname,"Персонализация","Фоновое изображение удалено");
+    }
+  }else{
+    if(copy('../../../system/core/design/walls/'.$wall.'','../../../system/users/'.$_SESSION["loginuser"].'/settings/etc/wall.jpg')){?>
+      <script>
+      function getRandomInt(min,max){
+        return Math.floor(Math.random()*(max-min+1))+min;
+      }
+    function wallchange(){
+        document.body.style.backgroundImage='url("../../../system/users/<? echo $_SESSION["loginuser"];?>/settings/etc/wall.jpg?ran='+getRandomInt(1,1000)+'")';
+    };
+    wallchange();
+      </script>
+    <?
+    $newgui->newnotification($appname,"Персонализация","Фоновое изображение рабочего стола изменено");
   }
-function wallchange(){
-    document.body.style.backgroundImage='url("../../../system/users/<? echo $_SESSION["loginuser"];?>/settings/etc/wall.jpg?ran='+getRandomInt(1,1000)+'")';
-};
-wallchange();
-  </script>
-  <?
-  $newgui->newnotification($appname,"Персонализация","Фоновое изображение рабочего стола изменено");
 }
 }
 if ($theme!=''){
@@ -82,7 +88,7 @@ if ($theme!=''){
   $dir='../../core/design/walls/';
   $d=dir($dir);
   chdir($d->path);
-
+  echo('<div id="clearwall" class="ui-button ui-widget ui-corner-all" onClick="clearwall'.$appid.'();" style="-webkit-user-select:none; border:2px dashed #4a4a4a; background-color:#e4e4e4; cursor:pointer; user-select:none; padding:5px; margin:5px; color:#000; width:80px; height:80px; word-wrap:break-word; text-overflow:ellipsis; overflow:hidden; ">Убрать</div>');
   while (false !== ($entry=$d->read())) {
   	$path=$d->path;
   	$name=$entry;
@@ -98,7 +104,15 @@ if ($theme!=''){
 <script>
 $(function(){$("#tabssettings<?echo $appid;?>").tabs();});
 $( "#restart" ).on( "click", function() {return location.href = 'os.php';});
-function loadwall<?echo $appid;?>(el){$("#<?echo $appid;?>").load("<?echo $folder?>screen.php?wall="+el.id+"&id=<?echo rand(0,10000).'&appname='.$appname.'&destination='.$folder.'&appid='.$appid;?>")};
+function loadwall<?echo $appid;?>(el){
+  if(el!='none'){
+    el=el.id;
+  }
+  $("#<?echo $appid;?>").load("<?echo $folder?>screen.php?wall="+el+"&id=<?echo rand(0,10000).'&appname='.$appname.'&destination='.$folder.'&appid='.$appid;?>")};
 function loadtheme<?echo $appid;?>(el2){$("#<?echo $appid;?>").load("<?echo $folder?>screen.php?theme="+el2.id+"&id=<?echo rand(0,10000).'&appname='.$appname.'&destination='.$folder.'&appid='.$appid;?>")};
 function back<?echo $appid;?>(el){$("#<?echo $appid;?>").load("<?echo $folder?>main.php?id=<?echo rand(0,10000).'&destination='.$folder.'&appname='.$appname.'&appid='.$appid;?>")};
+function clearwall<?echo $appid;?>(){
+  $('.backgroundtheme').css('background','');
+  loadwall<?echo $appid;?>('none');
+}
 </script>
