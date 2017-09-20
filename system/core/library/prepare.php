@@ -92,8 +92,21 @@
       <div id="linklog<?echo $id;?>" class="<?echo $delclassname;?>">
       <script>
       $( function() {
-        $( "#<?echo 'icon'.$id.'';?>" ).mouseover(function(){$(this).css('background-color','rgba(192,192,192,0.3)')});
-        $( "#<?echo 'icon'.$id.'';?>" ).mouseout(function(){$(this).css('background-color','transparent')});
+        $( "#<?echo 'icon'.$id.'';?>" ).click(function(){
+          releaselink();
+          var border_color = $('.action-buttons').css('background-color');
+          $("#link_content<?echo $id?>").css({
+            'white-space' : 'pre-wrap',
+            'background-color' : 'rgba(177,207,228,0.3)',
+            'border' : '1px solid ' + border_color
+          });
+        });
+        $( "#<?echo 'icon'.$id.'';?>" ).mouseover(function(){
+          $(this).css('background-color'  , 'rgba(192,192,192,0.3)');
+        });
+        $( "#<?echo 'icon'.$id.'';?>" ).mouseout(function(){
+          $(this).css('background-color'  , 'transparent');
+        });
         $( "#<?echo 'icon'.$id.'';?>" ).dblclick(function(){$("#<?echo 'app'.$id.'';?>").show('drop',500)})
         } );
       </script>
@@ -101,9 +114,9 @@
       <?
       $linkname=str_replace("_"," ",$linkname);
         $namejs="'".$name."'";$filejs="'".$file."'";$paramjs="'".$param."'";$keyjs="'".$key."'";
-            echo'<div id="link'.$id.'" class="'.$delclassname.'" on'.$click.'="makeprocess('.$namejs.','.$filejs.','.$paramjs.','.$keyjs.');"><div id=icons'.$id.' class="ui-widget-header ui-widget-content ico clickme" style="z-index:-1000; height:auto; text-align:center; width:70px; position:relative; display:block; float:left;"><div style="background-color:transparent;  background-image: url('.$linkicon.'); background-size:cover; height:64px; width:64px; margin:auto; margin-top:17px; ">';
+            echo'<div id="link'.$id.'" class="'.$delclassname.'" on'.$click.'="makeprocess('.$namejs.','.$filejs.','.$paramjs.','.$keyjs.'); releaselink();"><div id=icons'.$id.' class="ui-widget-header ui-widget-content ico clickme" style="padding:5px; z-index:-1000; height:auto; text-align:center; width:70px; position:relative; display:block; float:left;"><div style="background-color:transparent;  background-image: url('.$linkicon.'); background-size:cover; height:64px; width:64px; margin:auto; margin-top:17px; ">';
             echo '<div id=icon'.$id.' style="width:100%; height:auto;">';
-            echo '<div class="linktheme" style="white-space: pre-wrap; padding-top: 100%; text-overflow:ellipsis; cursor:default; overflow:hidden; font-size:13px; text-shadow:0px 0px 4px rgba(0,0,0,0.9);" >';
+            echo '<div id="link_content'.$id.'" class="linktheme">';
             echo $linkname.'</div></div></div></div></div>';
             $id++;
           }
@@ -145,10 +158,10 @@ function topbar(){
   global $object, $login;
   ?>
   <div id="topbar" class="ui-widget-content topbartheme" style="display:none; z-index:9999; height:22px; padding-top:4px;">
-    <span id="hideall" class="topbaractbtn ui-forest" style="cursor:pointer; display:none; background-color:#5ca556; color:#fff; width:12px; float:right; text-align:center; width:15px; margin-right: 8px;">
+    <span id="hideall" class="topbaractbtn ui-forest" style="cursor:pointer; display:none; background-color:#37a22e; color:#fff; width:12px; float:right; text-align:center; width:15px; margin-right: 8px; font-family:monospace; padding:2px 0;">
       -
     </span>
-    <span id="closeall" class="topbaractbtn ui-forest" style="cursor:pointer; display:none; background-color:#bf5a5a; color:#fff; float:right; text-align:center; width:15px;" onclick="$('.process').remove(); $('.topbaractbtn').css('display','none');">
+    <span id="closeall" class="topbaractbtn ui-forest" style="cursor:pointer; display:none; background-color:#ed2020; color:#fff; float:right; text-align:center; width:15px; font-family:monospace; padding:2px 0;" onclick="$('.process').remove(); $('.topbaractbtn').css('display','none');">
       x
     </span>
     <div class="date " style="float:right; font-size:15px; padding-right:10px; user-select: none; cursor: default;">
@@ -165,7 +178,7 @@ function topbar(){
       =
     </div>
   </div>
-  <div id="aboutmenu" class="ui-widget-content menutheme" onmouseover="document.getElementById('aboutmenu').style.display='block';" onmouseout="document.getElementById('aboutmenu').style.display='none';" style="z-index:9999; user-select:none; display:none; text-align:justify; min-width:200px; max-width:300px; position:absolute; text-overflow:hidden; overflow:ellipsis; padding:14px 0;">
+  <div id="aboutmenu" class="ui-widget-content menutheme" onmouseover="document.getElementById('aboutmenu').style.display='block';" onmouseout="document.getElementById('aboutmenu').style.display='none';" style="z-index:9999; user-select:none; display:none; text-align:justify; min-width:200px; max-width:300px; position:absolute; text-overflow:hidden; overflow:ellipsis; padding:14px 0 0 0;">
   <span style="text-transform:uppercase; cursor:pointer;  padding:5px;" onclick="makeprocess('Settings','users','<?echo $login;?>','selectuser'); document.getElementById('aboutmenu').style.display='none';">
     <?echo $login;?>
   </span>
@@ -185,8 +198,7 @@ function topbar(){
   <span style="cursor:pointer; padding:5px;" onclick="makeprocess('Settings','about','',''); document.getElementById('aboutmenu').style.display='none';">
     О системе
   </span>
-  <hr class="menulines">
-    <div style="text-align:center; margin-top: 14px;">
+    <div class="action-buttons" style="text-align:center; margin-top: 14px; padding:14px 0; filter:hue-rotate(8deg);">
     <span style="font-size:26px; cursor:default; width:26px;">
     <b class="ui-forest" style="border:2px solid; cursor:pointer; padding:0 6px; margin:3px; border-radius:5px;" onclick="return location.href = 'os.php'">R</b>
     <b class="ui-forest" style="border:2px solid; cursor:pointer; padding:0 6px; margin:3px; border-radius:5px;" onclick="hibernation('false')">M</b>
@@ -224,6 +236,7 @@ function topbar(){
         border:none;
         background-color: <?echo $themeload['topbarbackcolor'];?>;
         color: <?echo $themeload['topbarbackcolor'];?>;
+        filter:contrast(0.9);
       }
       .backgroundtheme
       {
@@ -242,6 +255,10 @@ function topbar(){
         border: 3px solid <?echo $themeload['draggablebackcolor'];?>;
         border-radius: 6px 6px 8px 8px;
         border-top: 0;
+      }
+      .action-buttons{
+        background: <?echo $themeload['draggablebackcolor'];?>;
+        color: <?echo $themeload['draggablefontcolor'];?>;
       }
       </style>
 

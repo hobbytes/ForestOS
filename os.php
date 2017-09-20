@@ -113,8 +113,18 @@ function runEffect() {
 $( "#hideall" ).on( "click", function() {
   runEffect();
   $( ".dragwindow" ).toggleClass( "dragwindowtoggle", 500 );
+  $( ".windowborder" ).toggleClass( "windowborderhide", 500 );
+  $( ".windowborder" ).toggleClass( "bordertoggle", 1 );
 });
 });
+
+function releaselink(){
+  $(".linktheme").css({
+    'white-space' : 'nowrap',
+    'background-color' : 'transparent',
+    'border' : ''
+  });
+}
 
   $( function() {
     $(window).load(function(){

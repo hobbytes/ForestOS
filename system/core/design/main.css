@@ -45,6 +45,17 @@ body {
 	z-index: 9998;
 }
 
+.linktheme{
+	white-space: nowrap;
+	word-wrap: break-word;
+	padding-top: 104%;
+	text-overflow:ellipsis;
+	cursor:default;
+	overflow:hidden;
+	font-size:13px;
+	text-shadow:0px 0px 1px rgba(0,0,0,0.9);
+}
+
 .welcomescreen img{
 	width:128px;
 	position:absolute;
