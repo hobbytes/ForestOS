@@ -29,6 +29,7 @@ body {
 	overflow: auto;
 	background-color: rgba(35, 37, 37, 0.6);
 	backdrop-filter:	blur(5px);
+	-webkit-backdrop-filter:	blur(5px);
 }
 
 
@@ -105,6 +106,7 @@ body {
 	overflow: hidden;
 	white-space: nowrap;
 	backdrop-filter:	blur(3px);
+	-webkit-backdrop-filter:	blur(3px);
 }
 
 .dragwindowtoggle
@@ -196,10 +198,12 @@ body {
 
 .topbartheme{
 	backdrop-filter:	blur(3px);
+	-webkit-backdrop-filter:	blur(3px);
 }
 
 .menutheme{
 	backdrop-filter:	blur(3px);
+	-webkit-backdrop-filter:	blur(3px);
 }
 
 ::-webkit-scrollbar {
