@@ -21,11 +21,8 @@ class info{
             return $browser.' '.$version; // для всех остальных возвращаем браузер и версию
     }
     function writestat($alarmbody,$folder){
-
-      include 'etc/security.php';
       include '../bd.php';
-      global $getdata, $getstat;
-      $security = new security;
+      global $getdata, $getstat, $security;
       $bd = new readbd;
       $bd->readglobal2("password","forestusers","login",$_SESSION["loginuser"]);
       $key=$getdata;

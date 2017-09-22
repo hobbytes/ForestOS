@@ -96,7 +96,7 @@
           releaselink();
           var border_color = $('.action-buttons').css('background-color');
           $("#link_content<?echo $id?>").css({
-            'white-space' : 'pre-wrap',
+            'white-space' : 'pre-line',
             'background-color' : 'rgba(177,207,228,0.3)',
             'border' : '1px solid ' + border_color
           });
@@ -133,17 +133,15 @@ function welcomescreen(){
 
 /*---------check and load hibernation---------*/
 function hibernation(){
-  global $login,  $getdata, $object;
+  global $login,  $getdata, $object,$security;
   $file = 'system/users/'.$login.'/settings/state.hdf';
   if(file_exists($file)){
     $content = parse_ini_file($file);
     if(!empty($content)){
       session_start();
       $_SESSION['appid']  = $content['last_app_id']-1;
-      require 'system/core/library/etc/security.php';
       $bds= new readbd;
   		$bds->readglobalfunction(password,users,login,$login);
-      $security = new security;
       $key=$getdata;
       echo $security->__decode($content['state'], $key);
       file_put_contents('system/users/'.$login.'/settings/state.hdf','');

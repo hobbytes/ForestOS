@@ -13,16 +13,6 @@ class security {
         }
 }
 
-function strToHex($string)
-{
-    $hex='';
-    for ($i=0; $i < strlen($string); $i++)
-    {
-        $hex .= dechex(ord($string[$i]));
-    }
-    return $hex;
-}
-
 function __decode($text, $key){
         $td = mcrypt_module_open ("tripledes", '', 'cfb', '');
         $iv_size = mcrypt_enc_get_iv_size ($td);
@@ -35,16 +25,6 @@ function __decode($text, $key){
         }
     }
 
-function hexToStr($hex)
-{
-    $string='';
-    for ($i=0; $i < strlen($hex)-1; $i+=2)
-    {
-        $string .= chr(hexdec($hex[$i].$hex[$i+1]));
-    }
-    return $string;
-}
-
 function appprepare(){
 session_start();
 if(!isset($_SESSION['loginuser'])){
@@ -56,6 +36,12 @@ if(!isset($_SESSION['loginuser'])){
   <script>document.body.innerHTML = '';</script>
   <?
 }
+}
+
+function crypt($string, $salt){
+  $crypt_string=addslashes(strip_tags(htmlspecialchars(crypt($string,'$2a$10$'.md5($salt)))));
+  $crypt_string=str_replace('$2a$10$','',$crypt_string);
+  return $crypt_string;
 }
 }
 ?>

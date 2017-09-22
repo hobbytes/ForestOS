@@ -5,15 +5,14 @@
 <?
 if (function_exists('date_default_timezone_set'))
 date_default_timezone_set('Europe/Moscow');
+global $loginin, $infob,  $security;
 $date= date("d.m.y,H:i:s");
 $status2=$_POST['logins'];
-
 if ($status2!='')
 {
 $loginin=strtolower(addslashes(strip_tags(htmlspecialchars($_POST['loginin']))));
-$passwordin=md5(addslashes(strip_tags(htmlspecialchars($_POST['passwordin']))));
+$passwordin=$security->crypt($_POST['passwordin'],$loginin);
 }
-global $loginin, $infob;
 session_start();
 $auth = new AuthClassUser();
 $auth->construct('login',$loginin);

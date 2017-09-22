@@ -24,8 +24,10 @@ class AuthClassUser {
        * @param string $passwors
        */
       public function auth($login, $passwors) {
-          if ($login == $this->_login && $passwors == $this->_password) { $_SESSION["is_authuser"] = true; $_SESSION["loginuser"] = $login;
-              return true;
+          if ($login == $this->_login && $passwors == $this->_password) {
+            $_SESSION["is_authuser"] = true;
+            $_SESSION["loginuser"] = $login;
+            return true;
           }
           else {$_SESSION["is_authuser"] = false;
               return false;

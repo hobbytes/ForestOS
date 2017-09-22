@@ -5,8 +5,9 @@ $erase  = $_GET['erase'];
 $appname  = $_GET['appname'];
 $folder = $_GET['destination'];
 $oldpassword  = $_GET['oldpassword'];
-$newpassword  = $_GET['newpassword'];
-$checkpassword  = $_GET['checkpassword'];
+$newpassword  =  $_GET['newpassword'];
+$checkpassword  =  $_GET['checkpassword'];
+
 ?>
 <div id="<?echo $appname.$appid;?>" style="background-color:#f2f2f2; height:500px; max-height:95%; max-width:100%; width:800px; padding-top:10px; border-radius:0px 0px 5px 5px; overflow:auto;">
 <div style="width:100%; text-align:left; padding-bottom:10px; font-size:30px; border-bottom:#d8d8d8 solid 2px; text-overflow:ellipsis; overflow:hidden;">
@@ -19,8 +20,8 @@ include '../../core/library/bd.php';
 include '../../core/library/gui.php';
 include '../../core/library/etc/security.php';
 include '../../core/library/etc.php';
-$security	=	new security;
 session_start();
+$security	=	new security;
 $security->appprepare();
 if($erase=='true'){
   file_put_contents('../../core/journal.mcj','');
@@ -30,13 +31,19 @@ $gui = new gui;
 $infob  = new info;
 
 if(!empty($oldpassword) && !empty($newpassword) && !empty($checkpassword)){
+
+  $oldpassword  = $security->crypt($_GET['oldpassword'],$_SESSION["loginuser"]);
+  $newpassword  =  $security->crypt($_GET['newpassword'],$_SESSION["loginuser"]);
+  $checkpassword  =  $security->crypt($_GET['checkpassword'],$_SESSION["loginuser"]);
+
   $settingsbd->readglobal2("password","forestusers","login",$_SESSION["loginuser"]);
   $bdpass=$getdata;
 
-  if($bdpass==md5($oldpassword)){
+  if($bdpass==$oldpassword){
     if($newpassword==$checkpassword){
-      $settingsbd->updatebd("forestusers",password,md5($newpassword),login,$_SESSION["loginuser"]);
+      $settingsbd->updatebd("forestusers",password,$newpassword,login,$_SESSION["loginuser"]);
       echo 'Пароль изменен!';
+      file_put_contents('../../core/journal.mcj','');
     }else{
       echo 'Новые пароли не совпадают!';
     }
