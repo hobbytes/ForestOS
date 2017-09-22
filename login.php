@@ -11,7 +11,7 @@ $status2=$_POST['logins'];
 if ($status2!='')
 {
 $loginin=strtolower(addslashes(strip_tags(htmlspecialchars($_POST['loginin']))));
-$passwordin=$security->crypt($_POST['passwordin'],$loginin);
+$passwordin=$security->crypt(addslashes(strip_tags(htmlspecialchars($_POST['passwordin']))),$loginin);
 }
 session_start();
 $auth = new AuthClassUser();
