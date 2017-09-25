@@ -32,9 +32,9 @@ $infob  = new info;
 
 if(!empty($oldpassword) && !empty($newpassword) && !empty($checkpassword)){
 
-  $oldpassword  = $security->crypt($_GET['oldpassword'],$_SESSION["loginuser"]);
-  $newpassword  =  $security->crypt($_GET['newpassword'],$_SESSION["loginuser"]);
-  $checkpassword  =  $security->crypt($_GET['checkpassword'],$_SESSION["loginuser"]);
+  $oldpassword  = $security->crypt_s($_GET['oldpassword'],$_SESSION["loginuser"]);
+  $newpassword  =  $security->crypt_s($_GET['newpassword'],$_SESSION["loginuser"]);
+  $checkpassword  =  $security->crypt_s($_GET['checkpassword'],$_SESSION["loginuser"]);
 
   $settingsbd->readglobal2("password","forestusers","login",$_SESSION["loginuser"]);
   $bdpass=$getdata;

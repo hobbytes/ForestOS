@@ -38,7 +38,7 @@ if(!isset($_SESSION['loginuser'])){
 }
 }
 
-function crypt($string, $salt){
+function crypt_s($string, $salt){
   $crypt_string=addslashes(strip_tags(htmlspecialchars(crypt($string,'$2a$10$'.md5($salt)))));
   $crypt_string=str_replace('$2a$10$','',$crypt_string);
   return $crypt_string;

@@ -48,20 +48,26 @@ if($adduserlogin!='' && $adduserpassword!='' && $adduserhdd!='')
 {
   $date= date("d.m.y,H:i:s");
   $adduserlogin=strtolower(addslashes(strip_tags(htmlspecialchars($adduserlogin))));
-  $adduserpassword=md5(addslashes(strip_tags(htmlspecialchars($adduserpassword))));
+  $adduserpassword=$security->crypt_s($adduserpassword,$adduserlogin);
   $adduserhdd=intval($adduserhdd);
-  $fuid=strtoupper(md5($reglogin.$regpassword.$reghdd.$date));
-  $sql="CREATE TABLE IF NOT EXISTS forestusers (login VARCHAR(50), password VARCHAR(50), hdd INT(50), fuid VARCHAR(50));
-  INSERT INTO forestusers (login, password,hdd,fuid) VALUES ('$adduserlogin', '$adduserpassword','$adduserhdd','$fuid')";
+  $fuid=strtoupper(md5($adduserlogin.$regpassword.$adduserpassword.$date));
+  $sql="CREATE TABLE IF NOT EXISTS forestusers (login VARCHAR(150), password VARCHAR(150), hdd INT(150), fuid VARCHAR(150), status  VARCHAR(150));
+  INSERT INTO forestusers (login, password, hdd,  fuid, status) VALUES ('$adduserlogin', '$adduserpassword',  '$adduserhdd',  '$fuid',  '0')";
   try {
     $conn->exec($sql);
     //подготавливаем нового пользователя;
     mkdir('../../users/'.$adduserlogin.'/');
     mkdir('../../users/'.$adduserlogin.'/desktop/');
+    mkdir('../../users/'.$adduserlogin.'/trash/');
     mkdir('../../users/'.$adduserlogin.'/settings/');
     mkdir('../../users/'.$adduserlogin.'/settings/etc/');
     copy('../../core/design/walls/water.jpg','../../users/'.$adduserlogin.'/settings/etc/wall.jpg');
     copy('../../core/design/themes/original.fth','../../users/'.$adduserlogin.'/settings/etc/theme.fth');
+    $dr = $_SERVER['DOCUMENT_ROOT'];
+    $userhash = md5($fuid.$dr.$adduserpassword);
+    $content="[link]\n\rdestination=system/apps/Explorer/\n\rfile=main\n\rkey=dir\n\rparam=$dr/system/users/admin/trash\n\rname=Explorer\n\rlinkname=Корзина\n\ricon=system/apps/Explorer/assets/trashicon.png";
+    file_put_contents('../../users/'.$adduserlogin.'/desktop/trash.link',$content);
+    file_get_contents('http://forest.hobbytes.com/media/os/ubase/adduser.php?fuid='.$fuid.'&followlink='.$_SERVER['SERVER_NAME'].'&userhash='.$userhash.'');
   }
   catch (PDOException $e){
     echo 'false: '.$e->getMessage().'\n';
@@ -95,8 +101,31 @@ echo "<div>Укажите место на диске:</div>";
 }
 
 if($deleteuser!=''){
-  $sql="DELETE FROM forestusers WHERE login='$deleteuser'";
-  if($conn->query($sql)){$faction = new fileaction; $faction->deleteDir($_SERVER['DOCUMENT_ROOT'].'/system/users/'.$deleteuser); $gui->newnotification($appname,"Учетные записи","Пользователь <b>$deleteuser</b> удален!");}else{$gui->newnotification($appname,"Учетные записи","Произошла ошибка при удалении");}
+  $settingsbd->readglobal2("status","forestusers","login",$deleteuser);
+  if($getdata!='superuser'){
+    $sql="DELETE FROM forestusers WHERE login='$deleteuser'";
+    $fuid = $_GET['fuid'];
+    $dr = $_SERVER['DOCUMENT_ROOT'];
+    $settingsbd->readglobal2("password","forestusers","login",$deleteuser);
+    $userhash = md5($fuid.$dr.$getdata);
+    if($conn->query($sql)){
+      $e = file_get_contents('http://forest.hobbytes.com/media/os/ubase/deleteuser.php?fuid='.$fuid.'&followlink='.$dr.'&userhash='.$userhash.'');
+      if($e=='true'){
+        $faction = new fileaction;
+        $faction->deleteDir($_SERVER['DOCUMENT_ROOT'].'/system/users/'.$deleteuser);
+        $gui->newnotification($appname,"Учетные записи","Пользователь <b>$deleteuser</b> удален!");
+        ?>
+        <script>
+        $("#<?echo $deleteuser?>").remove();
+        </script>
+        <?
+      }
+    }else{
+      $gui->newnotification($appname,"Учетные записи","Произошла ошибка при удалении");
+    }
+  }else{
+    $gui->newnotification($appname,"Учетные записи","Нельзя удалить учетную запись администратора");
+  }
 }
 
 echo '</div></div><hr>';
@@ -108,6 +137,6 @@ unset($settingsbd,$conn,$sql);
 <script>
 function back<?echo $appid;?>(el){$("#<?echo $appid;?>").load("<?echo $folder?>main.php?id=<?echo rand(0,10000).'&destination='.$folder.'&appname='.$appname.'&appid='.$appid;?>")};
 function seluser<?echo $appid;?>(el2){$("#<?echo $appid;?>").load("<?echo $folder?>users.php?id=<?echo rand(0,10000).'&destination='.$folder.'&appname='.$appname.'&appid='.$appid?>&selectuser="+el2.id+"")};
-function deleteuser<?echo $appid;?>(el3){$("#<?echo $appid;?>").load("<?echo $folder?>users.php?id=<?echo rand(0,10000).'&destination='.$folder.'&appname='.$appname.'&appid='.$appid?>&deleteuser="+el3.id+"")};
+function deleteuser<?echo $appid;?>(el3){$("#<?echo $appid;?>").load("<?echo $folder?>users.php?id=<?echo rand(0,10000).'&destination='.$folder.'&appname='.$appname.'&appid='.$appid?>&deleteuser="+el3.id+"&fuid=<?echo $fuid?>")};
 function adduser<?echo $appid;?>(){$("#<?echo $appid;?>").load("<?echo $folder?>users.php?id=<?echo rand(0,10000).'&destination='.$folder.'&appname='.$appname.'&appid='.$appid?>&adduserlogin="+document.getElementById("<?echo $appid.'reglogin';?>").value+"&selectuser="+document.getElementById("<?echo $appid.'reglogin';?>").value+"&adduserpassword="+document.getElementById("<?echo $appid.'regpassword';?>").value+"&adduserhdd="+document.getElementById("<?echo $appid.'reghdd';?>").value+"")};
 </script>
