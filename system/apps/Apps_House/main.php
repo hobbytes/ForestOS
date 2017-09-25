@@ -120,7 +120,7 @@ echo '
   if($arrayu!=''){
   foreach ($arrayu as $key)
   {
-    if($upd_array['revision']!=$key['file']){
+    if($upd_array['subversion']!=$key['subversion']){
       $fo->format($key['size']*1024);
       echo '
       <span class="ui-button ui-widget ui-corner-all" style="height:auto; width:90%; position:relative; text-align:left;  margin:5px;"> <span>
@@ -128,7 +128,7 @@ echo '
       <div style="text-align:left;">Обновление системы<br><br/>
         <span style="font-size:17px;"><b>Forest OS</b> '.$key['codename'].'</span><br>
       <span style="font-size:12px; font-weight:900; " >сборка: <span style="color:#363636; text-transform: uppercase;">'.$key['file'].'</span></span><br>
-      <span style="font-size:12px; ">версия: '.$key['version'].'<br>размер: '.$format.'</span></div></span><span style="font-size:15px; color:#464646; white-space:pre;">'.$key['description'].'</span>
+      <span style="font-size:12px; ">версия: '.$key['version'].'<br>версия сборки: '.$key['subversion'].'<br>размер: '.$format.'</span></div></span><span style="font-size:15px; color:#464646; white-space:pre;">'.$key['description'].'</span>
       <div id="'.$key['file'].'" class="app_h" onClick="update'.$appid.'()" style="background-color:#245896; color:#fff; width:30%; margin: 10px auto 10px auto; font-size:13px; padding:5px; text-align:center;">Обновить</div></span>
       ';
       }

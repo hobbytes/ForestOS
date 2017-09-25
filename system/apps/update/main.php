@@ -28,6 +28,7 @@ foreach ($arrayu as $key)
 {
   $revision = $key['file'];
   $version  = $key['version'];
+  $subversion  = $key['subversion'];
   $size = $key['size'];
   $codename = $key['codename'];
 }
@@ -45,7 +46,7 @@ foreach ($arrayu as $key)
     if($arrayu!=''){
     $fo->format($size*1024);
     echo '<br><span style="font-size:12px; font-weight:900; " >сборка: <span style="color:#363636; text-transform: uppercase;">'.$revision.'</span></span><br>
-    <span style="font-size:12px; ">версия: '.$version.'<br>размер: '.$format.'</span>';
+    <span style="font-size:12px; ">версия: '.$version.'<br>версия сборки: '.$subversion.'<br>размер: '.$format.'</span>';
   }
   ?>
   <div id="<?echo $revision;?>" onClick="updatenow<?echo $appid;?>(this);" style="background-color:#54c45c; color:#fff; width:200px; font-size:15px; text-align:center; margin:10px auto; cursor:pointer; padding:5px;">
@@ -68,7 +69,7 @@ $zip->extractTo('../../../');
 $zip->close();
 
 $myfile=fopen('../../core/osinfo.foc',"w");
-$content='[forestos]'.PHP_EOL.PHP_EOL.'version='.$version.PHP_EOL.PHP_EOL.'revision='.$revision.PHP_EOL.PHP_EOL.'codename='.$codename;
+$content='[forestos]'.PHP_EOL.PHP_EOL.'version='.$version.PHP_EOL.PHP_EOL.'subversion='.$subversion.PHP_EOL.PHP_EOL.'revision='.$revision.PHP_EOL.PHP_EOL.'codename='.$codename;
 fwrite($myfile,PHP_EOL.$content);fclose($myfile);
 
 echo '<p>Обновление '.$updatefile.' установлено!</p>';
