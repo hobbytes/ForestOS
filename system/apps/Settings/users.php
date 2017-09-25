@@ -62,7 +62,9 @@ if($adduserlogin!='' && $adduserpassword!='' && $adduserhdd!='')
     mkdir('../../users/'.$adduserlogin.'/settings/');
     mkdir('../../users/'.$adduserlogin.'/settings/etc/');
     $wall=glob('../../core/design/walls/*.jpg');
-    copy($wall[0],'../../users/'.$adduserlogin.'/settings/etc/wall.jpg');
+    if(!empty($wall[0])){
+      copy($wall[0],'../../users/'.$adduserlogin.'/settings/etc/wall.jpg');
+    }
     copy('../../core/design/themes/original.fth','../../users/'.$adduserlogin.'/settings/etc/theme.fth');
     $dr = $_SERVER['DOCUMENT_ROOT'];
     $userhash = md5($fuid.$dr.$adduserpassword);
