@@ -82,11 +82,39 @@ en_inputoldpass = Enter old password
 en_inputnewpass = Enter a new password
 en_inputnewpass_2 = Enter the new password again
 en_button_change = Change Password
-en_journal_label = Log
+en_journal_label = Log File
 en_button_journal = Clear log
 en_notchangepass = 'Password changed!'
 en_notnewerrorpass = 'New passwords do not match!'
 en_notolderrorpass = 'You have entered the wrong old password!'
+
+[users]
+ru_button_deleteuser  = Удалить пользователя
+ru_button_adduser  = Добавить пользователя
+ru_newuser_label  = Новый пользователь
+ru_inputuser_label  = Введите логин
+ru_inputpass_label  = Введите пароль
+ru_inputcapacity_label  = Укажите место на диске
+ru_deleteusernot  = Пользователь удален
+ru_user_error = Произошла ошибка при удалении
+ru_user_error2 = Нельзя удалить учетную запись администратора
+
+en_button_deleteuser = Delete user
+en_button_adduser = Add user
+en_newuser_label = New user
+en_inputuser_label = Enter login
+en_inputpass_label = Enter password
+en_inputcapacity_label = Capacity
+en_deleteusernot = User deleted
+en_user_error = An error occurred while deleting
+en_user_error2 = You can not delete an administrator account
+
+[autorun]
+ru_autorun_msg1 = Теперь в менеджере автозапуска пусто
+ru_autorun_msg2 = Вы добавили в автозапуск
+
+en_autorun_msg1 = Now in the autorun manager is empty
+en_autorun_msg2 = You added to autorun
 
 [etc]
 ru_restart  = Перезагрузить

@@ -3,11 +3,13 @@
 $appid=$_GET['appid'];
 $appname=$_GET['appname'];
 $folder=$_GET['destination'];
+session_start();
+$language_users  = parse_ini_file('app.lang');
 ?>
 
 <div id="<?echo $appname.$appid;?>" style="background-color:#f2f2f2; height:500px; max-height:95%; max-width:100%; width:800px; padding-top:10px; border-radius:0px 0px 5px 5px; overflow:auto;">
 <div style="width:100%; text-align:left; padding-bottom:10px; font-size:30px; border-bottom:#d8d8d8 solid 2px; text-overflow:ellipsis; overflow:hidden;">
-<span onClick="back<?echo $appid;?>();" class="ui-forest" style="background-color:#d8d8d8; color:#000; border-radius:30%; cursor:pointer; font-size:25px; margin-left:5px;"> &#9668 </span>Учетные записи</div>
+<span onClick="back<?echo $appid;?>();" class="ui-forest" style="background-color:#d8d8d8; color:#000; border-radius:30%; cursor:pointer; font-size:25px; margin-left:5px;"> &#9668 </span><?echo $language_users[$_SESSION['locale'].'_settings_users']?></div>
 <?php
 /*Settings*/
 //Подключаем библиотеки
@@ -16,7 +18,6 @@ include '../../core/library/bd.php';
 include '../../core/library/gui.php';
 include '../../core/library/etc/security.php';
 $security	=	new security;
-session_start();
 $security->appprepare();
 $settingsbd = new readbd;
 $gui = new gui;
@@ -29,7 +30,7 @@ $adduserhdd=$_GET['adduserhdd'];
 $settingsbd->readglobal2("fuid","forestusers","login",$_SESSION["loginuser"]);
 $fuid=$getdata;
 
-echo '<div style="text-align:left; margin-top:10px; margin-left:10px;"><b style="font-size:20px;">Учетные записи</b>';
+echo '<div style="text-align:left; margin-top:10px; margin-left:10px;"><b style="font-size:20px;">'.$language_users[$_SESSION['locale'].'_settings_users'].'</b>';
 echo '<div style="margin-top:10px; overflow:hidden;">';
 /*-----loadusers----*/
 $conn = new PDO (DB_DSN, DB_USERNAME, DB_PASSWORD);
@@ -65,6 +66,7 @@ if($adduserlogin!='' && $adduserpassword!='' && $adduserhdd!='')
     if(!empty($wall[0])){
       copy($wall[0],'../../users/'.$adduserlogin.'/settings/etc/wall.jpg');
     }
+    file_put_contents('../../users/'.$adduserlogin.'/settings/language.foc',  $_SESSION['locale']);
     copy('../../core/design/themes/original.fth','../../users/'.$adduserlogin.'/settings/etc/theme.fth');
     $dr = $_SERVER['DOCUMENT_ROOT'];
     $userhash = md5($fuid.$dr.$adduserpassword);
@@ -87,19 +89,19 @@ if($selectuser!=''){
   $fuid=$getdata;
   echo '<div style="text-align:left; margin-top:100px; "><b style="font-size:35px; text-transform:uppercase;">'.$selectuser.'</b>';
   echo '<div><br> FUID: '.$fuid.'</div></div>';
-  echo '<div id="'.$selectuser.'" onClick="deleteuser'.$appid.'(this);" class="ui-forest-button ui-forest-cancel">Удалить пользователя</div>';
+  echo '<div id="'.$selectuser.'" onClick="deleteuser'.$appid.'(this);" class="ui-forest-button ui-forest-cancel">'.$language_users[$_SESSION['locale'].'_button_deleteuser'].'</div>';
 }
 else
 {
-  echo '<div style="text-align:left; margin-top:100px; "><b style="font-size:25px; text-transform:uppercase;">Новый пользователь</b></div>';
+  echo '<div style="text-align:left; margin-top:100px; "><b style="font-size:25px; text-transform:uppercase;">'.$language_users[$_SESSION['locale'].'_newuser_label'].'</b></div>';
 
-echo "<div>Введите логин:</div>";
-  $gui->inputslabel('Логин', 'text', ''.$appid.'reglogin', ''.$adduserlogin.'','50', 'введите логин');
-echo "<div>Введите пароль:</div>";
-  $gui->inputslabel('Пароль', 'password', ''.$appid.'regpassword', ''.$adduserpassword.'','50','придумайте пароль');
-echo "<div>Укажите место на диске:</div>";
-  $gui->inputslabel('Место на диске', 'text', ''.$appid.'reghdd', '60000' ,'50','укажите место на диске');
-  echo '<div id="addbtnuser'.$appid.'" onClick="adduser'.$appid.'();" class="ui-forest-button ui-forest-accept">Добавить пользователя</div>';
+echo "<div>".$language_users[$_SESSION['locale'].'_inputuser_label'].":</div>";
+  $gui->inputslabel('', 'text', ''.$appid.'reglogin', ''.$adduserlogin.'','50', $language_users[$_SESSION['locale'].'_inputuser_label']);
+echo "<div>".$language_users[$_SESSION['locale'].'_inputpass_label'].":</div>";
+  $gui->inputslabel('', 'password', ''.$appid.'regpassword', ''.$adduserpassword.'','50',$language_users[$_SESSION['locale'].'_inputpass_label']);
+echo "<div>".$language_users[$_SESSION['locale'].'_inputcapacity_label'].":</div>";
+  $gui->inputslabel('', 'text', ''.$appid.'reghdd', '60000' ,'50',$language_users[$_SESSION['locale'].'_inputcapacity_label']);
+  echo '<div id="addbtnuser'.$appid.'" onClick="adduser'.$appid.'();" class="ui-forest-button ui-forest-accept">'.$language_users[$_SESSION['locale'].'_button_adduser'].'</div>';
 }
 }
 
@@ -116,7 +118,7 @@ if($deleteuser!=''){
       if($e=='true'){
         $faction = new fileaction;
         $faction->deleteDir($_SERVER['DOCUMENT_ROOT'].'/system/users/'.$deleteuser);
-        $gui->newnotification($appname,"Учетные записи","Пользователь <b>$deleteuser</b> удален!");
+        $gui->newnotification($appname,$language_users[$_SESSION['locale'].'_settings_users'],  $language_users[$_SESSION['locale'].'_deleteusernot'].": <b>$deleteuser</b>");
         ?>
         <script>
         $("#<?echo $deleteuser?>").remove();
@@ -124,10 +126,10 @@ if($deleteuser!=''){
         <?
       }
     }else{
-      $gui->newnotification($appname,"Учетные записи","Произошла ошибка при удалении");
+      $gui->newnotification($appname,$language_users[$_SESSION['locale'].'_settings_users'],  $language_users[$_SESSION['locale'].'_user_error']);
     }
   }else{
-    $gui->newnotification($appname,"Учетные записи","Нельзя удалить учетную запись администратора");
+    $gui->newnotification($appname,$language_users[$_SESSION['locale'].'_settings_users'],  $language_users[$_SESSION['locale'].'_user_error_2']);
   }
 }
 

@@ -5,10 +5,12 @@ $appname  = $_GET['appname'];
 $folder = $_GET['destination'];
 $checked  = $_GET['checked'];
 $savestatus  = $_GET['save'];
+session_start();
+$language_autorun  = parse_ini_file('app.lang');
 ?>
 <div id="<?echo $appname.$appid;?>" style="text-align:center; background-color:#f2f2f2; height:500px; max-height:95%; max-width:100%; width:800px; padding-top:10px; border-radius:0px 0px 5px 5px; overflow:auto;">
 <div style="width:100%; text-align:left; padding-bottom:10px; font-size:30px; border-bottom:#d8d8d8 solid 2px; text-overflow:ellipsis; overflow:hidden;">
-<span onClick="back<?echo $appid;?>();" class="ui-forest" style="background-color:#d8d8d8; color:#000; border-radius:30%; cursor:pointer; font-size:25px; margin-left:5px;"> &#9668 </span>Менеджер автозапуска</div>
+<span onClick="back<?echo $appid;?>();" class="ui-forest" style="background-color:#d8d8d8; color:#000; border-radius:30%; cursor:pointer; font-size:25px; margin-left:5px;"> &#9668 </span><?echo $language_autorun[$_SESSION['locale'].'_settings_autorun']?></div>
 <?php
 /*Settings*/
 //Подключаем библиотеки
@@ -16,16 +18,15 @@ include '../../core/library/gui.php';
 include '../../core/library/etc/security.php';
 $newgui = new gui;
 $security	=	new security;
-session_start();
 $security->appprepare();
 if($savestatus=='true'){
   file_put_contents('../../users/'.$_SESSION["loginuser"].'/settings/autorun.foc',$checked);
   if(empty($checked)){
-    $text = "Теперь в менеджере автозапуска пусто";
+    $text = $language_autorun[$_SESSION['locale'].'_autorun_msg1'];
   }else{
-    $text = "Вы добавили в автозапуск: <b>$checked</b>";
+    $text = $language_autorun[$_SESSION['locale'].'_autorun_msg2'].": <b>$checked</b>";
   }
-  $newgui->newnotification($appname,"Менеджер автозапуска",$text);
+  $newgui->newnotification($appname,$language_autorun[$_SESSION['locale'].'_settings_autorun'],$text);
   unset($text);
 }
 echo '<div class="checkboxfix" style="width:80%; text-align:left; margin:15px auto;"><fieldest>';
@@ -39,7 +40,7 @@ foreach (glob("../*/main.php") as $filename)
   echo '<input type="checkbox" class="checkboxclass'.$appid.'" id="checkbox'.$name.$appid.'" name="'.$name.'">';
 }
 echo '</fieldest></div>';
-echo '<hr><div onClick="saveautoset'.$appid.'();" class="ui-forest-button ui-forest-accept ui-forest-center">Сохранить</div>';
+echo '<hr><div onClick="saveautoset'.$appid.'();" class="ui-forest-button ui-forest-accept ui-forest-center">'.$language_autorun[$_SESSION['locale'].'_button_save'].'</div>';
 
 $content  = file_get_contents('../../users/'.$_SESSION["loginuser"].'/settings/autorun.foc');
 if($content){
