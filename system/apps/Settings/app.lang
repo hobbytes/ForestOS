@@ -1,7 +1,7 @@
 [main]
 
 [language]
-ru_label_choose = 'Выберите язык'
-ru_button_save = 'Сохранить'
-en_label_choose = 'Choose language'
-en_button_save = 'Save'
+ru_label_choose = Выберите язык
+ru_button_save = Сохранить
+en_label_choose = Choose language
+en_button_save = Save

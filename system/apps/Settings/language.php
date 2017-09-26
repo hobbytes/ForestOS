@@ -28,17 +28,17 @@ if(empty($current_lang)){
   $current_lang = 'en';
   $_SESSION['loacale']  = $current_lang;
 }
-
+$language_lang  = parse_ini_file('app.lang');
 ?>
 <div style="margin:15%; font-size:20px">
   <span>
-    Выберите язык
+    <?echo $language_lang[$_SESSION['loacale'].'_label_choose']?>
   </span>
 <select id="selectlang<?echo $appid?>" style="margin:10px; width:200px; font-size:20px; padding:10px; -webkit-appearance:none;">
   <option value="ru">Русский</option>
   <option value="en">English</option>
 </select>
-<div onClick="savelang<?echo $appid?>();" class="ui-forest-button ui-forest-accept ui-forest-center">Сохранить</div>
+<div onClick="savelang<?echo $appid?>();" class="ui-forest-button ui-forest-accept ui-forest-center"><?echo $language_lang[$_SESSION['loacale'].'_button_save']?></div>
 </div>
 </div>
 <script>
