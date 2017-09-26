@@ -21,6 +21,7 @@ $prepare = new prepare;
 $security = new security;
 $auth = new AuthClassUser();
 $auth->checkout();
+$prepare->language();
 $prepare->start();
 $prepare->wall();
 $prepare->themeload();

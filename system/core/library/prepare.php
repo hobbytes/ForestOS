@@ -1,6 +1,12 @@
 <?
   class prepare{
 
+/*---------load language---------*/
+    function language()
+    {
+      global $language;
+      $language  = parse_ini_file('system/core/os.lang');
+    }
 /*---------load head---------*/
     public function start()
     {
@@ -159,7 +165,7 @@ function hibernation(){
 
 /*---------topbar load---------*/
 function topbar(){
-  global $object, $login;
+  global $object, $login, $language;
   ?>
   <div id="topbar" class="ui-widget-content topbartheme" style="display:none; z-index:9999; height:22px; padding-top:4px;">
     <span id="hideall" class="topbaractbtn ui-forest" style="cursor:pointer; display:none; background-color:#37a22e; color:#fff; width:12px; float:right; text-align:center; width:15px; margin-right: 8px; font-family:monospace; padding:2px 0;">
@@ -188,19 +194,19 @@ function topbar(){
   </span>
   <hr class="menulines">
   <span style="cursor:pointer; padding:5px;" onclick="makeprocess('Explorer','main','',''); document.getElementById('aboutmenu').style.display='none';">
-    Проводник
+    <?echo $language[$_SESSION['locale'].'_explorer_menu']?>
   </span>
   <hr class="menulines">
   <span style="cursor:pointer; padding:5px;" onclick="makeprocess('Settings','main','',''); document.getElementById('aboutmenu').style.display='none';">
-    Параметры
+    <?echo $language[$_SESSION['locale'].'_settings_menu']?>
   </span>
   <hr class="menulines">
   <span style="cursor:pointer; padding:5px;" onclick="makeprocess('Apps_House','main','',''); document.getElementById('aboutmenu').style.display='none';">
-    Магазин
+    <?echo $language[$_SESSION['locale'].'_store_menu']?>
   </span>
   <hr class="menulines">
   <span style="cursor:pointer; padding:5px;" onclick="makeprocess('Settings','about','',''); document.getElementById('aboutmenu').style.display='none';">
-    О системе
+    <?echo $language[$_SESSION['locale'].'_about_menu']?>
   </span>
     <div class="action-buttons" style="text-align:center; margin-top: 14px; padding:14px 0; filter:hue-rotate(8deg);">
     <span style="font-size:26px; cursor:default; width:26px;">
