@@ -2,6 +2,8 @@
 /*--------Получаем App Name и App ID--------*/
 $appname=$_GET['appname'];
 $appid=$_GET['appid'];
+session_start();
+$language_themecreate  = parse_ini_file('app.lang');
 ?>
 <div id="<?echo $appname.$appid;?>" style="background-color:#f2f2f2; max-height:100%; height:500px; width:100%; padding-top:10px; border-radius:0px 0px 5px 5px; overflow:auto;">
 <?php
@@ -297,38 +299,38 @@ backgroundfontcolor='$backgroundfontcolor'\n
 <div>
   <?
 
-  echo '<div style="text-align:left; margin-top:10px; margin-left:10px;"><b style="font-size:20px;">Создание темы</b></div>';
+  echo '<div style="text-align:left; margin-top:10px; margin-left:10px;"><b style="font-size:20px;">'.$language_themecreate[$_SESSION['locale'].'_tc_label'].'</b></div>';
 
   echo '<div id="namethemblock" class="theme_block">';
-  echo "<div>Название темы:</div>";
-  $newgui->inputslabel('Логин', 'text', ''.$appid.'themename', '','100', 'название темы');
+  echo "<div>".$language_themecreate[$_SESSION['locale'].'_tc_name_label'].":</div>";
+  $newgui->inputslabel('', 'text', ''.$appid.'themename', '','100', $language_themecreate[$_SESSION['locale'].'_tc_name_label']);
   echo '</div>';
 
   echo '<div id="topbarthemblock" class="theme_block">';
-  echo "<div>Верхний бар:</div>";
-  echo '<div id="theme_background" selector="topbarthemblock" object="topbartheme" type="background-color" onClick="theme_button'.$appid.'(this);" class="ui-forest-button ui-forest-accept">Цвет бара</div>';
-  echo '<div id="theme_fontcolor" selector="topbarthemblock" object="topbartheme" type="color" onClick="theme_button'.$appid.'(this);" class="ui-forest-button ui-forest-accept">Цвет текста</div>';
+  echo "<div>".$language_themecreate[$_SESSION['locale'].'_tc_tb_label'].":</div>";
+  echo '<div id="theme_background" selector="topbarthemblock" object="topbartheme" type="background-color" onClick="theme_button'.$appid.'(this);" class="ui-forest-button ui-forest-accept">'.$language_themecreate[$_SESSION['locale'].'_tc_tb_colorbtn'].'</div>';
+  echo '<div id="theme_fontcolor" selector="topbarthemblock" object="topbartheme" type="color" onClick="theme_button'.$appid.'(this);" class="ui-forest-button ui-forest-accept">'.$language_themecreate[$_SESSION['locale'].'_tc_tb_textcolorbtn'].'</div>';
   echo '</div>';
 
   echo '<div id="windowthemblock" class="theme_block">';
-  echo "<div>Окно приложений:</div>";
-  echo '<div id="theme_backgroundwindow" selector="windowthemblock" object="dragwindow" type="background-color" onClick="theme_button'.$appid.'(this);" class="ui-forest-button ui-forest-accept">Цвет окна</div>';
-  echo '<div id="theme_fontcolorwindow" selector="windowthemblock" object="dragwindow" type="color" onClick="theme_button'.$appid.'(this);" class="ui-forest-button ui-forest-accept">Цвет текста</div>';
+  echo "<div>".$language_themecreate[$_SESSION['locale'].'_tc_w_label'].":</div>";
+  echo '<div id="theme_backgroundwindow" selector="windowthemblock" object="dragwindow" type="background-color" onClick="theme_button'.$appid.'(this);" class="ui-forest-button ui-forest-accept">'.$language_themecreate[$_SESSION['locale'].'_tc_w_colorbtn'].'</div>';
+  echo '<div id="theme_fontcolorwindow" selector="windowthemblock" object="dragwindow" type="color" onClick="theme_button'.$appid.'(this);" class="ui-forest-button ui-forest-accept">'.$language_themecreate[$_SESSION['locale'].'_tc_w_textcolorbtn'].'</div>';
   echo '</div>';
 
   echo '<div id="menuthemblock" class="theme_block">';
-  echo "<div>Меню:</div>";
-  echo '<div id="theme_backgroundmenu" selector="menuthemblock" object="menutheme" type="background-color" onClick="theme_button'.$appid.'(this);" class="ui-forest-button ui-forest-accept">Цвет меню</div>';
-  echo '<div id="theme_fontcolormenu" selector="menuthemblock" object="menutheme" type="color" onClick="theme_button'.$appid.'(this);" class="ui-forest-button ui-forest-accept">Цвет текста</div>';
+  echo "<div>".$language_themecreate[$_SESSION['locale'].'_tc_m_label'].":</div>";
+  echo '<div id="theme_backgroundmenu" selector="menuthemblock" object="menutheme" type="background-color" onClick="theme_button'.$appid.'(this);" class="ui-forest-button ui-forest-accept">'.$language_themecreate[$_SESSION['locale'].'_tc_m_colorbtn'].'</div>';
+  echo '<div id="theme_fontcolormenu" selector="menuthemblock" object="menutheme" type="color" onClick="theme_button'.$appid.'(this);" class="ui-forest-button ui-forest-accept">'.$language_themecreate[$_SESSION['locale'].'_tc_m_textcolorbtn'].'</div>';
   echo '</div>';
 
   echo '<div id="wallthemblock" class="theme_block">';
-  echo "<div>Рабочий стол:</div>";
-  echo '<div id="theme_wall" selector="wallthemblock" object="backgroundtheme" type="background-color" onClick="theme_button'.$appid.'(this);" class="ui-forest-button ui-forest-accept">Цвет фона</div>';
-  echo '<div id="theme_link" selector="wallthemblock" object="linktheme" type="color" onClick="theme_button'.$appid.'(this);" class="ui-forest-button ui-forest-accept ui-forest-center">Цвет текста</div>';
+  echo "<div>".$language_themecreate[$_SESSION['locale'].'_tc_d_label'].":</div>";
+  echo '<div id="theme_wall" selector="wallthemblock" object="backgroundtheme" type="background-color" onClick="theme_button'.$appid.'(this);" class="ui-forest-button ui-forest-accept">'.$language_themecreate[$_SESSION['locale'].'_tc_d_colorbtn'].'</div>';
+  echo '<div id="theme_link" selector="wallthemblock" object="linktheme" type="color" onClick="theme_button'.$appid.'(this);" class="ui-forest-button ui-forest-accept ui-forest-center">'.$language_themecreate[$_SESSION['locale'].'_tc_d_textcolorbtn'].'</div>';
   echo '</div>';
-  echo '<div onClick="theme_save'.$appid.'(0);" class="ui-forest-button ui-forest-cancel">Сохранить</div>';
-  echo '<div onClick="theme_save'.$appid.'(1);" class="ui-forest-button ui-forest-cancel">Сохранить и применить</div>';
+  echo '<div onClick="theme_save'.$appid.'(0);" class="ui-forest-button ui-forest-cancel">'.$language_themecreate[$_SESSION['locale'].'_button_save'].'</div>';
+  echo '<div onClick="theme_save'.$appid.'(1);" class="ui-forest-button ui-forest-cancel">'.$language_themecreate[$_SESSION['locale'].'_tc_saveandbtn'].'</div>';
   ?>
 </div>
 

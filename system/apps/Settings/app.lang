@@ -116,6 +116,39 @@ ru_autorun_msg2 = Вы добавили в автозапуск
 en_autorun_msg1 = Now in the autorun manager is empty
 en_autorun_msg2 = You added to autorun
 
+[themecreator]
+ru_tc_label = Создание темы
+ru_tc_name_label  = Название темы
+ru_tc_tb_label = Верхний бар
+ru_tc_tb_colorbtn  = Цвет бара
+ru_tc_tb_textcolorbtn  = Цвет текста
+ru_tc_w_label = Окно приложений
+ru_tc_w_colorbtn  = Цвет окна
+ru_tc_w_textcolorbtn  = Цвет текста
+ru_tc_m_label = Меню
+ru_tc_m_colorbtn  = Цвет меню
+ru_tc_m_textcolorbtn  = Цвет текста
+ru_tc_d_label = Рабочий стол
+ru_tc_d_colorbtn  = Цвет фона
+ru_tc_d_textcolorbtn  = Цвет текста
+ru_tc_saveandbtn  = Сохранить и прмиенить
+
+en_tc_label = Theme Creator
+en_tc_name_label = Theme title
+en_tc_tb_label = Top bar
+en_tc_tb_colorbtn = Bar color
+en_tc_tb_textcolorbtn = Text color
+en_tc_w_label = Application Window
+en_tc_w_colorbtn = Window Color
+en_tc_w_textcolorbtn = Text color
+en_tc_m_label = Menu
+en_tc_m_colorbtn = Menu color
+en_tc_m_textcolorbtn = Text color
+en_tc_d_label = Desktop
+en_tc_d_colorbtn = Background color
+en_tc_d_textcolorbtn = Text color
+en_tc_saveandbtn = Save and Apply
+
 [etc]
 ru_restart  = Перезагрузить
 en_restart  = Restart
