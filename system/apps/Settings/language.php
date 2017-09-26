@@ -28,6 +28,7 @@ if(empty($current_lang)){
   $current_lang = 'en';
   $_SESSION['loacale']  = $current_lang;
 }
+
 ?>
 <div style="margin:15%; font-size:20px">
   <span>

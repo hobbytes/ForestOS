@@ -4,6 +4,12 @@
 /*---------load head---------*/
     function start()
     {
+      // # check lang
+      $_SESSION['locale'] = file_get_contents('system/users/'.$_SESSION["loginuser"].'/settings/language.foc');
+      if(empty($_SESSION['locale'])){
+        file_put_contents('system/users/'.$_SESSION["loginuser"].'/settings/language.foc','en');
+        $_SESSION['locale'] = 'en';
+      }
       global $hashfile,$mobile,$infob,$click,$top,$left,$maxwidth;
       $infob->ismobile();
       if($mobile=='true'){$click='click'; $top='20px';$left='0px'; $maxwidth='100%';}else{$click='dblclick'; $top='25%';$left='25%'; $maxwidth='90%';}
