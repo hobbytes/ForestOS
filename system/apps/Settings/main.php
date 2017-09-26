@@ -15,7 +15,7 @@ include '../../core/library/bd.php';
 include '../../core/library/etc/security.php';
 $security	=	new security;
 $security->appprepare();
-
+$language_settings  = parse_ini_file('app.lang');
 function newbutton($name_btn,	$label_btn){
 	global $folder,	$appid;
 	echo '<div id="'.$name_btn.'" class="ui-button ui-widget ui-corner-all" onClick="loadsettings'.$appid.'(this);" style="word-wrap:break-word; text-overflow:ellipsis; text-align:center; position:relative; display:block; float:left; margin:5px; color:#000; width:80px; height:80px; padding:5px; font-size:12px; cursor:pointer;">
