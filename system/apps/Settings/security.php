@@ -7,11 +7,12 @@ $folder = $_GET['destination'];
 $oldpassword  = $_GET['oldpassword'];
 $newpassword  =  $_GET['newpassword'];
 $checkpassword  =  $_GET['checkpassword'];
-
+session_start();
+$language_security  = parse_ini_file('app.lang');
 ?>
 <div id="<?echo $appname.$appid;?>" style="background-color:#f2f2f2; height:500px; max-height:95%; max-width:100%; width:800px; padding-top:10px; border-radius:0px 0px 5px 5px; overflow:auto;">
 <div style="width:100%; text-align:left; padding-bottom:10px; font-size:30px; border-bottom:#d8d8d8 solid 2px; text-overflow:ellipsis; overflow:hidden;">
-<span onClick="back<?echo $appid;?>();" class="ui-forest" style="background-color:#d8d8d8; color:#000; border-radius:30%; cursor:pointer; font-size:25px; margin-left:5px;"> &#9668 </span>Безопасность</div>
+<span onClick="back<?echo $appid;?>();" class="ui-forest" style="background-color:#d8d8d8; color:#000; border-radius:30%; cursor:pointer; font-size:25px; margin-left:5px;"> &#9668 </span><?echo $language_security[$_SESSION['locale'].'_settings_security']?></div>
 <?php
 /*Settings*/
 //Подключаем библиотеки
@@ -20,7 +21,6 @@ include '../../core/library/bd.php';
 include '../../core/library/gui.php';
 include '../../core/library/etc/security.php';
 include '../../core/library/etc.php';
-session_start();
 $security	=	new security;
 $security->appprepare();
 if($erase=='true'){
@@ -42,34 +42,34 @@ if(!empty($oldpassword) && !empty($newpassword) && !empty($checkpassword)){
   if($bdpass==$oldpassword){
     if($newpassword==$checkpassword){
       $settingsbd->updatebd("forestusers",password,$newpassword,login,$_SESSION["loginuser"]);
-      echo 'Пароль изменен!';
+      echo $language_security[$_SESSION['locale'].'_notchangepass'];
       file_put_contents('../../core/journal.mcj','');
     }else{
-      echo 'Новые пароли не совпадают!';
+      echo $language_security[$_SESSION['locale'].'_notnewerrorpass'];
     }
   }else{
-    echo 'Вы ввели неправильный старый пароль!';
+    echo $language_security[$_SESSION['locale'].'_notolderrorpass'];
   }
   unset($oldpassword,$newpassword,$checkpassword);
 }
 
-  echo '<div style="text-align:left; margin-top:10px; margin-left:10px;"><b style="font-size:20px;">Изменение пароля</b>';
-  echo "<div>Введите старый пароль:</div>";
-  $gui->inputslabel('Логин', 'password', ''.$appid.'oldpassword', ''.$adduserlogin.'','50', 'старый пароль');
-  echo "<div>Введите новый пароль:</div>";
-  $gui->inputslabel('Пароль', 'password', ''.$appid.'newpassword', ''.$adduserpassword.'','50','придумайте новый пароль');
-  echo "<div>Введите новый пароль еще раз:</div>";
-  $gui->inputslabel('Пароль', 'password', ''.$appid.'checkpassword', ''.$adduserpassword.'','50','введите еще раз новый пароль');
+  echo '<div style="text-align:left; margin-top:10px; margin-left:10px;"><b style="font-size:20px;">'.$language_security[$_SESSION['locale'].'_changepassword_label'].'</b>';
+  echo "<div>".$language_security[$_SESSION['locale'].'_inputoldpass'].":</div>";
+  $gui->inputslabel('', 'password', ''.$appid.'oldpassword', ''.$adduserlogin.'','50', $language_security[$_SESSION['locale'].'_inputoldpass']);
+  echo "<div>".$language_security[$_SESSION['locale'].'_inputnewpass'].":</div>";
+  $gui->inputslabel('', 'password', ''.$appid.'newpassword', ''.$adduserpassword.'','50',$language_security[$_SESSION['locale'].'_inputnewpass']);
+  echo "<div>".$language_security[$_SESSION['locale'].'_inputnewpass_2'].":</div>";
+  $gui->inputslabel('', 'password', ''.$appid.'checkpassword', ''.$adduserpassword.'','50',$language_security[$_SESSION['locale'].'_inputnewpass_2']);
 
-  echo '<div id="changepassword'.$appid.'" onClick="changepassword'.$appid.'();" class="ui-forest-button ui-forest-accept">Поменять пароль</div><hr>';
+  echo '<div id="changepassword'.$appid.'" onClick="changepassword'.$appid.'();" class="ui-forest-button ui-forest-accept">'.$language_security[$_SESSION['locale'].'_button_change'].'</div><hr>';
 
 
 
 $infob->readstat('../../core/journal.mcj');
 $text=$getstat;
-echo '<div style="text-align:left; margin-top:10px; margin-left:10px;"><b style="font-size:20px;">Журнал</b>';
+echo '<div style="text-align:left; margin-top:10px; margin-left:10px;"><b style="font-size:20px;">'.$language_security[$_SESSION['locale'].'_journal_label'].'</b>';
 echo '<div><textarea style="width:95%; max-width:95%;" rows="10" cols="80" >'.$text.'</textarea></div></div>';
-echo '<div onClick="eraselog'.$appid.'();" style="margin:10px;" class="ui-forest-button ui-forest-cancel">Отчистить журнал</div><hr>';
+echo '<div onClick="eraselog'.$appid.'();" style="margin:10px;" class="ui-forest-button ui-forest-cancel">'.$language_security[$_SESSION['locale'].'_button_journal'].'</div><hr>';
 unset($settingsbd);
 ?>
 </div>

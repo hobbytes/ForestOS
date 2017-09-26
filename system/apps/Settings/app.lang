@@ -57,8 +57,6 @@ en_notthemechange_1 = 'The color theme has been changed to '
 en_notthemechange_2 = 'Restart the system for the changes to take effect.'
 en_notthemeerror  = 'An error has occurred! Theme not installed'
 
-
-
 [language]
 ru_label_choose = Выберите язык
 ru_button_save = Сохранить
@@ -67,6 +65,28 @@ en_label_choose = Choose language
 en_button_save = Save
 en_save_lang  = 'The language of the system was changed. Restart the system for the changes to take effect'
 
+[security]
+ru_changepassword_label = Изменение пароля
+ru_inputoldpass = Введите старый пароль
+ru_inputnewpass = Введите новый пароль
+ru_inputnewpass_2 = Введите новый пароль еще раз
+ru_button_change  = Поменять пароль
+ru_journal_label  = Журнал
+ru_button_journal  = Отчистить журнал
+ru_notchangepass  = 'Пароль изменен!'
+ru_notnewerrorpass  = 'Новые пароли не совпадают!'
+ru_notolderrorpass  = 'Вы ввели неправильный старый пароль!'
+
+en_changepassword_label = Change Password
+en_inputoldpass = Enter old password
+en_inputnewpass = Enter a new password
+en_inputnewpass_2 = Enter the new password again
+en_button_change = Change Password
+en_journal_label = Log
+en_button_journal = Clear log
+en_notchangepass = 'Password changed!'
+en_notnewerrorpass = 'New passwords do not match!'
+en_notolderrorpass = 'You have entered the wrong old password!'
 
 [etc]
 ru_restart  = Перезагрузить
