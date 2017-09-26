@@ -35,7 +35,7 @@ $fo->format($getdata);
 
 echo '<div style="text-align:left; margin-top:10px; margin-left:10px;"><b style="font-size:20px;">Издание Forest OS</b><br>';
 echo '<img style="width:128px; height:128px;" src="system/core/design/images/forestosicon.png"/>';
-echo '<div><b>Forest OS</b> '.$osinfo['codename'].'<br>Версия '.$osinfo['version'].'<br><span style="font-size:13px; color:#313131;">сборка: <span style="text-transform:uppercase;">'.$osinfo['revision'].'</span></span></div></div><hr>';
+echo '<div><b>Forest OS</b> '.$osinfo['codename'].'<br>Версия '.$osinfo['version'].'<br><span style="font-size:13px; color:#313131;">сборка: <span style="text-transform:uppercase;">'.$osinfo['revision'].'</span><br>версия сборки: '.$osinfo['subversion'].'</span></div></div><hr>';
 
 echo '<div style="text-align:left; margin-top:10px; margin-left:10px;"><b style="font-size:20px;">Пользователь</b>';
 echo '<div style="padding-right:10px;">Имя учетной записи: '.$_SESSION["loginuser"].'<br> FUID: '.$fuid.'</div></div><hr>';

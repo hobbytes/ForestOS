@@ -16,18 +16,28 @@ include '../../core/library/etc/security.php';
 $security	=	new security;
 $security->appprepare();
 
+function newbutton($name_btn,	$label_btn){
+	global $folder,	$appid;
+	echo '<div id="'.$name_btn.'" class="ui-button ui-widget ui-corner-all" onClick="loadsettings'.$appid.'(this);" style="word-wrap:break-word; text-overflow:ellipsis; text-align:center; position:relative; display:block; float:left; margin:5px; color:#000; width:80px; height:80px; padding:5px; font-size:12px; cursor:pointer;">
+	<div style="-webkit-user-select:none; margin:auto; user-select:none; background-image: url('.$folder.'/icons/'.$name_btn.'.png); background-size:cover; height:50px; width:50px;">
+	</div>
+	<div>'.$label_btn.'</div>
+	</div>';
+}
+
 echo '<div style="width:100%; height:auto; padding:10px; float:left; border-bottom:1px solid #d6d6d6;">';
-echo('<div id="about" class="ui-button ui-widget ui-corner-all" onClick="loadsettings'.$appid.'(this);" style="word-wrap:break-word; text-overflow:ellipsis; text-align:center; position:relative; display:block; float:left; margin:5px; color:#000; width:80px; height:80px; padding:5px; font-size:12px; height:auto; background-color:#d8d8d8; cursor:pointer;"><div style="-webkit-user-select:none; margin:auto; user-select:none; background-image: url('.$folder.'/icons/about.png); background-size:cover; height:50px; width:50px;"></div><div>О системе</div></div>');
-echo('<div id="screen" class="ui-button ui-widget ui-corner-all" onClick="loadsettings'.$appid.'(this);" style="word-wrap:break-word; text-overflow:ellipsis; text-align:center; position:relative; display:block; float:left; margin:5px; color:#000; width:80px; height:80px; padding:5px; font-size:12px; height:auto; background-color:#d8d8d8; cursor:pointer;"><div style="-webkit-user-select:none; margin:auto; user-select:none; background-image: url('.$folder.'/icons/screen.png); background-size:cover; height:50px; width:50px;"></div><div>Персонализация</div></div>');
+newbutton('about',	'О системе');
+newbutton('screen',	'Персонализация');
+newbutton('language',	'Язык и регион');
 echo '</div>';
 
 echo '<div style="width:100%; padding:10px; height:auto; background-color:#e5e5e5; border-bottom:1px solid #d6d6d6; float:left;">';
-echo('<div id="security" class="ui-button ui-widget ui-corner-all" onClick="loadsettings'.$appid.'(this);" style="word-wrap:break-word; text-overflow:ellipsis; text-align:center; position:relative; display:block; float:left; margin:5px; color:#000; width:80px; height:80px; padding:5px; font-size:12px; height:auto; background-color:#d8d8d8; cursor:pointer;"><div style="-webkit-user-select:none; margin:auto; user-select:none; background-image: url('.$folder.'/icons/security.png); background-size:cover; height:50px; width:50px;"></div><div>Безопасность</div></div>');
-echo('<div id="users" class="ui-button ui-widget ui-corner-all" onClick="loadsettings'.$appid.'(this);" style="word-wrap:break-word; text-overflow:ellipsis; text-align:center; position:relative; display:block; float:left; margin:5px; color:#000; width:80px; height:80px; padding:5px; font-size:12px; height:auto; background-color:#d8d8d8; cursor:pointer;"><div style="-webkit-user-select:none; margin:auto; user-select:none; background-image: url('.$folder.'/icons/users.png); background-size:cover; height:50px; width:50px;"></div><div>Учетные записи</div></div>');
+newbutton('security',	'Безопасность');
+newbutton('users',	'Учетные записи');
 echo '</div>';
 
 echo '<div style="width:100%; height:auto; padding:10px; float:left; border-bottom:1px solid #d6d6d6;">';
-echo('<div id="autorun" class="ui-button ui-widget ui-corner-all" onClick="loadsettings'.$appid.'(this);" style="word-wrap:break-word; text-overflow:ellipsis; text-align:center; position:relative; display:block; float:left; margin:5px; color:#000; width:80px; height:80px; padding:5px; font-size:12px; height:auto; background-color:#d8d8d8; cursor:pointer;"><div style="-webkit-user-select:none; margin:auto; user-select:none; background-image: url('.$folder.'/icons/autorun.png); background-size:cover; height:50px; width:50px;"></div><div>Менеджер Автозапуска</div></div>');
+newbutton('autorun',	'Менеджер Автозапуска');
 echo '</div>';
 ?>
 </div>
