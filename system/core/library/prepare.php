@@ -2,7 +2,7 @@
   class prepare{
 
 /*---------load head---------*/
-    function start()
+    public function start()
     {
       // # check lang
       $_SESSION['locale'] = file_get_contents('system/users/'.$_SESSION["loginuser"].'/settings/language.foc');
