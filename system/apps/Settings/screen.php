@@ -5,10 +5,12 @@ $wall=$_GET['wall'];
 $theme=$_GET['theme'];
 $appname=$_GET['appname'];
 $folder=$_GET['destination'];
+session_start();
+$language_screen  = parse_ini_file('app.lang');
 ?>
 <div id="<?echo $appname.$appid;?>" style="background-color:#f2f2f2; height:500px; max-height:95%; max-width:100%; width:800px;  padding-top:10px; border-radius:0px 0px 5px 5px; overflow:auto;">
 <div style="width:100%; text-align:left; padding-bottom:10px; font-size:30px; text-overflow:ellipsis; overflow:hidden;">
-<span onClick="back<?echo $appid;?>();" class="ui-forest" style="background-color:#d8d8d8; color:#000; border-radius:30%; cursor:pointer; font-size:25px; margin-left:5px;"> &#9668 </span>Персонализация</div>
+<span onClick="back<?echo $appid;?>();" class="ui-forest" style="background-color:#d8d8d8; color:#000; border-radius:30%; cursor:pointer; font-size:25px; margin-left:5px;"> &#9668 </span><?echo $language_screen[$_SESSION['locale'].'_settings_screen']?></div>
 <?php
 /*Settings*/
 //Подключаем библиотеки
@@ -18,12 +20,11 @@ include '../../core/library/gui.php';
 include '../../core/library/etc/security.php';
 $security	=	new security;
 $newgui = new gui;
-session_start();
 $security->appprepare();
 if($wall!=''){
   if($wall=='none'){
     if(unlink('../../../system/users/'.$_SESSION["loginuser"].'/settings/etc/wall.jpg')){
-      $newgui->newnotification($appname,"Персонализация","Фоновое изображение удалено");
+      $newgui->newnotification($appname,$language_screen[$_SESSION['locale'].'_settings_screen'],$language_screen[$_SESSION['locale'].'_notwalldelete']);
     }
   }else{
     if(copy('../../../system/core/design/walls/'.$wall.'','../../../system/users/'.$_SESSION["loginuser"].'/settings/etc/wall.jpg')){?>
@@ -37,22 +38,22 @@ if($wall!=''){
     wallchange();
       </script>
     <?
-    $newgui->newnotification($appname,"Персонализация","Фоновое изображение рабочего стола изменено");
+    $newgui->newnotification($appname,$language_screen[$_SESSION['locale'].'_settings_screen'],$language_screen[$_SESSION['locale'].'_notwallchange']);
   }
 }
 }
 if ($theme!=''){
   session_start();
   if(copy('../../../system/core/design/themes/'.$theme.'','../../../system/users/'.$_SESSION["loginuser"].'/settings/etc/theme.fth'))  {
-  $newgui->newnotification($appname,"Персонализация","Цветовая тема изменена на <b>$theme</b>. Перезагрузите систему, чтобы изменения вступили в силу<br><span id='restart' style='margin-left: 25%;' class='ui-button ui-widget ui-corner-all'>Перезагрузить</span>");
-}else{$newgui->newnotification($appname,"Персонализация","Произошла ошибка! Тема не установлена");}
+  $newgui->newnotification($appname,$language_screen[$_SESSION['locale'].'_settings_screen'],$language_screen[$_SESSION['locale'].'_notthemechange_1']."<b>".$theme."</b>. ".$language_screen[$_SESSION['locale'].'_notthemechange_2']."<br><span id='restart' style='margin-left: 25%;' class='ui-button ui-widget ui-corner-all'>".$language_screen[$_SESSION['locale'].'_restart']."</span>");
+}else{$newgui->newnotification($appname,$language_screen[$_SESSION['locale'].'_settings_screen'],$language_screen[$_SESSION['locale'].'_notthemeerror']);}
 }
     ?>
 
 <div id="tabssettings<?echo $appid;?>">
   <ul>
-    <li><a href="#themesettingtab<?echo $appid;?>">Цветовые темы</a></li>
-    <li><a href="#wallsettingtab<?echo $appid;?>">Фоновые изображения</a></li>
+    <li><a href="#themesettingtab<?echo $appid;?>"><?echo $language_screen[$_SESSION['locale'].'_themetab']?></a></li>
+    <li><a href="#wallsettingtab<?echo $appid;?>"><?echo $language_screen[$_SESSION['locale'].'_walltab']?></a></li>
   </ul>
 
 
@@ -71,7 +72,7 @@ if ($theme!=''){
         $themeloadset=parse_ini_file('../../core/design/themes/'.$name2);
         if($current_theme == $themeloadset['Name']){
           $select_style  = 'border: 2px solid '.$themeloadset['draggablebackcolor'].';  box-shadow:0 0 5px '.$themeloadset['topbarbackcolor'].';';
-          $select_text  = '<span style="font-size:10px;">(текущая)</span>';
+          $select_text  = '<span style="font-size:10px;">('.$language_screen[$_SESSION['locale'].'_current_label'].')</span>';
         }
         echo('<div id="'.$name2.'" class="ui-button ui-widget ui-corner-all" onClick="loadtheme'.$appid.'(this);" style="-webkit-user-select:none; cursor:pointer; '.$select_style.' user-select:none; padding:5px; background-color:'.$themeloadset['backgroundcolor'].'; margin:5px; color:'.$themeloadset['backgroundfontcolor'].'; width:80px; height:80px; word-wrap:break-word; text-overflow:ellipsis; overflow:hidden; text-transform:uppercase; "><div style="height:15%; background-color:'.$themeloadset['topbarbackcolor'].';"></div><div style="height:15%; background-color:'.$themeloadset['draggablebackcolor'].'; margin-bottom: 5px;"></div>'.$themeloadset['Name'].'<br>'.$select_text.'</div>');
         $select_style  = '';
@@ -88,7 +89,7 @@ if ($theme!=''){
   $dir='../../core/design/walls/';
   $d=dir($dir);
   chdir($d->path);
-  echo('<div id="clearwall" class="ui-button ui-widget ui-corner-all" onClick="clearwall'.$appid.'();" style="-webkit-user-select:none; border:2px dashed #4a4a4a; background-color:#e4e4e4; cursor:pointer; user-select:none; padding:5px; margin:5px; color:#000; width:80px; height:80px; word-wrap:break-word; text-overflow:ellipsis; overflow:hidden; ">Убрать</div>');
+  echo('<div id="clearwall" class="ui-button ui-widget ui-corner-all" onClick="clearwall'.$appid.'();" style="-webkit-user-select:none; border:2px dashed #4a4a4a; background-color:#e4e4e4; cursor:pointer; user-select:none; padding:5px; margin:5px; color:#000; width:80px; height:80px; word-wrap:break-word; text-overflow:ellipsis; overflow:hidden; ">'.$language_screen[$_SESSION['locale'].'_clear_label'].'</div>');
   while (false !== ($entry=$d->read())) {
   	$path=$d->path;
   	$name=$entry;

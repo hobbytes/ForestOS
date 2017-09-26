@@ -15,6 +15,50 @@ en_settings_security = Security
 en_settings_users = Users
 en_settings_autorun = Autorun manager
 
+[about]
+ru_version_label  = Версия
+ru_revision_label = сборка
+ru_subversion_label = версия сборка
+ru_user_label = Пользователь
+ru_username_label = Имя учетной записи
+ru_capacity_label = Диск
+ru_capacityall_label  = Всего
+ru_capacityfree_label  = Остаток
+ru_capacityused_label  = Занято
+
+en_version_label  = Version
+en_revision_label = build name
+en_subversion_label = build version
+en_user_label = User
+en_username_label = User name
+en_capacity_label = Capacity
+en_capacityall_label  = All
+en_capacityfree_label  = Free
+en_capacityused_label  = Used
+
+[screen]
+ru_themetab = Цветовые темы
+ru_walltab = Фоновые изображения
+ru_current_label  = Текущая
+ru_clear_label  = Убрать
+ru_notwalldelete  = 'Фоновое изображение удалено'
+ru_notwallchange  = 'Фоновое изображение рабочего стола изменено'
+ru_notthemechange_1 = 'Цветовая тема изменена на '
+ru_notthemechange_2 = 'Перезагрузите систему, чтобы изменения вступили в силу'
+ru_notthemeerror  = 'Произошла ошибка! Тема не установлена'
+
+en_themetab = Color themes
+en_walltab = Background images
+en_current_label  = Current
+en_clear_label  = Clear
+en_notwalldelete  = 'Background image deleted'
+en_notwallchange  = 'Desktop background image changed'
+en_notthemechange_1 = 'The color theme has been changed to '
+en_notthemechange_2 = 'Restart the system for the changes to take effect.'
+en_notthemeerror  = 'An error has occurred! Theme not installed'
+
+
+
 [language]
 ru_label_choose = Выберите язык
 ru_button_save = Сохранить
