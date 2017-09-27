@@ -3,6 +3,11 @@ include '../../core/library/etc/security.php';
 $security	=	new security;
 session_start();
 $security->appprepare();
+
+//Загружаем файл локализации
+$upload_lang  = parse_ini_file('etc.lang');
+$cl = $_SESSION['locale'];
+
 $where=$_GET['where'];
 $appname=$_GET['appname'];
 $appid=$_GET['appid'];
@@ -24,16 +29,16 @@ if( isset( $_GET['uploadfiles'] ) ){
         }
     }
 
-    $data = $error ? array('error' => 'Ошибка загрузки файлов.') : array('files' => $files );
+    $data = $error ? array('error' => 'Error') : array('files' => $files );
 
     echo json_encode( $data );
 }
 ?>
 <div style="text-align:center;">
-  Загрузка файла<br>
+  <?echo $upload_lang[$cl.'_upload']?><br><br>
 <input type="file" multiple="multiple" accept="*">
-<div class="submit button ui-forest-button ui-forest-accept ui-forest-center">Загрузить</div>
-<div onClick="hideload<?echo $appid?>();" class="ui-forest-button ui-forest-cancel ui-forest-center">Отмена</div>
+<div class="submit button ui-forest-button ui-forest-accept ui-forest-center"><?echo $upload_lang[$cl.'_btn_load']?></div>
+<div onClick="hideload<?echo $appid?>();" class="ui-forest-button ui-forest-cancel ui-forest-center"><?echo $upload_lang[$cl.'_btn_cancel']?></div>
 <div class="ajax-respond"></div></div>
 <script>
 // Переменная куда будут располагаться данные файлов

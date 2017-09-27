@@ -1,0 +1,53 @@
+[Explorer]
+ru_menu_file_label = Файл
+ru_menu_open_label = Открыть
+ru_menu_md_label = Создать папку
+ru_menu_ml_label = Создать ярлык
+ru_menu_trash_label = Отправить в корзинку
+ru_menu_delete_label = Удалить
+ru_menu_loadfile_label = Загрузить файл
+ru_menu_property_label = Свойства
+
+en_menu_file_label = File
+en_menu_open_label = Open
+en_menu_md_label = Create Folder
+en_menu_ml_label = Create Shortcut
+en_menu_trash_label = Send to trash
+en_menu_delete_label = Delete
+en_menu_loadfile_label = Upload file
+en_menu_property_label = Properties
+
+[makedir]
+ru_mdir_label = Введите название папки
+ru_mdir_okbtn = Ок
+ru_mdir_cancelbtn = Отмена
+ru_msg_1  = Папка
+ru_msg_2  = ' создана!'
+ru_msg_3  = ' не создана!'
+ru_msg_4  = 'Такая папка уже существует!'
+
+en_mdir_label = Enter folder name
+en_mdir_okbtn = Ok
+en_mdir_cancelbtn = Cancel
+en_msg_1 = Folder
+en_msg_2 = ' created!'
+en_msg_3 = ' not created!'
+en_msg_4 = 'This folder already exists!'
+
+[trash]
+ru_trash_label  = Очистить корзину
+
+en_trash_label  = Empty trash
+
+[folder]
+ru_size = размер
+ru_date = Дата
+ru_free_label = Свободно
+ru_free_label_2 = из
+ru_back_label = назад
+
+en_size = size
+en_date = Date
+en_free_label = Free
+en_free_label_2 = of
+en_back_label = back

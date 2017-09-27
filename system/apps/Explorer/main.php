@@ -21,10 +21,12 @@ $click	=	$_GET['mobile'];
 $folder	=	$_GET['destination'];
 $erasestatus	=	$_GET['erasestatus'];
 $dialogexplorer = new gui;
-
 //Запускаем сессию
 session_start();
 $security->appprepare();
+//Загружаем файл локализации
+$explorer_lang  = parse_ini_file('app.lang');
+$cl = $_SESSION['locale'];
 if($erasestatus){
 $faction->deleteDir($dir);
 mkdir($dir);
@@ -34,12 +36,12 @@ if (isset($_GET['makedir'])){
 	if(!is_dir($dir.'/'.$_GET['makedir']))
 	{
 		if(mkdir($dir.'/'.$_GET['makedir'],0755)){
-			echo "Папка ".$_GET['makedir']." создана!";
+			echo $explorer_lang[$cl.'_msg_1']." ".$_GET['makedir'].$explorer_lang[$cl.'_msg_2'];
 		}else{
-			echo "Папка ".$_GET['makedir']." не создана!";
+			echo $explorer_lang[$cl.'_msg_1']." ".$_GET['makedir'].$explorer_lang[$cl.'_msg_3'];
 		}
 	}else{
-		echo 'Такая папка уже существует!';
+		echo $explorer_lang[$cl.'_msg_4'];
 	}
 }
 //обрабатываем кнопки удаления и перемещения в корзину
@@ -111,33 +113,33 @@ $pathmain = str_replace($_SERVER['DOCUMENT_ROOT'],'',$pathmain);
 ?>
 <div >
 <div style="cursor:default; float:left; padding:5px 10px;" onmouseover="document.getElementById('filemenu<?echo $appid;?>').style.display='block';" onmouseout="document.getElementById('filemenu<?echo $appid;?>').style.display='none';">
-	<b>Файл</b>
+	<b><?echo $explorer_lang[$cl.'_menu_file_label']?></b>
 	<div id="filemenu<?echo $appid;?>" style="display:none; cursor:default; position:absolute; z-index:9000; background:#fff; width:auto;">
 <ul id="mmenu<?echo $appid;?>" >
-	<li><div <?echo 'id="'.$dir.'/" class="loadthis" onClick="load'.$appid.'(this);" ';?> >Открыть</div></li>
-	<li><div <?echo 'onClick="mkdirshow'.$appid.'();" ';?> >Создать папку</div></li>
-	<li><div <?echo 'id="'.$dir.'/" class="mklink" onClick="link'.$appid.'(this);" ';?> >Создать ярлык</div></li>
-	<li><div <?echo 'class="delete" onClick="deletes'.$appid.'(this);" ';?>>Отправить в корзину</div></li>
-	<li><div <?echo 'class="deleteforever" onClick="deleteforever'.$appid.'(this);" ';?>>Удалить</div></li>
-	<li><div <? echo 'id="'.$dir.'/" onClick="loadshow'.$appid.'(this);"';?>>Загрузить файл</div></li>
-	<li><div <? echo 'id="'.$dir.'/" class="loadthis" onClick="getproperty'.$appid.'(this);"';?>>Свойства</div></li>
+	<li><div <?echo 'id="'.$dir.'/" class="loadthis" onClick="load'.$appid.'(this);" ';?> ><?echo $explorer_lang[$cl.'_menu_open_label']?></div></li>
+	<li><div <?echo 'onClick="mkdirshow'.$appid.'();" ';?> ><?echo $explorer_lang[$cl.'_menu_md_label']?></div></li>
+	<li><div <?echo 'id="'.$dir.'/" class="mklink" onClick="link'.$appid.'(this);" ';?> ><?echo $explorer_lang[$cl.'_menu_ml_label']?></div></li>
+	<li><div <?echo 'class="delete" onClick="deletes'.$appid.'(this);" ';?>><?echo $explorer_lang[$cl.'_menu_trash_label']?></div></li>
+	<li><div <?echo 'class="deleteforever" onClick="deleteforever'.$appid.'(this);" ';?>><?echo $explorer_lang[$cl.'_menu_delete_label']?></div></li>
+	<li><div <? echo 'id="'.$dir.'/" onClick="loadshow'.$appid.'(this);"';?>><?echo $explorer_lang[$cl.'_menu_loadfile_label']?></div></li>
+	<li><div <? echo 'id="'.$dir.'/" class="loadthis" onClick="getproperty'.$appid.'(this);"';?>><?echo $explorer_lang[$cl.'_menu_property_label']?></div></li>
 </ul>
 </div>
 </div>
 <div id="erasetrash<?echo $appid;?>" onClick="erasetrash<?echo $appid;?>();" class="ui-forest-button ui-forest-cancel" style="margin:3px auto; padding:5px 10px; float:left; display:none;">
-	<b>Очистить корзину</b>
+	<b><?echo $explorer_lang[$cl.'_trash_label']?></b>
 </div>
 </div>
 <div id="mkdirdiv<?echo $appid;?>" style="width:43%; display:none; z-index:10; height:120px; padding:10px; background-color:#eaeaea; border: 1px solid #282828; position:absolute; margin-top:25%; text-align:center; overflow:hidden; left:25%;">
 <label for="mkdirinput<?echo $appid;?>">
-	Введите название
+	<?echo $explorer_lang[$cl.'_mdir_label']?>
 	<input id="mkdirvalue<?echo $appid;?>" style="font-size:20px; margin-bottom:10px;" name="mkdirinput<?echo $appid;?>" type="text" value="">
 </label>
 <span onclick="document.getElementById('mkdirdiv<?echo $appid;?>').style.display='none';" style="width:70px;" class="ui-button ui-widget ui-corner-all">
-	Отмена
+	<?echo $explorer_lang[$cl.'_mdir_cancelbtn']?>
 </span>
 <span style="width:70px;" onClick="mkdirbtn<?echo $appid;?>();" class="ui-button ui-widget ui-corner-all">
-	ОК
+	<?echo $explorer_lang[$cl.'_mdir_okbtn']?>
 </span>
 </div>
 <?
@@ -146,7 +148,7 @@ while (false !== ($entry=$d->read())) {
 	$path	=	$d->path;
 	$name	=	$entry;
 	if ($entry	==	'..'){
-		$name	=	'&#9668назад';
+		$name	=	'&#9668 '.$explorer_lang[$cl.'_back_label'];
 		$extension='';
 		$color	=	'#80abc6';
 		$type	=	$folder.'/assets/folderico.png';
@@ -162,12 +164,12 @@ while (false !== ($entry=$d->read())) {
 			if (empty($size)){
 				$format	= '0 Bytes';
 			}
-			$format = '<br> Размер: '.$format;
+			$format = '<br> '.$explorer_lang[$cl.'_size'].': '.$format;
 		} catch (Exception $e) {
 			echo $e->getMessage($e);
 		}
 
-		$datecreate = 'Дата: '.date('d.m.y H:i:s', filectime(realpath($entry))).$format;
+		$datecreate = $explorer_lang[$cl.'_date'].': '.date('d.m.y H:i:s', filectime(realpath($entry))).$format;
 	}
 	if(eregi($_SESSION["loginuser"].'/trash',$pathmain)){
 		?>
@@ -199,7 +201,7 @@ while (false !== ($entry=$d->read())) {
 			}
 		}
 		$fo->format(filesize(realpath($entry)));
-		$datecreate = 'Дата: '.date('d.m.y H:i:s', filectime(realpath($entry))).'<br> Размер: '.$format;
+		$datecreate = $explorer_lang[$cl.'_date'].': '.date('d.m.y H:i:s', filectime(realpath($entry))).'<br> '.$explorer_lang[$cl.'_size'].': '.$format;
 	}
 
 	$wardir = $_SERVER['DOCUMENT_ROOT'];
@@ -230,7 +232,7 @@ $getdata=$getdata*1000000-$size;
 $fo->format($getdata2);
 $format2=$format;
 $fo->format($getdata);
-echo 'Свободно: '.$format .' из '.$format2 ;
+echo $explorer_lang[$cl.'_free_label'].': '.$format .' '.$explorer_lang[$cl.'_free_label_2'].' '.$format2 ;
 ?>
 </div>
 </div>
