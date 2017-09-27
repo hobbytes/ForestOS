@@ -7,6 +7,8 @@ ru_menu_trash_label = Отправить в корзинку
 ru_menu_delete_label = Удалить
 ru_menu_loadfile_label = Загрузить файл
 ru_menu_property_label = Свойства
+ru_error_open = "Не могу открыть файл с расширением <b style='text-transform:uppercase;'>"
+ru_error_label  = "Ошибка чтения файла"
 
 en_menu_file_label = File
 en_menu_open_label = Open
@@ -16,6 +18,8 @@ en_menu_trash_label = Send to trash
 en_menu_delete_label = Delete
 en_menu_loadfile_label = Upload file
 en_menu_property_label = Properties
+en_error_open = "Can not open file with extension <b style='text-transform:uppercase;'>"
+en_error_label  = "Error reading file"
 
 [makedir]
 ru_mdir_label = Введите название папки

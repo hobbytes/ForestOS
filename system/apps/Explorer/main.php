@@ -58,20 +58,22 @@ if($deleteforever!=''){
 //Логика
 if($link!=''){
 	if($linkname=='main.php'){
-		$destination=$link;
+		$mainfile	=	str_replace('.php','',$linkname);
+		$destination=str_replace($linkname,'',$link);
 		$link='';
 		$param='';
 		$newname=stristr($destination, 'apps/');
 		$newname=str_replace(array('apps/','/main.php'),'',$newname);
 		$puplicname=$newname;
 	}else{
+		$mainfile	=	'main';
 		$param='dir';
 		$destination="system/apps/Explorer/";
 		$puplicname=$linkname;
 		$newname='Explorer';
 	}
 	$file = '../../users/'.$_SESSION["loginuser"].'/desktop/'.$puplicname.'_'.uniqid().'.link';
-	$faction->makelink($file,$destination,'main',$param,$link,$newname,$puplicname,$ico);
+	$faction->makelink($file,$destination,$mainfile,$param,$link,$newname,$puplicname,$ico);
 }
 
 if ($dir==''){
@@ -99,7 +101,7 @@ if(!is_dir($dir)){
 			<script>makeprocess2('<?echo $dest?>','<?echo $param;?>','<?echo $keys;?>');</script>
 		</div>
 		<?}else{
-			$dialogexplorer->dialog("Не могу открыть файл с расширением <b style='text-transform:uppercase;'>$ext</b>","Ошибка запуска","bounce");
+			$dialogexplorer->dialog($explorer_lang[$cl.'_error_open']."*.$ext</b>",$explorer_lang[$cl.'_error_label'],"bounce");
 		}
 	}
 $d=dir($dir);
