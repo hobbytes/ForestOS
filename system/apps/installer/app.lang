@@ -1,0 +1,18 @@
+[installer]
+ru_installer_label  = Установка приложения
+ru_installer_button = Установить
+ru_installer_msg_upd_1  = обновлено
+ru_installer_msg_upd_2  = Обновление
+ru_installer_msg_1  = установлено
+ru_installer_msg_2  = Установка
+ru_installer_msg_label  = Приложение
+ru_installer_msg_label_2  = 'не установлено!'
+
+en_installer_label  = Installing the application
+en_installer_button = Install
+en_installer_msg_upd_1 = updated
+en_installer_msg_upd_2 = Update
+en_installer_msg_1 = installed
+en_installer_msg_2 = Installation
+en_installer_msg_label = Application
+en_installer_msg_label_2 = 'not installed!'
