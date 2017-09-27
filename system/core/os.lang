@@ -8,3 +8,27 @@ en_explorer_menu  = Explorer
 en_settings_menu  = Settings
 en_store_menu  = Store
 en_about_menu  = About
+
+[daysofweek]
+ru_monday = Понедельник
+ru_tuesday = Вторник
+ru_wednesday = Среда
+ru_thursday = Четверг
+ru_friday = Пятница
+ru_saturday = Суббота
+ru_sunday = Воскресенье
+
+en_monday = Monday
+en_tuesday = Tuesday
+en_wednesday = Wednesday
+en_thursday = Thursday
+en_friday = Friday
+en_saturday = Saturday
+en_sunday = Sunday
+
+[hibernation]
+ru_hibernation_name = Гибернация
+ru_hibernation_notification = 'Систем успешно загрузилась после режима гибернации. <br>Дата гибернации:'
+
+en_hibernation_name = Hibernation
+en_hibernation_notification = 'The system successfully booted after the hibernation mode.<br> Hibernation Date:'

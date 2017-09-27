@@ -18,7 +18,7 @@ en_settings_autorun = Autorun manager
 [about]
 ru_version_label  = Версия
 ru_revision_label = сборка
-ru_subversion_label = версия сборка
+ru_subversion_label = версия сборки
 ru_user_label = Пользователь
 ru_username_label = Имя учетной записи
 ru_capacity_label = Диск

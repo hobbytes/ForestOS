@@ -16,6 +16,9 @@ $security	=	new security;
 //Запускаем сессию
 session_start();
 $security->appprepare();
+//Загружаем файл локализации
+$apphouse_lang  = parse_ini_file('app.lang');
+$cl = $_SESSION['locale'];
 //Логика
 if($appdownload!=''){
   if($type=="app_h"){$_SESSION['appversion']=$_GET['v'];?><script>makeprocess2('system/apps/installer/main.php','<?echo $appdownload; ?>','appdownload');</script><?}else{$link='walls/'.$appdownload; $l='.jpg';}
@@ -42,10 +45,10 @@ function wallchange(){
 wallchange();
   </script>
   <?
-echo "Изображение для рабочего стола успешно загружено!";
+echo $apphouse_lang[$cl.'_wall_msg'];
 }
 
-}else{echo "Ошибка!";}
+}else{echo $apphouse_lang[$cl.'_wall_error'];}
       }
   unlink('./temp/'.$appdownload.$temphash.$l);
 }
@@ -63,15 +66,15 @@ $fileu=file_get_contents($urlu);
 $arrayu=json_decode($fileu,TRUE);
 
 ?>
-<div id="tabs<?echo $appid;?>">
+<div id="tabs<?echo $appid?>">
   <ul>
-    <li><a href="#apptab<?echo $appid;?>">Приложения</a></li>
-    <li><a href="#walltab<?echo $appid;?>">Фоновые изображения</a></li>
-    <li><a href="#updatetab<?echo $appid;?>">Обновления</a></li>
+    <li><a href="#apptab<?echo $appid?>"><?echo $apphouse_lang[$cl.'_tab_apps']?></a></li>
+    <li><a href="#walltab<?echo $appid?>"><?echo $apphouse_lang[$cl.'_tab_walls']?></a></li>
+    <li><a href="#updatetab<?echo $appid?>"><?echo $apphouse_lang[$cl.'_tab_updates']?></a></li>
   </ul>
 
 
-  <div id="apptab<?echo $appid;?>">
+  <div id="apptab<?echo $appid?>">
 <?
 $appcounter=0;
 $ini_array = parse_ini_file('../../core/appinstall.foc', true);
@@ -81,26 +84,30 @@ foreach ($array as $key)
 $appcounter=$appcounter+1;
 $fo->format($key['size']*1024);
 if (array_key_exists($key['file'], $ini_array))
-{$btncolor='777777';$btntext='Установлено';$btnaction='';}else{$btncolor='54c45c';$btntext='Установить';$btnaction='onClick="downloadapp(this,'.$key['version'].');"';}
-$name=str_replace('_',' ',$key['file']);
+{$btncolor='777777';$btntext=$apphouse_lang[$cl.'_card_button_2'];$btnaction='';}else{$btncolor='54c45c';$btntext=$apphouse_lang[$cl.'_card_button_1'];$btnaction='onClick="downloadapp(this,'.$key['version'].');"';}
+if($cl  ==  'en' || $cl != 'ru'){
+  $name=str_replace('_',' ',$key['file']);
+}else{
+  $name = $key['name'];
+}
 echo '
 <span class="ui-button ui-widget ui-corner-all" style="height:auto; width:200px; position:relative; text-align:center;  margin:5px;">
 <span onClick="fullhouse'.$appid.'('.$appcounter.');" >
 <div style="background-image: url(http://forest.hobbytes.com/media/os/apps/'.$key['file'].'/app.png); background-size:cover; margin:auto; height:64px; width:64px;">
 </div>
 <div style="text-align:center;">'.$name.'<br>
-<span style="font-size:10px;">версия: '.$key['version'].'<br>размер: '.$format.'</span>
+<span style="font-size:10px;">'.$apphouse_lang[$cl.'_card_version'].': '.$key['version'].'<br>'.$apphouse_lang[$cl.'_card_size'].': '.$format.'</span>
 </div>
 </span><br>
 <div id="'.$key['file'].'" class="app_h" '.$btnaction.' style="background-color:#'.$btncolor.'; color:#fff; font-size:13px; padding:5px;">'.$btntext.'</div></span>
 <div class="apphouseinfohide" id="'.$appid.'apphouseinfo'.$appcounter.'">
 <div style="background-image: url(http://forest.hobbytes.com/media/os/apps/'.$key['file'].'/app.png); background-size:cover; margin-bottom:10px; height:80px; width:80px;"></div>
-<span style="font-size:15px; font-weight:900; color:#363636; text-transform: uppercase;" >'.$key['name'].'</span><br>
-<span style="font-size:13px; color:#464646;">'.$key['namelat'].' by '.$key['designer'].', version: '.$key['version'].'</span>
+<span style="font-size:15px; font-weight:900; color:#363636; text-transform: uppercase;" >'.$name.'</span><br>
+<span style="font-size:13px; color:#464646;">'.$name.' by '.$key['designer'].', version: '.$key['version'].'</span>
 <br><br>
-<span style="font-size:13px; color:#464646; font-weight:600;">Описание</span><br><span style="font-size:13px; color:#464646;">'.$key['description'].'</span>
+<span style="font-size:13px; color:#464646; font-weight:600;">'.$apphouse_lang[$cl.'_card_description'].'</span><br><span style="font-size:13px; color:#464646;">'.$key['description'].'</span>
 </div>';
-}}else{echo 'Приложения не найдены!';}?>
+}}else{echo $apphouse_lang[$cl.'_card_error'];}?>
 </div>
 
 <div id="walltab<?echo $appid;?>">
@@ -109,8 +116,8 @@ echo '
   foreach ($arrayw as $key)
   {
   $name=$key['file'];
-  echo '<span class="ui-button ui-widget ui-corner-all" style="height:100px; width:100px; background-image: url(http://forest.hobbytes.com/media/os/walls/thumb/litle_'.$key['file'].'.jpg); background-size:cover; margin:auto; position:relative; text-align:center;  margin:5px;"><div style="text-align:center; margin-top:75%;"><div id="'.$key['file'].'" class="wall_h" onClick="downloadapp(this);" style="background-color:#53547b; color:#fff; font-size:13px; padding:5px;">Скачать</div></div></span>';
-}}else{echo 'Изображения не найдены!';}?>
+  echo '<span class="ui-button ui-widget ui-corner-all" style="height:100px; width:100px; background-image: url(http://forest.hobbytes.com/media/os/walls/thumb/litle_'.$key['file'].'.jpg); background-size:cover; margin:auto; position:relative; text-align:center;  margin:5px;"><div style="text-align:center; margin-top:75%;"><div id="'.$key['file'].'" class="wall_h" onClick="downloadapp(this);" style="background-color:#53547b; color:#fff; font-size:13px; padding:5px;">'.$apphouse_lang[$cl.'_wall_button'].'</div></div></span>';
+}}else{echo $apphouse_lang[$cl.'_wall_error_2'];}?>
 </div>
 
 <div id="updatetab<?echo $appid;?>">
@@ -125,11 +132,12 @@ echo '
       echo '
       <span class="ui-button ui-widget ui-corner-all" style="height:auto; width:90%; position:relative; text-align:left;  margin:5px;"> <span>
       <p style="text-align:left; background-image: url(http://forest.hobbytes.com/media/os/updates/uplogo.png); background-size:cover; height:80px; width:80px;"></p>
-      <div style="text-align:left;">Обновление системы<br><br/>
-        <span style="font-size:17px;"><b>Forest OS</b> '.$key['codename'].'</span><br>
-      <span style="font-size:12px; font-weight:900; " >сборка: <span style="color:#363636; text-transform: uppercase;">'.$key['file'].'</span></span><br>
-      <span style="font-size:12px; ">версия: '.$key['version'].'<br>версия сборки: '.$key['subversion'].'<br>размер: '.$format.'</span></div></span><span style="font-size:15px; color:#464646; white-space:pre;">'.$key['description'].'</span>
-      <div id="'.$key['file'].'" class="app_h" onClick="update'.$appid.'()" style="background-color:#245896; color:#fff; width:30%; margin: 10px auto 10px auto; font-size:13px; padding:5px; text-align:center;">Обновить</div></span>
+      <div style="text-align:left;">'.$apphouse_lang[$cl.'_upd_label'].'<br><br/>
+      <span style="font-size:17px;"><b>Forest OS</b> '.$key['codename'].'</span><br>
+      <span style="font-size:12px; font-weight:900; " >'.$apphouse_lang[$cl.'_upd_revision'].': <span style="color:#363636; text-transform: uppercase;">'.$key['file'].'</span></span><br>
+      <span style="font-size:12px; ">'.$apphouse_lang[$cl.'_card_version'].': '.$key['version'].'<br>'.$apphouse_lang[$cl.'_upd_subversion'].': '.$key['subversion'].'<br>'.$apphouse_lang[$cl.'_card_size'].': '.$format.'</span></div></span>
+      <br><b>'.$apphouse_lang[$cl.'_card_description'].':</b><br><span style="font-size:15px; color:#464646; white-space:pre;">'.$key['description'].'</span>
+      <div id="'.$key['file'].'" class="app_h" onClick="update'.$appid.'()" style="background-color:#962439; color:#fff; width:30%; margin: 10px auto 10px auto; font-size:13px; padding:5px; text-align:center;">'.$apphouse_lang[$cl.'_upd_button'].'</div></span>
       ';
       }
     }
@@ -147,12 +155,17 @@ echo '
       if($newversion>$curversion){
         $appcounter=$appcounter+1;
         $fo->format($key['size']*1024);
-        $name=str_replace('_',' ',$key['file']);
+        if($cl  ==  'en' || $cl != 'ru'){
+          $name=str_replace('_',' ',$key['file']);
+        }else{
+          $name = $key['name'];
+        }
         echo '
-        <span class="ui-button ui-widget ui-corner-all" style="height:auto; width:200px; position:relative; text-align:center;  margin:5px;"> <span onClick="fullhouseupd'.$appid.'('.$appcounter.');" ><div style="background-image: url(http://forest.hobbytes.com/media/os/apps/'.$key['file'].'/app.png); background-size:cover; margin:auto; height:64px; width:64px;"></div><div style="text-align:center;">'.$name.'<br><span style="font-size:10px;">версия: '.$key['version'].'<br>размер: '.$format.'</span></div></span><br><div id="'.$key['file'].'" class="app_h" onClick="downloadapp(this,'.$newversion.');" style="background-color:#245896; color:#fff; font-size:13px; padding:5px;">Обновить</div></span>
+        <span class="ui-button ui-widget ui-corner-all" style="height:auto; width:200px; position:relative; text-align:center;  margin:5px;"> <span onClick="fullhouseupd'.$appid.'('.$appcounter.');" ><div style="background-image: url(http://forest.hobbytes.com/media/os/apps/'.$key['file'].'/app.png); background-size:cover; margin:auto; height:64px; width:64px;"></div><div style="text-align:center;">'.$name.'<br>
+        <span style="font-size:10px;">'.$apphouse_lang[$cl.'_card_version'].': '.$key['version'].'<br>'.$apphouse_lang[$cl.'_card_size'].': '.$format.'</span></div></span><br><div id="'.$key['file'].'" class="app_h" onClick="downloadapp(this,'.$newversion.');" style="background-color:#245896; color:#fff; font-size:13px; padding:5px;">'.$apphouse_lang[$cl.'_upd_button'].'</div></span>
         <div class="apphouseinfohide" id="'.$appid.'apphouseinfoupd'.$appcounter.'"><div style="background-image: url(http://forest.hobbytes.com/media/os/apps/'.$key['file'].'/app.png); background-size:cover; margin-bottom:10px; height:80px; width:80px;"></div>
-          <span style="font-size:15px; font-weight:900; color:#363636; text-transform: uppercase;" >'.$key['name'].'</span><br><span style="font-size:13px; color:#464646;">'.$key['namelat'].' by '.$key['designer'].', version: '.$key['version'].'</span>
-          <br><br><span style="font-size:13px; color:#464646; font-weight:600;">Описание</span><br><span style="font-size:13px; color:#464646; white-space:pre;">'.$key['description'].'</span>
+          <span style="font-size:15px; font-weight:900; color:#363636; text-transform: uppercase;" >'.$name.'</span><br><span style="font-size:13px; color:#464646;">'.$name.' by '.$key['designer'].', version: '.$key['version'].'</span>
+          <br><br><span style="font-size:13px; color:#464646; font-weight:600;">'.$apphouse_lang[$cl.'_card_description'].':</span><br><span style="font-size:13px; color:#464646; white-space:pre;">'.$key['description'].'</span>
           </div>';
       }
     }

@@ -38,13 +38,18 @@ class gui{
     echo '<input class="'.$name.'" id="'.$name.'" placeholder="'.$placeholder.'"style="width:'.$size.'%; -webkit-appearance:none; padding:10px; font-size:15px; border-radius:3px; margin:auto; background-color:#fff; float:none; border:1px solid #ccc; color:#3a3a3a;" type="'.$type.'" name="'.$name.'" value="'.$value.'" /></br></br>';
   }
 function getDayRus(){
- $days = array(
- 'Воскресенье' , 'Понедельник' ,
-'Вторник' , 'Среда' ,
- 'Четверг' , 'Пятница' , 'Суббота'
- );
-$num_day = (date('w'));
-$name_day = $days[$num_day];
+  $day_lang = parse_ini_file('system/core/os.lang');//localization file
+  $days = array(
+  $day_lang[$_SESSION['locale'].'_sunday'],
+  $day_lang[$_SESSION['locale'].'_monday'],
+  $day_lang[$_SESSION['locale'].'_tuesday'],
+  $day_lang[$_SESSION['locale'].'_wednesday'],
+  $day_lang[$_SESSION['locale'].'_thursday'],
+  $day_lang[$_SESSION['locale'].'_friday'],
+  $day_lang[$_SESSION['locale'].'_saturday']
+  );
+ $num_day = (date('w'));
+ $name_day = $days[$num_day];
  return $name_day;
 }
 

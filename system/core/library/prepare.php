@@ -145,7 +145,7 @@ function welcomescreen(){
 
 /*---------check and load hibernation---------*/
 function hibernation(){
-  global $login,  $getdata, $object,$security;
+  global $login,  $getdata, $object, $security, $language;
   $file = 'system/users/'.$login.'/settings/state.hdf';
   if(file_exists($file)){
     $content = parse_ini_file($file);
@@ -157,7 +157,7 @@ function hibernation(){
       $key=$getdata;
       echo $security->__decode($content['state'], $key);
       file_put_contents('system/users/'.$login.'/settings/state.hdf','');
-      $object->newnotification("Hibernation","Гибернация","Систем успешно загрузилась после режима гибернации. <br>Дата гибернации:  <b>".$content['time_stamp']."</b>");
+      $object->newnotification("Hibernation",$language[$_SESSION['locale'].'_hibernation_name'],$language[$_SESSION['locale'].'_hibernation_notification']."  <b>".$content['time_stamp']."</b>");
     }
   }
   unset($content,$bds,$security,$key,$getdata);
