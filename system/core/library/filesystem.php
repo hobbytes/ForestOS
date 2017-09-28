@@ -41,13 +41,13 @@ function size_check($path){
 
     class fileaction{
 
-      function rmdir_recursive($dir) {
-        $trashfolder='../../users/'.$_SESSION["loginuser"].'/trash/';
+      function rmdir_recursive($dir,$trashfolder) {
+        if(empty($trashfolder)){
+                  $trashfolder=$_SERVER['DOCUMENT_ROOT'].'/system/users/'.$_SESSION["loginuser"].'/trash/';
+        }
         if(!is_dir($trashfolder)){mkdir($trashfolder);}
-
         if (is_file($dir)){
         if(copy($dir,$trashfolder.basename($dir))){unlink($dir); echo '  файл: <b>'.basename($dir).'</b> перемещен в корзину';}
-
         }else{
           $folder=basename($dir);
           if(is_dir($trashfolder)){$trashfolder=$trashfolder.$folder.rand(0,1000);}else{$trashfolder=$trashfolder.$folder;}rename($dir,$trashfolder); echo '  папка: <b>'.$folder.'</b> перемещена в корзину';

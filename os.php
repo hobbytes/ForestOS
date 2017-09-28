@@ -136,8 +136,16 @@ function releaselink(){
       $("#topbar").css('display','block')
       $(".trashdrop").droppable({
         drop: function(event, ui){
-          //console.log(ui.draggable.attr('d'));
-          $("#"+ui.draggable.attr('id')).remove();
+          var del_file = ui.draggable.attr('d');
+          $.ajax({
+            type: "POST",
+            url: "system/core/functions/trash",
+            data: {
+               file_delete: del_file
+            }
+          }).done(function(o) {
+            $("#"+ui.draggable.attr('id')).remove();
+        });
         }
       });
     });
