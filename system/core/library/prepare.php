@@ -100,7 +100,7 @@
       if(!file_exists($appicon)){$appicon='';}
       if($linkicon==''){$linkicon=$hashfile->filehash($appicon);}else{$linkicon=$hashfile->filehash('./'.$link['icon']);}
       ?>
-
+      <div class="link<?echo $id;?>">
       <div id="linklog<?echo $id;?>" class="<?echo $delclassname;?>">
       <script>
       $( function() {
@@ -130,10 +130,10 @@
         $classtrash = ' trashdrop';
       }
         $namejs="'".$name."'";$filejs="'".$file."'";$paramjs="'".$param."'";$keyjs="'".$key."'";
-            echo'<div id="link'.$id.'" class="'.$delclassname.'" on'.$click.'="makeprocess('.$namejs.','.$filejs.','.$paramjs.','.$keyjs.'); releaselink();"><div id=icons'.$id.' class="ui-widget-header ui-widget-content ico clickme'.$classtrash.'" d="'.$filenames.'" style="padding:5px; z-index:-1000; height:auto; text-align:center; width:70px; position:relative; display:block; float:left;"><div style="background-color:transparent;  background-image: url('.$linkicon.'); background-size:cover; height:64px; width:64px; margin:auto; margin-top:17px; ">';
+            echo'<div id="link'.$id.'" class="'.$delclassname.'" on'.$click.'="makeprocess('.$namejs.','.$filejs.','.$paramjs.','.$keyjs.'); releaselink();"><div id=icons'.$id.' class="ui-widget-header ui-widget-content ico clickme'.$classtrash.'" d="'.$filenames.'" i="'.$id.'" style="padding:5px; z-index:-1000; height:auto; text-align:center; width:70px; position:relative; display:block; float:left;"><div style="background-color:transparent;  background-image: url('.$linkicon.'); background-size:cover; height:64px; width:64px; margin:auto; margin-top:17px; ">';
             echo '<div id=icon'.$id.' style="width:100%; height:auto;">';
             echo '<div id="link_content'.$id.'" class="linktheme">';
-            echo $linkname.'</div></div></div></div></div>';
+            echo $linkname.'</div></div></div></div></div></div>';
             $id++;
           }
     }

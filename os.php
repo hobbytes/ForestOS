@@ -135,6 +135,7 @@ function releaselink(){
       $("#topbar").show('fade',1500);
       $("#topbar").css('display','block')
       $(".trashdrop").droppable({
+        accept: ".ico",
         drop: function(event, ui){
           var del_file = ui.draggable.attr('d');
           $.ajax({
@@ -144,7 +145,7 @@ function releaselink(){
                file_delete: del_file
             }
           }).done(function(o) {
-            $("#"+ui.draggable.attr('id')).remove();
+            $(".link"+ui.draggable.attr('i')).remove();
         });
         }
       });
@@ -155,6 +156,12 @@ function releaselink(){
     });
   });
 </script>
+<style>
+.ui-droppable-hover{
+  transform: scale(0.7);
+  transition: all 0.2s ease;
+}
+</style>
 <?
 $_SESSION['appid']  = '<script>document.writeln(id)</script>';
 $prepare->autorun();
