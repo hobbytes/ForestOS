@@ -134,6 +134,12 @@ function releaselink(){
       $(".welcomescreen").hide('fade',500);
       $("#topbar").show('fade',1500);
       $("#topbar").css('display','block')
+      $(".trashdrop").droppable({
+        drop: function(event, ui){
+          //console.log(ui.draggable.attr('d'));
+          $("#"+ui.draggable.attr('id')).remove();
+        }
+      });
     });
     $( ".ico" ).draggable({containment:"body", snap:".ico, #topbar"});
     $( ".window" ).mouseup(function(){
