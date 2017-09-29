@@ -156,12 +156,6 @@ function releaselink(){
     });
   });
 </script>
-<style>
-.ui-droppable-hover{
-  transform: scale(0.7);
-  transition: all 0.2s ease;
-}
-</style>
 <?
 $_SESSION['appid']  = '<script>document.writeln(id)</script>';
 $prepare->autorun();

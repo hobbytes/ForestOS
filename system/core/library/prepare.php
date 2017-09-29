@@ -10,13 +10,19 @@
 /*---------load head---------*/
     public function start()
     {
+      global $hashfile,$getdata,$mobile,$infob,$click,$top,$left,$maxwidth;
       // # check lang
       $_SESSION['locale'] = file_get_contents('system/users/'.$_SESSION["loginuser"].'/settings/language.foc');
       if(empty($_SESSION['locale'])){
+        $bd = new readbd;
+        $bd->readglobal2("login","forestusers","status",superuser);
+        $superuser = $getdata;
+        $_SESSION['locale'] = file_get_contents('system/users/'.$superuser.'/settings/language.foc');
+        if(empty($_SESSION['locale'])){
         file_put_contents('system/users/'.$_SESSION["loginuser"].'/settings/language.foc','en');
         $_SESSION['locale'] = 'en';
       }
-      global $hashfile,$mobile,$infob,$click,$top,$left,$maxwidth;
+      }
       $infob->ismobile();
       if($mobile=='true'){$click='click'; $top='20px';$left='0px'; $maxwidth='100%';}else{$click='dblclick'; $top='25%';$left='25%'; $maxwidth='90%';}
       ?>
@@ -128,6 +134,14 @@
       $classtrash = '';
       if(eregi($login.'/trash',$param)){
         $classtrash = ' trashdrop';
+        ?>
+        <style>
+        .ui-droppable-hover{
+          transform: scale(0.7);
+          transition: all 0.2s ease;
+        }
+        </style>
+        <?
       }
         $namejs="'".$name."'";$filejs="'".$file."'";$paramjs="'".$param."'";$keyjs="'".$key."'";
             echo'<div id="link'.$id.'" class="'.$delclassname.'" on'.$click.'="makeprocess('.$namejs.','.$filejs.','.$paramjs.','.$keyjs.'); releaselink();"><div id=icons'.$id.' class="ui-widget-header ui-widget-content ico clickme'.$classtrash.'" d="'.$filenames.'" i="'.$id.'" style="padding:5px; z-index:-1000; height:auto; text-align:center; width:70px; position:relative; display:block; float:left;"><div style="background-color:transparent;  background-image: url('.$linkicon.'); background-size:cover; height:64px; width:64px; margin:auto; margin-top:17px; ">';

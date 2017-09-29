@@ -43,8 +43,8 @@ $gui->formend();
 </div>
 </div>
 </div>
-<div class="date" style="float:left; user-select: none; cursor: default; color:#fff; font-size:20pt; padding-left:30px; margin-bottom:10px; position:relative;">
-  <?php echo $object->getDayRus().' '.date('d').'<br>';?>
+<div class="date" style="float:left; user-select: none; cursor: default; color:#fff; padding-left:30px; margin-bottom:10px; position:relative;">
+  <span style="font-size:27pt; font-weight:700; text-transform:uppercase;"><?php echo $object->getDayRus().' '.date('d').'<br>';?></span>
   <span style="font-size:35pt;" id="time"></span>
 </div>
 <script type="text/javascript">
