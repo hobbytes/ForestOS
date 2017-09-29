@@ -63,13 +63,13 @@ if(!empty($oldpassword) && !empty($newpassword) && !empty($checkpassword)){
 
   echo '<div id="changepassword'.$appid.'" onClick="changepassword'.$appid.'();" class="ui-forest-button ui-forest-accept">'.$language_security[$_SESSION['locale'].'_button_change'].'</div><hr>';
 
-
-
 $infob->readstat('../../core/journal.mcj');
 $text=$getstat;
 echo '<div style="text-align:left; margin-top:10px; margin-left:10px;"><b style="font-size:20px;">'.$language_security[$_SESSION['locale'].'_journal_label'].'</b>';
 echo '<div><textarea style="width:95%; max-width:95%;" rows="10" cols="80" >'.$text.'</textarea></div></div>';
-echo '<div onClick="eraselog'.$appid.'();" style="margin:10px;" class="ui-forest-button ui-forest-cancel">'.$language_security[$_SESSION['locale'].'_button_journal'].'</div><hr>';
+if($_SESSION['loginuser'] == $_SESSION['superuser']){
+  echo '<div onClick="eraselog'.$appid.'();" style="margin:10px;" class="ui-forest-button ui-forest-cancel">'.$language_security[$_SESSION['locale'].'_button_journal'].'</div><hr>';
+}
 unset($settingsbd);
 ?>
 </div>

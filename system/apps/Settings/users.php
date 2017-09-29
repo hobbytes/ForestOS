@@ -33,19 +33,22 @@ $fuid=$getdata;
 echo '<div style="text-align:left; margin-top:10px; margin-left:10px;"><b style="font-size:20px;">'.$language_users[$_SESSION['locale'].'_settings_users'].'</b>';
 echo '<div style="margin-top:10px; overflow:hidden;">';
 /*-----loadusers----*/
-$conn = new PDO (DB_DSN, DB_USERNAME, DB_PASSWORD);
-$sql="SELECT login FROM forestusers";
-$id=$conn->query($sql);
-  while ($row = $id->fetch())
-    {
-      $getdata=$row['login'];
-      echo '<div id="'.$getdata.'" onClick="seluser'.$appid.'(this);" class="userselect" style="background:#2e2f31; cursor:pointer; border-radius:40px;40px;40px;40px; width:80px; height:50px; font-size:20px; text-align:center; padding-top:30px; color:#fff; float:left; overflow:hidden; text-overflow:ellipsis; display:block; position:relative; margin-left:10px;">'.$getdata.'</div>';
-    }
 
-echo '<div id="newuser" onClick="seluser'.$appid.'(this);" class="userselect" style="background:#5ece5d; cursor:pointer; border:3px dashed #298c23; border-radius:40px;40px;40px;40px; width:74px; height:44px; font-size:18px; text-align:center; padding-top:30px; color:#fff; float:left; overflow:hidden; text-overflow:ellipsis; display:block; position:relative; margin-left:10px;">+</div>';
+if($_SESSION['loginuser'] == $_SESSION['superuser']){
+  $conn = new PDO (DB_DSN, DB_USERNAME, DB_PASSWORD);
+  $sql="SELECT login FROM forestusers";
+  $id=$conn->query($sql);
+    while ($row = $id->fetch())
+      {
+        $getdata=$row['login'];
+        echo '<div id="'.$getdata.'" onClick="seluser'.$appid.'(this);" class="userselect" style="background:#2e2f31; cursor:pointer; border-radius:40px;40px;40px;40px; width:80px; height:50px; font-size:20px; text-align:center; padding-top:30px; color:#fff; float:left; overflow:hidden; text-overflow:ellipsis; display:block; position:relative; margin-left:10px;">'.$getdata.'</div>';
+      }
+      echo '<div id="newuser" onClick="seluser'.$appid.'(this);" class="userselect" style="background:#5ece5d; cursor:pointer; border:3px dashed #298c23; border-radius:40px;40px;40px;40px; width:74px; height:44px; font-size:18px; text-align:center; padding-top:30px; color:#fff; float:left; overflow:hidden; text-overflow:ellipsis; display:block; position:relative; margin-left:10px;">+</div>';
+}else{
+  echo '<div id="'.$_SESSION['loginuser'].'" onClick="seluser'.$appid.'(this);" class="userselect" style="background:#2e2f31; cursor:pointer; border-radius:40px;40px;40px;40px; width:80px; height:50px; font-size:20px; text-align:center; padding-top:30px; color:#fff; float:left; overflow:hidden; text-overflow:ellipsis; display:block; position:relative; margin-left:10px;">'.$_SESSION['loginuser'].'</div>';
+}
 
-
-if($adduserlogin!='' && $adduserpassword!='' && $adduserhdd!='')
+if($adduserlogin!='' && $adduserpassword!='' && $adduserhdd!='' && $_SESSION['loginuser'] == $_SESSION['superuser'])
 {
   $date= date("d.m.y,H:i:s");
   $adduserlogin=strtolower(addslashes(strip_tags(htmlspecialchars($adduserlogin))));

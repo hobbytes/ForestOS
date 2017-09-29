@@ -24,7 +24,7 @@ class info{
       include '../bd.php';
       global $getdata, $getstat, $security;
       $bd = new readbd;
-      $bd->readglobal2("password","forestusers","login",$_SESSION["loginuser"]);
+      $bd->readglobal2("password","forestusers","login",$_SESSION['superuser']);
       $key=$getdata;
       $date= date("d.m.y,H:i:s");
       $ip = $_SERVER["REMOTE_ADDR"];
@@ -43,7 +43,7 @@ class info{
       global $getdata, $getstat;
       $security = new security;
       $bd = new readbd;
-      $bd->readglobal2("password","forestusers","login",$_SESSION["loginuser"]);
+      $bd->readglobal2("password","forestusers","login",$_SESSION['superuser']);
       $key=$getdata;
       $content  = file_get_contents($folder);
       $getstat = $security->__decode($content, $key);
