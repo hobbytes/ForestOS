@@ -16,8 +16,8 @@
       if(empty($_SESSION['locale'])){
         $bd = new readbd;
         $bd->readglobal2("login","forestusers","status",superuser);
-        $superuser = $getdata;
-        $_SESSION['locale'] = file_get_contents('system/users/'.$superuser.'/settings/language.foc');
+        $_SESSION['superuser'] = $getdata;
+        $_SESSION['locale'] = file_get_contents('system/users/'.$_SESSION['superuser'].'/settings/language.foc');
         if(empty($_SESSION['locale'])){
         file_put_contents('system/users/'.$_SESSION["loginuser"].'/settings/language.foc','en');
         $_SESSION['locale'] = 'en';

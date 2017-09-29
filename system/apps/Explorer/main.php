@@ -215,8 +215,19 @@ while (false !== ($entry=$d->read())) {
 		$name3="'".realpath($entry)."'";
 		$name4="'".$type."'";
 		$name5="'".$name."'";
-	echo('<div id="'.realpath($entry).'" class="'.md5($name).' select ui-button ui-widget ui-corner-all" onClick="select'.$appid.'('.$name2.','.$name3.','.$name4.','.$name5.');" on'.$click.'="load'.$appid.'(this);"  style="cursor:default; height:128px;margin:5px;text-align:center;width:128px;position:relative;display:block;text-overflow:ellipsis;overflow:hidden;float:left;" title="'.$name.'"><div style="cursor:default; width:80px; height:80px; background-image: url('.$type.'); background-size:cover; -webkit-user-select:none; user-select:none; padding:5px; background-color:'.$color.'; margin:auto; color:#d05858; font-size:25px;">
-	'.$extension.'</div><div style="text-overflow: ellipsis;overflow: hidden;font-size: 15px;">'.$name.'<div style="font-size:10px; padding:5px; color:#688ad8;">'.$datecreate.'</div></div></div>');
+		$select	=	'select'.$appid.'('.$name2.','.$name3.','.$name4.','.$name5.');';
+		$load = 'load'.$appid.'(this);';
+		$n_color	=	'#000';
+		if(eregi('system/users/',realpath($entry)) || eregi('system/core',realpath($entry))){
+			if($_SESSION['superuser'] != $_SESSION['loginuser'] && !eregi('system/users/'.$_SESSION['loginuser'],realpath($entry)) || $_SESSION['superuser'] != $_SESSION['loginuser'] && eregi('system/core',realpath($entry))){
+			$select	=	'';
+			$load = '';
+			$n_color	=	'#e63030';
+		}
+	}
+
+	echo('<div id="'.realpath($entry).'" class="'.md5($name).' select ui-button ui-widget ui-corner-all" onClick="'.$select.'" on'.$click.'="'.$load.'"  style="cursor:default; height:128px;margin:5px;text-align:center;width:128px;position:relative;display:block;text-overflow:ellipsis;overflow:hidden;float:left;" title="'.$name.'"><div style="cursor:default; width:80px; height:80px; background-image: url('.$type.'); background-size:cover; -webkit-user-select:none; user-select:none; padding:5px; background-color:'.$color.'; margin:auto; color:#d05858; font-size:25px;">
+	'.$extension.'</div><div style="text-overflow: ellipsis;overflow: hidden;font-size: 15px;"><span style="color:'.$n_color.';">'.$name.'</span><div style="font-size:10px; padding:5px; color:#688ad8;">'.$datecreate.'</div></div></div>');
 }
 }
 $dir->close;
