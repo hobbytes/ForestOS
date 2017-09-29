@@ -133,6 +133,7 @@
       $linkname=str_replace("_"," ",$linkname);
       $classtrash = '';
       if(eregi($login.'/trash',$param)){
+        $linkicon = './system/apps/Explorer/assets/trashicon.png';
         $classtrash = ' trashdrop';
         ?>
         <style>
