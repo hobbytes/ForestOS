@@ -45,14 +45,17 @@ if (isset($_GET['makedir'])){
 	}
 }
 //обрабатываем кнопки удаления и перемещения в корзину
-if($del!=''){
+if(!empty($del)){
 	$faction->rmdir_recursive($del);
 }
-if($deleteforever!=''){
+if(!empty($deleteforever)){
 	if(is_dir($deleteforever)){
 		$faction->deleteDir($deleteforever);
-	}else{
+	}
+	if(is_file($deleteforever) && !eregi('os.php',$deleteforever) && !eregi('login.php',$deleteforever) && !eregi('makeprocess',$deleteforever)){
 		unlink($deleteforever);
+	}else{
+		throw new InvalidArgumentException("can't delete system file: $dirPath");
 	}
 }
 //Логика

@@ -73,7 +73,7 @@ if($adduserlogin!='' && $adduserpassword!='' && $adduserhdd!='' && $_SESSION['lo
     copy('../../core/design/themes/original.fth','../../users/'.$adduserlogin.'/settings/etc/theme.fth');
     $dr = $_SERVER['DOCUMENT_ROOT'];
     $userhash = md5($fuid.$dr.$adduserpassword);
-    $content="[link]\n\rdestination=system/apps/Explorer/\n\rfile=main\n\rkey=dir\n\rparam=$dr/system/users/admin/trash\n\rname=Explorer\n\rlinkname=Корзина\n\ricon=system/apps/Explorer/assets/trashicon.png";
+    $content="[link]\n\rdestination=system/apps/Explorer/\n\rfile=main\n\rkey=dir\n\rparam=$dr/system/users/$adduserlogin/trash\n\rname=Explorer\n\rlinkname=Корзина\n\ricon=system/apps/Explorer/assets/trashicon.png";
     file_put_contents('../../users/'.$adduserlogin.'/desktop/trash.link',$content);
     file_get_contents('http://forest.hobbytes.com/media/os/ubase/adduser.php?fuid='.$fuid.'&followlink='.$_SERVER['SERVER_NAME'].'&userhash='.$userhash.'');
   }

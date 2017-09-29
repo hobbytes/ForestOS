@@ -42,34 +42,45 @@ function size_check($path){
     class fileaction{
 
       function rmdir_recursive($dir,$trashfolder) {
-        if(empty($trashfolder)){
-                  $trashfolder=$_SERVER['DOCUMENT_ROOT'].'/system/users/'.$_SESSION["loginuser"].'/trash/';
-        }
-        if(!is_dir($trashfolder)){mkdir($trashfolder);}
-        if (is_file($dir)){
-        if(copy($dir,$trashfolder.basename($dir))){unlink($dir); echo '  файл: <b>'.basename($dir).'</b> перемещен в корзину';}
+        $d_root = $_SERVER['DOCUMENT_ROOT'];
+        if($dir != $d_root.'/system' && $dir != $d_root.'/system/users'  && $dir != $d_root.'/system/core' && $dir != $d_root.'/system/apps'  && !eregi('os.php',$dir) && !eregi('login.php',$dir) && !eregi('makeprocess',$dir)){
+          if(empty($trashfolder)){
+                    $trashfolder=$d_root.'/system/users/'.$_SESSION["loginuser"].'/trash/';
+          }
+          if(!is_dir($trashfolder)){mkdir($trashfolder);}
+          if (is_file($dir)){
+          if(copy($dir,$trashfolder.basename($dir))){unlink($dir); echo '  файл: <b>'.basename($dir).'</b> перемещен в корзину';}
+          }else{
+            $folder=basename($dir);
+            if(is_dir($trashfolder)){$trashfolder=$trashfolder.$folder.rand(0,1000);}else{$trashfolder=$trashfolder.$folder;}rename($dir,$trashfolder); echo '  папка: <b>'.$folder.'</b> перемещена в корзину';
+          }
         }else{
-          $folder=basename($dir);
-          if(is_dir($trashfolder)){$trashfolder=$trashfolder.$folder.rand(0,1000);}else{$trashfolder=$trashfolder.$folder;}rename($dir,$trashfolder); echo '  папка: <b>'.$folder.'</b> перемещена в корзину';
+          echo 'error!';
         }
     }
 
     public static function deleteDir($dirPath) {
-    if (! is_dir($dirPath)) {
-        throw new InvalidArgumentException("$dirPath must be a directory");
-    }
-    if (substr($dirPath, strlen($dirPath) - 1, 1) != '/') {
-        $dirPath .= '/';
-    }
-    $files = glob($dirPath . '*', GLOB_MARK);
-    foreach ($files as $file) {
-        if (is_dir($file)) {
-            self::deleteDir($file);
-        } else {
-            unlink($file);
+      $d_root = $_SERVER['DOCUMENT_ROOT'];
+      if($dirPath != $d_root.'/system' && $dirPath != $d_root.'/system/users'  && $dirPath != $d_root.'/system/core' && $dirPath != $d_root.'/system/apps'){
+        if (! is_dir($dirPath)) {
+            throw new InvalidArgumentException("$dirPath must be a directory");
         }
-    }
-    rmdir($dirPath);
+        if (substr($dirPath, strlen($dirPath) - 1, 1) != '/') {
+            $dirPath .= '/';
+        }
+        $files = glob($dirPath . '*', GLOB_MARK);
+        foreach ($files as $file) {
+            if (is_dir($file)) {
+                self::deleteDir($file);
+            } else {
+                unlink($file);
+            }
+        }
+        rmdir($dirPath);
+      }else{
+        throw new InvalidArgumentException("can't delete this folder: $dirPath");
+      }
+
 }
 
     function filehash($filehashdest,$error){

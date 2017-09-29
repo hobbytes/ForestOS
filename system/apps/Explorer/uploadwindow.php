@@ -13,7 +13,8 @@ $appname=$_GET['appname'];
 $appid=$_GET['appid'];
 $folder=$_GET['destination'];
 $data = array();
-if( isset( $_GET['uploadfiles'] ) ){
+if(isset($_GET['uploadfiles'])){
+  if($_SESSION['superuser'] == $_SESSION['loginuser']){
     $error = false;
     $files = array();
     $uploaddir = $where;
@@ -32,6 +33,10 @@ if( isset( $_GET['uploadfiles'] ) ){
     $data = $error ? array('error' => 'Error') : array('files' => $files );
 
     echo json_encode( $data );
+  }else{
+    echo 'private error!';
+    exit;
+  }
 }
 ?>
 <div style="text-align:center;">
