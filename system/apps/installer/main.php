@@ -36,46 +36,49 @@ function config_set($config_file, $section, $key, $value) {
 }
 
 if(isset($appinstall)){
-  $ch=curl_init('http://forest.hobbytes.com/media/os/apps/'.$appinstall.'/app.zip');
-  if(!is_dir('./temp/')){mkdir('./temp/');}
-  $temphash=md5(date('d.m.y.h.i.s').$appinstall);
-  $fp=fopen('./temp/'.$appinstall.$temphash.'.zip','wb');
-  curl_setopt($ch, CURLOPT_FILE,$fp);
-  curl_setopt($ch, CURLOPT_HEADER,0);
-  curl_exec($ch);
-  curl_close($ch);
-  fclose($fp);
-$zip=new ZipArchive;
-if($zip->open('./temp/'.$appinstall.$temphash.'.zip') === TRUE){
+  if($_SESSION['superuser'] == $_SESSION['loginuser']){
+    $ch=curl_init('http://forest.hobbytes.com/media/os/apps/'.$appinstall.'/app.zip');
+    if(!is_dir('./temp/')){mkdir('./temp/');}
+    $temphash=md5(date('d.m.y.h.i.s').$appinstall);
+    $fp=fopen('./temp/'.$appinstall.$temphash.'.zip','wb');
+    curl_setopt($ch, CURLOPT_FILE,$fp);
+    curl_setopt($ch, CURLOPT_HEADER,0);
+    curl_exec($ch);
+    curl_close($ch);
+    fclose($fp);
+  $zip=new ZipArchive;
+  if($zip->open('./temp/'.$appinstall.$temphash.'.zip') === TRUE){
 
-  $zip->extractTo('../../../'.str_replace($appinstall,'',$_GET['appinstdest']));
-  $zip->close();
-  $appname=str_replace("_"," ", $appinstall);
-  $myfile=fopen('../../users/'.$_SESSION["loginuser"].'/desktop/'.$appinstall.'.link',"w");
-  $content="[link]\ndestination=".$_GET['appinstdest']."/\nfile=main\nkey=\nparam=\nname='$appinstall'\nlinkname='$appinstall'\n";
-  fwrite($myfile,$content);fclose($myfile);
+    $zip->extractTo('../../../'.str_replace($appinstall,'',$_GET['appinstdest']));
+    $zip->close();
+    $appname=str_replace("_"," ", $appinstall);
+    $myfile=fopen('../../users/'.$_SESSION["loginuser"].'/desktop/'.$appinstall.'.link',"w");
+    $content="[link]\ndestination=".$_GET['appinstdest']."/\nfile=main\nkey=\nparam=\nname='$appinstall'\nlinkname='$appinstall'\n";
+    fwrite($myfile,$content);fclose($myfile);
 
-  $ini_array = parse_ini_file('../../core/appinstall.foc', true);
-  if (array_key_exists($appinstall, $ini_array))
-  {
-    config_set('../../core/appinstall.foc', $appinstall, 'version', $_SESSION['appversion']);
-    $type=$install_lang[$cl.'_installer_msg_upd_1']; $type2=$install_lang[$cl.'_installer_msg_upd_2'];
+    $ini_array = parse_ini_file('../../core/appinstall.foc', true);
+    if (array_key_exists($appinstall, $ini_array))
+    {
+      config_set('../../core/appinstall.foc', $appinstall, 'version', $_SESSION['appversion']);
+      $type=$install_lang[$cl.'_installer_msg_upd_1']; $type2=$install_lang[$cl.'_installer_msg_upd_2'];
+    }else{
+      $myfile=fopen('../../core/appinstall.foc',"a");
+      $content='['.$appinstall.']'.PHP_EOL.'version='.$_SESSION['appversion'].PHP_EOL.'destination='.$_GET['appinstdest'].PHP_EOL;
+      fwrite($myfile,PHP_EOL.$content);fclose($myfile);
+      unlink('./temp/'.$appinstall.$temphash.'.zip');
+      $type=$install_lang[$cl.'_installer_msg_1']; $type2=$install_lang[$cl.'_installer_msg_2'];
+    }
+    $pubname = str_replace('_',' ',$appinstall);
+    $gui->newnotification($appname,$type2,$install_lang[$cl.'_installer_msg_label'].' <b>'.$pubname.'</b> '.$type.'!');?>
+    <script>$(function(){$("#process<?echo $appid;?>").remove();});</script>
+  <?}else{
+    $gui->newnotification($appname,$install_lang[$cl.'_installer_msg_2'],$install_lang[$cl.'_installer_msg_label'].' <b>'.$pubname.'</b> '.$install_lang[$cl.'_installer_msg_label_2']); ?>
+    <script>$(function(){$("#process<?echo $appid;?>").remove();});</script>
+    <?}
   }else{
-    $myfile=fopen('../../core/appinstall.foc',"a");
-    $content='['.$appinstall.']'.PHP_EOL.'version='.$_SESSION['appversion'].PHP_EOL.'destination='.$_GET['appinstdest'].PHP_EOL;
-    fwrite($myfile,PHP_EOL.$content);fclose($myfile);
-    unlink('./temp/'.$appinstall.$temphash.'.zip');
-    $type=$install_lang[$cl.'_installer_msg_1']; $type2=$install_lang[$cl.'_installer_msg_2'];
+    echo $install_lang[$cl.'_installer_error_prv'];
   }
-  $pubname = str_replace('_',' ',$appinstall);
-  $gui->newnotification($appname,$type2,$install_lang[$cl.'_installer_msg_label'].' <b>'.$pubname.'</b> '.$type.'!');?>
-  <script>$(function(){$("#process<?echo $appid;?>").remove();});</script>
-<?}else{
-  $gui->newnotification($appname,$install_lang[$cl.'_installer_msg_2'],$install_lang[$cl.'_installer_msg_label'].' <b>'.$pubname.'</b> '.$install_lang[$cl.'_installer_msg_label_2']); ?>
-  <script>$(function(){$("#process<?echo $appid;?>").remove();});</script>
-  <?}
-}
-else{
+}else{
 ?>
 <p style="text-align:center"><div style="background-image: url(http://forest.hobbytes.com/media/os/apps/<?echo $appdownload;?>/app.png); background-size:cover; margin:auto; height:64px; width:64px;"></div></p>
 <div style="text-align:center; font-size:20px;">

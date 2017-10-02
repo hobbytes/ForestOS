@@ -7,6 +7,7 @@ ru_installer_msg_1  = установлено
 ru_installer_msg_2  = Установка
 ru_installer_msg_label  = Приложение
 ru_installer_msg_label_2  = 'не установлено!'
+ru_installer_error_prv = 'Только администратор может устанавливать приложения!'
 
 en_installer_label  = Installing the application
 en_installer_button = Install
@@ -16,3 +17,4 @@ en_installer_msg_1 = installed
 en_installer_msg_2 = Installation
 en_installer_msg_label = Application
 en_installer_msg_label_2 = 'not installed!'
+en_installer_error_prv = 'Only an administrator can install applications!'

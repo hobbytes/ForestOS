@@ -7,6 +7,7 @@ ru_update_size = размер
 ru_update_button = обновить
 ru_update_msg_1 = 'Обновление '
 ru_update_msg_2 = ' установлено!'
+ru_update_error_prv = 'Только администратор может устанавливать обновления!'
 
 en_update_label = Install the update
 en_update_build = build
@@ -16,3 +17,4 @@ en_update_size = size
 en_update_button = update now
 en_update_msg_1 = 'Update '
 en_update_msg_2 = ' installed!'
+en_update_error_prv = 'Only an administrator can install updates!'

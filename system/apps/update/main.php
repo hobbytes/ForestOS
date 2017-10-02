@@ -45,41 +45,46 @@ foreach ($arrayu as $key)
 <div style="text-align:center; font-size:20px;">
   <?echo $update_lang[$cl.'_update_label']?></b>
   <?
-  if($updatefile==''){
-    if($arrayu!=''){
-    $fo->format($size*1024);
-    echo '<br><span style="font-size:12px; font-weight:900; " >'.$update_lang[$cl.'_update_build'].': <span style="color:#363636; text-transform: uppercase;">'.$revision.'</span></span><br>
-    <span style="font-size:12px; ">'.$update_lang[$cl.'_update_version'].': '.$version.'<br>'.$update_lang[$cl.'_update_subversion'].': '.$subversion.'<br>'.$update_lang[$cl.'_update_size'].': '.$format.'</span>';
+  if($_SESSION['superuser'] == $_SESSION['loginuser']){
+    if($updatefile==''){
+      if($arrayu!=''){
+      $fo->format($size*1024);
+      echo '<br><span style="font-size:12px; font-weight:900; " >'.$update_lang[$cl.'_update_build'].': <span style="color:#363636; text-transform: uppercase;">'.$revision.'</span></span><br>
+      <span style="font-size:12px; ">'.$update_lang[$cl.'_update_version'].': '.$version.'<br>'.$update_lang[$cl.'_update_subversion'].': '.$subversion.'<br>'.$update_lang[$cl.'_update_size'].': '.$format.'</span>';
+    }
+    ?>
+    <div id="<?echo $revision;?>" onClick="updatenow<?echo $appid;?>(this);" style="background-color:#54c45c; color:#fff; width:200px; font-size:15px; text-align:center; margin:10px auto; cursor:pointer; padding:10px; border-radius:5px;">
+      <?echo $update_lang[$cl.'_update_button']?>
+    </div>
+    <?
+  }else{
+    $ch=curl_init('http://forest.hobbytes.com/media/os/updates/'.$updatefile.'.zip');
+    if(!is_dir('./temp/')){mkdir('./temp/');}
+    $temphash=md5(date('d.m.y.h.i.s').$updatefile);
+    $fp=fopen('./temp/'.$updatefile.$temphash.'.zip','wb');
+    curl_setopt($ch, CURLOPT_FILE,$fp);
+    curl_setopt($ch, CURLOPT_HEADER,0);
+    curl_exec($ch);
+    curl_close($ch);
+    fclose($fp);
+  $zip=new ZipArchive;
+  if($zip->open('./temp/'.$updatefile.$temphash.'.zip') === TRUE){
+  $zip->extractTo('../../../');
+  $zip->close();
+
+  $myfile=fopen('../../core/osinfo.foc',"w");
+  $content='[forestos]'.PHP_EOL.PHP_EOL.'version='.$version.PHP_EOL.PHP_EOL.'subversion='.$subversion.PHP_EOL.PHP_EOL.'revision='.$revision.PHP_EOL.PHP_EOL.'codename='.$codename;
+  fwrite($myfile,PHP_EOL.$content);fclose($myfile);
+
+  echo '<p>'.$update_lang[$cl.'_update_msg_1'].'<b>'.$updatefile.'</b>'.$update_lang[$cl.'_update_msg_2'].'</p>';
+  $gui->newnotification($appname, $update_lang[$cl.'_update_label'], $update_lang[$cl.'_update_msg_1'].'<b>'.$updatefile.'</b>'.$update_lang[$cl.'_update_msg_2']);
+  unlink('./temp/'.$updatefile.$temphash.'.zip');
   }
-  ?>
-  <div id="<?echo $revision;?>" onClick="updatenow<?echo $appid;?>(this);" style="background-color:#54c45c; color:#fff; width:200px; font-size:15px; text-align:center; margin:10px auto; cursor:pointer; padding:10px; border-radius:5px;">
-    <?echo $update_lang[$cl.'_update_button']?>
-  </div>
-  <?
+  }
 }else{
-  $ch=curl_init('http://forest.hobbytes.com/media/os/updates/'.$updatefile.'.zip');
-  if(!is_dir('./temp/')){mkdir('./temp/');}
-  $temphash=md5(date('d.m.y.h.i.s').$updatefile);
-  $fp=fopen('./temp/'.$updatefile.$temphash.'.zip','wb');
-  curl_setopt($ch, CURLOPT_FILE,$fp);
-  curl_setopt($ch, CURLOPT_HEADER,0);
-  curl_exec($ch);
-  curl_close($ch);
-  fclose($fp);
-$zip=new ZipArchive;
-if($zip->open('./temp/'.$updatefile.$temphash.'.zip') === TRUE){
-$zip->extractTo('../../../');
-$zip->close();
-
-$myfile=fopen('../../core/osinfo.foc',"w");
-$content='[forestos]'.PHP_EOL.PHP_EOL.'version='.$version.PHP_EOL.PHP_EOL.'subversion='.$subversion.PHP_EOL.PHP_EOL.'revision='.$revision.PHP_EOL.PHP_EOL.'codename='.$codename;
-fwrite($myfile,PHP_EOL.$content);fclose($myfile);
-
-echo '<p>'.$update_lang[$cl.'_update_msg_1'].'<b>'.$updatefile.'</b>'.$update_lang[$cl.'_update_msg_2'].'</p>';
-$gui->newnotification($appname,$update_lang[$cl.'_update_label'], $update_lang[$cl.'_update_msg_1'].'<b>'.$updatefile.'</b>'.$update_lang[$cl.'_update_msg_2']);
-unlink('./temp/'.$updatefile.$temphash.'.zip');
+  echo '<br><b>'.$update_lang[$cl.'_update_error_prv'].'</b>';
 }
-}
+
   ?>
 </div>
 </div>
