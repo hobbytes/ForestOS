@@ -11,12 +11,18 @@
     public function start()
     {
       global $hashfile,$getdata,$mobile,$infob,$click,$top,$left,$maxwidth;
+      //  # get superuser
+      $bd = new readbd;
+      $bd->readglobal2("status","forestusers","login",$_SESSION["loginuser"]);
+      if($getdata != 'superuser'){
+        $bd->readglobal2("login","forestusers","status",superuser);
+      }else{
+        $getdata  = $_SESSION["loginuser"];
+      }
+      $_SESSION['superuser'] = $getdata;
       // # check lang
       $_SESSION['locale'] = file_get_contents('system/users/'.$_SESSION["loginuser"].'/settings/language.foc');
       if(empty($_SESSION['locale'])){
-        $bd = new readbd;
-        $bd->readglobal2("login","forestusers","status",superuser);
-        $_SESSION['superuser'] = $getdata;
         $_SESSION['locale'] = file_get_contents('system/users/'.$_SESSION['superuser'].'/settings/language.foc');
         if(empty($_SESSION['locale'])){
         file_put_contents('system/users/'.$_SESSION["loginuser"].'/settings/language.foc','en');

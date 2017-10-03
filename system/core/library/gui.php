@@ -37,6 +37,9 @@ class gui{
   {
     echo '<input class="'.$name.'" id="'.$name.'" placeholder="'.$placeholder.'"style="width:'.$size.'%; -webkit-appearance:none; padding:10px; font-size:15px; border-radius:3px; margin:auto; background-color:#fff; float:none; border:1px solid #ccc; color:#3a3a3a;" type="'.$type.'" name="'.$name.'" value="'.$value.'" /></br></br>';
   }
+  function errorLayot($content){
+    echo "<div style='width:300px; background-color:#f7b1ab; padding:15px; text-align:center; border:2px solid #882720; color:#691812;'>$content</div>";
+  }
 function getDayRus(){
   $day_lang = parse_ini_file('system/core/os.lang');//localization file
   $days = array(
