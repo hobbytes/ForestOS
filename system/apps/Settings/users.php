@@ -174,5 +174,24 @@ function seluser<?echo $appid;?>(el2){$("#<?echo $appid;?>").load("<?echo $folde
 function deleteuser<?echo $appid;?>(el3){$("#<?echo $appid;?>").load("<?echo $folder?>users.php?id=<?echo rand(0,10000).'&destination='.$folder.'&appname='.$appname.'&appid='.$appid?>&deleteuser="+el3.id+"&fuid=<?echo $fuid?>")};
 function addrule<?echo $appid;?>(el4){$("#<?echo $appid;?>").load("<?echo $folder?>users.php?id=<?echo rand(0,10000).'&destination='.$folder.'&appname='.$appname.'&appid='.$appid?>&selectuser="+el4.id+"&addrule="+el4.id+"&fuid=<?echo $fuid?>")};
 function removerule<?echo $appid;?>(el5){$("#<?echo $appid;?>").load("<?echo $folder?>users.php?id=<?echo rand(0,10000).'&destination='.$folder.'&appname='.$appname.'&appid='.$appid?>&selectuser="+el5.id+"&removerule="+el5.id+"&fuid=<?echo $fuid?>")};
-function adduser<?echo $appid;?>(){$("#<?echo $appid;?>").load("<?echo $folder?>users.php?id=<?echo rand(0,10000).'&destination='.$folder.'&appname='.$appname.'&appid='.$appid?>&adduserlogin="+document.getElementById("<?echo $appid.'reglogin';?>").value+"&selectuser="+document.getElementById("<?echo $appid.'reglogin';?>").value+"&adduserpassword="+document.getElementById("<?echo $appid.'regpassword';?>").value+"&adduserhdd="+document.getElementById("<?echo $appid.'reghdd';?>").value+"")};
+
+function adduser<?echo $appid;?>(){
+  var u_login = $('.<?echo $appid?>reglogin').val();
+  var u_password = $('.<?echo $appid?>regpassword').val();
+  var u_hdd = $('.<?echo $appid?>reghdd').val();
+  if(u_login && u_password && u_hdd){
+    $("#<?echo $appid;?>").load("<?echo $folder?>users.php?id=<?echo rand(0,10000).'&destination='.$folder.'&appname='.$appname.'&appid='.$appid?>&adduserlogin="+document.getElementById("<?echo $appid.'reglogin';?>").value+"&selectuser="+document.getElementById("<?echo $appid.'reglogin';?>").value+"&adduserpassword="+document.getElementById("<?echo $appid.'regpassword';?>").value+"&adduserhdd="+document.getElementById("<?echo $appid.'reghdd';?>").value+"");
+  }else{
+    if(!u_hdd){
+      $('.<?echo $appid?>reghdd').focus();
+    }
+    if(!u_password){
+      $('.<?echo $appid?>regpassword').focus();
+    }
+    if(!u_login){
+      $('.<?echo $appid?>reglogin').focus();
+    }
+  }
+};
+
 </script>
