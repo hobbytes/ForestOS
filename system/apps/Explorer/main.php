@@ -20,6 +20,7 @@ $ico	=	$_GET['ico'];
 $click	=	$_GET['mobile'];
 $folder	=	$_GET['destination'];
 $erasestatus	=	$_GET['erasestatus'];
+$zipfile = $_GET['zipfile'];
 $dialogexplorer = new gui;
 //Запускаем сессию
 session_start();
@@ -59,7 +60,21 @@ if(!empty($deleteforever)){
 	}
 }
 //Логика
-if($link!=''){
+/*-Упаковка объектов-*/
+if(!empty($zipfile)){
+include '../../core/library/zip.php';
+if(is_dir($zipfile)){
+	$zip = new zip;
+	$zip->toZip($zipfile,dirname($zipfile).'/'.basename($zipfile).'.zip');
+}else{
+	$zip = new ZipArchive;
+	$info = pathinfo($zipfile);
+	$zip->open(dirname($zipfile).'/'.basename($zipfile,'.'.$info['extension']).'.zip', ZIPARCHIVE::CREATE);
+	$zip->addFile($zipfile);
+	$zip->close();
+}
+}
+if(!empty($link)){
 	if($linkname=='main.php'){
 		$mainfile	=	str_replace('.php','',$linkname);
 		$destination=str_replace($linkname,'',$link);
@@ -127,6 +142,7 @@ $pathmain = str_replace($_SERVER['DOCUMENT_ROOT'],'',$pathmain);
 	<li><div <?echo 'class="delete" onClick="deletes'.$appid.'(this);" ';?>><?echo $explorer_lang[$cl.'_menu_trash_label']?></div></li>
 	<li><div <?echo 'class="deleteforever" onClick="deleteforever'.$appid.'(this);" ';?>><?echo $explorer_lang[$cl.'_menu_delete_label']?></div></li>
 	<li><div <? echo 'id="'.$dir.'/" onClick="loadshow'.$appid.'(this);"';?>><?echo $explorer_lang[$cl.'_menu_loadfile_label']?></div></li>
+	<li><div <? echo 'class="zipfile" onClick="newload'.$appid.'('."'zipfile'".',this.id);"';?>><?echo $explorer_lang[$cl.'_menu_zip_label']?></div></li>
 	<li><div <? echo 'id="'.$dir.'/" class="loadthis" onClick="getproperty'.$appid.'(this);"';?>><?echo $explorer_lang[$cl.'_menu_property_label']?></div></li>
 </ul>
 </div>
@@ -267,6 +283,7 @@ function select<?echo $appid;?>(folder,folder2,folder3,folder4){
 	$('.'+folder).css('background-color','#b5b5b5');
 	$(".delete").attr("id",folder2);
 	$(".deleteforever").attr("id",folder2);
+	$(".zipfile").attr("id",folder2);
 	$(".loadthis").attr("id",folder2);
 	$(".mklink").attr("id",folder2);
 	$(".mklink").attr("ico",folder3);
@@ -290,6 +307,9 @@ function mkdirshow<?echo $appid;?>(){
 };
 function mkdirbtn<?echo $appid;?>(){
 	$("#<?echo $appid;?>").load("<?echo $folder;?>/main.php?makedir="+$("#mkdirvalue<?echo $appid;?>").val()+"&id=<?echo rand(0,10000).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&dir='.realpath($entry).'&destination='.$folder;?>")
+};
+function newload<?echo $appid;?>(key,value){
+$("#<?echo $appid;?>").load("<?echo $folder;?>/main.php?"+key+"="+value+"&id=<?echo rand(0,10000).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&dir='.realpath($entry).'&destination='.$folder;?>")
 };
 $(function(){
 	$("#mmenu<?echo $appid;?>").menu();
