@@ -11,7 +11,6 @@ class zip{
   	}
 
   	$source = str_replace('\\', '/', realpath($source));
-
   	if (is_dir($source) === true){
   		$files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($source), RecursiveIteratorIterator::SELF_FIRST);
 
@@ -24,11 +23,10 @@ class zip{
 
   				$file = realpath($file);
   				$file = str_replace('\\', '/', $file);
-
   				if (is_dir($file) === true){
-  						$zip->addEmptyDir(str_replace($source . '/', '', $file . '/'));
+  						$zip->addEmptyDir(str_replace($source, '', $file . '/'));
   				}else if (is_file($file) === true){
-  						$zip->addFromString(str_replace($source . '/', '', $file), file_get_contents($file));
+  						$zip->addFromString(str_replace($source, '', $file), file_get_contents($file));
   				}
   		}
   	}else if (is_file($source) === true){

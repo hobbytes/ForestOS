@@ -70,7 +70,7 @@ if(is_dir($zipfile)){
 	$zip = new ZipArchive;
 	$info = pathinfo($zipfile);
 	$zip->open(dirname($zipfile).'/'.basename($zipfile,'.'.$info['extension']).'.zip', ZIPARCHIVE::CREATE);
-	$zip->addFile($zipfile);
+	$zip->addFile($zipfile,basename($zipfile));
 	$zip->close();
 }
 }
@@ -139,10 +139,10 @@ $pathmain = str_replace($_SERVER['DOCUMENT_ROOT'],'',$pathmain);
 	<li><div <?echo 'id="'.$dir.'/" class="loadthis" onClick="load'.$appid.'(this);" ';?> ><?echo $explorer_lang[$cl.'_menu_open_label']?></div></li>
 	<li><div <?echo 'onClick="mkdirshow'.$appid.'();" ';?> ><?echo $explorer_lang[$cl.'_menu_md_label']?></div></li>
 	<li><div <?echo 'id="'.$dir.'/" class="mklink" onClick="link'.$appid.'(this);" ';?> ><?echo $explorer_lang[$cl.'_menu_ml_label']?></div></li>
-	<li><div <?echo 'class="delete" onClick="deletes'.$appid.'(this);" ';?>><?echo $explorer_lang[$cl.'_menu_trash_label']?></div></li>
-	<li><div <?echo 'class="deleteforever" onClick="deleteforever'.$appid.'(this);" ';?>><?echo $explorer_lang[$cl.'_menu_delete_label']?></div></li>
-	<li><div <? echo 'id="'.$dir.'/" onClick="loadshow'.$appid.'(this);"';?>><?echo $explorer_lang[$cl.'_menu_loadfile_label']?></div></li>
-	<li><div <? echo 'class="zipfile" onClick="newload'.$appid.'('."'zipfile'".',this.id);"';?>><?echo $explorer_lang[$cl.'_menu_zip_label']?></div></li>
+	<li><div <?echo 'class="loadthis" onClick="newload'.$appid.'('."'del'".',this.id)" ';?>><?echo $explorer_lang[$cl.'_menu_trash_label']?></div></li>
+	<li><div <?echo 'class="loadthis" onClick="newload'.$appid.'('."'delf'".',this.id)" ';?>><?echo $explorer_lang[$cl.'_menu_delete_label']?></div></li>
+	<li><div <? echo 'id="'.$dir.'/" onClick="newload'.$appid.'('."'where'".',this.id)"';?>><?echo $explorer_lang[$cl.'_menu_loadfile_label']?></div></li>
+	<li><div <? echo 'class="loadthis" onClick="newload'.$appid.'('."'zipfile'".',this.id)"';?>><?echo $explorer_lang[$cl.'_menu_zip_label']?></div></li>
 	<li><div <? echo 'id="'.$dir.'/" class="loadthis" onClick="getproperty'.$appid.'(this);"';?>><?echo $explorer_lang[$cl.'_menu_property_label']?></div></li>
 </ul>
 </div>
@@ -281,27 +281,16 @@ function getproperty<?echo $appid;?>(obj){
 function select<?echo $appid;?>(folder,folder2,folder3,folder4){
 	$(".select").css('background-color','transparent');
 	$('.'+folder).css('background-color','#b5b5b5');
-	$(".delete").attr("id",folder2);
-	$(".deleteforever").attr("id",folder2);
-	$(".zipfile").attr("id",folder2);
 	$(".loadthis").attr("id",folder2);
 	$(".mklink").attr("id",folder2);
 	$(".mklink").attr("ico",folder3);
 	$(".mklink").attr("link",folder4);
 };
-function deletes<?echo $appid;?>(del){
-	$("#<?echo $appid;?>").load("<?echo $folder;?>/main.php?del="+del.id+"&id=<?echo rand(0,10000).'&dir='.realpath($entry).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&destination='.$folder;?>")
-};
+
 function erasetrash<?echo $appid;?>(){
 	$("#<?echo $appid;?>").load("<?echo $folder;?>/main.php?dir=<?echo realpath($entry)?>&erasestatus=true&id=<?echo rand(0,10000).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&destination='.$folder;?>")
 };
-function deleteforever<?echo $appid;?>(delf){
-	$("#<?echo $appid;?>").load("<?echo $folder;?>/main.php?delf="+delf.id+"&id=<?echo rand(0,10000).'&dir='.realpath($entry).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&destination='.$folder;?>")
-};
-function loadshow<?echo $appid;?>(divs){
-	$("#upload<?echo $appid;?>").load("<?echo $folder;?>/uploadwindow.php?where="+divs.id+"&id=<?echo rand(0,10000).'&appname='.$appname.'&appid='.$appid.'&destination='.$folder.'&mobile='.$click;?>")
-	$("#upload<?echo $appid;?>").css('display', 'block');
-};
+
 function mkdirshow<?echo $appid;?>(){
 	$("#mkdirdiv<?echo $appid;?>").css('display','block')
 };
