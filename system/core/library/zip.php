@@ -1,6 +1,9 @@
 <?
 class zip{
   function toZip($source, $destination){
+    session_start();
+    if($_SESSION['superuser'] == $_SESSION['loginuser']){
+
   	if (!extension_loaded('zip') || !file_exists($source)) {
   		return false;
   	}
@@ -34,5 +37,6 @@ class zip{
   	}
   	return $zip->close();
   }
+}
 }
 ?>

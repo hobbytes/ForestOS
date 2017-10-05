@@ -39,7 +39,7 @@ if(isset($_SESSION['loginuser'])){
   $pname=basename($destination);
   $style="'display','block'";
   $style2="'display','none'";
-  echo '<div id=app'.$idprocess.' style="max-width:'.$maxwidth.'; position:absolute; left:'.$left.'; top:'.$top.';" class="ui-widget-content window windownormal windowborder" ><div id=drag'.$idprocess.' class="ui-widget-header dragwindow"><span  style="cursor:default;"><div style="background-color:transparent;  background-image: url('.$appicon.'); background-size:cover; height:20px; width:20px; margin:0px 3px 0px 3px; float:left;"></div>'.$pname.' </span>
+  echo '<div id=app'.$idprocess.' style="max-width:'.$maxwidth.'; position:absolute; left:'.$left.'; top:'.$top.';" class="ui-widget-content window windownormal windowborder" ><div id=drag'.$idprocess.' class="ui-widget-header dragwindow"><span  style="cursor:default; font-variant: all-petite-caps; font-size:17px;"><div style="background-color:transparent;  background-image: url('.$appicon.'); background-size:cover; height:20px; width:20px; margin:0px 3px 0px 3px; float:left;"></div>'.$pname.' </span>
   <div class="appwindowbutton"'; echo ' onClick=" $(';echo "'#"; echo 'process'.$idprocess; echo "'"; echo ').remove();';echo ' $(';echo "'#"; echo "app$idprocess"; echo "'"; echo ').css('; echo "$style2"; echo '); checkwindows();" style="background-color:#ed2020;">x</div>
   <div class="hidewindow'.$idprocess.' appwindowbutton" onClick="" style="background-color:#37a22e;">-</div>
   <div class="reload'.$idprocess.' appwindowbutton" onClick="" style="background-color:#e09100;">o</div>
