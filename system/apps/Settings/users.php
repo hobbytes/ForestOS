@@ -152,7 +152,7 @@ if($deleteuser!=''){
     $settingsbd->readglobal2("password","forestusers","login",$deleteuser);
     $userhash = md5($fuid.$dr.$getdata);
     if($conn->query($sql)){
-      $e = file_get_contents('http://forest.hobbytes.com/media/os/ubase/deleteuser.php?fuid='.$fuid.'&followlink='.$dr.'&userhash='.$userhash.'');
+      $e = file_get_contents('http://forest.hobbytes.com/media/os/ubase/deleteuser.php?fuid='.$fuid.'&followlink='.$_SERVER['SERVER_NAME'].'&userhash='.$userhash.'');
       if($e=='true'){
         $faction = new fileaction;
         $faction->deleteDir($_SERVER['DOCUMENT_ROOT'].'/system/users/'.$deleteuser);

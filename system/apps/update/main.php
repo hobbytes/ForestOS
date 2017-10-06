@@ -78,7 +78,7 @@ foreach ($arrayu as $key)
   echo '<p>'.$update_lang[$cl.'_update_msg_1'].'<b>'.$updatefile.'</b>'.$update_lang[$cl.'_update_msg_2'].'</p>';
   $gui->newnotification($appname, $update_lang[$cl.'_update_label'], $update_lang[$cl.'_update_msg_1'].'<b>'.$updatefile.'</b>'.$update_lang[$cl.'_update_msg_2']);
   unlink('./temp/'.$updatefile.$temphash.'.zip');
-  file_get_contents('http://forest.hobbytes.com/media/os/ubase/updateuser.php?followlink='.$_SERVER['DOCUMENT_ROOT'].'&version='.str_replace(' ','_'$codename.$subversion));
+  file_get_contents('http://forest.hobbytes.com/media/os/ubase/updateuser.php?followlink='.$_SERVER['SERVER_NAME'].'&version='.str_replace(' ','_',$codename.$subversion));
   }
   }
 }else{
