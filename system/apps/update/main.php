@@ -75,10 +75,10 @@ foreach ($arrayu as $key)
   $myfile=fopen('../../core/osinfo.foc',"w");
   $content='[forestos]'.PHP_EOL.PHP_EOL.'version='.$version.PHP_EOL.PHP_EOL.'subversion='.$subversion.PHP_EOL.PHP_EOL.'revision='.$revision.PHP_EOL.PHP_EOL.'codename='.$codename;
   fwrite($myfile,PHP_EOL.$content);fclose($myfile);
-
   echo '<p>'.$update_lang[$cl.'_update_msg_1'].'<b>'.$updatefile.'</b>'.$update_lang[$cl.'_update_msg_2'].'</p>';
   $gui->newnotification($appname, $update_lang[$cl.'_update_label'], $update_lang[$cl.'_update_msg_1'].'<b>'.$updatefile.'</b>'.$update_lang[$cl.'_update_msg_2']);
   unlink('./temp/'.$updatefile.$temphash.'.zip');
+  file_get_contents('http://forest.hobbytes.com/media/os/ubase/updateuser.php?followlink='.$_SERVER['DOCUMENT_ROOT'].'&version='.str_replace(' ','_'$codename.$subversion));
   }
   }
 }else{

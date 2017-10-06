@@ -33,7 +33,7 @@ if (isset($_GET["exit"])) {
 }
   if ($auth->isAuth()) {
     header("Location:os.php");
-    $infob->writestat('Success Login -> '.$loginin,'system/core/journal.mcj');
+    $infob->writestat('Success Login  -> '.$loginin,'system/core/journal.mcj');
 }
 $gui = new gui;
 $gui->formstart('POST');
