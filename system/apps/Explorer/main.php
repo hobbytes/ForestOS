@@ -1,5 +1,5 @@
 <?$appname=$_GET['appname'];$appid=$_GET['appid'];?>
-<div id="<?echo $appname.$appid;?>" style="background-color:#f2f2f2; height:500px; max-height:95%; max-width:100%; width:800px; border-radius:0px 0px 5px 5px; overflow:auto;">
+<div id="<?echo $appname.$appid;?>" style="background-color:#f2f2f2; height:500px; max-width:100%; width:800px; border-radius:0px 0px 5px 5px; overflow:auto;">
 <?php
 /*Explorer*/
 //Подключаем библиотеки
@@ -81,8 +81,9 @@ if(!empty($link)){
 		$link='';
 		$param='';
 		$newname=stristr($destination, 'apps/');
-		$newname=str_replace(array('apps/','/main.php'),'',$newname);
+		$newname=str_replace(array('apps/','/main.php', '/'),'',$newname);
 		$puplicname=$newname;
+		$ico = stristr($ico,'?',true);
 	}else{
 		$mainfile	=	'main';
 		$param='dir';
@@ -245,7 +246,7 @@ while (false !== ($entry=$d->read())) {
 		}
 	}
 
-	echo('<div id="'.realpath($entry).'" class="'.md5($name).' select ui-button ui-widget ui-corner-all" onClick="'.$select.'" on'.$click.'="'.$load.'"  style="cursor:default; height:128px;margin:5px;text-align:center;width:128px;position:relative;display:block;text-overflow:ellipsis;overflow:hidden;float:left;" title="'.$name.'"><div style="cursor:default; width:80px; height:80px; background-image: url('.$type.'); background-size:cover; -webkit-user-select:none; user-select:none; padding:5px; background-color:'.$color.'; margin:auto; color:#d05858; font-size:25px;">
+	echo('<div id="'.realpath($entry).'" class="'.md5($name).' select ui-button ui-widget ui-corner-all explorer-object" onClick="'.$select.'" on'.$click.'="'.$load.'"  style="cursor:default; height:128px;margin:5px;text-align:center;width:128px;position:relative;display:block;text-overflow:ellipsis;overflow:hidden;float:left;" title="'.$name.'"><div style="cursor:default; width:80px; height:80px; background-image: url('.$type.'); background-size:cover; -webkit-user-select:none; user-select:none; padding:5px; background-color:'.$color.'; margin:auto; color:#d05858; font-size:25px;">
 	'.$extension.'</div><div style="text-overflow: ellipsis;overflow: hidden;font-size: 15px;"><span style="color:'.$n_color.';">'.$name.'</span><div style="font-size:10px; padding:5px; color:#688ad8;">'.$datecreate.'</div></div></div>');
 }
 }

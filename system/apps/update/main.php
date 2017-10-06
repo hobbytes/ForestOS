@@ -1,5 +1,5 @@
 <?$appname=$_GET['appname'];$appid=$_GET['appid'];?>
-<div id="<?echo $appname.$appid;?>" style="background-color:#ebebeb; height:300px; width:400px; color:#000; max-height:95%; max-width:100%; border-radius:0px 0px 5px 5px; overflow:auto;">
+<div id="<?echo $appname.$appid;?>" style="background-color:#ebebeb; height:100%; width:100%; color:#000;  border-radius:0px 0px 5px 5px; overflow:auto;">
 <?php
 /*Application Installer*/
 //Подключаем библиотеки
@@ -35,9 +35,13 @@ foreach ($arrayu as $key)
   $size = $key['size'];
   $codename = $key['codename'];
 }
+$current = parse_ini_file('../../core/osinfo.foc');
+if($current['subversion'] == $subversion){
+  die('<div style="width:500px; height:300px;">'.$gui->infoLayot('Forest OS has already been updated').'</div>');
+}
 }
 ?>
-
+<div style="width:500px; height:300px;">
 <p style="text-align:center">
   <div style="background-image: url(http://forest.hobbytes.com/media/os/updates/uplogo.png); background-size:cover; margin:auto; height:90px; width:90px;">
   </div>
@@ -86,6 +90,7 @@ foreach ($arrayu as $key)
 }
 
   ?>
+</div>
 </div>
 </div>
 <script>

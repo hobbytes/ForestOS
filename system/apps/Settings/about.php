@@ -34,7 +34,7 @@ $format3=$format;
 $fo->format($getdata);
 
 
-echo '<div style="text-align:left; margin-top:10px; margin-left:10px;"><b style="font-size:32px; font-weight:100;">Forest OS</b><br>';
+echo '<div style="text-align:left; margin-top:10px; margin-left:10px;"><b style="font-size:40px; font-weight:100; font-variant: all-petite-caps;">Forest OS</b><br>';
 echo '<img style="width:128px; height:128px;" src="system/core/design/images/forestosicon.png"/>';
 echo '<div><b>Forest OS</b> '.$osinfo['codename'].'<br>'.$language_about[$_SESSION['locale'].'_version_label'].' '.$osinfo['version'].'<br><span style="font-size:13px; color:#313131;">'.$language_about[$_SESSION['locale'].'_revision_label'].': <span style="text-transform:uppercase;">'.$osinfo['revision'].'</span><br>'.$language_about[$_SESSION['locale'].'_subversion_label'].': '.$osinfo['subversion'].'</span></div></div><hr>';
 
