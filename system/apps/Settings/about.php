@@ -39,7 +39,7 @@ echo '<img style="width:128px; height:128px;" src="system/core/design/images/for
 echo '<div><b>Forest OS</b> '.$osinfo['codename'].'<br>'.$language_about[$_SESSION['locale'].'_version_label'].' '.$osinfo['version'].'<br><span style="font-size:13px; color:#313131;">'.$language_about[$_SESSION['locale'].'_revision_label'].': <span style="text-transform:uppercase;">'.$osinfo['revision'].'</span><br>'.$language_about[$_SESSION['locale'].'_subversion_label'].': '.$osinfo['subversion'].'</span></div></div><hr>';
 
 echo '<div style="text-align:left; margin-top:10px; margin-left:10px;"><b style="font-size:20px;">'.$language_about[$_SESSION['locale'].'_user_label'].'</b>';
-echo '<div style="padding-right:10px;">'.$language_about[$_SESSION['locale'].'_username_label'].': '.$_SESSION["loginuser"].'<br> FUID: '.$fuid.'</div></div><hr>';
+echo '<div style="padding-right:10px;">'.$language_about[$_SESSION['locale'].'_username_label'].': '.str_replace('_',' ',$_SESSION["loginuser"]).'<br> FUID: '.$fuid.'</div></div><hr>';
 
 echo '<div style="text-align:left; margin-top:10px; margin-left:10px;"><b style="font-size:20px;">'.$language_about[$_SESSION['locale'].'_capacity_label'].'</b>';
 echo '<div>'.$language_about[$_SESSION['locale'].'_capacityall_label'].': '.$format2 .'<br>'.$language_about[$_SESSION['locale'].'_capacityfree_label'].': '.$format.'<br> '.$language_about[$_SESSION['locale'].'_capacityused_label'].': '.$format3.'</div></div><hr>';

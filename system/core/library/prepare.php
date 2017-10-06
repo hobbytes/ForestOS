@@ -174,7 +174,8 @@ function hibernation(){
   $file = 'system/users/'.$login.'/settings/state.hdf';
   if(file_exists($file)){
     $content = parse_ini_file($file);
-    if(!empty($content)){
+    session_start();
+    if(!empty($content) && $_SESSION["safemode"]!='true'){
       session_start();
       $_SESSION['appid']  = $content['last_app_id']-1;
       $bds= new readbd;
@@ -215,7 +216,7 @@ function topbar(){
   </div>
   <div id="aboutmenu" class="ui-widget-content menutheme" onmouseover="document.getElementById('aboutmenu').style.display='block';" onmouseout="document.getElementById('aboutmenu').style.display='none';" style="z-index:9999; user-select:none; display:none; text-align:justify; min-width:200px; max-width:300px; position:absolute; text-overflow:hidden; overflow:ellipsis; padding:14px 0 0 0;">
   <span style="text-transform:uppercase; cursor:pointer;  padding:5px;" onclick="makeprocess('Settings','users','<?echo $login;?>','selectuser'); document.getElementById('aboutmenu').style.display='none';">
-    <?echo $login;?>
+    <?echo str_replace('_',' ',$login);?>
   </span>
   <hr class="menulines">
   <span style="cursor:pointer; padding:5px;" onclick="makeprocess('Explorer','main','',''); document.getElementById('aboutmenu').style.display='none';">
@@ -321,8 +322,9 @@ function topbar(){
     }
     function autorun(){
       global $login;
+      session_start();
       $content  = file_get_contents('system/users/'.$login.'/settings/autorun.foc');
-      if($content){
+      if($content && $_SESSION["safemode"]!='true'){
         $array  = explode(",",$content);
         foreach ($array as $value){
           ?>

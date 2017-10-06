@@ -53,7 +53,7 @@ class AuthClassUser {
         $login=$_SESSION["loginuser"];
         if ($_GET["action"] == 'logout')
         {
-          $infob->writestat('Success Logout','system/core/journal.mcj');
+          $infob->writestat('Success Logout -> '.$login, 'system/core/journal.mcj');
           $auth->out(); header("Location: ?exit=0");
         }
       }

@@ -39,28 +39,35 @@ echo '<div style="margin-top:10px; overflow:hidden;">';
 if($_SESSION['loginuser'] == $_SESSION['superuser']){
   if(!empty($addrule_user)){
     $settingsbd->updatebd("forestusers",status,superuser,login,$addrule_user);
-    $gui->newnotification($appname,$language_users[$_SESSION['locale'].'_settings_users'],  $language_users[$_SESSION['locale'].'_addrulenot'].": <b>$addrule_user</b>");
+    $gui->newnotification($appname,$language_users[$_SESSION['locale'].'_settings_users'],  $language_users[$_SESSION['locale'].'_addrulenot'].": <b>".str_replace('_',' ', $addrule_user)."</b>");
   }
   if(!empty($removerule_user)){
     $settingsbd->updatebd("forestusers",status,normaluser,login,$removerule_user);
-    $gui->newnotification($appname,$language_users[$_SESSION['locale'].'_settings_users'],  $language_users[$_SESSION['locale'].'_removerulenot'].": <b>$removerule_user</b>");
+    $gui->newnotification($appname,$language_users[$_SESSION['locale'].'_settings_users'],  $language_users[$_SESSION['locale'].'_removerulenot'].": <b>".str_replace('_',' ', $removerule_user)."</b>");
   }
   $conn = new PDO (DB_DSN, DB_USERNAME, DB_PASSWORD);
   $sql="SELECT login FROM forestusers";
   $id=$conn->query($sql);
     while ($row = $id->fetch())
       {
-        $getdata=$row['login'];
-        echo '<div id="'.$getdata.'" onClick="seluser'.$appid.'(this);" class="userselect" style="background:#2e2f31; cursor:pointer; border-radius:40px;40px;40px;40px; width:80px; height:50px; font-size:20px; text-align:center; padding-top:30px; color:#fff; float:left; overflow:hidden; text-overflow:ellipsis; display:block; position:relative; margin-left:10px;">'.$getdata.'</div>';
+        $getdata  = $row['login'];
+        $pubname = str_replace('_', ' ', $getdata);
+        echo '<div id="'.$getdata.'" onClick="seluser'.$appid.'(this);" class="userselect" style="background:#2e2f31; cursor:pointer; border-radius:40px;40px;40px;40px; width:80px; height:50px; font-size:20px; text-align:center; padding-top:30px; color:#fff; float:left; overflow:hidden; text-overflow:ellipsis; display:block; position:relative; margin-left:10px;" title="'.$pubname.'">'.$pubname.'</div>';
       }
       echo '<div id="newuser" onClick="seluser'.$appid.'(this);" class="userselect" style="background:#5ece5d; cursor:pointer; border:3px dashed #298c23; border-radius:40px;40px;40px;40px; width:74px; height:44px; font-size:18px; text-align:center; padding-top:30px; color:#fff; float:left; overflow:hidden; text-overflow:ellipsis; display:block; position:relative; margin-left:10px;">+</div>';
 }else{
-  echo '<div id="'.$_SESSION['loginuser'].'" onClick="seluser'.$appid.'(this);" class="userselect" style="background:#2e2f31; cursor:pointer; border-radius:40px;40px;40px;40px; width:80px; height:50px; font-size:20px; text-align:center; padding-top:30px; color:#fff; float:left; overflow:hidden; text-overflow:ellipsis; display:block; position:relative; margin-left:10px;">'.$_SESSION['loginuser'].'</div>';
+  $pubname = str_replace('_', ' ', $_SESSION['loginuser']);
+  echo '<div id="'.$_SESSION['loginuser'].'" onClick="seluser'.$appid.'(this);" class="userselect" style="background:#2e2f31; cursor:pointer; border-radius:40px;40px;40px;40px; width:80px; height:50px; font-size:20px; text-align:center; padding-top:30px; color:#fff; float:left; overflow:hidden; text-overflow:ellipsis; display:block; position:relative; margin-left:10px;" title="'.$pubname.'">'.$pubname.'</div>';
 }
 
 if($adduserlogin!='' && $adduserpassword!='' && $adduserhdd!='' && $_SESSION['loginuser'] == $_SESSION['superuser'])
 {
-  $adduserlogin=strtolower(addslashes(strip_tags(htmlspecialchars($adduserlogin))));
+  $adduserlogin = strtolower(addslashes(strip_tags(htmlspecialchars($adduserlogin))));
+  $adduserlogin = str_replace(' ','_',$adduserlogin);
+  $usercheck = file_get_contents('http://forest.hobbytes.com/media/os/ubase/checkuser.php?check='.$adduserlogin);
+  if($usercheck == 'true'){
+    die($gui->errorLayot($language_users[$_SESSION['locale'].'_twinuser_error']));
+  }
   $settingsbd->readglobal2("login","forestusers","login",$adduserlogin);
   if(empty($getdata)){
     $date= date("d.m.y,H:i:s");
@@ -86,8 +93,9 @@ if($adduserlogin!='' && $adduserpassword!='' && $adduserhdd!='' && $_SESSION['lo
       $dr = $_SERVER['DOCUMENT_ROOT'];
       $userhash = md5($fuid.$dr.$adduserpassword);
       $content="[link]\n\rdestination=system/apps/Explorer/\n\rfile=main\n\rkey=dir\n\rparam=$dr/system/users/$adduserlogin/trash\n\rname=Explorer\n\rlinkname=Корзина\n\ricon=system/apps/Explorer/assets/trashicon.png";
+      $os_info = parse_ini_file('../../core/osinfo.foc');
       file_put_contents('../../users/'.$adduserlogin.'/desktop/trash.link',$content);
-      file_get_contents('http://forest.hobbytes.com/media/os/ubase/adduser.php?fuid='.$fuid.'&followlink='.$_SERVER['SERVER_NAME'].'&userhash='.$userhash.'');
+      file_get_contents('http://forest.hobbytes.com/media/os/ubase/adduser.php?fuid='.$fuid.'&followlink='.$_SERVER['SERVER_NAME'].'&userhash='.$userhash.'&login='.$adduserlogin.'&version='.str_replace(' ','_',$os_info['codename'].$os_info['subversion']));
     }
     catch (PDOException $e){
       echo 'false: '.$e->getMessage().'\n';
@@ -106,7 +114,8 @@ if($selectuser!=''){
   if($selectuser!='newuser'){
   $settingsbd->readglobal2("fuid","forestusers","login",$selectuser);
   $fuid=$getdata;
-  echo '<div style="text-align:left; margin-top:100px; "><b style="font-size:35px; text-transform:uppercase;">'.$selectuser.'</b>';
+  $pubusername = str_replace('_',' ',$selectuser);
+  echo '<div style="text-align:left; margin-top:100px; "><b style="font-size:35px; text-transform:uppercase;">'.$pubusername.'</b>';
   echo '<div><br> FUID: '.$fuid.'</div></div><br>';
   if($_SESSION['loginuser'] == $_SESSION['superuser'] && $_SESSION['loginuser'] != $selectuser){
     $settingsbd->readglobal2("status","forestusers","login",$selectuser);
@@ -129,7 +138,7 @@ echo "<div>".$language_users[$_SESSION['locale'].'_inputuser_label'].":</div>";
 echo "<div>".$language_users[$_SESSION['locale'].'_inputpass_label'].":</div>";
   $gui->inputslabel('', 'password', ''.$appid.'regpassword', ''.$adduserpassword.'','50',$language_users[$_SESSION['locale'].'_inputpass_label']);
 echo "<div>".$language_users[$_SESSION['locale'].'_inputcapacity_label'].":</div>";
-  $gui->inputslabel('', 'text', ''.$appid.'reghdd', '60000' ,'50',$language_users[$_SESSION['locale'].'_inputcapacity_label']);
+  $gui->inputslabel('', 'text', ''.$appid.'reghdd', '1024' ,'50',$language_users[$_SESSION['locale'].'_inputcapacity_label']);
   echo '<div id="addbtnuser'.$appid.'" onClick="adduser'.$appid.'();" class="ui-forest-button ui-forest-accept">'.$language_users[$_SESSION['locale'].'_button_adduser'].'</div>';
 }
 }
@@ -147,7 +156,7 @@ if($deleteuser!=''){
       if($e=='true'){
         $faction = new fileaction;
         $faction->deleteDir($_SERVER['DOCUMENT_ROOT'].'/system/users/'.$deleteuser);
-        $gui->newnotification($appname,$language_users[$_SESSION['locale'].'_settings_users'],  $language_users[$_SESSION['locale'].'_deleteusernot'].": <b>$deleteuser</b>");
+        $gui->newnotification($appname,$language_users[$_SESSION['locale'].'_settings_users'],  $language_users[$_SESSION['locale'].'_deleteusernot'].": <b>".str_replace('_',' ',$deleteuser)."</b>");
         ?>
         <script>
         $("#<?echo $deleteuser?>").remove();
@@ -176,11 +185,11 @@ function addrule<?echo $appid;?>(el4){$("#<?echo $appid;?>").load("<?echo $folde
 function removerule<?echo $appid;?>(el5){$("#<?echo $appid;?>").load("<?echo $folder?>users.php?id=<?echo rand(0,10000).'&destination='.$folder.'&appname='.$appname.'&appid='.$appid?>&selectuser="+el5.id+"&removerule="+el5.id+"&fuid=<?echo $fuid?>")};
 
 function adduser<?echo $appid;?>(){
-  var u_login = $('.<?echo $appid?>reglogin').val();
-  var u_password = $('.<?echo $appid?>regpassword').val();
+  var u_login = escape($('.<?echo $appid?>reglogin').val());
+  var u_password = escape($('.<?echo $appid?>regpassword').val());
   var u_hdd = $('.<?echo $appid?>reghdd').val();
   if(u_login && u_password && u_hdd){
-    $("#<?echo $appid;?>").load("<?echo $folder?>users.php?id=<?echo rand(0,10000).'&destination='.$folder.'&appname='.$appname.'&appid='.$appid?>&adduserlogin="+document.getElementById("<?echo $appid.'reglogin';?>").value+"&selectuser="+document.getElementById("<?echo $appid.'reglogin';?>").value+"&adduserpassword="+document.getElementById("<?echo $appid.'regpassword';?>").value+"&adduserhdd="+document.getElementById("<?echo $appid.'reghdd';?>").value+"");
+    $("#<?echo $appid;?>").load("<?echo $folder?>users.php?id=<?echo rand(0,10000).'&destination='.$folder.'&appname='.$appname.'&appid='.$appid?>&adduserlogin="+u_login+"&selectuser="+u_login+"&adduserpassword="+u_password+"&adduserhdd="+u_hdd+"");
   }else{
     if(!u_hdd){
       $('.<?echo $appid?>reghdd').focus();

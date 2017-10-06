@@ -64,6 +64,9 @@ function  hibernation(logout){
     if(logout == 'true'){
       return location.href = '?action=logout';
     }else{
+      <?
+      $_SESSION['safemode'] = 'false';
+      ?>
       return location.href = 'os.php';
     }
 });
