@@ -184,6 +184,8 @@ function hibernation(){
       echo $security->__decode($content['state'], $key);
       file_put_contents('system/users/'.$login.'/settings/state.hdf','');
       $object->newnotification("Hibernation",$language[$_SESSION['locale'].'_hibernation_name'],$language[$_SESSION['locale'].'_hibernation_notification']."  <b>".$content['time_stamp']."</b>");
+    }else{
+      file_put_contents('system/users/'.$login.'/settings/state.hdf','');
     }
   }
   unset($content,$bds,$security,$key,$getdata);
@@ -325,6 +327,7 @@ function topbar(){
       session_start();
       $content  = file_get_contents('system/users/'.$login.'/settings/autorun.foc');
       if($content && $_SESSION["safemode"]!='true'){
+        echo $_SESSION["safemode"];
         $array  = explode(",",$content);
         foreach ($array as $value){
           ?>
@@ -333,7 +336,10 @@ function topbar(){
           </script>
           <?
         }
+      }else{
+        file_put_contents('system/users/'.$login.'/settings/autorun.foc','');
       }
+      $_SESSION['safemode'] = 'false';
     }
   }
 ?>
