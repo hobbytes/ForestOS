@@ -142,7 +142,7 @@ $pathmain = str_replace($_SERVER['DOCUMENT_ROOT'],'',$pathmain);
 	<li><div <?echo 'id="'.$dir.'/" class="mklink" onClick="link'.$appid.'(this);" ';?> ><?echo $explorer_lang[$cl.'_menu_ml_label']?></div></li>
 	<li><div <?echo 'class="loadthis" onClick="newload'.$appid.'('."'del'".',this.id)" ';?>><?echo $explorer_lang[$cl.'_menu_trash_label']?></div></li>
 	<li><div <?echo 'class="loadthis" onClick="newload'.$appid.'('."'delf'".',this.id)" ';?>><?echo $explorer_lang[$cl.'_menu_delete_label']?></div></li>
-	<li><div <? echo 'id="'.$dir.'/" onClick="newload'.$appid.'('."'where'".',this.id)"';?>><?echo $explorer_lang[$cl.'_menu_loadfile_label']?></div></li>
+	<li><div <? echo 'id="'.$dir.'/" onClick="loadshow'.$appid.'(this)"';?>><?echo $explorer_lang[$cl.'_menu_loadfile_label']?></div></li>
 	<li><div <? echo 'class="loadthis" onClick="newload'.$appid.'('."'zipfile'".',this.id)"';?>><?echo $explorer_lang[$cl.'_menu_zip_label']?></div></li>
 	<li><div <? echo 'id="'.$dir.'/" class="loadthis" onClick="getproperty'.$appid.'(this);"';?>><?echo $explorer_lang[$cl.'_menu_property_label']?></div></li>
 </ul>
@@ -272,6 +272,9 @@ echo $explorer_lang[$cl.'_free_label'].': '.$format .' '.$explorer_lang[$cl.'_fr
 <script>
 function load<?echo $appid;?>(el){
 	$("#<?echo $appid;?>").load("<?echo $folder;?>main.php?dir="+el.id+"&id=<?echo rand(0,10000).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&destination='.$folder;?>")
+};function loadshow<?echo $appid;?>(divs){
+	$("#upload<?echo $appid;?>").load("<?echo $folder;?>/uploadwindow.php?where="+divs.id+"&id=<?echo rand(0,10000).'&appname='.$appname.'&appid='.$appid.'&destination='.$folder.'&mobile='.$click;?>")
+	$("#upload<?echo $appid;?>").css('display', 'block');
 };
 function link<?echo $appid;?>(el2){
 	$("#<?echo $appid;?>").load("<?echo $folder;?>main.php?linkdir="+el2.id+"&ico="+el2.getAttribute('ico')+"&linkname="+el2.getAttribute('link')+"&id=<?echo rand(0,10000).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&dir='.realpath($entry).'&destination='.$folder;?>")

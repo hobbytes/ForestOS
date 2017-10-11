@@ -38,13 +38,13 @@ class gui{
     echo '<input class="'.$name.'" id="'.$name.'" placeholder="'.$placeholder.'"style="width:'.$size.'%; -webkit-appearance:none; padding:10px; font-size:15px; border-radius:3px; margin:auto; background-color:#fff; float:none; border:1px solid #ccc; color:#3a3a3a;" type="'.$type.'" name="'.$name.'" value="'.$value.'" /></br></br>';
   }
   function errorLayot($content){
-    echo "<div class='ui-forest' style='width:300px; margin:auto; position:relative; top:25%; background-color:#f7b1ab; padding:15px; text-align:center; border:2px solid #882720; color:#691812;'><b>#error:</b> $content</div>";
+    echo "<div onclick='this.remove()' class='ui-forest' style='cursor:pointer; width:300px; margin:auto; position:relative; top:25%; background-color:#f7b1ab; padding:15px; text-align:center; border:2px solid #882720; color:#691812;'><b>#error:</b> $content</div>";
   }
   function warningLayot($content){
-    echo "<div class='ui-forest' style='width:300px; margin:auto; position:relative; top:25%; background-color:#f7eeb8; padding:15px; text-align:center; border:2px solid #8e8550; color:#6d6326;'><b>#warning:</b> $content</div>";
+    echo "<div onclick='this.remove()' class='ui-forest' style='cursor:pointer; width:300px; margin:auto; position:relative; top:25%; background-color:#f7eeb8; padding:15px; text-align:center; border:2px solid #8e8550; color:#6d6326;'><b>#warning:</b> $content</div>";
   }
   function infoLayot($content){
-    echo "<div class='ui-forest' style='width:300px; margin:auto; position:relative; top:25%; background-color:#83c4f1; padding:15px; text-align:center; border:2px solid #29597b; color:#133d5a;'><b>#informaiton:</b> $content</div>";
+    echo "<div onclick='this.remove()' class='ui-forest' style='cursor:pointer; width:300px; margin:auto; position:relative; top:25%; background-color:#83c4f1; padding:15px; text-align:center; border:2px solid #29597b; color:#133d5a;'><b>#informaiton:</b> $content</div>";
   }
 function getDayRus(){
   $day_lang = parse_ini_file('system/core/os.lang');//localization file
