@@ -195,7 +195,7 @@ function hibernation(){
 function topbar(){
   global $object, $login, $language;
   ?>
-  <div id="topbar" class="ui-widget-content topbartheme" style="display:none; z-index:9999; height:22px; padding-top:4px;">
+  <div id="topbar" class="ui-widget-content topbartheme" style="display:none; z-index:9999; height:25px; padding-top:5px;">
     <span id="hideall" class="topbaractbtn ui-forest" style="cursor:pointer; display:none; background-color:#37a22e; color:#fff; width:12px; float:right; text-align:center; width:15px; margin-right: 8px; font-family:monospace; padding:2px 0;">
       -
     </span>
