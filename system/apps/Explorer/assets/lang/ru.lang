@@ -1,0 +1,31 @@
+[Explorer]
+menu_file_label = Файл
+menu_open_label = Открыть
+menu_md_label = Создать папку
+menu_ml_label = Создать ярлык
+menu_trash_label = Отправить в корзинку
+menu_delete_label = Удалить
+menu_loadfile_label = Загрузить файл
+menu_property_label = Свойства
+menu_zip_label = Добавить в архив
+error_open = "Не могу открыть файл с расширением <b style='text-transform:uppercase;'>"
+error_label  = "Ошибка чтения файла"
+
+[makedir]
+mdir_label = Введите название папки
+mdir_okbtn = Ок
+mdir_cancelbtn = Отмена
+msg_1  = Папка
+msg_2  = ' создана!'
+msg_3  = ' не создана!'
+msg_4  = 'Такая папка уже существует!'
+
+[trash]
+trash_label  = Очистить корзину
+
+[folder]
+size = размер
+date = Дата
+free_label = Свободно
+free_label_2 = из
+back_label = назад

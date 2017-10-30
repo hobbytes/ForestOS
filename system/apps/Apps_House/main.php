@@ -21,7 +21,7 @@ $apphouse_lang  = parse_ini_file('app.lang');
 $cl = $_SESSION['locale'];
 //Логика
 if($appdownload!=''){
-  if($type=="app_h"){$_SESSION['appversion']=$_GET['v'];?><script>makeprocess2('system/apps/installer/main.php','<?echo $appdownload; ?>','appdownload');</script><?}else{$link='walls/'.$appdownload; $l='.jpg';}
+  if($type=="app_h"){$_SESSION['appversion']=$_GET['v'];?><script>makeprocess('system/apps/installer/main.php','<?echo $appdownload;?>','appdownload','Installer');</script><?}else{$link='walls/'.$appdownload; $l='.jpg';}
  $ch=curl_init('http://forest.hobbytes.com/media/os/'.$link.$l);
   if(!is_dir('./temp/')){mkdir('./temp/');}
   $temphash=md5(date('d.m.y.h.i.s').$appdownload);
@@ -180,7 +180,7 @@ function downloadapp(el,el3){$("#<?echo $appid;?>").load("<?echo $folder;?>main.
 function fullhouse<?echo $appid;?>(el2){$(".apphouseinfohide").css('display','none'); $("#<?echo $appid;?>apphouseinfo"+el2).show('clip',200); $("#<?echo $appid;?>apphouseinfo"+el2).css('display','block')};
 function fullhouseupd<?echo $appid;?>(el4){$(".apphouseinfohide").css('display','none'); $("#<?echo $appid;?>apphouseinfoupd"+el4).show('clip',200); $("#<?echo $appid;?>apphouseinfoupd"+el4).css('display','block')};
 function update<?echo $appid;?>(){
-  makeprocess('update','main','','');
+  makeprocess('system/apps/update/main.php','','','Update');
 }
 </script>
 <?

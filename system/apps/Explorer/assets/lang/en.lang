@@ -1,0 +1,31 @@
+[Explorer]
+menu_file_label = File
+menu_oplabel = Open
+menu_md_label = Create Folder
+menu_ml_label = Create Shortcut
+menu_trash_label = Send to trash
+menu_delete_label = Delete
+menu_loadfile_label = Upload file
+menu_property_label = Properties
+menu_zip_label = Add to archive
+error_open = "Can not open file with extension <b style='text-transform:uppercase;'>"
+error_label  = "Error reading file"
+
+[makedir]
+mdir_label = Enter folder name
+mdir_okbtn = Ok
+mdir_cancelbtn = Cancel
+msg_1 = Folder
+msg_2 = ' created!'
+msg_3 = ' not created!'
+msg_4 = 'This folder already exists!'
+
+[trash]
+trash_label  = Empty trash
+
+[folder]
+size = size
+date = Date
+free_label = Free
+free_label_2 = of
+back_label = back

@@ -104,13 +104,25 @@
     foreach (glob("system/users/$login/desktop/*.link") as $filenames)
     {
       $link=parse_ini_file($filenames);
-      $ref=$link['destination'];$name=$link['name'];$linkname=$link['linkname'];$file=$link['file'];$param=$link['param'];$key=$link['key']; $linkicon=$link['icon'];
+      $ref  = $link['destination'];
+      $name = $link['name'];
+      $linkname = $link['linkname'];
+      $file = $link['file'];
+      $param  = $link['param'];
+      $key  = $link['key'];
+      $linkicon = $link['icon'];
       $appicon=str_replace(array('.','php','main'),'',$ref).'app.png';
       if (!is_file($appicon)){
         $appicon='system/core/design/images/app.png';
       }
-      if(!file_exists($appicon)){$appicon='';}
-      if($linkicon==''){$linkicon=$hashfile->filehash($appicon);}else{$linkicon=$hashfile->filehash('./'.$link['icon']);}
+      if(!file_exists($appicon)){
+        $appicon='';
+      }
+      if($linkicon==''){
+        $linkicon=$hashfile->filehash($appicon);
+      }else{
+        $linkicon=$hashfile->filehash('./'.$link['icon']);
+      }
       ?>
       <div class="link<?echo $id;?>">
       <div id="linklog<?echo $id;?>" class="<?echo $delclassname;?>">
@@ -150,12 +162,28 @@
         </style>
         <?
       }
-        $namejs="'".$name."'";$filejs="'".$file."'";$paramjs="'".$param."'";$keyjs="'".$key."'";
-            echo'<div id="link'.$id.'" class="'.$delclassname.'" on'.$click.'="makeprocess('.$namejs.','.$filejs.','.$paramjs.','.$keyjs.'); releaselink();"><div id=icons'.$id.' class="ui-widget-header ui-widget-content ico clickme'.$classtrash.'" d="'.$filenames.'" i="'.$id.'" style="padding:5px; z-index:-1000; height:auto; text-align:center; width:70px; position:relative; display:block; float:left;"><div style="background-color:transparent;  background-image: url('.$linkicon.'); background-size:cover; height:64px; width:64px; margin:auto; margin-top:17px; ">';
-            echo '<div id=icon'.$id.' style="width:100%; height:auto;">';
-            echo '<div id="link_content'.$id.'" class="linktheme">';
-            echo $linkname.'</div></div></div></div></div></div>';
-            $id++;
+        if(!preg_match('/.php/',$ref)){
+          $destination  = $ref.$file.'.php';
+        }else{
+          $destination = $ref;
+        }
+        $destination = htmlspecialchars("'$destination'");
+        $param  =  htmlspecialchars("'$param'");
+        $key  = htmlspecialchars("'$key'");
+        $name = htmlspecialchars("'$name'");
+            echo'
+            <div id="link'.$id.'" class="'.$delclassname.'" on'.$click.'="makeprocess('.$destination.','.$param.','.$key.','.$name.'); releaselink();">
+              <div id=icons'.$id.' class="ui-widget-header ui-widget-content ico clickme'.$classtrash.'" d="'.$filenames.'" i="'.$id.'" style="padding:5px; z-index:-1000; height:auto; text-align:center; width:70px; position:relative; display:block; float:left;">
+                <div style="background-color:transparent;  background-image: url('.$linkicon.'); background-size:cover; height:64px; width:64px; margin:auto; margin-top:17px; ">
+                  <div id=icon'.$id.' style="width:100%; height:auto;">
+                    <div id="link_content'.$id.'" class="linktheme">
+                      '.$linkname.'
+                      </div>
+                      </div>
+                      </div>
+                      </div>
+                      </div>';
+                      $id++;
           }
     }
 
@@ -194,6 +222,10 @@ function hibernation(){
 /*---------topbar load---------*/
 function topbar(){
   global $object, $login, $language;
+  $settings_name = $language[$_SESSION['locale'].'_settings_menu'];
+  $store_name = $language[$_SESSION['locale'].'_store_menu'];
+  $about_name = $language[$_SESSION['locale'].'_about_menu'];
+  $explorer_name = $language[$_SESSION['locale'].'_explorer_menu'];
   ?>
   <div id="topbar" class="ui-widget-content topbartheme" style="display:none; z-index:9999; height:25px; padding-top:5px;">
     <span id="hideall" class="topbaractbtn ui-forest" style="cursor:pointer; display:none; background-color:#37a22e; color:#fff; width:12px; float:right; text-align:center; width:15px; margin-right: 8px; font-family:monospace; padding:2px 0;">
@@ -212,29 +244,29 @@ function topbar(){
     <script type="text/javascript">
       showTime();
     </script>
-    <div id="menu1" class="ui-forest" onmouseover="document.getElementById('aboutmenu').style.display='block';" onmouseout="document.getElementById('aboutmenu').style.display='none';" style="z-index:9999; user-select: none; cursor: default; text-align:center; width:50px; font-size:19px; ">
+    <div id="menu1" class="ui-forest" onmouseover="document.getElementById('aboutmenu').style.display='block';" onmouseout="document.getElementById('aboutmenu').style.display='none';" style="z-index:9999; user-select: none; cursor: default; text-align:center; width:50px; font-size:19px; padding:2px 0;">
       =
     </div>
   </div>
   <div id="aboutmenu" class="ui-widget-content menutheme" onmouseover="document.getElementById('aboutmenu').style.display='block';" onmouseout="document.getElementById('aboutmenu').style.display='none';" style="z-index:9999; user-select:none; display:none; text-align:justify; min-width:200px; max-width:300px; position:absolute; text-overflow:hidden; overflow:ellipsis; padding:14px 0 0 0;">
-  <span style="text-transform:uppercase; cursor:pointer;  padding:5px;" onclick="makeprocess('Settings','users','<?echo $login;?>','selectuser'); document.getElementById('aboutmenu').style.display='none';">
+  <span style="text-transform:uppercase; cursor:pointer;  padding:5px;" onclick="makeprocess('system/apps/Settings/users.php','<?echo $login;?>','selectuser','<?echo $settings_name?>'); document.getElementById('aboutmenu').style.display='none';">
     <?echo str_replace('_',' ',$login);?>
   </span>
   <hr class="menulines">
-  <span style="cursor:pointer; padding:5px;" onclick="makeprocess('Explorer','main','',''); document.getElementById('aboutmenu').style.display='none';">
-    <?echo $language[$_SESSION['locale'].'_explorer_menu']?>
+  <span style="cursor:pointer; padding:5px;" onclick="makeprocess('system/apps/Explorer/main.php','','','<?echo $explorer_name?>'); document.getElementById('aboutmenu').style.display='none';">
+    <?echo $explorer_name?>
   </span>
   <hr class="menulines">
-  <span style="cursor:pointer; padding:5px;" onclick="makeprocess('Settings','main','',''); document.getElementById('aboutmenu').style.display='none';">
-    <?echo $language[$_SESSION['locale'].'_settings_menu']?>
+  <span style="cursor:pointer; padding:5px;" onclick="makeprocess('system/apps/Settings/main.php','','','<?echo $settings_name?>'); document.getElementById('aboutmenu').style.display='none';">
+    <?echo $settings_name?>
   </span>
   <hr class="menulines">
-  <span style="cursor:pointer; padding:5px;" onclick="makeprocess('Apps_House','main','',''); document.getElementById('aboutmenu').style.display='none';">
-    <?echo $language[$_SESSION['locale'].'_store_menu']?>
+  <span style="cursor:pointer; padding:5px;" onclick="makeprocess('system/apps/Apps_House/main.php','','','<?echo $store_name?>'); document.getElementById('aboutmenu').style.display='none';">
+    <?echo $store_name?>
   </span>
   <hr class="menulines">
-  <span style="cursor:pointer; padding:5px;" onclick="makeprocess('Settings','about','',''); document.getElementById('aboutmenu').style.display='none';">
-    <?echo $language[$_SESSION['locale'].'_about_menu']?>
+  <span style="cursor:pointer; padding:5px;" onclick="makeprocess('system/apps/Settings/about.php','','','<?echo str_replace(' ','_',$about_name)?>'); document.getElementById('aboutmenu').style.display='none';">
+    <?echo $about_name?>
   </span>
     <div class="action-buttons" style="text-align:center; margin-top: 14px; padding:14px 0; filter:hue-rotate(8deg);">
     <span style="font-size:26px; cursor:default; width:26px;">
@@ -332,7 +364,7 @@ function topbar(){
         foreach ($array as $value){
           ?>
           <script>
-          makeprocess2('system/apps/<?echo $value?>/main.php','','');
+          makeprocess('system/apps/<?echo $value?>/main.php','','','<?echo $value?>');
           </script>
           <?
         }
