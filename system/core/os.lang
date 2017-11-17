@@ -3,11 +3,19 @@ ru_explorer_menu  = Проводник
 ru_settings_menu  = Параметры
 ru_store_menu  = Магазин
 ru_about_menu  = О системе
+ru_restart = перезагрузка
+ru_memoryrestart = мягкая перезагрузка
+ru_hibernation = гибернация
+ru_exit = выход
 
 en_explorer_menu  = Explorer
 en_settings_menu  = Settings
 en_store_menu  = Store
 en_about_menu  = About
+en_restart = reset
+en_memoryrestart = soft reset
+en_hibernation = hibernation
+en_exit = exit
 
 [login]
 ru_login_input = введите логин

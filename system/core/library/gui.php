@@ -2,11 +2,6 @@
 /*FOREST GUI*/
 date_default_timezone_set('Europe/Moscow');
 class gui{
-  //для регистарции
-  function registration($article, $type, $name, $value)
-  {
-    echo '<div style="color:#f2f2f2; -webkit-appearance:none; ">'.$article.':</div>  <input style="-webkit-appearance:none; font-size:20px; margin-bottom:10px; background-color:#494949; border-color:#3a3a3a; border:1; color:#f2f2f2;" type="'.$type.'" name="'.$name.'" value="'.$value.'" /><br/>';
-  }
   //для формы
   function formstart($method)
   {
@@ -23,11 +18,6 @@ class gui{
   {
     echo '<label for="'.$name.'" style="color:'.$color.'; background-color:'.$background.'; font-size:15px; border:none; width:'.$size.'%; float:left;">'.$article.':  <input id="'.$name.'" placeholder="'.$placeholder.'"style="width:'.$size.'%; padding:10px; font-size:15px; background-color:#f2f2f2; float:right; border-color:#3a3a3a; border-width:2px; color:#3a3a3a;" type="'.$type.'" name="'.$name.'" value="'.$value.'" /></label><br/>';
   }
-  //для скрытых полей
-  function inputhidden($name,$value)
-  {
-    echo '<input id="'.$name.'" type="hidden" value="'.$value.'" name="'.$name.'"/>';
-  }
   //для кнопочек
   function button($article, $textcolor, $backgroundcolor, $size,$name)
   {
@@ -35,7 +25,7 @@ class gui{
   }
   function inputslabel($article, $type, $name, $value, $size, $placeholder)
   {
-    echo '<input class="'.$name.'" id="'.$name.'" placeholder="'.$placeholder.'"style="width:'.$size.'%; -webkit-appearance:none; padding:10px; font-size:15px; border-radius:3px; margin:auto; background-color:#fff; float:none; border:1px solid #ccc; color:#3a3a3a;" type="'.$type.'" name="'.$name.'" value="'.$value.'" /></br></br>';
+    echo '<input class="'.$name.'" id="'.$name.'" placeholder="'.$placeholder.'"style="width:'.$size.'%; -webkit-appearance:none; padding:10px; font-size:15px; border-radius:6px; margin:auto; background-color:#fff; float:none; border:1px solid #ccc; color:#3a3a3a;" type="'.$type.'" name="'.$name.'" value="'.$value.'" /></br></br>';
   }
   function errorLayot($content){
     echo "<div onclick='this.remove()' class='ui-forest' style='cursor:pointer; width:300px; margin:auto; position:relative; top:25%; background-color:#f7b1ab; padding:15px; text-align:center; border:2px solid #882720; color:#691812;'><b>#error:</b> $content</div>";
