@@ -4,7 +4,7 @@ $appid=$_GET['appid'];
 $appname=$_GET['appname'];
 $folder=$_GET['destination'];
 session_start();
-$language_about  = parse_ini_file('app.lang');
+$language_about  = parse_ini_file('lang/about.lang');
 ?>
 <div id="<?echo $appname.$appid;?>" style="background-color:#f2f2f2; height:100%; width:100%; padding-top:10px; border-radius:0px 0px 5px 5px; overflow:auto;">
 <div style="width:100%; text-align:left; padding-bottom:10px; font-size:30px; border-bottom:#d8d8d8 solid 2px; text-overflow:ellipsis; overflow:hidden;">

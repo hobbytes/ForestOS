@@ -10,7 +10,7 @@ include '../../core/library/bd.php';
 include '../../core/library/etc/security.php';
 $security	=	new security;
 $security->appprepare();
-$language_settings  = parse_ini_file('app.lang');
+$language_settings  = parse_ini_file('lang/main.lang');
 ?>
 <div id="<?echo $appname.$appid;?>" style="background-color:#f2f2f2; height:500px; max-height:95%; max-width:100%; width:800px; padding-top:10px; border-radius:0px 0px 5px 5px; overflow:auto;">
 	<div style="width:100%; text-align:left; padding:0 10px 5px; font-size:30px; border-bottom:#d8d8d8 solid 2px; text-overflow:ellipsis; overflow:hidden;"><?echo $language_settings[$_SESSION['locale'].'_settings_label']?></div>

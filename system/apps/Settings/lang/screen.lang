@@ -1,0 +1,26 @@
+[screen]
+ru_settings_screen = Персонализация
+ru_themetab = Цветовые темы
+ru_walltab = Фоновые изображения
+ru_current_label  = Текущая
+ru_clear_label  = Убрать
+ru_notwalldelete  = 'Фоновое изображение удалено'
+ru_notwallchange  = 'Фоновое изображение рабочего стола изменено'
+ru_notthemechange_1 = 'Цветовая тема изменена на '
+ru_notthemechange_2 = 'Перезагрузите систему, чтобы изменения вступили в силу'
+ru_notthemeerror  = 'Произошла ошибка! Тема не установлена'
+
+en_settings_screen = Personalization
+en_themetab = Color themes
+en_walltab = Background images
+en_current_label  = Current
+en_clear_label  = Clear
+en_notwalldelete  = 'Background image deleted'
+en_notwallchange  = 'Desktop background image changed'
+en_notthemechange_1 = 'The color theme has been changed to '
+en_notthemechange_2 = 'Restart the system for the changes to take effect.'
+en_notthemeerror  = 'An error has occurred! Theme not installed'
+
+[etc]
+ru_restart  = Перезагрузить
+en_restart  = Restart

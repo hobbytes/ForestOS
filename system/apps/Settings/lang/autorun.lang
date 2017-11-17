@@ -1,0 +1,10 @@
+[autorun]
+ru_autorun_msg1 = Теперь в менеджере автозапуска пусто
+ru_autorun_msg2 = Вы добавили в автозапуск
+ru_settings_autorun = Менеджер автозапуска
+ru_button_save = Сохранить
+
+en_autorun_msg1 = Now in the autorun manager is empty
+en_autorun_msg2 = You added to autorun
+en_settings_autorun = Autorun manager
+en_button_save = Save

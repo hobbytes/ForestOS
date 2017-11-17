@@ -6,7 +6,7 @@ $theme=$_GET['theme'];
 $appname=$_GET['appname'];
 $folder=$_GET['destination'];
 session_start();
-$language_screen  = parse_ini_file('app.lang');
+$language_screen  = parse_ini_file('lang/screen.lang');
 ?>
 <div id="<?echo $appname.$appid;?>" style="background-color:#f2f2f2; height:500px; max-height:95%; max-width:100%; width:800px;  padding-top:10px; border-radius:0px 0px 5px 5px; overflow:auto;">
 <div style="width:100%; text-align:left; padding-bottom:10px; font-size:30px; text-overflow:ellipsis; overflow:hidden;">

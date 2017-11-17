@@ -6,7 +6,7 @@ $folder = $_GET['destination'];
 $checked  = $_GET['checked'];
 $savestatus  = $_GET['save'];
 session_start();
-$language_autorun  = parse_ini_file('app.lang');
+$language_autorun  = parse_ini_file('lang/autorun.lang');
 ?>
 <div id="<?echo $appname.$appid;?>" style="text-align:center; background-color:#f2f2f2; height:500px; max-height:95%; max-width:100%; width:800px; padding-top:10px; border-radius:0px 0px 5px 5px; overflow:auto;">
 <div style="width:100%; text-align:left; padding-bottom:10px; font-size:30px; border-bottom:#d8d8d8 solid 2px; text-overflow:ellipsis; overflow:hidden;">

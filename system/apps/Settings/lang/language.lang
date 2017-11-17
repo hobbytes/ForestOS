@@ -1,0 +1,14 @@
+[language]
+ru_settings_language = Язык и регион
+ru_label_choose = Выберите язык
+ru_button_save = Сохранить
+ru_save_lang  = 'Язык системы был изменен. Перезагрузите систему, чтобы изменения вступили в силу'
+
+en_settings_language = 'Language & Region'
+en_label_choose = Choose language
+en_button_save = Save
+en_save_lang  = 'The language of the system was changed. Restart the system for the changes to take effect'
+
+[etc]
+ru_restart  = Перезагрузить
+en_restart  = Restart

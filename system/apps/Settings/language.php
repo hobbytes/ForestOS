@@ -8,7 +8,7 @@ $choose_lang  = $_GET['choose_lang'];
 include '../../core/library/gui.php';
 $newgui = new gui;
 session_start();
-$language_lang  = parse_ini_file('app.lang');
+$language_lang  = parse_ini_file('lang/language.lang');
 
 if(!empty($choose_lang)){
   file_put_contents('../../users/'.$_SESSION['loginuser'].'/settings/language.foc',$choose_lang);
