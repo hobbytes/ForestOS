@@ -29,7 +29,7 @@ if(!empty($_GET['t']) && !empty($_GET['m'])){
 }
 
 echo '<div style="text-align:left; margin-top:10px; margin-left:10px;"><b style="font-size:20px;">'.$language[$_SESSION['locale'].'_feedback_label'].'</b>';
-echo "<div>".$language[$_SESSION['locale'].'_inputtheme_label'].":</div>";
+echo "<br><br><div>".$language[$_SESSION['locale'].'_inputtheme_label'].":</div>";
 $gui->inputslabel('', 'text', ''.$appid.'feedback_theme', '','50',$language[$_SESSION['locale'].'_inputtheme_label']);
 echo "<div>".$language[$_SESSION['locale'].'_inputmessage_label'].":</div>";
 echo '<div><textarea id="'.$appid.'feedback_message" style="width:95%; max-width:95%;" rows="10" cols="80" >'.$text.'</textarea></div><br>';

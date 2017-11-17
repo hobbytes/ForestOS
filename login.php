@@ -5,7 +5,7 @@
 <?
 if (function_exists('date_default_timezone_set'))
 date_default_timezone_set('Europe/Moscow');
-global $loginin, $infob,  $security;
+global $loginin, $infob, $security, $language;
 $date= date("d.m.y,H:i:s");
 $status2=$_POST['logins'];
 if ($status2!='')
@@ -37,12 +37,12 @@ if (isset($_GET["exit"])) {
 }
 $gui = new gui;
 $gui->formstart('POST');
-$gui->inputslabel('Логин', 'text', 'loginin', "$login_get",'70', 'введите логин');
-$gui->inputslabel('Пароль', 'password', 'passwordin', '','70','введите пароль');
+$gui->inputslabel('Логин', 'text', 'loginin', "$login_get",'70', $language[$_SESSION['locale'].'_login_input']);
+$gui->inputslabel('Пароль', 'password', 'passwordin', '','70', $language[$_SESSION['locale'].'_password_input']);
 ?>
-<div id="safemode" style="color:#63e47a; margin:10px 0; display:none;"><input type="checkbox" name="safemode" value="true" style="vertical-align:top; margin: 0 3px 0 0; width:17px; height:17px;">safe mode</div>
+<div id="safemode" style="color:#63e47a; margin:10px 0; display:none;"><input type="checkbox" name="safemode" value="true" style="vertical-align:top; margin: 0 3px 0 0; width:17px; height:17px;"><?echo $language[$_SESSION['locale'].'_safemode_label']?></div>
 <?
-$gui->button('Войти', '#fff', '#092738', '30','logins');
+$gui->button($language[$_SESSION['locale'].'_login_button'], '#fff', '#092738', '30','logins');
 $gui->formend();
 ?>
 </div>

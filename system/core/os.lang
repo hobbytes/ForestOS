@@ -9,6 +9,18 @@ en_settings_menu  = Settings
 en_store_menu  = Store
 en_about_menu  = About
 
+[login]
+ru_login_input = введите логин
+ru_password_input = введите пароль
+ru_safemode_label = безопасный режим
+ru_login_button = Войти
+
+en_login_input = enter login
+en_password_input = enter password
+en_safemode_label = safe mode
+en_login_button = Login
+
+
 [daysofweek]
 ru_monday = Понедельник
 ru_tuesday = Вторник
