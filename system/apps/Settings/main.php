@@ -38,6 +38,7 @@ echo '</div>';
 
 echo '<div style="width:100%; height:auto; padding:10px; float:left; border-bottom:1px solid #d6d6d6;">';
 newbutton('autorun');
+newbutton('feedback');
 echo '</div>';
 ?>
 </div>

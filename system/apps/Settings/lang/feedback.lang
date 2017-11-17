@@ -1,0 +1,16 @@
+[feedback]
+ru_feedback = Обратная связь
+ru_feedback_label = Отправка запроса
+ru_inputtheme_label = Тема запроса
+ru_inputmessage_label = Сообщение
+ru_button_send = Отправить
+ru_status_true = "Сообщение отправлено!"
+ru_status_false = "Сообщение не отправлено!"
+
+en_feedback = Feedback
+en_feedback_label = Sending request
+en_inputtheme_label = Subject of the request
+en_inputmessage_label = Message
+en_button_send = Send
+en_status_true = "The message was sent!"
+en_status_false = "Message not sent!"
