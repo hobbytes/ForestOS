@@ -29,7 +29,7 @@ if(isset($_SESSION['loginuser'])){
   $p=$_GET['p'];// name of property
   $k=$_GET['k'];// key property
   $n=$_GET['n'];// name of process
-  
+
   function makeprocess($destination,  $idprocess, $param, $key, $name){
   global $click,$top,$left,$maxwidth,$autohide,$object,$maxwidthm;
   $folder=dirname($destination);
@@ -44,7 +44,6 @@ if(isset($_SESSION['loginuser'])){
   if(empty($name)){
     $name=basename($destination);
   }
-
   $destination_ =  $destination.$file;
   if(!preg_match('/.php/',$destination_)){
      $destination_ = $destination_.'.php';
@@ -64,10 +63,14 @@ if(isset($_SESSION['loginuser'])){
     <script async>
     $( function() {
       $( "#<?echo 'app'.$idprocess.'';?>" ).draggable({containment:"body",handle:"<?echo '#drag'.$idprocess.'';?>", snap:".ui-body, .dragwindowtoggle, #topbar"});
-      $( "#<?echo 'app'.$idprocess.'';?>" ).resizable({containment:"body",minHeight:$(window).height()*0.15,minWidth:$(window).width()*0.15,maxWidth:$(window).width()*<?echo $maxwidthm;?>,maxHeight:$(window).height()*0.95,autoHide:<?echo $autohide;?>,alsoResize:"#<?echo ''.$nameprocess.$idprocess.'';?>"});
+      $( "#<?echo 'app'.$idprocess.'';?>" ).resizable({containment:"body",minHeight:$(window).height()*0.15,minWidth:$(window).width()*0.15,maxWidth:$(window).width()*<?echo $maxwidthm;?>,maxHeight:$(window).height()*0.95,autoHide:<?echo $autohide;?>,alsoResize:"#<?echo $name.$idprocess?>"});
       $( "#<?echo 'app'.$idprocess.'';?>" ).click(function(){$("#<?echo 'app'.$idprocess.'';?>" ).addClass("windowactive")});
       $( "#<?echo 'drag'.$idprocess.'';?>" ).click(function(){$("#<?echo 'app'.$idprocess.'';?>" ).addClass("windowactive")});
-      $( "#<?echo 'drag'.$idprocess.'';?>" ).dblclick(function(){$("#<?echo 'app'.$idprocess.'';?>" ).css({top:"21px",left:"0"})});
+      $( "#<?echo 'drag'.$idprocess.'';?>" ).dblclick(function(){
+        $("#<?echo 'app'.$idprocess.'';?>" ).css({
+          top:"29px",left:"0"
+        })
+      });
       $( ".window" ).mouseup(function(){$(".window").removeClass("windowactive")});
       if(!$("#process<?echo $idprocess;?>").hasClass('hibernatethis')){
         $("#<?echo $idprocess;?>" ).load("<? echo $destination.'?id='.rand(0,10000).'&appid='.$idprocess.'&appname='.$name.'&destination='.$folder.'/&mobile='.$click.'&'.$key.'='.$param;?>");
@@ -93,10 +96,12 @@ if(isset($_SESSION['loginuser'])){
       $( "#<?echo 'app'.$idprocess;?>" ).toggleClass( "bordertoggle", 1 );
     });
 
-    $( ".reload<?echo $idprocess;?>" ).on( "click", function() {
+    $(".reload<?echo $idprocess;?>" ).on( "click", function() {
       $("#<?echo $idprocess;?>" ).load("<? echo $destination_.'?id='.rand(0,10000).'&appid='.$idprocess.'&appname='.$nameprocess.'&destination='.$folder.'/&mobile='.$click.'&'.$key.'='.$param;?>");
     });
-    $( "#<?echo 'drag'.$idprocess.'';?>" ).on( "dblclick", function() { $( "#<?echo 'app'.$idprocess.'';?>" ).toggleClass( "windowfullscreen", 100 );});
+    $("#<?echo 'drag'.$idprocess?>" ).on( "dblclick", function() {
+       $("#<?echo 'app'.$idprocess?>" ).toggleClass( "windowfullscreen", 100 );
+     });
     $("#process<?echo $idprocess;?>" ).appendTo("#proceses");
       });
     </script>
