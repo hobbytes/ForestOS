@@ -136,7 +136,7 @@ echo '
       <span style="font-size:17px;"><b>Forest OS</b> '.$key['codename'].'</span><br>
       <span style="font-size:12px; font-weight:900; " >'.$apphouse_lang[$cl.'_upd_revision'].': <span style="color:#363636; text-transform: uppercase;">'.$key['file'].'</span></span><br>
       <span style="font-size:12px; ">'.$apphouse_lang[$cl.'_card_version'].': '.$key['version'].'<br>'.$apphouse_lang[$cl.'_upd_subversion'].': '.$key['subversion'].'<br>'.$apphouse_lang[$cl.'_card_size'].': '.$format.'</span></div></span>
-      <br><b>'.$apphouse_lang[$cl.'_card_description'].':</b><br><span style="font-size:15px; color:#464646; white-space:pre;">'.$key['description'].'</span>
+      <br><b>'.$apphouse_lang[$cl.'_card_description'].':</b><br><span style="font-size:15px; color:#464646; white-space:pre-wrap;">'.$key['description'].'</span>
       <div id="'.$key['file'].'" class="app_h" onClick="update'.$appid.'()" style="background-color:#962439; color:#fff; width:30%; margin: 10px auto 10px auto; font-size:13px; padding:5px; text-align:center;">'.$apphouse_lang[$cl.'_upd_button'].'</div></span>
       ';
       }
@@ -165,7 +165,7 @@ echo '
         <span style="font-size:10px;">'.$apphouse_lang[$cl.'_card_version'].': '.$key['version'].'<br>'.$apphouse_lang[$cl.'_card_size'].': '.$format.'</span></div></span><br><div id="'.$key['file'].'" class="app_h" onClick="downloadapp(this,'.$newversion.');" style="background-color:#245896; color:#fff; font-size:13px; padding:5px;">'.$apphouse_lang[$cl.'_upd_button'].'</div></span>
         <div class="apphouseinfohide" id="'.$appid.'apphouseinfoupd'.$appcounter.'"><div style="background-image: url(http://forest.hobbytes.com/media/os/apps/'.$key['file'].'/app.png); background-size:cover; margin-bottom:10px; height:80px; width:80px;"></div>
           <span style="font-size:15px; font-weight:900; color:#363636; text-transform: uppercase;" >'.$name.'</span><br><span style="font-size:13px; color:#464646;">'.$name.' by '.$key['designer'].', version: '.$key['version'].'</span>
-          <br><br><span style="font-size:13px; color:#464646; font-weight:600;">'.$apphouse_lang[$cl.'_card_description'].':</span><br><span style="font-size:13px; color:#464646; white-space:pre;">'.$key['description'].'</span>
+          <br><br><span style="font-size:13px; color:#464646; font-weight:600;">'.$apphouse_lang[$cl.'_card_description'].':</span><br><span style="font-size:13px; color:#464646; white-space:pre-wrap;">'.$key['description'].'</span>
           </div>';
       }
     }
