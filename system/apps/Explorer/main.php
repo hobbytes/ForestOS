@@ -134,8 +134,8 @@ if ($pathmain=='../../../'){
 }
 $pathmain = str_replace($_SERVER['DOCUMENT_ROOT'],'',$pathmain);
 ?>
-<div >
-<div style="cursor:default; float:left; padding:5px 10px;" onmouseover="document.getElementById('filemenu<?echo $appid;?>').style.display='block';" onmouseout="document.getElementById('filemenu<?echo $appid;?>').style.display='none';">
+<div style="position:absolute; width:100%; z-index:1; background:#f2f2f2; border:1px solid #d4d4d4; box-shadow: 0 1px 2px rgba(0,0,0,0.065);">
+<div style="cursor:default; padding:5px 10px; width:40px;" onmouseover="document.getElementById('filemenu<?echo $appid;?>').style.display='block';" onmouseout="document.getElementById('filemenu<?echo $appid;?>').style.display='none';">
 	<b><?echo $explorer_lang['menu_file_label']?></b>
 	<div id="filemenu<?echo $appid;?>" style="display:none; cursor:default; position:absolute; z-index:9000; background:#fff; width:auto;">
 <ul id="mmenu<?echo $appid;?>" >
@@ -150,8 +150,11 @@ $pathmain = str_replace($_SERVER['DOCUMENT_ROOT'],'',$pathmain);
 </ul>
 </div>
 </div>
-<div id="erasetrash<?echo $appid;?>" onClick="erasetrash<?echo $appid;?>();" class="ui-forest-button ui-forest-cancel" style="margin:3px auto; padding:5px 10px; float:left; display:none;">
-	<b><?echo $explorer_lang['trash_label']?></b>
+<div>
+<span style="cursor:pointer; user-select:none; padding:4px; background:#4d94ef; margin:0px 10px; border-radius:8px; color:#fff;" id="<?echo $_SERVER['DOCUMENT_ROOT'].dirname($pathmain)?>" onclick="load<?echo $appid?>(this)">
+	&#9668
+</span>
+<input style="-webkit-appearance:none; border:1px solid #ccc; width:80%; font-size:17px; margin-left:10px; margin: 0 11px 10px;" type="search" value="os<?echo $pathmain?>"></input>
 </div>
 </div>
 <div id="mkdirdiv<?echo $appid;?>" style="width:43%; display:none; z-index:10; height:120px; padding:10px; background-color:#eaeaea; border: 1px solid #282828; position:absolute; margin-top:25%; text-align:center; overflow:hidden; left:25%;">
@@ -166,22 +169,15 @@ $pathmain = str_replace($_SERVER['DOCUMENT_ROOT'],'',$pathmain);
 	<?echo $explorer_lang['mdir_okbtn']?>
 </span>
 </div>
+<div style="margin: 85px 0;">
 <?
-echo '<input style="width:96%; font-size:17px; margin-left:10px;" type="search" value="os'.$pathmain.'"></input>';
 while (false !== ($entry=$d->read())) {
 	$path	=	$d->path;
 	$name	=	$entry;
-	if ($entry	==	'..'){
-		$name	=	'&#9668 '.$explorer_lang['back_label'];
-		$extension='';
-		$color	=	'#80abc6';
-		$type	=	$folder.'/assets/folderico.png';
-		$datecreate	=	'';
-	}else{
+	if ($entry	!=	'..'){
 		$color	=	'#ffee00';
 		$extension	=	'';
 		$type	=	$folder.'/assets/folderico.png';
-
 		try {
 			$fo->size_check(realpath(realpath($entry)));
 			$fo->format($size);
@@ -197,6 +193,9 @@ while (false !== ($entry=$d->read())) {
 	}
 	if(eregi($_SESSION["loginuser"].'/trash',$pathmain)){
 		?>
+		<div id="erasetrash<?echo $appid;?>" onClick="erasetrash<?echo $appid;?>();" class="ui-forest-button ui-forest-cancel" style="margin:5px; padding:64px 10px; float:left; display:none; height:14px;">
+			<b><?echo $explorer_lang['trash_label']?></b>
+		</div>
 		<script>
 		$('#erasetrash<?echo $appid;?>').css('display','block');
 		</script>
@@ -232,7 +231,7 @@ while (false !== ($entry=$d->read())) {
 	$wardir = stristr($wardir, 'public_html');
 	$wardir	= str_replace('public_html/','',$wardir);
 
-	if ($entry!='.' && !in_array($entry,$warfile) && realpath($entry).'/'.$wardir!=$_SERVER['DOCUMENT_ROOT']){
+	if ($entry!='.' && $entry!='..' && !in_array($entry,$warfile) && realpath($entry).'/'.$wardir!=$_SERVER['DOCUMENT_ROOT']){
 		$name2="'".md5($name)."'";
 		$name3="'".realpath($entry)."'";
 		$name4="'".$type."'";
@@ -254,6 +253,7 @@ while (false !== ($entry=$d->read())) {
 }
 $dir->close;
 ?>
+</div>
 <div id="upload<?echo $appid;?>" style="position:fixed; display:none; width:350px; top:25%; left:25%; background-color:#f9f9f9; border:5px solid #505050; padding:20px; border-radius:10px;">
 </div>
 
