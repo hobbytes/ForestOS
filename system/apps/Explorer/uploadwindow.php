@@ -5,7 +5,7 @@ session_start();
 $security->appprepare();
 
 //Загружаем файл локализации
-$upload_lang  = parse_ini_file('etc.lang');
+$upload_lang  = parse_ini_file('assets/lang/etc.lang');
 $cl = $_SESSION['locale'];
 
 $where=$_GET['where'];

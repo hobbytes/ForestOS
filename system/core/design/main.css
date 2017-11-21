@@ -132,6 +132,14 @@ body {
 	filter: drop-shadow(0px 0px 3px #888);
 }
 
+.ui-forest-blink{
+	transition: all 0.2s ease;
+}
+
+.ui-forest-blink:hover{
+	filter: brightness(110%);
+}
+
 .ui-forest-button{
 	color:	#fff;
 	padding: 10px;
@@ -158,7 +166,6 @@ body {
 
 .ui-forest-cancel{
 	background: linear-gradient(45deg,	#fe6b6b 30%,	#ff7171 90%);
-
 }
 
 
@@ -184,7 +191,9 @@ body {
 	 height:90%;
 }
 
-.blurwindowpassive{}
+.blurwindowpassive{
+
+}
 
 .blurwindowactive
 {
@@ -192,7 +201,7 @@ body {
 }
 
 .windowactive{
-	z-index:9990;
+	z-index:9999;
 	box-shadow:rgba(0,0,0,0.3) 0px 0px 25px -4px;
 }
 

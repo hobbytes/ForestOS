@@ -135,9 +135,9 @@ if ($pathmain=='../../../'){
 $pathmain = str_replace($_SERVER['DOCUMENT_ROOT'],'',$pathmain);
 ?>
 <div style="position:absolute; width:100%; z-index:1; background:#f2f2f2; border:1px solid #d4d4d4; box-shadow: 0 1px 2px rgba(0,0,0,0.065);">
-<div style="cursor:default; padding:5px 10px; width:40px;" onmouseover="document.getElementById('filemenu<?echo $appid;?>').style.display='block';" onmouseout="document.getElementById('filemenu<?echo $appid;?>').style.display='none';">
+<div style="cursor:default; padding:5px 10px; width:40px;" onmouseover="$('#filemenu<?echo $appid;?>').css('display','block')" onmouseout="$('#filemenu<?echo $appid;?>').css('display','none')">
 	<b><?echo $explorer_lang['menu_file_label']?></b>
-	<div id="filemenu<?echo $appid;?>" style="display:none; cursor:default; position:absolute; z-index:9000; background:#fff; width:auto;">
+	<div id="filemenu<?echo $appid;?>" style="display:none; cursor:default; position:absolute; z-index:1; background:#fff; width:auto;">
 <ul id="mmenu<?echo $appid;?>" >
 	<li><div <?echo 'id="'.$dir.'/" class="loadthis" onClick="load'.$appid.'(this);" ';?> ><?echo $explorer_lang['menu_open_label']?></div></li>
 	<li><div <?echo 'onClick="mkdirshow'.$appid.'();" ';?> ><?echo $explorer_lang['menu_md_label']?></div></li>
@@ -150,11 +150,11 @@ $pathmain = str_replace($_SERVER['DOCUMENT_ROOT'],'',$pathmain);
 </ul>
 </div>
 </div>
-<div>
-<span style="cursor:pointer; user-select:none; padding:4px; background:#4d94ef; margin:0px 10px; border-radius:8px; color:#fff;" id="<?echo $_SERVER['DOCUMENT_ROOT'].dirname($pathmain)?>" onclick="load<?echo $appid?>(this)">
+<div style="margin-top:7px;">
+<span class="ui-forest-blink" style="cursor:pointer; user-select:none; padding:4px; background:#4d94ef; margin:0px 10px; border-radius:10px; color:#fff;" id="<?echo $_SERVER['DOCUMENT_ROOT'].dirname($pathmain)?>" onclick="load<?echo $appid?>(this)">
 	&#9668
 </span>
-<input style="-webkit-appearance:none; border:1px solid #ccc; width:80%; font-size:17px; margin-left:10px; margin: 0 11px 10px;" type="search" value="os<?echo $pathmain?>"></input>
+<input style="-webkit-appearance:none; border:1px solid #ccc; width:80%; font-size:17px; margin: 0 5px 10px;" type="search" value="os<?echo $pathmain?>"></input>
 </div>
 </div>
 <div id="mkdirdiv<?echo $appid;?>" style="width:43%; display:none; z-index:10; height:120px; padding:10px; background-color:#eaeaea; border: 1px solid #282828; position:absolute; margin-top:25%; text-align:center; overflow:hidden; left:25%;">
@@ -169,7 +169,7 @@ $pathmain = str_replace($_SERVER['DOCUMENT_ROOT'],'',$pathmain);
 	<?echo $explorer_lang['mdir_okbtn']?>
 </span>
 </div>
-<div style="margin: 85px 0;">
+<div style="margin: 92px 0;">
 <?
 while (false !== ($entry=$d->read())) {
 	$path	=	$d->path;
@@ -254,7 +254,7 @@ while (false !== ($entry=$d->read())) {
 $dir->close;
 ?>
 </div>
-<div id="upload<?echo $appid;?>" style="position:fixed; display:none; width:350px; top:25%; left:25%; background-color:#f9f9f9; border:5px solid #505050; padding:20px; border-radius:10px;">
+<div id="upload<?echo $appid;?>" style="z-index:1; position:absolute; display:none; width:350px; top:25%; left:25%; background-color:#f9f9f9; border:5px solid #505050; padding:20px; border-radius:10px;">
 </div>
 
 <div style="padding:0 10px; background-color:#f2f2f2; width:97%; position:absolute; top:96%; word-wrap:break-word;">

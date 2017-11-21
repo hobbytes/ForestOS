@@ -51,7 +51,7 @@ if(isset($_SESSION['loginuser'])){
 
   $style="'display','block'";
   $style2="'display','none'";
-  echo '<div id=app'.$idprocess.' style="max-width:'.$maxwidth.'; position:absolute; left:'.$left.'; top:'.$top.';" class="ui-widget-content window windownormal windowborder">
+  echo '<div id=app'.$idprocess.' style="max-width:'.$maxwidth.'; position:absolute; left:'.$left.'; top:'.$top.'; z-index:2;" class="ui-widget-content window windownormal windowborder">
   <div id=drag'.$idprocess.' class="ui-widget-header dragwindow">
   <span  style="cursor:default; font-size:17px;"><div style="background-color:transparent;  background-image: url('.$appicon.'); background-size:cover; height:20px; width:20px; margin:0px 3px 0px 3px; float:left;"></div>'.str_replace('_',  ' ',  $name).' </span>
   <div class="appwindowbutton"'; echo ' onClick=" $(';echo "'#"; echo 'process'.$idprocess; echo "'"; echo ').remove();';echo ' $(';echo "'#"; echo "app$idprocess"; echo "'"; echo ').css('; echo "$style2"; echo '); checkwindows();" style="background-color:#ed2020;">x</div>
