@@ -249,36 +249,39 @@ function topbar(){
     </div>
   </div>
   <div id="aboutmenu" class="ui-widget-content menutheme" onmouseover="document.getElementById('aboutmenu').style.display='block';" onmouseout="document.getElementById('aboutmenu').style.display='none';" style="z-index:9999; user-select:none; display:none; text-align:justify; min-width:200px; max-width:300px; position:absolute; text-overflow:hidden; overflow:ellipsis; padding:14px 0 0 0;">
-  <span style="text-transform:uppercase; cursor:pointer;  padding:5px;" onclick="makeprocess('system/apps/Settings/users.php','<?echo $login;?>','selectuser','<?echo $settings_name?>'); document.getElementById('aboutmenu').style.display='none';">
+  <span style="text-transform:uppercase; cursor:pointer;  padding:5px;" onclick="makeprocess('system/apps/Settings/users.php','<?echo $login;?>','selectuser','<?echo $settings_name?>'); hide_menu();">
     <?echo str_replace('_',' ',$login);?>
   </span>
   <hr class="menulines">
-  <span style="cursor:pointer; padding:5px;" onclick="makeprocess('system/apps/Explorer/main.php','','','<?echo $explorer_name?>'); document.getElementById('aboutmenu').style.display='none';">
+  <span style="cursor:pointer; padding:5px;" onclick="makeprocess('system/apps/Explorer/main.php','','','<?echo $explorer_name?>'); hide_menu();">
     <?echo $explorer_name?>
   </span>
   <hr class="menulines">
-  <span style="cursor:pointer; padding:5px;" onclick="makeprocess('system/apps/Settings/main.php','','','<?echo $settings_name?>'); document.getElementById('aboutmenu').style.display='none';">
+  <span style="cursor:pointer; padding:5px;" onclick="makeprocess('system/apps/Settings/main.php','','','<?echo $settings_name?>'); hide_menu();">
     <?echo $settings_name?>
   </span>
   <hr class="menulines">
-  <span style="cursor:pointer; padding:5px;" onclick="makeprocess('system/apps/Apps_House/main.php','','','<?echo $store_name?>'); document.getElementById('aboutmenu').style.display='none';">
+  <span style="cursor:pointer; padding:5px;" onclick="makeprocess('system/apps/Apps_House/main.php','','','<?echo $store_name?>'); hide_menu();">
     <?echo $store_name?>
   </span>
   <hr class="menulines">
-  <span style="cursor:pointer; padding:5px;" onclick="makeprocess('system/apps/Settings/about.php','','','<?echo str_replace(' ','_',$about_name)?>'); document.getElementById('aboutmenu').style.display='none';">
+  <span style="cursor:pointer; padding:5px;" onclick="makeprocess('system/apps/Settings/about.php','','','<?echo str_replace(' ','_',$about_name)?>'); hide_menu();">
     <?echo $about_name?>
   </span>
     <div class="action-buttons" style="text-align:center; margin-top:14px; padding:20px 0px 14px; filter:hue-rotate(8deg);">
     <span style="font-size:26px; cursor:default; width:26px;">
-    <b class="ui-forest action_button" name="<?echo $language[$_SESSION['locale'].'_restart'];?>" style="border:2px solid; cursor:pointer; padding:0 6px; margin:3px; border-radius:5px;" onclick="return location.href = 'os.php'">R</b>
-    <b class="ui-forest action_button" name="<?echo $language[$_SESSION['locale'].'_memoryrestart'];?>" style="border:2px solid; cursor:pointer; padding:0 6px; margin:3px; border-radius:5px;" onclick="hibernation('false')">S</b>
-    <b class="ui-forest action_button" name="<?echo $language[$_SESSION['locale'].'_hibernation'];?>" style="border:2px solid; cursor:pointer; padding:0 6px; margin:3px; border-radius:5px;" onclick="hibernation('true')">H</b>
-    <b class="ui-forest action_button" name="<?echo $language[$_SESSION['locale'].'_exit'];?>" style="border:2px solid; cursor:pointer; padding:0 6px; margin:3px; border-radius:5px;" onclick="return location.href = '?action=logout'">E</b>
+    <b class="ui-forest action_button" name="<?echo $language[$_SESSION['locale'].'_restart'];?>" onclick="return location.href = 'os.php'">R</b>
+    <b class="ui-forest action_button" name="<?echo $language[$_SESSION['locale'].'_memoryrestart'];?>" onclick="hibernation('false')">S</b>
+    <b class="ui-forest action_button" name="<?echo $language[$_SESSION['locale'].'_hibernation'];?>" onclick="hibernation('true')">H</b>
+    <b class="ui-forest action_button" name="<?echo $language[$_SESSION['locale'].'_exit'];?>" onclick="return location.href = '?action=logout'">E</b>
   </span>
   <div id="buttons_label" style="opacity:0; height:0; font-variant: all-petite-caps; font-weight:600; transition: all 0.2s ease; font-size:14px; padding:10 0 0; letter-spacing: 3px;"></div>
   </div>
   </div>
   <script>
+  function hide_menu(){
+    $("#aboutmenu").css('display','none');
+  }
   $(".action_button").on( "mouseover", function() {
     $("#buttons_label").css("opacity", "1");
     $("#buttons_label").css("height", "100%");

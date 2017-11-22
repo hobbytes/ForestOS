@@ -134,6 +134,8 @@ body {
 
 .ui-forest-blink{
 	transition: all 0.2s ease;
+  cursor: pointer;
+  user-select: none;
 }
 
 .ui-forest-blink:hover{
@@ -168,6 +170,13 @@ body {
 	background: linear-gradient(45deg,	#fe6b6b 30%,	#ff7171 90%);
 }
 
+.action_button{
+	border:2px solid;
+	cursor:pointer;
+	padding:0 6px;
+	margin:3px;
+	border-radius:5px;
+}
 
 .bordertoggle
 {

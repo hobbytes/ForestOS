@@ -151,7 +151,7 @@ $pathmain = str_replace($_SERVER['DOCUMENT_ROOT'],'',$pathmain);
 </div>
 </div>
 <div style="margin-top:7px;">
-<span class="ui-forest-blink" style="cursor:pointer; user-select:none; padding:4px; background:#4d94ef; margin:0px 10px; border-radius:10px; color:#fff;" id="<?echo $_SERVER['DOCUMENT_ROOT'].dirname($pathmain)?>" onclick="load<?echo $appid?>(this)">
+<span class="ui-forest-blink" style="padding:4px; background:#4d94ef; margin:0px 10px; border-radius:10px; color:#2b5182;" id="<?echo $_SERVER['DOCUMENT_ROOT'].dirname($pathmain)?>" onclick="load<?echo $appid?>(this)">
 	&#9668
 </span>
 <input style="-webkit-appearance:none; border:1px solid #ccc; width:80%; font-size:17px; margin: 0 5px 10px;" type="search" value="os<?echo $pathmain?>"></input>

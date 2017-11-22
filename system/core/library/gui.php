@@ -96,7 +96,7 @@ function newnotification($name, $title, $text,$time){
   <div id="notification_<?echo $name;?>" class="topbartheme notificationclass" onmouseover="document.getElementById('closenot_<?echo $name;?>').style.opacity='1';" onmouseout="document.getElementById('closenot_<?echo $name;?>').style.opacity='0';" style="right:0; width:290px; font-size:14px; margin:10px 10px 20px 10px; height:auto; max-height:300px; text-align:left; transition:all 0.2s ease; overflow:auto; ">
   <div id="closenot_<?echo $name;?>" onclick="document.getElementById('notification_<?echo $name;?>').remove();" class="topbartheme" style="position:relative; opacity:0; left:95%; width:8px; background-color:transparent; cursor:pointer; transition:all 0.2s ease; margin:5px 0px 0px -10px;">x</div>
   <span style="font-size:15px; padding: 10px;"><?echo '<b>'.$title.'</b> <span style="font-size:14px;">'.date('H:i, d.m').'</span>'?></span><br><br>
-  <div style="background-color: #d6d6d6;color: #000;padding: 10px;"><?echo $text;?></div>
+  <div style="background-color: #d6d6d6;color: #000;padding: 10px; word-wrap: break-word;"><?echo $text;?></div>
 
     <script>
     var notcenter=document.getElementById('notifications');
