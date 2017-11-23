@@ -1,8 +1,10 @@
 [TM]
 ru_name_title = 'Имя'
 ru_loc_title = 'Расположение'
+ru_explorer_title = 'Проводник'
 
 en_name_title = 'Name'
 en_loc_title = 'Location'
+en_explorer_title = 'Explorer'
 
 id_title = 'ID'

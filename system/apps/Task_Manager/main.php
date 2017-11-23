@@ -26,6 +26,8 @@ $folder=$_GET['destination'];
 .tm-box-left{
   text-align: left;
   table-layout:fixed;
+  color: #4654bb;
+  cursor: pointer;
 }
 .tm-box-close{
   float: right;
@@ -63,7 +65,7 @@ $(".process-container").each(function(index, element){
   var p_id = $(element).attr("id");
   var p_name = $("#drag"+p_id + "> .process-title").text();
   var p_loc = $(element).attr("location");
-  $("#taskcontainer<?echo $appid?>").append('<tr t_id="'+p_id+'" id="task'+p_id+'"><td>'+p_name+'</td><td>'+p_id+'</td><td class="tm-box-left" onClick="open_folder('+p_id+')">'+p_loc+'<div class="tm-box-close ui-forest-blink" onClick="task_close('+p_id+'); checkwindows();">x</div></td></tr>');
+  $("#taskcontainer<?echo $appid?>").append('<tr t_id="'+p_id+'" id="task'+p_id+'"><td>'+p_name+'</td><td>'+p_id+'</td><td class="tm-box-left""><span onClick="open_folder('+p_id+')">'+p_loc+'</span><div class="tm-box-close ui-forest-blink" onClick="task_close('+p_id+'); checkwindows();">x</div></td></tr>');
   temp_id = p_id;
 });
 
@@ -75,7 +77,7 @@ function task_check<?echo $appid;?>(){
   });
   if(new_id > temp_id){
     temp_id = new_id;
-    $("#taskcontainer<?echo $appid?>").append('<tr t_id="'+new_id+'" id="task'+new_id+'"><td>'+new_name+'</td><td>'+new_id+'</td><td class="tm-box-left">'+new_loc+'<div class="tm-box-close ui-forest-blink" onClick="task_close('+new_id+'); checkwindows();">x</div></td></tr>');
+    $("#taskcontainer<?echo $appid?>").append('<tr t_id="'+new_id+'" id="task'+new_id+'"><td>'+new_name+'</td><td>'+new_id+'</td><td class="tm-box-left"><span onClick="open_folder('+new_id+')">'+new_loc+'</span><div class="tm-box-close ui-forest-blink" onClick="task_close('+new_id+'); checkwindows();">x</div></td></tr>');
   }
   $("#taskcontainer<?echo $appid?> > tr").each(function(index, element){
     var get_id = $(element).attr("t_id");
@@ -91,8 +93,10 @@ function task_close(id){
 }
 
 function open_folder(id){
-//var folder = $("#task"+id+ '> .tm-box-left').text;
-//makeprocess('<?echo $_SERVER['DOCUMENT_ROOT'].'/system/apps/Explorer/main.php'?>',''+folder+'','dir','Explorer');
+var folder = $("#task"+id+' > .tm-box-left').text();
+folder = folder.replace('/main.phpx','');
+folder = '<?echo $_SERVER['DOCUMENT_ROOT']?>/'+folder+'';
+makeprocess('<?echo $_SERVER['DOCUMENT_ROOT'].'/system/apps/Explorer/main.php'?>',folder,'dir','<?echo $language[$_SESSION['locale'].'_explorer_title']?>');
 }
 
 var timer<?echo $appid;?> = setInterval(function(){
@@ -101,7 +105,7 @@ var timer<?echo $appid;?> = setInterval(function(){
 }else{
   clearInterval(timer<?echo $appid;?>);
 }
-},1000);
+},500);
 </script>
 <?
 unset($appid);

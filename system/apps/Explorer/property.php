@@ -15,7 +15,7 @@ $folder=$_GET['destination'];
 session_start();
 $security->appprepare();
 /*--------Загружаем файл локализации--------*/
-$prop_lang  = parse_ini_file('etc.lang');
+$prop_lang  = parse_ini_file('assets/lang/etc.lang');
 $cl = $_SESSION['locale'];
 /*--------Логика--------*/
 $get_object = $_GET['object'];
