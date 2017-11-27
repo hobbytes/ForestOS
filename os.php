@@ -1,9 +1,13 @@
+<?
+$osinfo = parse_ini_file('system/core/osinfo.foc', false);
+$os_version = $osinfo['codename'].' '.$osinfo['subversion']."\n";
+?>
 <!--
    ____                 __    ____  ____
   / __/__  _______ ___ / /_  / __ \/ __/
  / _// _ \/ __/ -_|_-</ __/ / /_/ /\ \
 /_/  \___/_/  \__/___/\__/  \____/___/
-          WET STONE 1.0
+          <?echo $os_version?>
 -->
 <?
 require 'system/core/library/gui.php';
@@ -41,125 +45,18 @@ $_SESSION['appid']=-1;
 </div>
 </div>
 <div id="proceses">
+  <script>
+  var id=<?echo $_SESSION['appid']=$_SESSION['appid']+1?>;
+  <?
+  require 'system/core/library/js/core-js.php';
+  ?>
+  </script>
   <?
   $prepare->hibernation();
   ?>
 </div>
 </body>
 </html>
-<script>
-var id=<?echo $_SESSION['appid']=$_SESSION['appid']+1?>;
-
-function  hibernation(logout){
-  $('.process').addClass('hibernatethis');
-  var savestate = ($('#proceses').html());
-  $.ajax({
-    type: "POST",
-    url: "system/core/library/etc/hibernation",
-    data: {
-       content:savestate,
-       appid:id
-    }
-  }).done(function(o) {
-    if(logout == 'true'){
-      return location.href = '?action=logout';
-    }
-    if(logout == 'false'){
-      return location.href = 'os.php';
-    }
-});
-}
-function checkwindows(){
-  closestyle="";
-  var prc=$(".process").length;
-  if (prc>1){
-    closestyle="inline";
-  }else{
-    closestyle="none";
-  }
-  $(".topbaractbtn").css('display',''+window.closestyle+'');
-}
-
-function makeprocess(dest,param,key,name){
-  $('.ui-body').append("<div id=\"process"+(id=id+1)+"\" class='process' style='display:none;'></div>");
-  $("#process"+id+"").show('drop',500);
-  $("#process"+id+"" ).load("makeprocess.php?id=<?echo md5(date('d.m.y.h.i.s'));?>"+id+"&d="+dest+"/&i="+id+"&p="+param+"&k="+key+"&n="+name);
-  checkwindows();
-};
-
-$( function() {
-  $( "#notificationsbtn" ).on( "click", function() {
-    $('.notificationclass').css('opacity','0');
-    if($( "#notifications" ).hasClass("notificationshow"))
-    {
-      $('.notificationclass').css('opacity','0');
-      $('.notificationclass').css('display','none');
-    }else{
-      $('.notificationclass').css('opacity','0.97');
-      $('.notificationclass').css('display','block');
-    }
-    $( ".notificationhide" ).toggleClass( "notificationshow", 100 );
-  });
-$( "#topbar" ).on( "dblclick", function() {
-  $( ".blurwindowpassive" ).toggleClass( "blurwindowactive", 100 );
-});
-
-function runEffect() {
-  var options = {};
-  $( ".hideallclass" ).toggle( "slide", options, 100 );
-};
-$( "#hideall" ).on( "click", function() {
-  runEffect();
-  $( ".dragwindow" ).toggleClass( "dragwindowtoggle", 500 );
-  $( ".windowborder" ).toggleClass( "windowborderhide", 500 );
-  $( ".windowborder" ).toggleClass( "bordertoggle", 1 );
-});
-});
-
-function releaselink(){
-  $(".linktheme").css({
-    'white-space' : 'nowrap',
-    'background-color' : 'transparent',
-    'border' : ''
-  });
-}
-
-function UpdateWindow(id,name){
-  var parentWidth = $("#app"+id).css('width');
-  var parentHeight = $("#app"+id).css('height');
-  if(parentHeight!='0px'){
-    $("#"+name+id).css('width', parentWidth);
-    $("#"+name+id).css('height', parentHeight);
-  }
-}
-
-  $( function() {
-    $(window).load(function(){
-      $(".welcomescreen").hide('fade',500);
-      $("#topbar").show('fade',1500);
-      $("#topbar").css('display','block')
-      $(".trashdrop").droppable({
-        accept: ".ico",
-        drop: function(event, ui){
-          var del_file = ui.draggable.attr('d');
-          $.ajax({
-            type: "POST",
-            url: "system/core/functions/trash",
-            data: {
-               file_delete: del_file
-            }
-          }).done(function(o) {
-            $(".link"+ui.draggable.attr('i')).remove();
-        });
-        }
-      });
-    });
-    $( ".ico" ).draggable({containment:"body", snap:".ico, #topbar"});
-    $( ".window" ).mouseup(function(){
-      $(".window").removeClass("windowactive")
-    });
-  });
-</script>
 <?
 $_SESSION['appid']  = '<script>document.writeln(id)</script>';
 $prepare->autorun();

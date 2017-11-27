@@ -182,6 +182,7 @@ function fullhouseupd<?echo $appid;?>(el4){$(".apphouseinfohide").css('display',
 function update<?echo $appid;?>(){
   makeprocess('system/apps/update/main.php','','','Update');
 }
+UpdateWindow("<?echo $appid?>","<?echo $appname?>");
 </script>
 <?
 unset($appid);
