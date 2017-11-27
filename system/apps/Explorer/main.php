@@ -1,5 +1,5 @@
 <?$appname=$_GET['appname'];$appid=$_GET['appid'];?>
-<div id="<?echo $appname.$appid;?>" style="background-color:#f2f2f2; height:500px; max-width:100%; width:800px; border-radius:0px 0px 5px 5px; overflow:auto;">
+<div id="<?echo $appname.$appid?>" style="background-color:#f2f2f2; height:500px; max-width:100%; width:800px; border-radius:0px 0px 5px 5px; overflow:auto;">
 <?php
 /*Explorer*/
 //Подключаем библиотеки
@@ -135,10 +135,10 @@ if ($pathmain=='../../../'){
 $pathmain = str_replace($_SERVER['DOCUMENT_ROOT'],'',$pathmain);
 ?>
 <div style="position:absolute; width:100%; z-index:1; background:#f2f2f2; border:1px solid #d4d4d4; box-shadow: 0 1px 2px rgba(0,0,0,0.065);">
-<div style="cursor:default; padding:5px 10px; width:40px;" onmouseover="$('#filemenu<?echo $appid;?>').css('display','block')" onmouseout="$('#filemenu<?echo $appid;?>').css('display','none')">
+<div style="cursor:default; padding:5px 10px; width:40px;" onmouseover="$('#filemenu<?echo $appid?>').css('display','block')" onmouseout="$('#filemenu<?echo $appid?>').css('display','none')">
 	<b><?echo $explorer_lang['menu_file_label']?></b>
-	<div id="filemenu<?echo $appid;?>" style="display:none; cursor:default; position:absolute; z-index:1; background:#fff; width:auto;">
-<ul id="mmenu<?echo $appid;?>" >
+	<div id="filemenu<?echo $appid?>" style="display:none; cursor:default; position:absolute; z-index:1; background:#fff; width:auto;">
+<ul id="mmenu<?echo $appid?>" >
 	<li><div <?echo 'id="'.$dir.'/" class="loadthis" onClick="load'.$appid.'(this);" ';?> ><?echo $explorer_lang['menu_open_label']?></div></li>
 	<li><div <?echo 'onClick="mkdirshow'.$appid.'();" ';?> ><?echo $explorer_lang['menu_md_label']?></div></li>
 	<li><div <?echo 'id="'.$dir.'/" class="mklink" onClick="link'.$appid.'(this);" ';?> ><?echo $explorer_lang['menu_ml_label']?></div></li>
@@ -157,15 +157,15 @@ $pathmain = str_replace($_SERVER['DOCUMENT_ROOT'],'',$pathmain);
 <input style="-webkit-appearance:none; border:1px solid #ccc; width:80%; font-size:17px; margin: 0 5px 10px;" type="search" value="os<?echo $pathmain?>"></input>
 </div>
 </div>
-<div id="mkdirdiv<?echo $appid;?>" style="width:43%; display:none; z-index:10; height:120px; padding:10px; background-color:#eaeaea; border: 1px solid #282828; position:absolute; margin-top:25%; text-align:center; overflow:hidden; left:25%;">
-<label for="mkdirinput<?echo $appid;?>">
+<div id="mkdirdiv<?echo $appid?>" style="width:43%; display:none; z-index:10; height:120px; padding:10px; background-color:#eaeaea; border: 1px solid #282828; position:absolute; margin-top:25%; text-align:center; overflow:hidden; left:25%;">
+<label for="mkdirinput<?echo $appid?>">
 	<?echo $explorer_lang['mdir_label']?>
-	<input id="mkdirvalue<?echo $appid;?>" style="font-size:20px; margin-bottom:10px;" name="mkdirinput<?echo $appid;?>" type="text" value="">
+	<input id="mkdirvalue<?echo $appid?>" style="font-size:20px; margin-bottom:10px;" name="mkdirinput<?echo $appid?>" type="text" value="">
 </label>
-<span onclick="document.getElementById('mkdirdiv<?echo $appid;?>').style.display='none';" style="width:70px;" class="ui-button ui-widget ui-corner-all">
+<span onclick="document.getElementById('mkdirdiv<?echo $appid?>').style.display='none';" style="width:70px;" class="ui-button ui-widget ui-corner-all">
 	<?echo $explorer_lang['mdir_cancelbtn']?>
 </span>
-<span style="width:70px;" onClick="mkdirbtn<?echo $appid;?>();" class="ui-button ui-widget ui-corner-all">
+<span style="width:70px;" onClick="mkdirbtn<?echo $appid?>();" class="ui-button ui-widget ui-corner-all">
 	<?echo $explorer_lang['mdir_okbtn']?>
 </span>
 </div>
@@ -193,11 +193,11 @@ while (false !== ($entry=$d->read())) {
 	}
 	if(eregi($_SESSION["loginuser"].'/trash',$pathmain)){
 		?>
-		<div id="erasetrash<?echo $appid;?>" onClick="erasetrash<?echo $appid;?>();" class="ui-forest-button ui-forest-cancel" style="margin:5px; padding:64px 10px; float:left; display:none; height:14px;">
+		<div id="erasetrash<?echo $appid?>" onClick="erasetrash<?echo $appid?>();" class="ui-forest-button ui-forest-cancel" style="margin:5px; padding:64px 10px; float:left; display:none; height:14px;">
 			<b><?echo $explorer_lang['trash_label']?></b>
 		</div>
 		<script>
-		$('#erasetrash<?echo $appid;?>').css('display','block');
+		$('#erasetrash<?echo $appid?>').css('display','block');
 		</script>
 		<?
 	}
@@ -254,7 +254,7 @@ while (false !== ($entry=$d->read())) {
 $dir->close;
 ?>
 </div>
-<div id="upload<?echo $appid;?>" style="z-index:1; position:absolute; display:none; width:350px; top:25%; left:25%; background-color:#f9f9f9; border:5px solid #505050; padding:20px; border-radius:10px;">
+<div id="upload<?echo $appid?>" style="z-index:1; position:absolute; display:none; width:350px; top:25%; left:25%; background-color:#f9f9f9; border:5px solid #505050; padding:20px; border-radius:10px;">
 </div>
 
 <div style="padding:0 10px; background-color:#f2f2f2; width:97%; top:97%; word-wrap:break-word; font-size:10px; float:right; position:absolute; text-align:right;">
@@ -272,19 +272,19 @@ echo $explorer_lang['free_label'].': '.$format .' '.$explorer_lang['free_label_2
 </div>
 </div>
 <script>
-function load<?echo $appid;?>(el){
-	$("#<?echo $appid;?>").load("<?echo $folder;?>main.php?dir="+el.id+"&id=<?echo rand(0,10000).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&destination='.$folder?>")
-};function loadshow<?echo $appid;?>(divs){
-	$("#upload<?echo $appid;?>").load("<?echo $folder;?>/uploadwindow.php?where="+divs.id+"&id=<?echo rand(0,10000).'&appname='.$appname.'&appid='.$appid.'&destination='.$folder.'&mobile='.$click;?>")
-	$("#upload<?echo $appid;?>").css('display', 'block');
+function load<?echo $appid?>(el){
+	$("#<?echo $appid?>").load("<?echo $folder;?>main.php?dir="+el.id+"&id=<?echo rand(0,10000).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&destination='.$folder?>")
+};function loadshow<?echo $appid?>(divs){
+	$("#upload<?echo $appid?>").load("<?echo $folder;?>/uploadwindow.php?where="+divs.id+"&id=<?echo rand(0,10000).'&appname='.$appname.'&appid='.$appid.'&destination='.$folder.'&mobile='.$click;?>")
+	$("#upload<?echo $appid?>").css('display', 'block');
 };
-function link<?echo $appid;?>(el2){
-	$("#<?echo $appid;?>").load("<?echo $folder;?>main.php?linkdir="+el2.id+"&ico="+el2.getAttribute('ico')+"&linkname="+el2.getAttribute('link')+"&id=<?echo rand(0,10000).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&dir='.realpath($entry).'&destination='.$folder;?>")
+function link<?echo $appid?>(el2){
+	$("#<?echo $appid?>").load("<?echo $folder;?>main.php?linkdir="+el2.id+"&ico="+el2.getAttribute('ico')+"&linkname="+el2.getAttribute('link')+"&id=<?echo rand(0,10000).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&dir='.realpath($entry).'&destination='.$folder;?>")
 };
-function getproperty<?echo $appid;?>(obj){
+function getproperty<?echo $appid?>(obj){
 	makeprocess('<?echo $folder?>property.php',obj.id,'object','<?echo $explorer_lang['menu_property_label']?>');
 };
-function select<?echo $appid;?>(folder,folder2,folder3,folder4){
+function select<?echo $appid?>(folder,folder2,folder3,folder4){
 	$(".select").css('background-color','transparent');
 	$('.'+folder).css('background-color','#b5b5b5');
 	$(".loadthis").attr("id",folder2);
@@ -293,23 +293,24 @@ function select<?echo $appid;?>(folder,folder2,folder3,folder4){
 	$(".mklink").attr("link",folder4);
 };
 
-function erasetrash<?echo $appid;?>(){
-	$("#<?echo $appid;?>").load("<?echo $folder;?>/main.php?dir=<?echo realpath($entry)?>&erasestatus=true&id=<?echo rand(0,10000).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&destination='.$folder;?>")
+function erasetrash<?echo $appid?>(){
+	$("#<?echo $appid?>").load("<?echo $folder;?>/main.php?dir=<?echo realpath($entry)?>&erasestatus=true&id=<?echo rand(0,10000).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&destination='.$folder;?>")
 };
 
-function mkdirshow<?echo $appid;?>(){
-	$("#mkdirdiv<?echo $appid;?>").css('display','block')
+function mkdirshow<?echo $appid?>(){
+	$("#mkdirdiv<?echo $appid?>").css('display','block')
 };
-function mkdirbtn<?echo $appid;?>(){
-	$("#<?echo $appid;?>").load("<?echo $folder;?>/main.php?makedir="+$("#mkdirvalue<?echo $appid;?>").val()+"&id=<?echo rand(0,10000).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&dir='.realpath($entry).'&destination='.$folder;?>")
+function mkdirbtn<?echo $appid?>(){
+	$("#<?echo $appid?>").load("<?echo $folder;?>/main.php?makedir="+$("#mkdirvalue<?echo $appid?>").val()+"&id=<?echo rand(0,10000).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&dir='.realpath($entry).'&destination='.$folder;?>")
 };
-function newload<?echo $appid;?>(key,value){
-$("#<?echo $appid;?>").load("<?echo $folder;?>/main.php?"+key+"="+value+"&id=<?echo rand(0,10000).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&dir='.realpath($entry).'&destination='.$folder;?>")
+function newload<?echo $appid?>(key,value){
+$("#<?echo $appid?>").load("<?echo $folder;?>/main.php?"+key+"="+value+"&id=<?echo rand(0,10000).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&dir='.realpath($entry).'&destination='.$folder;?>")
 };
 $(function(){
-	$("#mmenu<?echo $appid;?>").menu();
+	$("#mmenu<?echo $appid?>").menu();
 	$("#makeprocess").remove();
 });
+UpdateWindow("<?echo $appid?>","<?echo $appname?>");
 </script>
 <style>.ui-menu{width: 150px;}</style>
 <?

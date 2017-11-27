@@ -124,6 +124,15 @@ function releaselink(){
   });
 }
 
+function UpdateWindow(id,name){
+  var parentWidth = $("#app"+id).css('width');
+  var parentHeight = $("#app"+id).css('height');
+  if(parentHeight!='0px'){
+    $("#"+name+id).css('width', parentWidth);
+    $("#"+name+id).css('height', parentHeight);
+  }
+}
+
   $( function() {
     $(window).load(function(){
       $(".welcomescreen").hide('fade',500);

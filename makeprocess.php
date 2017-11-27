@@ -61,10 +61,8 @@ if(isset($_SESSION['loginuser'])){
   ?>
   <div id="logic<?echo $idprocess;?>">
     <script async>
-    $( function() {
       $( "#<?echo 'app'.$idprocess?>" ).draggable({containment:"body",handle:"<?echo '#drag'.$idprocess?>", snap:".ui-body, .dragwindowtoggle, #topbar"});
       $( "#<?echo 'app'.$idprocess?>" ).resizable({containment:"body",minHeight:$(window).height()*0.15,minWidth:$(window).width()*0.15,maxWidth:$(window).width()*<?echo $maxwidthm;?>,maxHeight:$(window).height()*0.95,autoHide:<?echo $autohide;?>,alsoResize:"#<?echo $name.$idprocess?>"});
-      $( "#<?echo $name.$idprocess?>" ).resizable();
       $( "#<?echo 'app'.$idprocess?>" ).click(function(){$("#<?echo 'app'.$idprocess?>" ).addClass("windowactive")});
       $( "#<?echo 'drag'.$idprocess?>" ).click(function(){$("#<?echo 'app'.$idprocess?>" ).addClass("windowactive")});
       $( "#<?echo 'drag'.$idprocess?>" ).dblclick(function(){
@@ -103,7 +101,6 @@ if(isset($_SESSION['loginuser'])){
        $("#<?echo 'app'.$idprocess?>" ).toggleClass( "windowfullscreen", 100 );
      });
     $("#process<?echo $idprocess;?>" ).appendTo("#proceses");
-      });
     </script>
     </div>
     <?
