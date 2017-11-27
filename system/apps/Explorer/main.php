@@ -151,9 +151,9 @@ $pathmain = str_replace($_SERVER['DOCUMENT_ROOT'],'',$pathmain);
 </div>
 </div>
 <div style="margin-top:7px;">
-<span class="ui-forest-blink" style="padding:4px; background:#4d94ef; margin:0px 10px; border-radius:10px; color:#2b5182;" id="<?echo $_SERVER['DOCUMENT_ROOT'].dirname($pathmain)?>" onclick="load<?echo $appid?>(this)">
+<div class="ui-forest-blink" style="padding:4px; background:#4d94ef; margin:0px 10px; border-radius:10px; color:#2b5182; float:left; width:20px;" id="<?echo $_SERVER['DOCUMENT_ROOT'].dirname($pathmain)?>" onclick="load<?echo $appid?>(this)">
 	&#9668
-</span>
+</div>
 <input style="-webkit-appearance:none; border:1px solid #ccc; width:80%; font-size:17px; margin: 0 5px 10px;" type="search" value="os<?echo $pathmain?>"></input>
 </div>
 </div>
@@ -257,7 +257,7 @@ $dir->close;
 <div id="upload<?echo $appid;?>" style="z-index:1; position:absolute; display:none; width:350px; top:25%; left:25%; background-color:#f9f9f9; border:5px solid #505050; padding:20px; border-radius:10px;">
 </div>
 
-<div style="padding:0 10px; background-color:#f2f2f2; width:97%; position:absolute; top:96%; word-wrap:break-word;">
+<div style="padding:0 10px; background-color:#f2f2f2; width:97%; top:97%; word-wrap:break-word; font-size:10px; float:right; position:absolute; text-align:right;">
 <?
 $fo->size_check(dirname(dirname(dirname(__DIR__))));
 $explorerbd = new readbd;

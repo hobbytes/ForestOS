@@ -57,17 +57,18 @@ if(isset($_SESSION['loginuser'])){
   <div class="appwindowbutton"'; echo ' onClick=" $(';echo "'#"; echo 'process'.$idprocess; echo "'"; echo ').remove();';echo ' $(';echo "'#"; echo "app$idprocess"; echo "'"; echo ').css('; echo "$style2"; echo '); checkwindows();" style="background-color:#ed2020;">x</div>
   <div class="hidewindow'.$idprocess.' appwindowbutton" onClick="" style="background-color:#37a22e;">-</div>
   <div class="reload'.$idprocess.' appwindowbutton" onClick="" style="background-color:#e09100;">o</div>
-  </div><div id='.$idprocess.' class="blurwindowpassive hideallclass process-container" location="'.str_replace(array('//','php/'),array('/','php'),$destination_).'"></div></div></div>';
+  </div><div id='.$idprocess.' style="position:relative;" class="blurwindowpassive hideallclass process-container" location="'.str_replace(array('//','php/'),array('/','php'),$destination_).'"></div></div></div>';
   ?>
   <div id="logic<?echo $idprocess;?>">
     <script async>
     $( function() {
-      $( "#<?echo 'app'.$idprocess.'';?>" ).draggable({containment:"body",handle:"<?echo '#drag'.$idprocess.'';?>", snap:".ui-body, .dragwindowtoggle, #topbar"});
-      $( "#<?echo 'app'.$idprocess.'';?>" ).resizable({containment:"body",minHeight:$(window).height()*0.15,minWidth:$(window).width()*0.15,maxWidth:$(window).width()*<?echo $maxwidthm;?>,maxHeight:$(window).height()*0.95,autoHide:<?echo $autohide;?>,alsoResize:"#<?echo $name.$idprocess?>"});
-      $( "#<?echo 'app'.$idprocess.'';?>" ).click(function(){$("#<?echo 'app'.$idprocess.'';?>" ).addClass("windowactive")});
-      $( "#<?echo 'drag'.$idprocess.'';?>" ).click(function(){$("#<?echo 'app'.$idprocess.'';?>" ).addClass("windowactive")});
-      $( "#<?echo 'drag'.$idprocess.'';?>" ).dblclick(function(){
-        $("#<?echo 'app'.$idprocess.'';?>" ).css({
+      $( "#<?echo 'app'.$idprocess?>" ).draggable({containment:"body",handle:"<?echo '#drag'.$idprocess?>", snap:".ui-body, .dragwindowtoggle, #topbar"});
+      $( "#<?echo 'app'.$idprocess?>" ).resizable({containment:"body",minHeight:$(window).height()*0.15,minWidth:$(window).width()*0.15,maxWidth:$(window).width()*<?echo $maxwidthm;?>,maxHeight:$(window).height()*0.95,autoHide:<?echo $autohide;?>,alsoResize:"#<?echo $name.$idprocess?>"});
+      $( "#<?echo $name.$idprocess?>" ).resizable();
+      $( "#<?echo 'app'.$idprocess?>" ).click(function(){$("#<?echo 'app'.$idprocess?>" ).addClass("windowactive")});
+      $( "#<?echo 'drag'.$idprocess?>" ).click(function(){$("#<?echo 'app'.$idprocess?>" ).addClass("windowactive")});
+      $( "#<?echo 'drag'.$idprocess?>" ).dblclick(function(){
+        $("#<?echo 'app'.$idprocess?>" ).css({
           top:"29px",left:"0"
         })
       });
@@ -77,7 +78,7 @@ if(isset($_SESSION['loginuser'])){
       }
     $(function() {
       $(".window").removeClass("windowactive");
-      $("#<?echo 'app'.$idprocess.'';?>" ).addClass("windowactive");
+      $("#<?echo 'app'.$idprocess?>" ).addClass("windowactive");
     });
     function runEffect() {
       var options = {};
@@ -85,19 +86,18 @@ if(isset($_SESSION['loginuser'])){
   };
     $( ".hidewindow<?echo $idprocess;?>" ).on( "click", function() {
       runEffect();
-      if($( "#<?echo 'app'.$idprocess.'';?>" ).hasClass("ui-resizable")){
-          $( "#<?echo 'app'.$idprocess.'';?>" ).resizable({disabled:true,containment:"body"});
+      if($( "#<?echo 'app'.$idprocess?>" ).hasClass("ui-resizable")){
+          $( "#<?echo 'app'.$idprocess?>" ).resizable({disabled:true,containment:"body"});
         }
-        if($( "#<?echo 'app'.$idprocess.'';?>" ).hasClass("windowborderhide")){
-          $( "#<?echo 'app'.$idprocess.'';?>" ).resizable({disabled:false,containment:"body",minHeight:$(window).height()*0.15,minWidth:$(window).width()*0.15,maxWidth:$(window).width()*<?echo $maxwidthm;?>,maxHeight:$(window).height()*0.95,autoHide:<?echo $autohide;?>,alsoResize:"#<?echo ''.$nameprocess.$idprocess.'';?>"});
+        if($( "#<?echo 'app'.$idprocess?>" ).hasClass("windowborderhide")){
+          $( "#<?echo 'app'.$idprocess?>" ).resizable({disabled:false,containment:"body",minHeight:$(window).height()*0.15,minWidth:$(window).width()*0.15,maxWidth:$(window).width()*<?echo $maxwidthm;?>,maxHeight:$(window).height()*0.95,autoHide:<?echo $autohide;?>,alsoResize:"#<?echo $name.$idprocess?>"});
         }
       $( "#<?echo 'drag'.$idprocess;?>" ).toggleClass( "dragwindowtoggle", 500 );
       $( "#<?echo 'app'.$idprocess;?>" ).toggleClass( "windowborderhide", 500 );
       $( "#<?echo 'app'.$idprocess;?>" ).toggleClass( "bordertoggle", 1 );
     });
-
     $(".reload<?echo $idprocess;?>" ).on( "click", function() {
-      $("#<?echo $idprocess;?>" ).load("<? echo $destination_.'?id='.rand(0,10000).'&appid='.$idprocess.'&appname='.$nameprocess.'&destination='.$folder.'/&mobile='.$click.'&'.$key.'='.$param;?>");
+      $("#<?echo $idprocess;?>" ).load("<? echo $destination_.'?id='.rand(0,10000).'&appid='.$idprocess.'&appname='.$name.'&destination='.$folder.'/&mobile='.$click.'&'.$key.'='.$param;?>");
     });
     $("#<?echo 'drag'.$idprocess?>" ).on( "dblclick", function() {
        $("#<?echo 'app'.$idprocess?>" ).toggleClass( "windowfullscreen", 100 );
