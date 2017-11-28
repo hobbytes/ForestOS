@@ -40,4 +40,5 @@ echo '<div id="send'.$appid.'" onClick="send_message'.$appid.'();" class="ui-for
 <script>
 function back<?echo $appid;?>(el){$("#<?echo $appid;?>").load("<?echo $folder?>main.php?id=<?echo rand(0,10000).'&destination='.$folder.'&appname='.$appname.'&appid='.$appid;?>")};
 function send_message<?echo $appid;?>(){$("#<?echo $appid;?>").load("<?echo $folder?>feedback.php?id=<?echo rand(0,10000).'&destination='.$folder.'&appname='.$appname.'&appid='.$appid?>&t="+escape($('#<?echo $appid?>feedback_theme').val())+"&m="+escape($('#<?echo $appid?>feedback_message').val()))};
+UpdateWindow("<?echo $appid?>","<?echo $appname?>");
 </script>

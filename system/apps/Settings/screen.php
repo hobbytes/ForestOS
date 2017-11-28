@@ -116,4 +116,5 @@ function clearwall<?echo $appid;?>(){
   $('.backgroundtheme').css('background','');
   loadwall<?echo $appid;?>('none');
 }
+UpdateWindow("<?echo $appid?>","<?echo $appname?>");
 </script>

@@ -53,4 +53,5 @@ function savelang<?echo $appid?>(){
   var choose_lang = $("#selectlang<?echo $appid?>").val();
   $("#<?echo $appid;?>").load("<?echo $folder?>/language.php?choose_lang="+choose_lang+"&id=<?echo rand(0,10000).'&destination='.$folder.'&appname='.$appname.'&appid='.$appid;?>");
 }
+UpdateWindow("<?echo $appid?>","<?echo $appname?>");
 </script>

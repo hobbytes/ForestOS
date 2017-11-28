@@ -202,5 +202,5 @@ function adduser<?echo $appid;?>(){
     }
   }
 };
-
+UpdateWindow("<?echo $appid?>","<?echo $appname?>");
 </script>

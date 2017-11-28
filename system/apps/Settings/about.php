@@ -49,4 +49,5 @@ unset($settingsbd,$fo);
 </div>
 <script>
 function back<?echo $appid;?>(el){$("#<?echo $appid;?>").load("<?echo $folder?>main.php?id=<?echo rand(0,10000).'&destination='.$folder.'&appname='.$appname.'&appid='.$appid;?>")};
+UpdateWindow("<?echo $appid?>","<?echo $appname?>");
 </script>

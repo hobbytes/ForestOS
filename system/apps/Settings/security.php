@@ -77,4 +77,5 @@ unset($settingsbd);
 function back<?echo $appid;?>(el){$("#<?echo $appid;?>").load("<?echo $folder?>main.php?id=<?echo rand(0,10000).'&destination='.$folder.'&appname='.$appname.'&appid='.$appid;?>")};
 function eraselog<?echo $appid;?>(){$("#<?echo $appid;?>").load("<?echo $folder?>security.php?id=<?echo rand(0,10000).'&destination='.$folder.'&appname='.$appname.'&appid='.$appid.'&erase=true';?>")};
 function changepassword<?echo $appid;?>(){$("#<?echo $appid;?>").load("<?echo $folder?>security.php?id=<?echo rand(0,10000).'&destination='.$folder.'&appname='.$appname.'&appid='.$appid?>&oldpassword="+document.getElementById("<?echo $appid.'oldpassword';?>").value+"&newpassword="+document.getElementById("<?echo $appid.'newpassword';?>").value+"&checkpassword="+document.getElementById("<?echo $appid.'checkpassword';?>").value)};
+UpdateWindow("<?echo $appid?>","<?echo $appname?>");
 </script>

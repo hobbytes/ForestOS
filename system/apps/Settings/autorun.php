@@ -69,6 +69,7 @@ function saveautoset<?echo $appid;?>(){
   });
   $("#<?echo $appid;?>").load("<?echo $folder?>autorun.php?checked="+escape(checkboxradio<?echo $appid;?>)+"&save=true&id=<?echo rand(0,10000).'&destination='.$folder.'&appname='.$appname.'&appid='.$appid;?>");
 };
+UpdateWindow("<?echo $appid?>","<?echo $appname?>");
 </script>
 <style>
 .checkboxfix label{
