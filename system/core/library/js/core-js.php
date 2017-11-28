@@ -45,7 +45,7 @@ function ProcessLogic(id, name, destination, destination_, maxwidthm, folder, cl
   $( "#drag" + id ).dblclick(function(){$("#app" + id ).css({top:"29px",left:"0"})});
   $( ".window" ).mouseup(function(){$(".window").removeClass("windowactive")});
   if(!$("#process" + id).hasClass('hibernatethis')){
-    $("#" + id).load(""+destination+"?id=<?rand(0,10000)?>&appid="+id+"&appname="+name+"&destination="+folder+"/&mobile="+click+"&key="+key+"&param="+param+"");
+    $("#" + id).load(""+destination+"?id=<?echo rand(0,10000)?>&appid="+id+"&appname="+name+"&destination="+folder+"/&mobile="+click+"&"+key+"="+param);
   }
   $(function() {
     $(".window").removeClass("windowactive");
@@ -68,7 +68,7 @@ function ProcessLogic(id, name, destination, destination_, maxwidthm, folder, cl
       $( "#app" + id ).toggleClass( "bordertoggle", 1 );
     });
   $(".reload" + id).on( "click", function() {
-    $("#" + id).load(""+destination_+"?id=<?rand(0,10000)?>&appid="+id+"&appname="+name+"&destination="+folder+"/&mobile="+click+"&key="+key+"&param="+param+"");
+    $("#" + id).load(""+destination_+"?id=<?echo rand(0,10000)?>&appid="+id+"&appname="+name+"&destination="+folder+"/&mobile="+click+"&"+key+"="+param);
   });
   $("#drag" + id ).on( "dblclick", function() {
     $("#app" + id ).toggleClass( "windowfullscreen", 100, function(){

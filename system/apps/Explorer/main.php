@@ -135,9 +135,9 @@ if ($pathmain=='../../../'){
 $pathmain = str_replace($_SERVER['DOCUMENT_ROOT'],'',$pathmain);
 ?>
 <div style="position:absolute; width:100%; z-index:1; background:#f2f2f2; border:1px solid #d4d4d4; box-shadow: 0 1px 2px rgba(0,0,0,0.065);">
-<div style="cursor:default; padding:5px 10px; width:40px;" onmouseover="$('#filemenu<?echo $appid?>').css('display','block')" onmouseout="$('#filemenu<?echo $appid?>').css('display','none')">
-	<b><?echo $explorer_lang['menu_file_label']?></b>
-	<div id="filemenu<?echo $appid?>" style="display:none; cursor:default; position:absolute; z-index:1; background:#fff; width:auto;">
+<div class="ui-forest-menu-button" onmouseover="$('#filemenu<?echo $appid?>').css('display','block')" onmouseout="$('#filemenu<?echo $appid?>').css('display','none')">
+	<span><?echo $explorer_lang['menu_file_label']?></span>
+	<div id="filemenu<?echo $appid?>" style="display:none; cursor:default; position:absolute; z-index:1; background:#fff; width:auto; top:31px; left:4px;">
 <ul id="mmenu<?echo $appid?>" >
 	<li><div <?echo 'id="'.$dir.'/" class="loadthis" onClick="load'.$appid.'(this);" ';?> ><?echo $explorer_lang['menu_open_label']?></div></li>
 	<li><div <?echo 'onClick="mkdirshow'.$appid.'();" ';?> ><?echo $explorer_lang['menu_md_label']?></div></li>
@@ -150,19 +150,19 @@ $pathmain = str_replace($_SERVER['DOCUMENT_ROOT'],'',$pathmain);
 </ul>
 </div>
 </div>
-<div style="margin-top:7px;">
+<div style="margin-top:7px; border-top:1px solid #d4d4d4; padding-top:7px;">
 <div class="ui-forest-blink" style="padding:4px; background:#4d94ef; margin:0px 10px; border-radius:10px; color:#2b5182; float:left; width:20px;" id="<?echo $_SERVER['DOCUMENT_ROOT'].dirname($pathmain)?>" onclick="load<?echo $appid?>(this)">
 	&#9668
 </div>
 <input style="-webkit-appearance:none; border:1px solid #ccc; width:80%; font-size:17px; margin: 0 5px 10px;" type="search" value="os<?echo $pathmain?>"></input>
 </div>
 </div>
-<div id="mkdirdiv<?echo $appid?>" style="width:43%; display:none; z-index:10; height:120px; padding:10px; background-color:#eaeaea; border: 1px solid #282828; position:absolute; margin-top:25%; text-align:center; overflow:hidden; left:25%;">
+<div id="mkdirdiv<?echo $appid?>" style="z-index:1; position:fixed; display:none; top:25%; left:25%; background-color:#ededed; border:1px solid #797979; padding:20px; border-radius:6px; box-shadow:1px 1px 5px #000; width:min-content; text-align:center;">
 <label for="mkdirinput<?echo $appid?>">
 	<?echo $explorer_lang['mdir_label']?>
 	<input id="mkdirvalue<?echo $appid?>" style="font-size:20px; margin-bottom:10px;" name="mkdirinput<?echo $appid?>" type="text" value="">
 </label>
-<span onclick="document.getElementById('mkdirdiv<?echo $appid?>').style.display='none';" style="width:70px;" class="ui-button ui-widget ui-corner-all">
+<span onclick="$('#mkdirdiv<?echo $appid?>').css('display','none');" style="width:70px;" class="ui-button ui-widget ui-corner-all">
 	<?echo $explorer_lang['mdir_cancelbtn']?>
 </span>
 <span style="width:70px;" onClick="mkdirbtn<?echo $appid?>();" class="ui-button ui-widget ui-corner-all">
@@ -247,14 +247,14 @@ while (false !== ($entry=$d->read())) {
 		}
 	}
 
-	echo('<div id="'.realpath($entry).'" class="'.md5($name).' select ui-button ui-widget ui-corner-all explorer-object" onClick="'.$select.'" on'.$click.'="'.$load.'"  style="cursor:default; height:128px;margin:5px;text-align:center;width:128px;position:relative;display:block;text-overflow:ellipsis;overflow:hidden;float:left;" title="'.$name.'"><div style="cursor:default; width:80px; height:80px; background-image: url('.$type.'); background-size:cover; -webkit-user-select:none; user-select:none; padding:5px; background-color:'.$color.'; margin:auto; color:#d05858; font-size:25px;">
+	echo('<div id="'.realpath($entry).'" class="'.md5($name).' select ui-button ui-widget ui-corner-all explorer-object" onClick="'.$select.'" on'.$click.'="'.$load.'"  style="cursor:default; height:128px;	margin:5px;	text-align:center;	width:128px;	position:relative;	display:block;	text-overflow:ellipsis;	overflow:hidden;	float:left; transition:all 0.05s ease-out;" title="'.$name.'"><div style="cursor:default; width:80px; height:80px; background-image: url('.$type.'); background-size:cover; -webkit-user-select:none; user-select:none; padding:5px; background-color:'.$color.'; margin:auto; color:#d05858; font-size:25px;">
 	'.$extension.'</div><div style="text-overflow: ellipsis;overflow: hidden;font-size: 15px;"><span style="color:'.$n_color.';">'.$name.'</span><div style="font-size:10px; padding:5px; color:#688ad8;">'.$datecreate.'</div></div></div>');
 }
 }
 $dir->close;
 ?>
 </div>
-<div id="upload<?echo $appid?>" style="z-index:1; position:absolute; display:none; width:350px; top:25%; left:25%; background-color:#f9f9f9; border:5px solid #505050; padding:20px; border-radius:10px;">
+<div id="upload<?echo $appid?>" style="z-index:1; position:fixed; display:none; top:25%; left:25%; background-color:#ededed; border:1px solid #797979; padding:20px; border-radius:6px; box-shadow:1px 1px 5px #000;">
 </div>
 
 <div style="padding:0 10px; background-color:#f2f2f2; width:97%; top:97%; word-wrap:break-word; font-size:10px; float:right; position:absolute; text-align:right;">
@@ -274,7 +274,8 @@ echo $explorer_lang['free_label'].': '.$format .' '.$explorer_lang['free_label_2
 <script>
 function load<?echo $appid?>(el){
 	$("#<?echo $appid?>").load("<?echo $folder;?>main.php?dir="+el.id+"&id=<?echo rand(0,10000).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&destination='.$folder?>")
-};function loadshow<?echo $appid?>(divs){
+};
+function loadshow<?echo $appid?>(divs){
 	$("#upload<?echo $appid?>").load("<?echo $folder;?>/uploadwindow.php?where="+divs.id+"&id=<?echo rand(0,10000).'&appname='.$appname.'&appid='.$appid.'&destination='.$folder.'&mobile='.$click;?>")
 	$("#upload<?echo $appid?>").css('display', 'block');
 };
@@ -286,7 +287,7 @@ function getproperty<?echo $appid?>(obj){
 };
 function select<?echo $appid?>(folder,folder2,folder3,folder4){
 	$(".select").css('background-color','transparent');
-	$('.'+folder).css('background-color','#b5b5b5');
+	$('.'+folder).css('background-color','#d4d4d4');
 	$(".loadthis").attr("id",folder2);
 	$(".mklink").attr("id",folder2);
 	$(".mklink").attr("ico",folder3);
@@ -300,6 +301,7 @@ function erasetrash<?echo $appid?>(){
 function mkdirshow<?echo $appid?>(){
 	$("#mkdirdiv<?echo $appid?>").css('display','block')
 };
+
 function mkdirbtn<?echo $appid?>(){
 	$("#<?echo $appid?>").load("<?echo $folder;?>/main.php?makedir="+$("#mkdirvalue<?echo $appid?>").val()+"&id=<?echo rand(0,10000).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&dir='.realpath($entry).'&destination='.$folder;?>")
 };
