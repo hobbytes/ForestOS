@@ -37,7 +37,7 @@ if(!empty($app_delete) && !in_array($app_delete, $warn_apps)){
   $_remove_app = preg_match('/(?ms)^\['.$app_delete.'](?:(?!^\[[^]\r\n]+]).)*/', $remove_app, $new_file);
   $remove_app = str_replace($new_file[0], '', $remove_app);
   file_put_contents($app_install, $remove_app);
-  $gui->newnotification($appname, $language[$_SESSION['locale'].'_name'], 'Приложение: <b>'.$app_delete.'</b> успешно удалено');
+  $gui->newnotification($appname, $language[$_SESSION['locale'].'_name'], $language[$_SESSION['locale'].'_not_1'].': <b>'.$app_delete.'</b> '.$language[$_SESSION['locale'].'_not_2']);
 }
 
 $app_array = parse_ini_file($app_install, true);
@@ -54,9 +54,14 @@ foreach (glob($_SERVER['DOCUMENT_ROOT']."/system/apps/*/main.php") as $filenames
   $app_name = str_replace('_', ' ', $_app_name);
 
   if(!in_array($_app_name, $warn_apps)){
-    $delete_button = '<div app-delete="'.$_app_name.'" class="ui-forest-cancel ui-forest-button ui-forest-center app-delete'.$appid.'">Удалить</div>';
+    $delete_button = '<div app-delete="'.$_app_name.'" class="ui-forest-cancel ui-forest-button ui-forest-center app-delete'.$appid.'">'.$language[$_SESSION['locale'].'_delete_button'].'</div>';
   }else{
     $delete_button = '';
+  }
+
+  $version = $app_array[$_app_name]['version'];
+  if(empty($version)){
+    $version = $language[$_SESSION['locale'].'_unknow_version'];
   }
 
   echo'
@@ -66,17 +71,17 @@ foreach (glob($_SERVER['DOCUMENT_ROOT']."/system/apps/*/main.php") as $filenames
   <div id="button_layer'.$_app_name.$appid.'" class="button_layer" style="opacity:0; display:none; padding:7 10px;">
   <div style="float:right;">
   <div app-open="'.$_app_name.'" class="ui-forest-accept ui-forest-button ui-forest-center app-open'.$appid.'" >
-  Открыть папку
+  '.$language[$_SESSION['locale'].'_open_button'].'
   </div>
   <div app-link="'.$_app_name.'" class="ui-forest-accept ui-forest-button ui-forest-center app-link'.$appid.'" >
-  Создать ярлык
+  '.$language[$_SESSION['locale'].'_link_button'].'
   </div>
   '.$delete_button.'
   </div>
   <div style="float:right; width: 160px; background-color:#89b7f7; margin:11px; padding:10px;">
-  версия:
-  '.$app_array[$_app_name]['version'].'<br>
-  размер:
+  '.$language[$_SESSION['locale'].'_version_label'].':
+  '.$version.'<br>
+  '.$language[$_SESSION['locale'].'_size_label'].':
   '.$format.'
   </div>
   </div>
