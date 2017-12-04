@@ -13,7 +13,7 @@ $security->appprepare();
 $language_settings  = parse_ini_file('lang/main.lang');
 ?>
 <div id="<?echo $appname.$appid;?>" style="background-color:#f2f2f2; height:550px; max-height:95%; width:800px; padding-top:10px; border-radius:0px 0px 5px 5px; overflow:auto;">
-	<div style="width:100%; text-align:left; padding:0 10px 5px; font-size:30px; border-bottom:#d8d8d8 solid 2px; text-overflow:ellipsis; overflow:hidden;"><?echo $language_settings[$_SESSION['locale'].'_settings_label']?></div>
+	<div style="text-align:left; padding:0 10px 5px; font-size:30px; border-bottom:#d8d8d8 solid 2px; text-overflow:ellipsis; overflow:hidden;"><?echo $language_settings[$_SESSION['locale'].'_settings_label']?></div>
 <?php
 /*Settings*/
 function newbutton($name_btn){
