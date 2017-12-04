@@ -57,7 +57,7 @@ if($current['subversion'] == $subversion){
       <span style="font-size:12px; ">'.$update_lang[$cl.'_update_version'].': '.$version.'<br>'.$update_lang[$cl.'_update_subversion'].': '.$subversion.'<br>'.$update_lang[$cl.'_update_size'].': '.$format.'</span>';
     }
     ?>
-    <div id="<?echo $revision;?>" onClick="updatenow<?echo $appid;?>(this);" style="background-color:#54c45c; color:#fff; width:200px; font-size:15px; text-align:center; margin:10px auto; cursor:pointer; padding:10px; border-radius:5px;">
+    <div id="<?echo $revision;?>" onClick="updatenow<?echo $appid;?>(this);" class="ui-forest-blink" style="background-color:#54c45c; color:#fff; width:200px; font-size:15px; text-align:center; margin:10px auto; cursor:pointer; padding:10px; border-radius:5px;">
       <?echo $update_lang[$cl.'_update_button']?>
     </div>
     <?

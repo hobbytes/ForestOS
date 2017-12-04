@@ -88,7 +88,7 @@ if(isset($appinstall)){
 <label style="margin-top:10px; display:none; margin-left:8%;" for="checkbox<?echo $appid;?>" >Создать ярлык
 <input type="checkbox" name="checkbox<?echo $appid;?>" id="checkbox<?echo $appid;?>" ></input></label>
 <br>
-<div id="<?echo $appdownload;?>" onClick="appinstall<?echo $appid;?>(this);" style="background-color:#54c45c; color:#fff; width:200px; font-size:20px; text-align:center; margin-left:25%; cursor:pointer; padding:5px;"><?echo $install_lang[$cl.'_installer_button']?></div>
+<div id="<?echo $appdownload;?>" onClick="appinstall<?echo $appid;?>(this);" class="ui-forest-blink" style="background-color:#54c45c; color:#fff; width:200px; font-size:15px; text-align:center; margin:10px auto; cursor:pointer; padding:10px; border-radius:5px;"><?echo $install_lang[$cl.'_installer_button']?></div>
 <?}?>
 </div>
 <script>

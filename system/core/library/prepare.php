@@ -244,11 +244,11 @@ function topbar(){
     <script type="text/javascript">
       showTime();
     </script>
-    <div id="menu1" class="ui-forest" onmouseover="document.getElementById('aboutmenu').style.display='block';" onmouseout="document.getElementById('aboutmenu').style.display='none';" style="z-index:9999; user-select: none; cursor: default; text-align:center; width:50px; font-size:19px; padding:2px 0;">
+    <div id="menu1" class="ui-forest" onmouseover="$('#aboutmenu').css('display','block')" onmouseout="$('#aboutmenu').css('display','none')" style="z-index:9999; user-select: none; cursor: default; text-align:center; width:50px; font-size:19px; padding:2px 0;">
       =
     </div>
   </div>
-  <div id="aboutmenu" class="ui-widget-content menutheme" onmouseover="document.getElementById('aboutmenu').style.display='block';" onmouseout="document.getElementById('aboutmenu').style.display='none';" style="z-index:9999; user-select:none; display:none; text-align:justify; min-width:200px; max-width:300px; position:absolute; text-overflow:hidden; overflow:ellipsis; padding:14px 0 0 0;">
+  <div id="aboutmenu" class="ui-widget-content menutheme" onmouseover="$('#aboutmenu').css('display','block')" onmouseout="$('#aboutmenu').css('display','none')" style="z-index:9999; user-select:none; display:none; text-align:justify; min-width:200px; max-width:300px; position:absolute; text-overflow:hidden; overflow:ellipsis; padding:14px 0 0 0;">
   <span style="text-transform:uppercase; cursor:pointer;  padding:5px;" onclick="makeprocess('system/apps/Settings/users.php','<?echo $login;?>','selectuser','<?echo $settings_name?>'); hide_menu();">
     <?echo str_replace('_',' ',$login);?>
   </span>
