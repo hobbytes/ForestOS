@@ -1,6 +1,9 @@
 <?
-session_start();
 include '../library/filesystem.php';
+include '../library/etc/security.php';
+$security	=	new security;
+session_start();
+$security->appprepare();
 $faction = new fileaction;
 $file_delete  = $_POST['file_delete'];
 if(isset($file_delete)){

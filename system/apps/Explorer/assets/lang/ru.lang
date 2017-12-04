@@ -8,6 +8,9 @@ menu_delete_label = Удалить
 menu_loadfile_label = Загрузить файл
 menu_property_label = Свойства
 menu_zip_label = Добавить в архив
+menu_copy_label = Копировать
+menu_paste_label = Вставить
+menu_cut_label = Вырезать
 error_open = "Не могу открыть файл с расширением <b style='text-transform:uppercase;'>"
 error_label  = "Ошибка чтения файла"
 

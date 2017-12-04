@@ -135,6 +135,8 @@ if ($pathmain=='../../../'){
 $pathmain = str_replace($_SERVER['DOCUMENT_ROOT'],'',$pathmain);
 ?>
 <div style="position:absolute; width:100%; z-index:1; background:#f2f2f2; border:1px solid #d4d4d4; box-shadow: 0 1px 2px rgba(0,0,0,0.065);">
+
+<div class="menucontainer" style="display: flex;">
 <div class="ui-forest-menu-button" onmouseover="$('#filemenu<?echo $appid?>').css('display','block')" onmouseout="$('#filemenu<?echo $appid?>').css('display','none')">
 	<span><?echo $explorer_lang['menu_file_label']?></span>
 	<div id="filemenu<?echo $appid?>" style="display:none; cursor:default; position:absolute; z-index:1; background:#fff; width:auto; top:31px; left:4px;">
@@ -150,6 +152,19 @@ $pathmain = str_replace($_SERVER['DOCUMENT_ROOT'],'',$pathmain);
 </ul>
 </div>
 </div>
+
+<div class="ui-forest-menu-button" onmouseover="$('#editmenu_<?echo $appid?>').css('display','block')" onmouseout="$('#editmenu_<?echo $appid?>').css('display','none')">
+	<span><?echo 'Изменить'?></span>
+	<div id="editmenu_<?echo $appid?>" style="display:none; cursor:default; position:absolute; z-index:1; background:#fff; width:auto; top:31px; left:68px;">
+<ul id="editmenu<?echo $appid?>" >
+	<li><div <?echo 'id="" class="loadthis" onClick="copy'.$appid.'(this.id);" ';?> ><?echo $explorer_lang['menu_copy_label']?></div></li>
+	<li class="pastebutton"><div <?echo 'id="" class="loadthis" onClick="paste'.$appid.'(this.id);" ';?> ><?echo $explorer_lang['menu_paste_label']?></div></li>
+	<li><div <?echo 'id="" class="loadthis" onClick="cut'.$appid.'(this.id);" ';?> ><?echo $explorer_lang['menu_cut_label']?></div></li>
+</ul>
+</div>
+</div>
+</div>
+
 <div style="margin-top:7px; border-top:1px solid #d4d4d4; padding-top:7px;">
 <div class="ui-forest-blink" style="padding:4px; background:#4d94ef; margin:0px 10px; border-radius:10px; color:#2b5182; float:left; width:20px;" id="<?echo $_SERVER['DOCUMENT_ROOT'].dirname($pathmain)?>" onclick="load<?echo $appid?>(this)">
 	&#9668
@@ -308,11 +323,64 @@ function mkdirbtn<?echo $appid?>(){
 function newload<?echo $appid?>(key,value){
 $("#<?echo $appid?>").load("<?echo $folder;?>/main.php?"+key+"="+value+"&id=<?echo rand(0,10000).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&dir='.realpath($entry).'&destination='.$folder;?>")
 };
+
+function checkbutton(){
+	if(localStorage.getItem('copy') == null && localStorage.getItem('cut') == null){
+		$('.pastebutton').css({
+			'pointer-events' : 'none',
+			'opacity' : '0.6'
+		});
+	}else{
+		$('.pastebutton').css({
+			'pointer-events' : 'all',
+			'opacity' : '1'
+		});
+	}
+}
+
+function copy<?echo $appid?>(file){
+	localStorage.setItem('copy', file);
+	checkbutton();
+};
+
+function paste<?echo $appid?>(file){
+	var getFile = localStorage.getItem('copy');
+	var action = '';
+	if(getFile != null){
+		action = 'copy';
+	}else{
+		getFile = localStorage.getItem('cut');
+		localStorage.removeItem('cut');
+		action = 'cut';
+	}
+
+	$.ajax({
+		type: "POST",
+		url: "system/core/functions/filesystem",
+		data: {
+			 f:getFile,
+			 n:"<?echo realpath($entry).'/'?>",
+			 a:action
+		}
+	}).done(function(o) {
+});
+
+	checkbutton();
+};
+
+function cut<?echo $appid?>(file){
+	localStorage.removeItem('copy');
+	localStorage.setItem('cut', file);
+	checkbutton();
+};
+
 $(function(){
+	$("#editmenu<?echo $appid?>").menu();
 	$("#mmenu<?echo $appid?>").menu();
 	$("#makeprocess").remove();
 });
 UpdateWindow("<?echo $appid?>","<?echo $appname?>");
+checkbutton();
 </script>
 <style>.ui-menu{width: 150px;}</style>
 <?
