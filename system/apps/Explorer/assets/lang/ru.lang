@@ -8,9 +8,12 @@ menu_delete_label = Удалить
 menu_loadfile_label = Загрузить файл
 menu_property_label = Свойства
 menu_zip_label = Добавить в архив
+
+menu_edit_label = Изменить
 menu_copy_label = Копировать
 menu_paste_label = Вставить
 menu_cut_label = Вырезать
+
 error_open = "Не могу открыть файл с расширением <b style='text-transform:uppercase;'>"
 error_label  = "Ошибка чтения файла"
 
@@ -19,9 +22,8 @@ mdir_label = Введите название папки
 mdir_okbtn = Ок
 mdir_cancelbtn = Отмена
 msg_1  = Папка
-msg_2  = ' создана!'
-msg_3  = ' не создана!'
-msg_4  = 'Такая папка уже существует!'
+msg_2  = ' не создана!'
+msg_3  = 'Такая папка уже существует!'
 
 [trash]
 trash_label  = Очистить корзину

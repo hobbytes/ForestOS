@@ -36,13 +36,11 @@ mkdir($dir);
 if (isset($_GET['makedir'])){
 	if(!is_dir($dir.'/'.$_GET['makedir']))
 	{
-		if(mkdir($dir.'/'.$_GET['makedir'],0755)){
+		if(!mkdir($dir.'/'.$_GET['makedir'],0755)){
 			echo $explorer_lang['msg_1']." ".$_GET['makedir'].$explorer_lang['msg_2'];
-		}else{
-			echo $explorer_lang['msg_1']." ".$_GET['makedir'].$explorer_lang['msg_3'];
 		}
 	}else{
-		echo $explorer_lang['msg_4'];
+		echo $explorer_lang['msg_3'];
 	}
 }
 //обрабатываем кнопки удаления и перемещения в корзину
@@ -53,10 +51,12 @@ if(!empty($deleteforever)){
 	if(is_dir($deleteforever)){
 		$faction->deleteDir($deleteforever);
 	}
-	if(is_file($deleteforever) && !preg_match('/os.php/',$deleteforever) && !preg_match('/login.php/',$deleteforever) && !preg_match('/makeprocess.php/',$deleteforever)){
-		unlink($deleteforever);
-	}else{
-		throw new InvalidArgumentException("can't delete system file: $dirPath");
+	if(is_file($deleteforever)){
+		if(!preg_match('/os.php/',$deleteforever) && !preg_match('/login.php/',$deleteforever) && !preg_match('/makeprocess.php/',$deleteforever)){
+			unlink($deleteforever);
+		}else{
+			throw new InvalidArgumentException("can't delete system file: $dirPath");
+		}
 	}
 }
 //Логика
@@ -154,7 +154,7 @@ $pathmain = str_replace($_SERVER['DOCUMENT_ROOT'],'',$pathmain);
 </div>
 
 <div class="ui-forest-menu-button" onmouseover="$('#editmenu_<?echo $appid?>').css('display','block')" onmouseout="$('#editmenu_<?echo $appid?>').css('display','none')">
-	<span><?echo 'Изменить'?></span>
+	<span><?echo $explorer_lang['menu_edit_label']?></span>
 	<div id="editmenu_<?echo $appid?>" style="display:none; cursor:default; position:absolute; z-index:1; background:#fff; width:auto; top:31px; left:68px;">
 <ul id="editmenu<?echo $appid?>" >
 	<li><div <?echo 'id="" class="loadthis" onClick="copy'.$appid.'(this.id);" ';?> ><?echo $explorer_lang['menu_copy_label']?></div></li>
@@ -324,6 +324,10 @@ function newload<?echo $appid?>(key,value){
 $("#<?echo $appid?>").load("<?echo $folder;?>/main.php?"+key+"="+value+"&id=<?echo rand(0,10000).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&dir='.realpath($entry).'&destination='.$folder;?>")
 };
 
+function reload<? echo $appid?>(){
+	$("#<?echo $appid?>").load("<?echo $folder;?>main.php?dir=<?echo realpath($entry)?>&id=<?echo rand(0,10000).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&destination='.$folder?>");
+}
+
 function checkbutton(){
 	if(localStorage.getItem('copy') == null && localStorage.getItem('cut') == null){
 		$('.pastebutton').css({
@@ -363,8 +367,8 @@ function paste<?echo $appid?>(file){
 			 a:action
 		}
 	}).done(function(o) {
+		reload<?echo $appid?>();
 });
-
 	checkbutton();
 };
 

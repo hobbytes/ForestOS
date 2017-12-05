@@ -9,5 +9,12 @@ $getFile = $_POST['f'];
 $newPlace = $_POST['n'];
 $action = $_POST['a'];
 
-$fileaction->rcopy($getFile, $newPlace);
+$fileaction->rcopy($getFile, $newPlace, 1);
+if($action == 'cut'){
+  if(is_dir($getFile)){
+    $fileaction->deleteDir($getFile);
+  }else{
+    unlink($getFile);
+  }
+}
 ?>

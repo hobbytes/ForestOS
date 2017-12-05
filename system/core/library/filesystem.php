@@ -96,19 +96,25 @@ function size_check($path){
       }
     }
 
-    function rcopy($src,$dst) {
+    function rcopy($src, $dst, $flag) {
       if(is_file($src)){
         copy($src,$dst.basename($src));
       }else{
+        if(!empty($flag) && $flag == '1'){
+          $realdir = pathinfo(realpath($src));
+          $realdir = $realdir['basename'].'/';
+        }else{
+          $realdir = '';
+        }
         $dir = opendir($src);
-        @mkdir($dst);
+        @mkdir($dst.'/'.$realdir);
         while(false !== ( $file = readdir($dir)) ) {
             if (( $file != '.' ) && ( $file != '..' )) {
                 if ( is_dir($src . '/' . $file) ) {
-                    recurse_copy($src . '/' . $file,$dst . '/' . $file);
+                    recurse_copy($src . '/' . $file,$dst . '/' . $realdir. $file);
                 }
                 else {
-                    copy($src . '/' . $file,$dst . '/' . $file);
+                    copy($src . '/' . $file,$dst . '/' . $realdir. $file);
                 }
             }
         }
