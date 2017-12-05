@@ -81,8 +81,6 @@ if ($theme!=''){
     }}
     $dir2->close;
 ?>
-
-
 </div>
 
 <div id="wallsettingtab<?echo $appid;?>">
@@ -102,9 +100,63 @@ if ($theme!=''){
   ?>
 </div>
 </div>
+
+<div style="padding:20px;">
+
+<div style="width:200px; margin: 20px auto;" id="contrast-filter<?echo $appid?>">
+</div>
+
+<div style="width:200px; margin: 20px auto;" id="brightness-filter<?echo $appid?>">
+</div>
+
+<div style="width:200px; margin: 20px auto;" id="saturate-filter<?echo $appid?>">
+</div>
+</div>
+
 </div>
 <script>
-$(function(){$("#tabssettings<?echo $appid;?>").tabs();});
+$(function(){
+  $("#tabssettings<?echo $appid;?>").tabs();
+
+  $("#contrast-filter<?echo $appid;?>").slider({
+    value: 1,
+    min: 0,
+    max: 2,
+    step:0.001,
+    slide: function(event, ui){
+      getFilter();
+    }
+  });
+
+  $("#brightness-filter<?echo $appid;?>").slider({
+    value: 1,
+    min: 0,
+    max: 2,
+    step:0.001,
+    slide: function(event, ui){
+      getFilter();
+    }
+  });
+
+  $("#saturate-filter<?echo $appid;?>").slider({
+    value: 1,
+    min: 0,
+    max: 2,
+    step:0.001,
+    slide: function(event, ui){
+      getFilter();
+    }
+  });
+
+  function getFilter(){
+    var valueFilter = 'contrast('+$("#contrast-filter<?echo $appid;?>").slider("value")+') brightness('+$("#brightness-filter<?echo $appid;?>").slider("value")+') saturate('+$("#saturate-filter<?echo $appid;?>").slider("value")+')';
+    $('.backgroundtheme').css('filter',valueFilter);
+
+    //transform: rotate(0.5turn);
+    //transform: scale(0.5, 0.5);
+  }
+
+});
 $( "#restart" ).on( "click", function() {return location.href = 'os.php';});
 function loadwall<?echo $appid;?>(el){
   if(el!='none'){

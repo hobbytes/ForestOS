@@ -32,8 +32,8 @@ function checkwindows(){
 
 function makeprocess(dest,  param,  key,  name){
   $('.ui-body').append("<div id=\"process"+(id=id+1)+"\" class='process' style='display:none;'></div>");
-  $("#process"+id+"").show('drop',500);
   $("#process"+id+"" ).load("makeprocess.php?id=<?echo md5(date('d.m.y.h.i.s'));?>"+id+"&d="+dest+"/&i="+id+"&p="+param+"&k="+key+"&n="+name);
+  $("#process"+id+"").show('drop', 500);
   checkwindows();
 };
 
@@ -128,7 +128,7 @@ function UpdateWindow(id,name){
   $( function() {
     $(window).load(function(){
       $(".welcomescreen").hide('fade',500);
-      $("#topbar").show('fade',1500);
+      $("#topbar").show('fade', 1500);
       $("#topbar").css('display','block')
       $(".trashdrop").droppable({
         accept: ".ico",
