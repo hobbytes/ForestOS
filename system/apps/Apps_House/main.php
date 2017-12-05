@@ -12,6 +12,7 @@ $appdownload=$_GET['appdownload'];
 $type=$_GET['type'];
 $folder=$_GET['destination'];
 $fo = new filecalc;
+$fileaction = new fileaction;
 $security	=	new security;
 //Запускаем сессию
 session_start();
@@ -33,14 +34,13 @@ if($appdownload!=''){
   fclose($fp);
   if($type=="wall_h"){
 if(copy('./temp/'.$appdownload.$temphash.$l,'../../core/design/walls/'.$appdownload.$l)){
-
-  if(copy('../../../system/core/design/walls/'.$appdownload.$l.'','../../../system/users/'.$_SESSION["loginuser"].'/settings/etc/wall.jpg'))  {?>
+  $wall_link = '../../../system/users/'.$_SESSION["loginuser"].'/settings/etc/wall.jpg';
+  if(copy('../../../system/core/design/walls/'.$appdownload.$l, $wall_link))  {
+      $wall_link = $fileaction->filehash($wall_link);
+    ?>
   <script>
-  function getRandomInt(min,max){
-    return Math.floor(Math.random()*(max-min+1))+min;
-  }
 function wallchange(){
-    document.body.style.backgroundImage='url("../../../system/users/<? echo $_SESSION["loginuser"];?>/settings/etc/wall.jpg?ran='+getRandomInt(1,1000)+'")';
+      $("#background-wall").attr("src", "<?echo $wall_link?>");
 };
 wallchange();
   </script>

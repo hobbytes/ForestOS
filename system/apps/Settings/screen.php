@@ -19,34 +19,35 @@ include '../../core/library/bd.php';
 include '../../core/library/gui.php';
 include '../../core/library/etc/security.php';
 $security	=	new security;
-$newgui = new gui;
+$fileaction = new fileaction;
+$object = new gui;
 $security->appprepare();
 if($wall!=''){
+  $wall_link = '../../../system/users/'.$_SESSION["loginuser"].'/settings/etc/wall.jpg';
   if($wall=='none'){
-    if(unlink('../../../system/users/'.$_SESSION["loginuser"].'/settings/etc/wall.jpg')){
-      $newgui->newnotification($appname,$language_screen[$_SESSION['locale'].'_settings_screen'],$language_screen[$_SESSION['locale'].'_notwalldelete']);
+    if(unlink($wall_link)){
+      $object->newnotification($appname,$language_screen[$_SESSION['locale'].'_settings_screen'],$language_screen[$_SESSION['locale'].'_notwalldelete']);
     }
   }else{
-    if(copy('../../../system/core/design/walls/'.$wall.'','../../../system/users/'.$_SESSION["loginuser"].'/settings/etc/wall.jpg')){?>
+    if(copy('../../../system/core/design/walls/'.$wall, $wall_link)){
+      $wall = $fileaction->filehash($wall_link);
+      ?>
       <script>
-      function getRandomInt(min,max){
-        return Math.floor(Math.random()*(max-min+1))+min;
-      }
     function wallchange(){
-        document.body.style.backgroundImage='url("../../../system/users/<? echo $_SESSION["loginuser"];?>/settings/etc/wall.jpg?ran='+getRandomInt(1,1000)+'")';
+        $("#background-wall").attr("src", "<?echo $wall?>");
     };
     wallchange();
       </script>
     <?
-    $newgui->newnotification($appname,$language_screen[$_SESSION['locale'].'_settings_screen'],$language_screen[$_SESSION['locale'].'_notwallchange']);
+    $object->newnotification($appname,$language_screen[$_SESSION['locale'].'_settings_screen'],$language_screen[$_SESSION['locale'].'_notwallchange']);
   }
 }
 }
 if ($theme!=''){
   session_start();
   if(copy('../../../system/core/design/themes/'.$theme.'','../../../system/users/'.$_SESSION["loginuser"].'/settings/etc/theme.fth'))  {
-  $newgui->newnotification($appname,$language_screen[$_SESSION['locale'].'_settings_screen'],$language_screen[$_SESSION['locale'].'_notthemechange_1']."<b>".$theme."</b>. ".$language_screen[$_SESSION['locale'].'_notthemechange_2']."<br><span id='restart' style='margin-left: 25%;' class='ui-button ui-widget ui-corner-all'>".$language_screen[$_SESSION['locale'].'_restart']."</span>");
-}else{$newgui->newnotification($appname,$language_screen[$_SESSION['locale'].'_settings_screen'],$language_screen[$_SESSION['locale'].'_notthemeerror']);}
+  $object->newnotification($appname,$language_screen[$_SESSION['locale'].'_settings_screen'],$language_screen[$_SESSION['locale'].'_notthemechange_1']."<b>".$theme."</b>. ".$language_screen[$_SESSION['locale'].'_notthemechange_2']."<br><span id='restart' style='margin-left: 25%;' class='ui-button ui-widget ui-corner-all'>".$language_screen[$_SESSION['locale'].'_restart']."</span>");
+}else{$object->newnotification($appname,$language_screen[$_SESSION['locale'].'_settings_screen'],$language_screen[$_SESSION['locale'].'_notthemeerror']);}
 }
     ?>
 
@@ -113,7 +114,7 @@ function loadwall<?echo $appid;?>(el){
 function loadtheme<?echo $appid;?>(el2){$("#<?echo $appid;?>").load("<?echo $folder?>screen.php?theme="+el2.id+"&id=<?echo rand(0,10000).'&appname='.$appname.'&destination='.$folder.'&appid='.$appid;?>")};
 function back<?echo $appid;?>(el){$("#<?echo $appid;?>").load("<?echo $folder?>main.php?id=<?echo rand(0,10000).'&destination='.$folder.'&appname='.$appname.'&appid='.$appid;?>")};
 function clearwall<?echo $appid;?>(){
-  $('.backgroundtheme').css('background','');
+  $('#background-wall').attr('src','data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=');
   loadwall<?echo $appid;?>('none');
 }
 UpdateWindow("<?echo $appid?>","<?echo $appname?>");

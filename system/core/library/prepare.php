@@ -63,9 +63,8 @@
       $file_ = 'system/users/'.$_SESSION["loginuser"].'/settings/etc/wall.jpg';
       if (file_exists($file_)){
         $mainwall = $hashfile->filehash($file_);
-        $mainwall = 'background: url('.$mainwall.') 100% 100% no-repeat fixed;';
       }else{
-        $mainwall = '';
+        $mainwall = 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';
       }
     }else{
       $file='system/core/design/images/webwall.jpg';
@@ -91,8 +90,7 @@
         $prepare->changewall($file);
         $mainwall=$hashfile->filehash($file);
       }
-
-      $mainwall = 'background: url('.$mainwall.') 100% 100% no-repeat fixed;';
+      
     }
     }
 
