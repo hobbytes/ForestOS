@@ -9,14 +9,14 @@ en_tab_updates = Updates
 
 [app_card]
 ru_card_button_1  = Установить
-ru_card_button_2  = Установлено
+ru_card_button_2  = Открыть
 ru_card_version = версия
 ru_card_size = размер
 ru_card_description = Описание
 ru_card_error = 'Приложения не найдены!'
 
 en_card_button_1  = Install
-en_card_button_2  = Installed
+en_card_button_2  = Open
 en_card_version = version
 en_card_size = size
 en_card_description = Description
