@@ -31,7 +31,7 @@ $prepare->wall();
 $prepare->themeload();
 ?>
 <body class="ui-body backgroundtheme" style="position:relative; z-index:-2000; overflow-x:hidden; overflow-y:hidden;">
-<div id="background-container"><img id="background-wall" src="<?echo $mainwall?>" style="position: absolute; z-index: -99999; width:100%; height:100%;"></div>
+<div id="background-container"><img id="background-wall" src="<?echo $mainwall?>" style="position: absolute; z-index: -99999; width:100%; height:100%; object-fit:cover;"></div>
 <?
 if(isset($_SESSION['loginuser'])){
 $prepare->welcomescreen();

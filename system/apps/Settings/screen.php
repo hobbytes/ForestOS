@@ -51,12 +51,76 @@ if ($theme!=''){
 }
     ?>
 
-<div id="tabssettings<?echo $appid;?>">
+<div id="tabssettings<?echo $appid;?>" style="display: inline-block; width: 100%;">
   <ul>
+    <li><a href="#mainsettingtab<?echo $appid;?>"><?echo $language_screen[$_SESSION['locale'].'_displaytab']?></a></li>
     <li><a href="#themesettingtab<?echo $appid;?>"><?echo $language_screen[$_SESSION['locale'].'_themetab']?></a></li>
     <li><a href="#wallsettingtab<?echo $appid;?>"><?echo $language_screen[$_SESSION['locale'].'_walltab']?></a></li>
   </ul>
 
+  <div id="mainsettingtab<?echo $appid;?>">
+    <div style="padding:20px; border: 1px solid #a29d9d; float: left; margin: 10px;">
+      <div style="font-size: 20px; font-weight: 900; text-transform: uppercase; padding: 10px 0;"><?echo $language_screen[$_SESSION['locale'].'_correct_label']?></div>
+      <div style="margin: 20px auto;">
+        <div style="padding: 10 0px;"><?echo $language_screen[$_SESSION['locale'].'_contrast_label']?>:</div>
+        <div style="width:200px;" id="contrast-filter<?echo $appid?>">
+          <div id="contrast-handle<?echo $appid?>" style="width: auto; min-width:20px; text-align:center;" class="ui-slider-handle"></div>
+        </div>
+      </div>
+
+      <div style="margin: 20px auto;">
+        <div style="padding: 10 0px;"><?echo $language_screen[$_SESSION['locale'].'_brightness_label']?>:</div>
+        <div style="width:200px;" id="brightness-filter<?echo $appid?>">
+          <div id="brightness-handle<?echo $appid?>" style="width: auto; min-width:20px; text-align:center;" class="ui-slider-handle"></div>
+        </div>
+      </div>
+
+      <div style="margin: 20px auto;">
+        <div style="padding: 10 0px;"><?echo $language_screen[$_SESSION['locale'].'_saturate_label']?>:</div>
+        <div style="width:200px;" id="saturate-filter<?echo $appid?>">
+          <div id="saturate-handle<?echo $appid?>" style="width: auto; min-width:20px; text-align:center;" class="ui-slider-handle"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <div style="padding:20px; border: 1px solid #a29d9d; float: left; margin: 10px;">
+      <div style="font-size: 20px; font-weight: 900; text-transform: uppercase; padding: 10px 0;"><?echo $language_screen[$_SESSION['locale'].'_display_label']?></div>
+
+      <div style="margin: 20px auto;">
+        <div style="padding: 10 0px;"><?echo $language_screen[$_SESSION['locale'].'_scale_label']?>:</div>
+        <div style="width:200px;" id="scale-display<?echo $appid?>">
+          <div id="scale-handle<?echo $appid?>" style="width: auto; min-width:20px; text-align:center;" class="ui-slider-handle"></div>
+        </div>
+      </div>
+
+      <div style="margin: 20px auto;">
+        <div style="padding: 10 0px;"><?echo $language_screen[$_SESSION['locale'].'_rotate_label']?>:</div>
+        <div style="width:200px;" id="rotate-display<?echo $appid?>">
+          <div id="rotate-handle<?echo $appid?>" style="width: auto; min-width:20px; text-align:center;" class="ui-slider-handle"></div>
+        </div>
+      </div>
+
+      <div style="margin: 20px auto;">
+        <div style="padding: 10 0px;"><?echo $language_screen[$_SESSION['locale'].'_smooth_label']?>:</div>
+        <div style="width:200px;" id="smooth-display<?echo $appid?>">
+          <div id="smooth-handle<?echo $appid?>" style="width: auto; min-width:20px; text-align:center;" class="ui-slider-handle"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <div style="width: 100%; float: left;">
+    <div class="ui-forest-button ui-forest-accept ui-forest-center">
+      <?echo $language_screen[$_SESSION['locale'].'_save_button']?>
+    </div>
+
+    <div class="ui-forest-button ui-forest-cancel ui-forest-center">
+      <?echo $language_screen[$_SESSION['locale'].'_reset_button']?>
+    </div>
+  </div>
+
+  </div>
 
   <div id="themesettingtab<?echo $appid;?>">
 <?
@@ -100,41 +164,43 @@ if ($theme!=''){
   ?>
 </div>
 </div>
-
-<div style="padding:20px;">
-
-<div style="width:200px; margin: 20px auto;" id="contrast-filter<?echo $appid?>">
-</div>
-
-<div style="width:200px; margin: 20px auto;" id="brightness-filter<?echo $appid?>">
-</div>
-
-<div style="width:200px; margin: 20px auto;" id="saturate-filter<?echo $appid?>">
-</div>
-</div>
-
 </div>
 <script>
 $(function(){
+  var cHandler = $("#contrast-handle<?echo $appid;?>");
+  var bHandler = $("#brightness-handle<?echo $appid;?>");
+  var sHandler = $("#saturate-handle<?echo $appid;?>");
+  var scaleHandler = $("#scale-handle<?echo $appid;?>");
+  var rotateHandler = $("#rotate-handle<?echo $appid;?>");
+  var smoothHandler = $("#smooth-handle<?echo $appid;?>");
+
   $("#tabssettings<?echo $appid;?>").tabs();
 
   $("#contrast-filter<?echo $appid;?>").slider({
     value: 1,
-    min: 0,
-    max: 2,
-    step:0.001,
+    min: 0.7,
+    max: 1.4,
+    step:0.01,
+    create: function(){
+      cHandler.text($(this).slider("value"));
+    },
     slide: function(event, ui){
       getFilter();
+      cHandler.text(ui.value);
     }
   });
 
   $("#brightness-filter<?echo $appid;?>").slider({
     value: 1,
-    min: 0,
-    max: 2,
-    step:0.001,
+    min: 0.3,
+    max: 1.11,
+    step:0.01,
+    create: function(){
+      bHandler.text($(this).slider("value"));
+    },
     slide: function(event, ui){
       getFilter();
+      bHandler.text(ui.value);
     }
   });
 
@@ -142,21 +208,80 @@ $(function(){
     value: 1,
     min: 0,
     max: 2,
-    step:0.001,
+    step:0.01,
+    create: function(){
+      sHandler.text($(this).slider("value"));
+    },
     slide: function(event, ui){
       getFilter();
+      sHandler.text(ui.value);
+    }
+  });
+
+  $("#scale-display<?echo $appid;?>").slider({
+    value: 1,
+    min: 0.7,
+    max: 1.4,
+    step:0.01,
+    create: function(){
+      scaleHandler.text($(this).slider("value"));
+    },
+    slide: function(event, ui){
+      getDisplay();
+      scaleHandler.text(ui.value);
+    }
+  });
+
+  $("#rotate-display<?echo $appid;?>").slider({
+    value: 0,
+    min: 0,
+    max: 190,
+    step:1,
+    create: function(){
+      rotateHandler.text($(this).slider("value"));
+    },
+    slide: function(event, ui){
+      getDisplay();
+      rotateHandler.text(ui.value);
+      if(rotateHandler.text < 3 || ui.value < 3){
+        $("#rotate-display<?echo $appid;?>").slider('value',0);
+        rotateHandler.text("0");
+        getDisplay();
+      }
+      if(rotateHandler.text >= 178 || ui.value >= 178){
+        $("#rotate-display<?echo $appid;?>").slider('value',180);
+        rotateHandler.text("180");
+        getDisplay();
+      }
+    }
+  });
+
+  $("#smooth-display<?echo $appid;?>").slider({
+    value: 0,
+    min: 0,
+    max: 1.5,
+    step:0.01,
+    create: function(){
+      smoothHandler.text($(this).slider("value"));
+    },
+    slide: function(event, ui){
+      $('.backgroundtheme').css('transition','all '+ui.value+'s ease');
+      smoothHandler.text(ui.value);
     }
   });
 
   function getFilter(){
     var valueFilter = 'contrast('+$("#contrast-filter<?echo $appid;?>").slider("value")+') brightness('+$("#brightness-filter<?echo $appid;?>").slider("value")+') saturate('+$("#saturate-filter<?echo $appid;?>").slider("value")+')';
     $('.backgroundtheme').css('filter',valueFilter);
-
-    //transform: rotate(0.5turn);
-    //transform: scale(0.5, 0.5);
   }
 
+  function getDisplay(){
+    var valueDisplay = 'rotate('+$("#rotate-display<?echo $appid;?>").slider("value")+'deg) scale('+$("#scale-display<?echo $appid;?>").slider("value")+','+$("#scale-display<?echo $appid;?>").slider("value")+')';
+    $('.backgroundtheme').css('transform',valueDisplay);
+  }
 });
+
+
 $( "#restart" ).on( "click", function() {return location.href = 'os.php';});
 function loadwall<?echo $appid;?>(el){
   if(el!='none'){

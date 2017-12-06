@@ -1,5 +1,14 @@
 [screen]
 ru_settings_screen = Персонализация
+ru_displaytab = Дисплей
+ru_correct_label = Коррекция
+ru_contrast_label = Констраст
+ru_brightness_label = Яркость
+ru_saturate_label = Насыщенность
+ru_display_label = Дисплей
+ru_scale_label = Масштабирование
+ru_rotate_label = Вращение
+ru_smooth_label = Плавность
 ru_themetab = Цветовые темы
 ru_walltab = Фоновые изображения
 ru_current_label  = Текущая
@@ -11,6 +20,15 @@ ru_notthemechange_2 = 'Перезагрузите систему, чтобы и�
 ru_notthemeerror  = 'Произошла ошибка! Тема не установлена'
 
 en_settings_screen = Personalization
+en_displaytab = Display
+en_correct_label = Adjustment
+en_contrast_label = Constrast
+en_brightness_label = Brightness
+en_saturate_label = Saturation
+en_display_label = Display
+en_scale_label = Scaling
+en_rotate_label = Rotation
+en_smooth_label = Smoothness
 en_themetab = Color themes
 en_walltab = Background images
 en_current_label  = Current
@@ -23,4 +41,9 @@ en_notthemeerror  = 'An error has occurred! Theme not installed'
 
 [etc]
 ru_restart  = Перезагрузить
+ru_save_button  = Сохранить
+ru_reset_button  = Сброс настроек
+
 en_restart  = Restart
+en_save_button  = Save
+en_reset_button  = Reset
