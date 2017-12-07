@@ -60,7 +60,11 @@ $( function() {
   });
 });
 $("#labelos").click(function(){
-  $("#safemode").css('display','block');
+  if($("#safemode").is( ":hidden" )){
+  $("#safemode").slideDown("fast");
+}else{
+  $("#safemode").slideUp("fast");
+}
 });
 </script>
 <div class="welcomescreen">

@@ -29,8 +29,9 @@ $prepare->language();
 $prepare->start();
 $prepare->wall();
 $prepare->themeload();
+$prepare->DisplaySettings();
 ?>
-<body class="ui-body backgroundtheme" style="position:relative; z-index:-2000; overflow-x:hidden; overflow-y:hidden;">
+<body class="ui-body backgroundtheme" style="position:relative; z-index:-2000; overflow-x:hidden; overflow-y:hidden; transition: all 0.5s ease;">
 <div id="background-container"><img id="background-wall" src="<?echo $mainwall?>" style="position: absolute; z-index: -99999; width:100%; height:100%; object-fit:cover;"></div>
 <?
 if(isset($_SESSION['loginuser'])){

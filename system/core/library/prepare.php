@@ -90,7 +90,7 @@
         $prepare->changewall($file);
         $mainwall=$hashfile->filehash($file);
       }
-      
+
     }
     }
 
@@ -348,6 +348,40 @@ function topbar(){
       <?
 
     }
+
+function DisplaySettings(){
+  global $login;
+  $fileSettings = "system/users/$login/settings/display.foc";
+  if($_SESSION["safemode"] != 'true'){
+  if(file_exists($fileSettings)){
+    $getSettings = parse_ini_file($fileSettings);
+    if(!empty($getSettings['scale'])){
+      ?>
+      <script>
+        $(document).ready(function(){
+          var scaleValue = '<?echo $getSettings['scale'];?>';
+          var rotateValue = '<?echo $getSettings['rotate'];?>';
+          var smoothValue = '<?echo $getSettings['smooth'];?>';
+          var contrastValue = '<?echo $getSettings['contrast'];?>';
+          var brightnessValue = '<?echo $getSettings['brightness'];?>';
+          var saturateValue = '<?echo $getSettings['saturate'];?>';
+
+          var valueFilter = 'contrast('+contrastValue+') brightness('+brightnessValue+') saturate('+saturateValue+')';
+          $('.backgroundtheme').css('filter',valueFilter);
+
+          var valueDisplay = 'rotate('+rotateValue+'deg) scale('+scaleValue+','+scaleValue+')';
+          $('.backgroundtheme').css('transform',valueDisplay);
+
+          $('.backgroundtheme').css('transition','all '+smoothValue+'s ease');
+        });
+      </script>
+      <?
+    }
+  }
+}else{
+  unlink($fileSettings);
+}
+}
 
 /*---------changewall function---------*/
     function changewall($file)

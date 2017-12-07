@@ -10,7 +10,7 @@ $language_screen  = parse_ini_file('lang/screen.lang');
 ?>
 <div id="<?echo $appname.$appid;?>" style="background-color:#f2f2f2; height:500px; max-height:95%; max-width:100%; width:800px;  padding-top:10px; border-radius:0px 0px 5px 5px; overflow:auto;">
 <div style="width:100%; text-align:left; padding-bottom:10px; font-size:30px; text-overflow:ellipsis; overflow:hidden;">
-<span onClick="back<?echo $appid;?>();" class="ui-forest" style="background-color:#d8d8d8; color:#000; border-radius:30%; cursor:pointer; font-size:25px; margin-left:5px;"> &#9668 </span><?echo $language_screen[$_SESSION['locale'].'_settings_screen']?></div>
+<span onClick="back<?echo $appid?>();" class="ui-forest" style="background-color:#d8d8d8; color:#000; border-radius:30%; cursor:pointer; font-size:25px; margin-left:5px;"> &#9668 </span><?echo $language_screen[$_SESSION['locale'].'_settings_screen']?></div>
 <?php
 /*Settings*/
 //Подключаем библиотеки
@@ -49,16 +49,27 @@ if ($theme!=''){
   $object->newnotification($appname,$language_screen[$_SESSION['locale'].'_settings_screen'],$language_screen[$_SESSION['locale'].'_notthemechange_1']."<b>".$theme."</b>. ".$language_screen[$_SESSION['locale'].'_notthemechange_2']."<br><span id='restart' style='margin-left: 25%;' class='ui-button ui-widget ui-corner-all'>".$language_screen[$_SESSION['locale'].'_restart']."</span>");
 }else{$object->newnotification($appname,$language_screen[$_SESSION['locale'].'_settings_screen'],$language_screen[$_SESSION['locale'].'_notthemeerror']);}
 }
+
+$displayLink = '../../users/'.$_SESSION["loginuser"].'/settings/display.foc';
+
+if(isset($_GET['scale'])){
+  $saveSettings = "[DisplaySetting]\nscale='".$_GET['scale']."'\nrotate='".$_GET['rotate']."'\nsmooth='".$_GET['smooth']."'\ncontrast='".$_GET['contrast']."'\nbrightness='".$_GET['brightness']."'\nsaturate='".$_GET['saturate']."'";
+  file_put_contents($displayLink,$saveSettings);
+}
+
+if(is_file($displayLink)){
+  $getObject = parse_ini_file($displayLink);
+}
     ?>
 
-<div id="tabssettings<?echo $appid;?>" style="display: inline-block; width: 100%;">
+<div id="tabssettings<?echo $appid?>" style="display: inline-block; width: 100%;">
   <ul>
-    <li><a href="#mainsettingtab<?echo $appid;?>"><?echo $language_screen[$_SESSION['locale'].'_displaytab']?></a></li>
-    <li><a href="#themesettingtab<?echo $appid;?>"><?echo $language_screen[$_SESSION['locale'].'_themetab']?></a></li>
-    <li><a href="#wallsettingtab<?echo $appid;?>"><?echo $language_screen[$_SESSION['locale'].'_walltab']?></a></li>
+    <li><a href="#mainsettingtab<?echo $appid?>"><?echo $language_screen[$_SESSION['locale'].'_displaytab']?></a></li>
+    <li><a href="#themesettingtab<?echo $appid?>"><?echo $language_screen[$_SESSION['locale'].'_themetab']?></a></li>
+    <li><a href="#wallsettingtab<?echo $appid?>"><?echo $language_screen[$_SESSION['locale'].'_walltab']?></a></li>
   </ul>
 
-  <div id="mainsettingtab<?echo $appid;?>">
+  <div id="mainsettingtab<?echo $appid?>">
     <div style="padding:20px; border: 1px solid #a29d9d; float: left; margin: 10px;">
       <div style="font-size: 20px; font-weight: 900; text-transform: uppercase; padding: 10px 0;"><?echo $language_screen[$_SESSION['locale'].'_correct_label']?></div>
       <div style="margin: 20px auto;">
@@ -111,18 +122,18 @@ if ($theme!=''){
     </div>
 
     <div style="width: 100%; float: left;">
-    <div class="ui-forest-button ui-forest-accept ui-forest-center">
+    <div class="ui-forest-button ui-forest-accept ui-forest-center" onClick="savedisplay<?echo $appid?>()">
       <?echo $language_screen[$_SESSION['locale'].'_save_button']?>
     </div>
 
-    <div class="ui-forest-button ui-forest-cancel ui-forest-center">
+    <div class="ui-forest-button ui-forest-cancel ui-forest-center" onClick="resetdisplay<?echo $appid?>()">
       <?echo $language_screen[$_SESSION['locale'].'_reset_button']?>
     </div>
   </div>
 
   </div>
 
-  <div id="themesettingtab<?echo $appid;?>">
+  <div id="themesettingtab<?echo $appid?>">
 <?
     $current_theme  = parse_ini_file('../../users/'.$_SESSION["loginuser"].'/settings/etc/theme.fth');
     $current_theme  = $current_theme['Name'];
@@ -147,7 +158,7 @@ if ($theme!=''){
 ?>
 </div>
 
-<div id="wallsettingtab<?echo $appid;?>">
+<div id="wallsettingtab<?echo $appid?>">
   <?
   $dir='../../core/design/walls/';
   $d=dir($dir);
@@ -166,133 +177,171 @@ if ($theme!=''){
 </div>
 </div>
 <script>
-$(function(){
-  var cHandler = $("#contrast-handle<?echo $appid;?>");
-  var bHandler = $("#brightness-handle<?echo $appid;?>");
-  var sHandler = $("#saturate-handle<?echo $appid;?>");
-  var scaleHandler = $("#scale-handle<?echo $appid;?>");
-  var rotateHandler = $("#rotate-handle<?echo $appid;?>");
-  var smoothHandler = $("#smooth-handle<?echo $appid;?>");
+  cHandler = $("#contrast-handle<?echo $appid?>");
+  bHandler = $("#brightness-handle<?echo $appid?>");
+  sHandler = $("#saturate-handle<?echo $appid?>");
+  scaleHandler = $("#scale-handle<?echo $appid?>");
+  rotateHandler = $("#rotate-handle<?echo $appid?>");
+  smoothHandler = $("#smooth-handle<?echo $appid?>");
+  var state = '<?echo $getObject['scale'];?>';
+  if( state ){
+    scaleValue = '<?echo $getObject['scale'];?>';
+    rotateValue = '<?echo $getObject['rotate'];?>';
+    smoothValue = '<?echo $getObject['smooth'];?>';
+    contrastValue = '<?echo $getObject['contrast'];?>';
+    brightnessValue = '<?echo $getObject['brightness'];?>';
+    saturateValue = '<?echo $getObject['saturate'];?>';
+  }else{
+    scaleValue = '1';
+    rotateValue = '0';
+    smoothValue = '0.5';
+    contrastValue = '1';
+    brightnessValue = '1';
+    saturateValue = '1';
+  }
 
-  $("#tabssettings<?echo $appid;?>").tabs();
+  $("#tabssettings<?echo $appid?>").tabs();
 
-  $("#contrast-filter<?echo $appid;?>").slider({
-    value: 1,
+  $("#contrast-filter<?echo $appid?>").slider({
+    value: contrastValue,
     min: 0.7,
     max: 1.4,
-    step:0.01,
+    step:0.1,
     create: function(){
-      cHandler.text($(this).slider("value"));
+      cHandler.text(contrastValue);
     },
     slide: function(event, ui){
-      getFilter();
       cHandler.text(ui.value);
+      contrastValue = ui.value;
+      getFilter();
     }
   });
 
-  $("#brightness-filter<?echo $appid;?>").slider({
-    value: 1,
+  $("#brightness-filter<?echo $appid?>").slider({
+    value: brightnessValue,
     min: 0.3,
     max: 1.11,
-    step:0.01,
+    step:0.1,
     create: function(){
-      bHandler.text($(this).slider("value"));
+      bHandler.text(brightnessValue);
     },
     slide: function(event, ui){
-      getFilter();
       bHandler.text(ui.value);
+      brightnessValue = ui.value;
+      getFilter();
     }
   });
 
-  $("#saturate-filter<?echo $appid;?>").slider({
-    value: 1,
+  $("#saturate-filter<?echo $appid?>").slider({
+    value: saturateValue,
     min: 0,
     max: 2,
-    step:0.01,
+    step:0.1,
     create: function(){
-      sHandler.text($(this).slider("value"));
+      sHandler.text(saturateValue);
     },
     slide: function(event, ui){
-      getFilter();
+      saturateValue = ui.value;
       sHandler.text(ui.value);
+      getFilter();
     }
   });
 
-  $("#scale-display<?echo $appid;?>").slider({
-    value: 1,
+  $("#scale-display<?echo $appid?>").slider({
+    value: scaleValue,
     min: 0.7,
     max: 1.4,
     step:0.01,
     create: function(){
-      scaleHandler.text($(this).slider("value"));
+      scaleHandler.text(scaleValue);
     },
     slide: function(event, ui){
-      getDisplay();
       scaleHandler.text(ui.value);
+      scaleValue = ui.value;
+      getDisplay();
     }
   });
 
-  $("#rotate-display<?echo $appid;?>").slider({
-    value: 0,
-    min: 0,
+  $("#rotate-display<?echo $appid?>").slider({
+    value: rotateValue,
+    min: -190,
     max: 190,
-    step:1,
+    step:10,
     create: function(){
-      rotateHandler.text($(this).slider("value"));
+      rotateHandler.text(rotateValue);
     },
     slide: function(event, ui){
+      rotateValue = ui.value;
       getDisplay();
       rotateHandler.text(ui.value);
-      if(rotateHandler.text < 3 || ui.value < 3){
-        $("#rotate-display<?echo $appid;?>").slider('value',0);
-        rotateHandler.text("0");
+      if(rotateHandler.text >= 170 || ui.value >= 170){
+        $("#rotate-display<?echo $appid?>").slider('value',180);
+        rotateHandler.text(ui.value);
         getDisplay();
       }
-      if(rotateHandler.text >= 178 || ui.value >= 178){
-        $("#rotate-display<?echo $appid;?>").slider('value',180);
-        rotateHandler.text("180");
+
+      if(rotateHandler.text <= -170 || ui.value <= -170){
+        $("#rotate-display<?echo $appid?>").slider('value',-180);
+        rotateHandler.text(ui.value);
         getDisplay();
       }
     }
   });
 
-  $("#smooth-display<?echo $appid;?>").slider({
-    value: 0,
+  $("#smooth-display<?echo $appid?>").slider({
+    value: smoothValue,
     min: 0,
     max: 1.5,
-    step:0.01,
+    step:0.1,
     create: function(){
-      smoothHandler.text($(this).slider("value"));
+      smoothHandler.text(smoothValue);
     },
     slide: function(event, ui){
-      $('.backgroundtheme').css('transition','all '+ui.value+'s ease');
+      smoothValue = ui.value;
       smoothHandler.text(ui.value);
+      $('.backgroundtheme').css('transition','all '+ui.value+'s ease');
     }
   });
 
   function getFilter(){
-    var valueFilter = 'contrast('+$("#contrast-filter<?echo $appid;?>").slider("value")+') brightness('+$("#brightness-filter<?echo $appid;?>").slider("value")+') saturate('+$("#saturate-filter<?echo $appid;?>").slider("value")+')';
+    var valueFilter = 'contrast('+contrastValue+') brightness('+brightnessValue+') saturate('+saturateValue+')';
     $('.backgroundtheme').css('filter',valueFilter);
   }
 
   function getDisplay(){
-    var valueDisplay = 'rotate('+$("#rotate-display<?echo $appid;?>").slider("value")+'deg) scale('+$("#scale-display<?echo $appid;?>").slider("value")+','+$("#scale-display<?echo $appid;?>").slider("value")+')';
+    var valueDisplay = 'rotate('+rotateValue+'deg) scale('+scaleValue+','+scaleValue+')';
     $('.backgroundtheme').css('transform',valueDisplay);
   }
-});
 
 
 $( "#restart" ).on( "click", function() {return location.href = 'os.php';});
-function loadwall<?echo $appid;?>(el){
+function loadwall<?echo $appid?>(el){
   if(el!='none'){
     el=el.id;
   }
-  $("#<?echo $appid;?>").load("<?echo $folder?>screen.php?wall="+el+"&id=<?echo rand(0,10000).'&appname='.$appname.'&destination='.$folder.'&appid='.$appid;?>")};
-function loadtheme<?echo $appid;?>(el2){$("#<?echo $appid;?>").load("<?echo $folder?>screen.php?theme="+el2.id+"&id=<?echo rand(0,10000).'&appname='.$appname.'&destination='.$folder.'&appid='.$appid;?>")};
-function back<?echo $appid;?>(el){$("#<?echo $appid;?>").load("<?echo $folder?>main.php?id=<?echo rand(0,10000).'&destination='.$folder.'&appname='.$appname.'&appid='.$appid;?>")};
-function clearwall<?echo $appid;?>(){
+  $("#<?echo $appid?>").load("<?echo $folder?>screen.php?wall="+el+"&id=<?echo rand(0,10000).'&appname='.$appname.'&destination='.$folder.'&appid='.$appid;?>")};
+function loadtheme<?echo $appid?>(el2){$("#<?echo $appid?>").load("<?echo $folder?>screen.php?theme="+el2.id+"&id=<?echo rand(0,10000).'&appname='.$appname.'&destination='.$folder.'&appid='.$appid;?>")};
+function back<?echo $appid?>(el){$("#<?echo $appid?>").load("<?echo $folder?>main.php?id=<?echo rand(0,10000).'&destination='.$folder.'&appname='.$appname.'&appid='.$appid;?>")};
+function clearwall<?echo $appid?>(){
   $('#background-wall').attr('src','data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=');
-  loadwall<?echo $appid;?>('none');
+  loadwall<?echo $appid?>('none');
+}
+
+function savedisplay<?echo $appid?>(){
+  $("#<?echo $appid?>").load("<?echo $folder?>screen.php?scale="+scaleValue+"&rotate="+rotateValue+"&smooth="+smoothValue+"&contrast="+contrastValue+"&brightness="+brightnessValue+"&saturate="+saturateValue+"&id=<?echo rand(0,10000).'&appname='.$appname.'&destination='.$folder.'&appid='.$appid;?>")
+}
+
+function resetdisplay<?echo $appid?>(){
+    scaleValue = '1';
+    rotateValue = '0';
+    smoothValue = '0.5';
+    contrastValue = '1';
+    brightnessValue = '1';
+    saturateValue = '1';
+    getFilter();
+    getDisplay();
+    $('.backgroundtheme').css('transition','all '+smoothValue+'s ease');
+    savedisplay<?echo $appid?>();
 }
 UpdateWindow("<?echo $appid?>","<?echo $appname?>");
 </script>
