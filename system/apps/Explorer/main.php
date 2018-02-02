@@ -33,14 +33,29 @@ $faction->deleteDir($dir);
 mkdir($dir);
 }
 
+
+if (isset($_GET['makefile'])){
+	if(!is_file($dir.'/'.$_GET['makefile']))
+	{
+		$defaultExt = '';
+		preg_match('/\.[^\.]+$/i',$_GET['makefile'],$ext);
+		if($ext[0] == ''){
+			$defaultExt = '.txt';
+		}file_put_contents($dir.'/'.$_GET['makefile'].$defaultExt,'');
+	}else{
+		$dialogexplorer->newnotification($appname,$appname,$explorer_lang['mfile_msg_1']);
+	}
+}
+
+// make new dir
 if (isset($_GET['makedir'])){
 	if(!is_dir($dir.'/'.$_GET['makedir']))
 	{
 		if(!mkdir($dir.'/'.$_GET['makedir'],0755)){
-			echo $explorer_lang['msg_1']." ".$_GET['makedir'].$explorer_lang['msg_2'];
+			$dialogexplorer->newnotification($appname,$appname,$explorer_lang['msg_1']." ".$_GET['makedir'].$explorer_lang['msg_2']);
 		}
 	}else{
-		echo $explorer_lang['msg_3'];
+		$dialogexplorer->newnotification($appname,$appname,$explorer_lang['msg_3']);
 	}
 }
 //обрабатываем кнопки удаления и перемещения в корзину
@@ -142,7 +157,7 @@ $pathmain = str_replace($_SERVER['DOCUMENT_ROOT'],'',$pathmain);
 	<div id="filemenu<?echo $appid?>" style="display:none; cursor:default; position:absolute; z-index:1; background:#fff; width:auto; top:31px; left:4px;">
 <ul id="mmenu<?echo $appid?>" >
 	<li><div <?echo 'id="'.$dir.'/" class="loadthis" onClick="load'.$appid.'(this);" ';?> ><?echo $explorer_lang['menu_open_label']?></div></li>
-	<li><div <?echo 'id="'.$dir.'/" class="loadthis" onClick="loadnewfile'.$appid.'(this);" ';?> ><?echo $explorer_lang['menu_newfile_label']?></div></li>
+	<li><div <?echo 'class="loadthis" onClick="mkfileshow'.$appid.'();" ';?> ><?echo $explorer_lang['menu_newfile_label']?></div></li>
 	<li><div <?echo 'onClick="mkdirshow'.$appid.'();" ';?> ><?echo $explorer_lang['menu_md_label']?></div></li>
 	<li><div <?echo 'id="'.$dir.'/" class="mklink" onClick="link'.$appid.'(this);" ';?> ><?echo $explorer_lang['menu_ml_label']?></div></li>
 	<li><div <?echo 'class="loadthis" onClick="newload'.$appid.'('."'del'".',this.id)" ';?>><?echo $explorer_lang['menu_trash_label']?></div></li>
@@ -185,6 +200,20 @@ $pathmain = str_replace($_SERVER['DOCUMENT_ROOT'],'',$pathmain);
 	<?echo $explorer_lang['mdir_okbtn']?>
 </span>
 </div>
+
+<div id="mkfilediv<?echo $appid?>" style="z-index:1; position:fixed; display:none; top:25%; left:25%; background-color:#ededed; border:1px solid #797979; padding:20px; border-radius:6px; box-shadow:1px 1px 5px #000; width:min-content; text-align:center;">
+<label for="mkfileinput<?echo $appid?>">
+	<?echo $explorer_lang['mfile_label']?>
+	<input id="mkfilevalue<?echo $appid?>" style="font-size:20px; margin-bottom:10px;" name="mkfileinput<?echo $appid?>" type="text" value="">
+</label>
+<span onclick="$('#mkfilediv<?echo $appid?>').css('display','none');" style="width:70px;" class="ui-button ui-widget ui-corner-all">
+	<?echo $explorer_lang['mfile_cancelbtn']?>
+</span>
+<span style="width:70px;" onClick="mkfilebtn<?echo $appid?>();" class="ui-button ui-widget ui-corner-all">
+	<?echo $explorer_lang['mfile_okbtn']?>
+</span>
+</div>
+
 <div style="margin: 92px 0;">
 <?
 while (false !== ($entry=$d->read())) {
@@ -318,9 +347,18 @@ function mkdirshow<?echo $appid?>(){
 	$("#mkdirdiv<?echo $appid?>").css('display','block')
 };
 
+function mkfileshow<?echo $appid?>(){
+	$("#mkfilediv<?echo $appid?>").css('display','block')
+};
+
 function mkdirbtn<?echo $appid?>(){
 	$("#<?echo $appid?>").load("<?echo $folder;?>/main.php?makedir="+$("#mkdirvalue<?echo $appid?>").val()+"&id=<?echo rand(0,10000).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&dir='.realpath($entry).'&destination='.$folder;?>")
 };
+
+function mkfilebtn<?echo $appid?>(){
+	$("#<?echo $appid?>").load("<?echo $folder;?>/main.php?makefile="+$("#mkfilevalue<?echo $appid?>").val()+"&id=<?echo rand(0,10000).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&dir='.realpath($entry).'&destination='.$folder;?>")
+};
+
 function newload<?echo $appid?>(key,value){
 $("#<?echo $appid?>").load("<?echo $folder;?>/main.php?"+key+"="+value+"&id=<?echo rand(0,10000).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&dir='.realpath($entry).'&destination='.$folder;?>")
 };

@@ -26,6 +26,12 @@ msg_1  = Папка
 msg_2  = ' не создана!'
 msg_3  = 'Такая папка уже существует!'
 
+[makefile]
+mfile_label = Введите название файла
+mfile_okbtn = Ок
+mfile_cancelbtn = Отмена
+mfile_msg_1  = 'Такой файл уже существует!'
+
 [trash]
 trash_label  = Очистить корзину
 

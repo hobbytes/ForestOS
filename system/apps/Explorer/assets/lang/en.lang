@@ -26,6 +26,12 @@ msg_1 = Folder
 msg_2 = ' not created!'
 msg_3 = 'This folder already exists!'
 
+[makefile]
+mfile_label = Enter file name
+mfile_okbtn = Ok
+mfile_cancelbtn = Cancel
+mfile_msg_1  = 'This file already exists!'
+
 [trash]
 trash_label  = Empty trash
 
