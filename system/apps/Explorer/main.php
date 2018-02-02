@@ -116,7 +116,7 @@ if ($dir==''){
 }
 if(!is_dir($dir)){
 	$ext=pathinfo($dir);
-	$ext=$ext['extension'];
+	$ext=mb_strtolower($ext['extension']);
 	if($ext=='php'){
 		$file=basename($dir,'.php');
 		$dest=$dir;
