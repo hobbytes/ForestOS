@@ -1,6 +1,7 @@
 [Explorer]
 menu_file_label = Файл
 menu_open_label = Открыть
+menu_newfile_label = Новый файл
 menu_md_label = Создать папку
 menu_ml_label = Создать ярлык
 menu_trash_label = Отправить в корзинку

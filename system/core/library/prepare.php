@@ -7,6 +7,24 @@
       global $language;
       $language  = parse_ini_file('system/core/os.lang');
     }
+
+/*---------load language---------*/
+
+    function showversion()
+    {
+      $osinfo = parse_ini_file('system/core/osinfo.foc', false);
+      $os_version = $osinfo['codename'].' '.$osinfo['subversion']."\n";
+      ?>
+<!--
+   ____                 __    ____  ____
+  / __/__  _______ ___ / /_  / __ \/ __/
+ / _// _ \/ __/ -_|_-</ __/ / /_/ /\ \
+/_/  \___/_/  \__/___/\__/  \____/___/
+          <?echo $os_version?>
+-->
+      <?
+    }
+
 /*---------load head---------*/
     public function start()
     {

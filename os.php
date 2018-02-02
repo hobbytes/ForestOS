@@ -1,14 +1,4 @@
-<?
-$osinfo = parse_ini_file('system/core/osinfo.foc', false);
-$os_version = $osinfo['codename'].' '.$osinfo['subversion']."\n";
-?>
-<!--
-   ____                 __    ____  ____
-  / __/__  _______ ___ / /_  / __ \/ __/
- / _// _ \/ __/ -_|_-</ __/ / /_/ /\ \
-/_/  \___/_/  \__/___/\__/  \____/___/
-          <?echo $os_version?>
--->
+
 <?
 require 'system/core/library/gui.php';
 require 'system/core/library/bd.php';
@@ -25,6 +15,7 @@ $prepare = new prepare;
 $security = new security;
 $auth = new AuthClassUser();
 $auth->checkout();
+$prepare->showversion();
 $prepare->language();
 $prepare->start();
 $prepare->wall();
