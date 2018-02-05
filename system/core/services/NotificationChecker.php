@@ -16,5 +16,6 @@ foreach(glob($dir.'*.not') as $filename){
   $body = $security->__decode($NArray['body'], $key);
   $gui->newnotification($NArray['appname'],$NArray['appname'],$body,0,$NArray['date']);
   unset($NArray,$body);
+  unlink($filename);
 }
 ?>

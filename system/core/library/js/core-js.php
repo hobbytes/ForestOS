@@ -127,6 +127,12 @@ function UpdateWindow(id,name){
 
   $( function() {
     $(window).load(function(){
+
+      //notification checker
+      var notificationTimer = setInterval(function(){
+        $("#notifications").load("<?echo $_SERVER['DOCUMENT_ROOT'].'/system/core/services/NotificationChecker.php'?>");
+      },8000);
+
       $(".welcomescreen").hide('fade',500);
       $("#topbar").show('fade', 1500);
       $("#topbar").css('display','block')
