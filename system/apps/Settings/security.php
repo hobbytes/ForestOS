@@ -41,14 +41,24 @@ if(!empty($oldpassword) && !empty($newpassword) && !empty($checkpassword)){
 
   if($bdpass==$oldpassword){
     if($newpassword==$checkpassword){
+      $settingsbd->readglobal2("fuid","forestusers","login",$_SESSION["loginuser"]);
+      $fuid = $getdata;
+      $d_root = $_SERVER['DOCUMENT_ROOT'];
+      $token = md5($fuid.$d_root.$newpassword);
+      $oldtoken = md5($fuid.$d_root.$oldpassword);
+      $getRequest = file_get_contents('http://forest.hobbytes.com/media/os/ubase/updatetoken.php?token='.$token.'&oldtoken='.$oldtoken.'&followlink='.$_SERVER['SERVER_NAME']);
+      if($getRequest != "OK"){
+        $gui->errorLayot("SERVER ERROR!")
+        exit();
+      }
       $settingsbd->updatebd("forestusers",password,$newpassword,login,$_SESSION["loginuser"]);
-      echo $language_security[$_SESSION['locale'].'_notchangepass'];
+      $gui->newnotification($appname,$language_security[$_SESSION['locale'].'_settings_security'],$language_security[$_SESSION['locale'].'_notchangepass']);
       file_put_contents('../../core/journal.mcj','');
     }else{
-      echo $language_security[$_SESSION['locale'].'_notnewerrorpass'];
+      $gui->newnotification($appname,$language_security[$_SESSION['locale'].'_settings_security'],$language_security[$_SESSION['locale'].'_notnewerrorpass']);
     }
   }else{
-    echo $language_security[$_SESSION['locale'].'_notolderrorpass'];
+    $gui->newnotification($appname,$language_security[$_SESSION['locale'].'_settings_security'],$language_security[$_SESSION['locale'].'_notolderrorpass']);
   }
   unset($oldpassword,$newpassword,$checkpassword);
 }
