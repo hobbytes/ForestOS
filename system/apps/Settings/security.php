@@ -48,7 +48,7 @@ if(!empty($oldpassword) && !empty($newpassword) && !empty($checkpassword)){
       $oldtoken = md5($fuid.$d_root.$oldpassword);
       $getRequest = file_get_contents('http://forest.hobbytes.com/media/os/ubase/updatetoken.php?token='.$token.'&oldtoken='.$oldtoken.'&followlink='.$_SERVER['SERVER_NAME']);
       if($getRequest != "OK"){
-        $gui->errorLayot("SERVER ERROR!")
+        $gui->errorLayot("Invalid token!");
         exit();
       }
       $settingsbd->updatebd("forestusers",password,$newpassword,login,$_SESSION["loginuser"]);
