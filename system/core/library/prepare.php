@@ -38,6 +38,12 @@
         $getdata  = $_SESSION["loginuser"];
       }
       $_SESSION['superuser'] = $getdata;
+
+      if($_SESSION["safemode"]  ==  'true'){
+        file_put_contents($_SERVER['DOCUMENT_ROOT'].'/system/users/'.$_SESSION['loginuser'].'/settings/notifications/MainNotificationFile.hdf','');
+        $_SESSION["safemode"] = 'false';
+      }
+
       // # check lang
       $_SESSION['locale'] = file_get_contents('system/users/'.$_SESSION["loginuser"].'/settings/language.foc');
       if(empty($_SESSION['locale'])){
@@ -287,10 +293,10 @@ function topbar(){
   </span>
     <div class="action-buttons" style="text-align:center; margin-top:14px; padding:20px 0px 14px; filter:hue-rotate(8deg);">
     <span style="font-size:26px; cursor:default; width:26px;">
-    <b class="ui-forest action_button" name="<?echo $language[$_SESSION['locale'].'_restart'];?>" onclick="return location.href = 'os.php'">R</b>
-    <b class="ui-forest action_button" name="<?echo $language[$_SESSION['locale'].'_memoryrestart'];?>" onclick="hibernation('false')">S</b>
-    <b class="ui-forest action_button" name="<?echo $language[$_SESSION['locale'].'_hibernation'];?>" onclick="hibernation('true')">H</b>
-    <b class="ui-forest action_button" name="<?echo $language[$_SESSION['locale'].'_exit'];?>" onclick="return location.href = '?action=logout'">E</b>
+    <b class="ui-forest action_button" name="<?echo $language[$_SESSION['locale'].'_restart'];?>" onclick="SaveNotification(); return location.href = 'os.php'">R</b>
+    <b class="ui-forest action_button" name="<?echo $language[$_SESSION['locale'].'_memoryrestart'];?>" onclick="SaveNotification(); hibernation('false')">S</b>
+    <b class="ui-forest action_button" name="<?echo $language[$_SESSION['locale'].'_hibernation'];?>" onclick="SaveNotification(); hibernation('true')">H</b>
+    <b class="ui-forest action_button" name="<?echo $language[$_SESSION['locale'].'_exit'];?>" onclick="SaveNotification(); return location.href = '?action=logout'">E</b>
   </span>
   <div id="buttons_label" style="opacity:0; height:0; font-variant: all-petite-caps; font-weight:600; transition: all 0.2s ease; font-size:14px; padding:10 0 0; letter-spacing: 3px;"></div>
   </div>
@@ -420,6 +426,7 @@ function DisplaySettings(){
        fclose($fp);
       }
     }
+
     function autorun(){
       global $login;
       session_start();
@@ -440,4 +447,24 @@ function DisplaySettings(){
       $_SESSION['safemode'] = 'false';
     }
   }
+
+  $folder = $_SERVER['DOCUMENT_ROOT'].'/system/core/';
+  session_start();
 ?>
+<script>
+//Save Notification Function
+function SaveNotification(){
+  var content = $("#notification-container").html();
+  $.ajax({
+    type: "POST",
+    url: "<?echo $folder.'functions/NotificationSaver'?>",
+    data: {
+       login:"<?echo $_SESSION['loginuser']?>",
+       body:content
+    },
+    success: function(datas){
+      //console.log(datas);
+    }
+  });
+}
+</script>

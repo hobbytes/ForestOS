@@ -81,13 +81,14 @@ function ProcessLogic(id, name, destination, destination_, maxwidthm, folder, cl
 $( function() {
   $( "#notificationsbtn" ).on( "click", function() {
     $('.notificationclass').css('opacity','0');
+    $("#notification-container").css('display','block');
     if($( "#notifications" ).hasClass("notificationshow"))
     {
-      $('.notificationclass').css('opacity','0');
-      $('.notificationclass').css('display','none');
+      $('.notificationclass').css({'opacity':'0','display':'none'});
+      $('#notificationTopLabel').css('display','none');
     }else{
-      $('.notificationclass').css('opacity','0.97');
-      $('.notificationclass').css('display','block');
+      $('.notificationclass').css({'opacity':'0.97','display':'block'});
+      $('#notificationTopLabel').css('display','block');
     }
     $( ".notificationhide" ).toggleClass( "notificationshow", 100 );
   });
@@ -128,10 +129,33 @@ function UpdateWindow(id,name){
   $( function() {
     $(window).load(function(){
 
+      <?
+      $folder = $_SERVER['DOCUMENT_ROOT'].'/system/core/';
+      session_start();
+      ?>
+
+      //notification loader
+
+      $.get("<?echo $folder.'functions/NotificationLoader.php'?>", function(data){
+        if(data && (data = $.trim(data))){
+          $(data).appendTo("#notification-container");
+          var ntf = $(".notificationclass").length;
+          if(ntf > 0){
+            $("#notification-container").css('display','none');
+          }
+        }
+      });
+
       //notification checker
       var notificationTimer = setInterval(function(){
-        $("#notifications").load("<?echo $_SERVER['DOCUMENT_ROOT'].'/system/core/services/NotificationChecker.php'?>");
-      },8000);
+        $.get("<?echo $folder.'services/NotificationChecker.php'?>", function(data){
+          if(data && (data = $.trim(data))){
+            $("#notification-container").css('display','block');
+            $(data).appendTo("#notification-container");
+            SaveNotification();
+          }
+        });
+      },10000);
 
       $(".welcomescreen").hide('fade',500);
       $("#topbar").show('fade', 1500);

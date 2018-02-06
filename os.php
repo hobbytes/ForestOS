@@ -35,6 +35,18 @@ $prepare->desktop("linkdiv");
 $_SESSION['appid']=-1;
 ?>
 <div id="notifications" class="notificationhide" style="display:block; position:absolute; right: 0; height: 100%; padding: 10px; transition:all 0.2s ease;">
+<div id="notificationTopLabel" style="width:310px; color:#fff; font-size:20pt; text-align:center; user-select: none; cursor: default; display:none; padding: 10 0; background: rgba(119,119,119,0.5);">
+  <div id="fulltime" style="font-size:20pt;">
+  </div>
+  <div class="date_" style="font-size:10pt;">
+    <?php echo date('d.m.Y')?>
+  </div>
+  <div style="font-weight:600; padding: 10 0;">
+  Центр уведомлений
+  </div>
+</div>
+<div id="notification-container">
+</div>
 </div>
 </div>
 <div id="proceses">

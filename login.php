@@ -5,14 +5,14 @@
 <?
 if (function_exists('date_default_timezone_set'))
 date_default_timezone_set('Europe/Moscow');
-global $loginin, $infob, $security, $language;
-$date= date("d.m.y,H:i:s");
-$status2=$_POST['logins'];
-if ($status2!='')
+global $loginin, $infob, $security, $language, $mobile;
+$date = date("d.m.y,H:i:s");
+$status2 = $_POST['logins'];
+if ($status2  !=  '')
 {
-$loginin=strtolower(addslashes(strip_tags(htmlspecialchars($_POST['loginin']))));
-$loginin = str_replace(' ', '_', $loginin);
-$passwordin=$security->crypt_s(addslashes(strip_tags(htmlspecialchars($_POST['passwordin']))),$loginin);
+  $loginin=strtolower(addslashes(strip_tags(htmlspecialchars($_POST['loginin']))));
+  $loginin = str_replace(' ', '_', $loginin);
+  $passwordin=$security->crypt_s(addslashes(strip_tags(htmlspecialchars($_POST['passwordin']))),$loginin);
 }
 session_start();
 $auth = new AuthClassUser();
@@ -49,14 +49,20 @@ $gui->formend();
 </div>
 </div>
 <div class="date" style="float:left; user-select: none; cursor: default; color:#fff; padding-left:30px; margin-bottom:10px; position:relative;">
-  <span style="font-size:27pt; font-weight:700; text-transform:uppercase;"><?php echo $object->getDayRus().', '.date('d').'<br>';?></span>
-  <span style="font-size:35pt;" id="time"></span>
+  <span id="date" style="font-size:27pt; font-weight:700; text-transform:uppercase;"><?php echo $object->getDayRus().', '.date('d').'<br>';?></span>
+  <span id="time" style="font-size:35pt;"></span>
 </div>
 <script type="text/javascript">
 $( function() {
   $(window).load(function(){
     $(".welcomescreen").hide('fade',500);
     showTime();
+    var is_mobile = "<?echo $mobile?>";
+    if(is_mobile == "true"){
+      $("#loginin").css("padding-top","0");
+      $("#date").css("font-size","20pt");
+      $("#time").css("font-size","30pt");
+    }
   });
 });
 $("#labelos").click(function(){
