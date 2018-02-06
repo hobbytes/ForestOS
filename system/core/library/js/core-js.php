@@ -80,6 +80,7 @@ function ProcessLogic(id, name, destination, destination_, maxwidthm, folder, cl
 
 $( function() {
   $( "#notificationsbtn" ).on( "click", function() {
+    $("#notificationsbtn").css({'border':'2px solid #fff','background-color':'rgba(0,0,0,0)'});
     $('.notificationclass').css('opacity','0');
     $("#notification-container").css('display','block');
     if($( "#notifications" ).hasClass("notificationshow"))
@@ -133,7 +134,7 @@ function UpdateWindow(id,name){
       $folder = $_SERVER['DOCUMENT_ROOT'].'/system/core/';
       session_start();
       ?>
-
+      var notificationColor = $(".action-buttons").css('background-color');
       //notification loader
 
       $.get("<?echo $folder.'functions/NotificationLoader.php'?>", function(data){
@@ -142,6 +143,9 @@ function UpdateWindow(id,name){
           var ntf = $(".notificationclass").length;
           if(ntf > 0){
             $("#notification-container").css('display','none');
+            $("#notificationsbtn").css({'border':'2px solid '+notificationColor,'background-color':notificationColor});
+          }else{
+          $("#notificationsbtn").css({'border':'2px solid #fff','background-color':'rgba(0,0,0,0)'});
           }
         }
       });
@@ -153,6 +157,7 @@ function UpdateWindow(id,name){
             $("#notification-container").css('display','block');
             $(data).appendTo("#notification-container");
             SaveNotification();
+            $("#notificationsbtn").css({'border':'2px solid '+notificationColor,'background-color':notificationColor});
           }
         });
       },10000);

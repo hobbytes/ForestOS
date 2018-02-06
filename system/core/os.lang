@@ -8,6 +8,7 @@ ru_memoryrestart = мягкая перезагрузка
 ru_hibernation = гибернация
 ru_exit = выход
 ru_notification_label = Центр уведомлений
+ru_notification_clear = Отчистить
 
 en_explorer_menu  = Explorer
 en_settings_menu  = Settings
@@ -18,6 +19,7 @@ en_memoryrestart = soft reset
 en_hibernation = hibernation
 en_exit = exit
 en_notification_label = Notification Center
+en_notification_clear = Clear All
 
 [login]
 ru_login_input = введите логин

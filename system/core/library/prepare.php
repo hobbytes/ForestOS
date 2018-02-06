@@ -261,7 +261,7 @@ function topbar(){
       <?php echo $object->getDayRus().' '.date('d').',';?>
       <span id="time"></span>
     </div>
-    <div id="notificationsbtn" class="ui-forest" style="float:right; font-size: 11px; margin-right: 10px; padding: 1px; user-select: none; border: 2px outset #fff; border-radius: 4px; cursor: default;">
+    <div id="notificationsbtn" class="ui-forest-blink" style="float:right; font-size: 11px; margin-right: 10px; padding: 1px; user-select: none; border: 2px solid #fff; border-radius: 4px; cursor: default; color:#fff; filter:hue-rotate(90deg);">
       N
     </div>
     <script type="text/javascript">
@@ -466,5 +466,12 @@ function SaveNotification(){
       //console.log(datas);
     }
   });
+}
+
+//Clear Notification Function
+function NotificationClear(){
+  $("#notification-container").html('');
+  SaveNotification();
+  $("#notificationsbtn").css({'border':'2px solid #fff','background-color':'rgba(0,0,0,0)'});
 }
 </script>
