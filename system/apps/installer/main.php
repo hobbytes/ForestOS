@@ -48,7 +48,6 @@ if(isset($appinstall)){
     fclose($fp);
   $zip=new ZipArchive;
   if($zip->open('./temp/'.$appinstall.$temphash.'.zip') === TRUE){
-
     $zip->extractTo('../../../'.str_replace($appinstall,'',$_GET['appinstdest']));
     $zip->close();
     $appname=str_replace("_"," ", $appinstall);
@@ -61,6 +60,7 @@ if(isset($appinstall)){
     {
       config_set('../../core/appinstall.foc', $appinstall, 'version', $_SESSION['appversion']);
       $type=$install_lang[$cl.'_installer_msg_upd_1']; $type2=$install_lang[$cl.'_installer_msg_upd_2'];
+      //unlink('./temp/'.$appinstall.$temphash.'.zip');
     }else{
       $myfile=fopen('../../core/appinstall.foc',"a");
       $content='['.$appinstall.']'.PHP_EOL.'version='.$_SESSION['appversion'].PHP_EOL.'destination='.$_GET['appinstdest'].PHP_EOL;

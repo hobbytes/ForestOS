@@ -18,3 +18,4 @@ foreach(glob($dir.'*.not') as $filename){
   unset($NArray,$body);
   unlink($filename);
 }
+?>
