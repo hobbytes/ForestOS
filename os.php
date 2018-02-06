@@ -41,8 +41,10 @@ $_SESSION['appid']=-1;
   <div class="date_" style="font-size:10pt;">
     <?php echo date('d.m.Y')?>
   </div>
-  <div style="font-weight:600; padding: 10 0;">
-  Центр уведомлений
+  <div style="font-weight:600; padding: 10 0; text-transform: uppercase; font-size: 18pt;">
+  <?
+  echo $language[$_SESSION['locale'].'_notification_label'];
+  ?>
   </div>
 </div>
 <div id="notification-container">
