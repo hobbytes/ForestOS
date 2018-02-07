@@ -103,14 +103,14 @@ function newnotification($name, $title, $text,$time=0,$customDate=0){
   <div style="background-color: #d6d6d6;color: #000;padding: 10px; word-wrap: break-word;"><?echo $text;?></div>
 
     <script>
-    SaveNotification();
-    $(".notificationclass").css({'opacity':'0','display':'none'});
+    //$(".notificationclass").css({'opacity':'0','display':'none'});
     $("#notification-container").css('display','block');
     $("#notification_<?echo $name;?>").prependTo("#notification-container");
     setTimeout(function() {$("#notification_<?echo $name;?>").css('opacity','0.97'); $("#notification_<?echo $name;?>").css('display','block'),1000});
     <?if($time!='infinite'){?>
       setTimeout(function() {$("#notification_<?echo $name;?>").css('opacity','0'); $("#notification_<?echo $name;?>").css('display','none');},<?echo $time;?>);
       <?}?>
+    SaveNotification();
     </script>
     </div>
   <?

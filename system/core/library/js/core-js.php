@@ -155,7 +155,7 @@ function UpdateWindow(id,name){
         $.get("<?echo $folder.'services/NotificationChecker.php'?>", function(data){
           if(data && (data = $.trim(data))){
             $("#notification-container").css('display','block');
-            $(data).appendTo("#notification-container");
+            $(data).prependTo("#notification-container");
             SaveNotification();
             $("#notificationsbtn").css({'border':'2px solid '+notificationColor,'background-color':notificationColor});
           }
