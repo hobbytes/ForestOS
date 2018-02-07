@@ -34,7 +34,7 @@ $prepare->topbar();
 $prepare->desktop("linkdiv");
 $_SESSION['appid']=-1;
 ?>
-<div id="notifications" class="notificationhide" style="display:block; position:absolute; right: 0; height: 100%; padding: 10px; transition:all 0.2s ease; z-index:9999;">
+<div id="notifications" class="notificationhide" style="display:block; position:absolute; right: 0; height: 100%; padding: 10px; transition:all 0.2s ease;">
 <div id="notificationTopLabel" style="width:310px; color:#fff; font-size:20pt; text-align:center; user-select: none; cursor: default; display:none; padding: 10 0; background: rgba(119,119,119,0.5);">
   <div id="fulltime" style="font-size:20pt;">
   </div>
