@@ -6,7 +6,7 @@
 Forest OS - это сетевая операционная система (оболочка) с открытым исходным кодом, которая основана на технологиях PHP и JS.
 
 # Как установить:
-1. Скачать файл http://forest.hobbytes.com/media/os/installer.zip и распоковать в корень сайта 
+1. Скачать файл http://forest.hobbytes.com/media/os/installer.zip и распаковать в корень сайта 
 2. Запустить файл `<index.php>`
 
 # English
