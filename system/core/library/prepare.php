@@ -88,7 +88,7 @@
       if (file_exists($file_)){
         $mainwall = $hashfile->filehash($file_);
       }else{
-        $mainwall = 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';
+        $mainwall = 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';  
       }
     }else{
       $file='system/core/design/images/webwall.jpg';
@@ -158,6 +158,9 @@
             'background-color' : 'rgba(177,207,228,0.3)',
             'border' : '1px solid ' + border_color
           });
+        });
+        $( "#background-wall" ).click(function(){
+          releaselink();
         });
         $( "#<?echo 'icon'.$id.'';?>" ).mouseover(function(){
           $(this).css('background-color'  , 'rgba(192,192,192,0.3)');
