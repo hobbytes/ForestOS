@@ -20,11 +20,35 @@ $dest = $hash->filehash('../../..'.$_GET['photoviewload'],'false');
 //Ассоциируем файлы
 $newpermission->fileassociate(array('png','jpg','jpeg','bmp','gif'), $folder.'main.php', 'photoviewload', $appname);
 
-if($dest==''){
+if($dest  ==  ''){
   $dest = $_GET['photoviewload'];
 }
 $photo='('.$dest.')';
-//Логика
+
+/*local file?*/
+$isLocal = realpath((dirname($dest)));
+
+/*download image*/
+if($_GET['download'] == 'true'){
+  $downloadDir = $_SERVER['DOCUMENT_ROOT'].'/system/users/'.$_SESSION['loginuser'].'/documents/images';
+  if(!is_dir($downloadDir)){
+    mkdir($downloadDir);
+  }
+  $ch=curl_init($dest);
+  $fp=fopen($downloadDir.'/'.basename($dest),'wb');
+  curl_setopt($ch, CURLOPT_FILE,$fp);
+  curl_setopt($ch, CURLOPT_HEADER,0);
+  curl_exec($ch);
+  curl_close($ch);
+  fclose($fp);
+  if(is_file($downloadDir.'/'.basename($dest))){
+    ?>
+    <script>
+      makeprocess("system/apps/Explorer/main.php" , "<?echo $downloadDir?>", "dir", "Explorer");
+    </script>
+    <?
+  }
+}
 ?>
 
 <style>
@@ -89,36 +113,45 @@ $photo='('.$dest.')';
 }
 </style>
 
-<div id="photo<?echo $appname.$appid;?>" class="photo<?echo $appid;?>"></div>
-<div class="button<?echo $appid;?> zoom-in<?echo $appid;?>"><i class="material-icons">-</i></div>
-<div class="button<?echo $appid;?> zoom-out<?echo $appid;?>"><i class="material-icons">+</i></div>
+<div id="photo<?echo $appname.$appid?>" class="photo<?echo $appid?>"></div>
+<div class="button<?echo $appid?> zoom-in<?echo $appid?>"><i class="material-icons">-</i></div>
+<div class="button<?echo $appid?> zoom-out<?echo $appid?>"><i class="material-icons">+</i></div>
+<?
+if(empty($isLocal)){
+  ?>
+  <div class="ui-forest-blink" id="downloadImage<?echo $appid?>" style="background:rgba(0,0,0,0.82); text-align:center; position:absolute; top:88%; left:46%; padding:0 20px; color:#8BC34A; font-size:30px; font-weight:900;">&#11015;</div>
+  <?
+}
+?>
 </div>
 <script>
 var zoom = 0;
 $(document).ready(function(){
 
-  $('.zoom-in<?echo $appid;?>').click(function(){
+  $('.zoom-in<?echo $appid?>').click(function(){
     zoom-=1;
     if(zoom <= 0) zoom = 0;
     if(zoom > 15) zoom = 15;
     var k = parseFloat(1+zoom/5);
-    $('.photo<?echo $appid;?>').css('transform','scale('+k+')');
+    $('.photo<?echo $appid?>').css('transform','scale('+k+')');
   });
-  $('.zoom-out<?echo $appid;?>').click(function(){
+  $('.zoom-out<?echo $appid?>').click(function(){
     zoom+=1;
     if(zoom <= 0) zoom = 0;
     if(zoom > 20) zoom = 20;
     var k = parseFloat(1+zoom/5);
-    $('.photo<?echo $appid;?>').css('transform','scale('+k+')');
+    $('.photo<?echo $appid?>').css('transform','scale('+k+')');
   });
 });
 
+/*download image*/
+$('#downloadImage<?echo $appid?>').click(function(){
+  $("#<?echo $appid?>").load("<?echo $folder;?>main.php?photoviewload=<?echo $dest?>&download=true&id=<?echo rand(0,10000).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&destination='.$folder;?>");
+});
 
 $( function() {
   $( "#photo<?echo $appname.$appid;?>" ).draggable();
 });
-
-function photoload<?echo $appid;?>(el){$("#<?echo $appid;?>").load("<?echo $folder;?>main.php?command=test&id=<?echo rand(0,10000).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&destination='.$folder;?>")};
 </script>
 <?
 unset($appid);
