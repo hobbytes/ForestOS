@@ -2,6 +2,7 @@
 menu_file_label = File
 menu_open_label = Open
 menu_newfile_label = New file
+menu_rename_label = Rename
 menu_md_label = Create Folder
 menu_ml_label = Create Shortcut
 menu_trash_label = Send to trash

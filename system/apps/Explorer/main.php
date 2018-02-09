@@ -11,7 +11,7 @@ include '../../core/library/etc/security.php';
 $fo = new filecalc;
 $faction = new fileaction;
 $security	=	new security;
-$dir = $_GET['dir'];
+$dir = preg_replace('#%u([0-9A-F]{4})#se','iconv("UTF-16BE","UTF-8",pack("H4","$1"))',$_GET['dir']);
 $del = $_GET['del'];
 $deleteforever = $_GET['delf'];
 $link	=	$_GET['linkdir'];
@@ -32,7 +32,6 @@ if($erasestatus){
 $faction->deleteDir($dir);
 mkdir($dir);
 }
-
 
 if (isset($_GET['makefile'])){
 	if(!is_file($dir.'/'.$_GET['makefile']))
@@ -158,6 +157,7 @@ $pathmain = str_replace($_SERVER['DOCUMENT_ROOT'],'',$pathmain);
 <ul id="mmenu<?echo $appid?>" >
 	<li><div <?echo 'id="'.$dir.'/" class="loadthis" onClick="load'.$appid.'(this);" ';?> ><?echo $explorer_lang['menu_open_label']?></div></li>
 	<li><div <?echo 'class="loadthis" onClick="mkfileshow'.$appid.'();" ';?> ><?echo $explorer_lang['menu_newfile_label']?></div></li>
+	<li><div <? echo 'id="'.$dir.'/" class="loadthis" onClick="getproperty'.$appid.'(this);"';?>><?echo $explorer_lang['menu_rename_label']?></div></li>
 	<li><div <?echo 'onClick="mkdirshow'.$appid.'();" ';?> ><?echo $explorer_lang['menu_md_label']?></div></li>
 	<li><div <?echo 'id="'.$dir.'/" class="mklink" onClick="link'.$appid.'(this);" ';?> ><?echo $explorer_lang['menu_ml_label']?></div></li>
 	<li><div <?echo 'class="loadthis" onClick="newload'.$appid.'('."'del'".',this.id)" ';?>><?echo $explorer_lang['menu_trash_label']?></div></li>
