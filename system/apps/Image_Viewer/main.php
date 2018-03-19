@@ -16,12 +16,16 @@ $security	=	new security;
 $click=$_GET['mobile'];
 $folder=$_GET['destination'];
 $security->appprepare();
-$dest = $hash->filehash('../../..'.$_GET['photoviewload'],'false');
+$_dest = str_replace($_SERVER['DOCUMENT_ROOT'],'',$_GET['defaultloader']);
+if(empty($_dest)){
+  $_dest = $_GET['photoviewload'];
+}
+$dest = $hash->filehash('../../..'.$_dest,'false');
 //Ассоциируем файлы
 $newpermission->fileassociate(array('png','jpg','jpeg','bmp','gif'), $folder.'main.php', 'photoviewload', $appname);
 
 if($dest  ==  ''){
-  $dest = $_GET['photoviewload'];
+  $dest = $_dest;
 }
 $photo='('.$dest.')';
 
@@ -72,7 +76,8 @@ if($_GET['download'] == 'true'){
   left: 0;
   right: 0;
   margin: auto;
-  transition: all 0.1s ease-out;
+  transition: all 0.2s ease-out;
+  transform: scale(0.5);
 }
 <?echo ".photo".$appid;?>:hover {
   box-shadow:rgba(16, 16, 22, 0.2) 0px 0px 1px 1px;
@@ -125,21 +130,17 @@ if(empty($isLocal)){
 ?>
 </div>
 <script>
-var zoom = 0;
+var zoom = 0.5;
 $(document).ready(function(){
 
   $('.zoom-in<?echo $appid?>').click(function(){
-    zoom-=1;
-    if(zoom <= 0) zoom = 0;
-    if(zoom > 15) zoom = 15;
-    var k = parseFloat(1+zoom/5);
+    zoom-=0.5;
+    var k = parseFloat(0.5+zoom/7);
     $('.photo<?echo $appid?>').css('transform','scale('+k+')');
   });
   $('.zoom-out<?echo $appid?>').click(function(){
-    zoom+=1;
-    if(zoom <= 0) zoom = 0;
-    if(zoom > 20) zoom = 20;
-    var k = parseFloat(1+zoom/5);
+    zoom+=0.5;
+    var k = parseFloat(0.5+zoom/7);
     $('.photo<?echo $appid?>').css('transform','scale('+k+')');
   });
 });

@@ -70,6 +70,9 @@ foreach (glob($_SERVER['DOCUMENT_ROOT']."/system/apps/*/main.php") as $filenames
   <div style="padding:7px 25px; width:200px; border-right:1px solid #ccc;">'.$app_name.'</div>
   <div id="button_layer'.$_app_name.$appid.'" class="button_layer" style="opacity:0; display:none; padding:7 10px;">
   <div style="float:right;">
+  <div app-run="'.$_app_name.'" class="ui-forest-accept ui-forest-button ui-forest-center app-run'.$appid.'" >
+  '.$language[$_SESSION['locale'].'_run_button'].'
+  </div>
   <div app-open="'.$_app_name.'" class="ui-forest-accept ui-forest-button ui-forest-center app-open'.$appid.'" >
   '.$language[$_SESSION['locale'].'_open_button'].'
   </div>
@@ -106,6 +109,11 @@ $("#<?echo $appid;?>").load("<?echo $folder?>appmanager.php?app_link="+app_link+
 $(".app-open<?echo $appid?>").click(function(){
 var app_open = $(this).attr('app-open');
 makeprocess('system/apps/Explorer/main.php',"<?echo $_SERVER['DOCUMENT_ROOT'].'/system/apps/'?>"+app_open+"",'dir','Explorer');
+});
+
+$(".app-run<?echo $appid?>").click(function(){
+var app_run = $(this).attr('app-run');
+makeprocess('system/apps/'+app_run+'/main.php','','',app_run);
 });
 
 $(".app-container<?echo $appid?>").click(function(){

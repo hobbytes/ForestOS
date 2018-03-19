@@ -1,6 +1,7 @@
 [App Manager]
 ru_name = 'Менеджер приложений'
 ru_delete_button = 'Удалить'
+ru_run_button = 'Запустить'
 ru_open_button = 'Открыть папку'
 ru_link_button = 'Создать ярлык'
 ru_unknow_version = 'неизвестно'
@@ -11,6 +12,7 @@ ru_not_2 = 'удалено'
 
 en_name = 'Application manager'
 en_delete_button = 'Delete'
+en_run_button = 'Run'
 en_open_button = 'Open folder'
 en_link_button ='Create link'
 en_unknow_version = 'unknow'

@@ -20,12 +20,12 @@ function  hibernation(logout){
 }
 
 function checkwindows(){
-  closestyle="";
-  var prc=$(".process").length;
-  if (prc>1){
-    closestyle="inline";
+  closestyle  = "";
+  var prc = $(".process").length;
+  if (prc > 1){
+    closestyle  = "inline";
   }else{
-    closestyle="none";
+    closestyle  = "none";
   }
   $(".topbaractbtn").css('display',''+window.closestyle+'');
 }

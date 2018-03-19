@@ -45,7 +45,6 @@ if (isset($_GET['makefile'])){
 		$dialogexplorer->newnotification($appname,$appname,$explorer_lang['mfile_msg_1']);
 	}
 }
-
 // make new dir
 if (isset($_GET['makedir'])){
 	if(!is_dir($dir.'/'.$_GET['makedir']))
@@ -156,6 +155,20 @@ $pathmain = str_replace($_SERVER['DOCUMENT_ROOT'],'',$pathmain);
 	<div id="filemenu<?echo $appid?>" style="display:none; cursor:default; position:absolute; z-index:1; background:#fff; width:auto; top:31px; left:4px;">
 <ul id="mmenu<?echo $appid?>" >
 	<li><div <?echo 'id="'.$dir.'/" class="loadthis" onClick="load'.$appid.'(this);" ';?> ><?echo $explorer_lang['menu_open_label']?></div></li>
+	<li>
+		<div <?echo 'id="'.$dir.'/" class="loadas" ';?> ><?echo $explorer_lang['menu_openas_label']?></div>
+		<ul style="background:#fff;">
+			<?
+			foreach (glob($_SERVER['DOCUMENT_ROOT']."/system/apps/*/main.php") as $filenames)
+			{
+				$get_name = preg_match('/apps.*?\/(.*?)\/main.php/',$filenames, $app_name);
+			  $_app_name = $app_name[1];
+			  $app_name = str_replace('_', ' ', $_app_name);
+				echo '<li><div onClick="makeprocess(\''.$_SERVER['DOCUMENT_ROOT'].'/system/apps/'.$_app_name.'/main.php\',$(\'.loadas\').attr(\'id\'),\'defaultloader\',\''.$_app_name.'\');">'.$app_name.'</div></li>';
+			}
+			?>
+		</ul>
+	</li>
 	<li><div <?echo 'class="loadthis" onClick="mkfileshow'.$appid.'();" ';?> ><?echo $explorer_lang['menu_newfile_label']?></div></li>
 	<li><div <? echo 'id="'.$dir.'/" class="loadthis" onClick="getproperty'.$appid.'(this);"';?>><?echo $explorer_lang['menu_rename_label']?></div></li>
 	<li><div <?echo 'onClick="mkdirshow'.$appid.'();" ';?> ><?echo $explorer_lang['menu_md_label']?></div></li>
@@ -259,7 +272,7 @@ while (false !== ($entry=$d->read())) {
 			$extension	=	"";
 		}else{
 			$extension	=	stristr($name, '.');
-			$extension	=	str_replace('.','',$extension);
+			$extension	=	mb_strtolower(str_replace('.','',$extension));
 			$type	=	$folder.'/assets/fileico.png';
 			if($extension	==	'png'  || $extension	==	'jpg' || $extension	==	'jpeg' || $extension	==	'bmp' || $extension	==	'gif'){
 				$color='transparent';
@@ -320,6 +333,7 @@ echo $explorer_lang['free_label'].': '.$format .' '.$explorer_lang['free_label_2
 function load<?echo $appid?>(el){
 	$("#<?echo $appid?>").load("<?echo $folder;?>main.php?dir="+el.id+"&id=<?echo rand(0,10000).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&destination='.$folder?>")
 };
+
 function loadshow<?echo $appid?>(divs){
 	$("#upload<?echo $appid?>").load("<?echo $folder;?>/uploadwindow.php?where="+divs.id+"&id=<?echo rand(0,10000).'&appname='.$appname.'&appid='.$appid.'&destination='.$folder.'&mobile='.$click;?>")
 	$("#upload<?echo $appid?>").css('display', 'block');
@@ -334,6 +348,7 @@ function select<?echo $appid?>(folder,folder2,folder3,folder4){
 	$(".select").css('background-color','transparent');
 	$('.'+folder).css('background-color','#d4d4d4');
 	$(".loadthis").attr("id",folder2);
+	$(".loadas").attr("id",folder2);
 	$(".mklink").attr("id",folder2);
 	$(".mklink").attr("ico",folder3);
 	$(".mklink").attr("link",folder4);

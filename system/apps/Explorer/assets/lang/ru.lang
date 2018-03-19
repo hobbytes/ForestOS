@@ -1,6 +1,7 @@
 [Explorer]
 menu_file_label = Файл
 menu_open_label = Открыть
+menu_openas_label = Открыть с помощью
 menu_newfile_label = Новый файл
 menu_rename_label = Переименовать
 menu_md_label = Создать папку
