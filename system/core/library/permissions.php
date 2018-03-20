@@ -26,18 +26,19 @@ class PermissionRequest{
           $check_key = $key.'_key='.$requestname;
           if(!preg_match("/$check_key/i",$current)){
             $current = str_replace('[AppKeys]',"[AppKeys]\n\r".$key.'_key='.$requestname,$current);
-            $list = $list.' <b>*.'.$key.'</b>|';
             file_put_contents($file, $current);
           }
           if(!preg_match("/$check_dest/i",$current)){
             $current = str_replace('[AppExt]',"[AppExt]\n\r".$key.'='.$appdestination,$current);
-            $list = $list.' <b>*.'.$key.'</b>|';
+            $list = $list.' <b>'.$key.'</b> | ';
             file_put_contents($file, $current);
           }
         }
         global $object, $language;
         $pubname  = str_replace("_"," ",$appname);
-        $object->newnotification($appname,"Ассоциация файлов","Приложение <b>$pubname</b> ассоциировала расширения: $list");
+        if(!empty($list)){
+          $object->newnotification($appname,"Ассоциация файлов","Приложение <b>$pubname</b> ассоциировала расширения: $list");
+        }
       }
   }
 
