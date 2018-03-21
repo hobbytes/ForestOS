@@ -2,7 +2,7 @@
 if($_GET['getinfo'] == 'true'){
 	include '../../core/library/etc/appinfo.php';
 	$appinfo = new AppInfo;
-	$appinfo->setInfo('Apps House', '1.0', 'Forest OS Team', 'Магазин');
+	$appinfo->setInfo('Apps House', '1.0', 'Forest Media', 'Магазин');
 }
 $appname=$_GET['appname'];
 $appid=$_GET['appid'];
