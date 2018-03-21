@@ -1,4 +1,12 @@
-<?$appname=$_GET['appname'];$appid=$_GET['appid'];?>
+<?
+if($_GET['getinfo'] == 'true'){
+	include '../../core/library/etc/appinfo.php';
+	$appinfo = new AppInfo;
+	$appinfo->setInfo('Update Tool', '1.0', 'Forest OS Team', 'Update Tool');
+}
+$appname=$_GET['appname'];
+$appid=$_GET['appid'];
+?>
 <div id="<?echo $appname.$appid;?>" style="background-color:#ebebeb; height:100%; width:100%; color:#000;  border-radius:0px 0px 5px 5px; overflow:auto;">
 <?php
 /*Application Installer*/
