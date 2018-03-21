@@ -27,20 +27,21 @@ $app_delete = $_GET['app_delete'];
 $app_link = $_GET['app_link'];
 
 if(!empty($app_link)){
+  $info = file_get_contents('http://'.$_SERVER['HTTP_HOST'].'/system/apps/'.$app_link.'/main.php?getinfo=true&h='.md5(date('dmyhis')));
+  $arrayInfo = json_decode($info);
+  if($_SESSION['locale'] == 'en'){
+    $pubname	=	$arrayInfo->{'name'};
+  }else{
+    $pubname	=	$arrayInfo->{'secondname'};
+  }
   $file = $_SERVER['DOCUMENT_ROOT'].'/system/users/'.$_SESSION['loginuser'].'/desktop/'.$app_link.'_'.uniqid().'.link';
-  $fileaction->makelink($file, $_SERVER['DOCUMENT_ROOT'].'/system/apps/'.$app_link.'/', 'main', '', $app_link, $app_link, $app_link, 'system/apps/'.$app_link.'/app.png');
+  $fileaction->makelink($file, $_SERVER['DOCUMENT_ROOT'].'/system/apps/'.$app_link.'/', 'main', '', $app_link, $pubname, $pubname, 'system/apps/'.$app_link.'/app.png');
 }
 
 if(!empty($app_delete) && !in_array($app_delete, $warn_apps)){
   $fileaction->deleteDir('../'.$app_delete);
-  $remove_app = file_get_contents($app_install);
-  $_remove_app = preg_match('/(?ms)^\['.$app_delete.'](?:(?!^\[[^]\r\n]+]).)*/', $remove_app, $new_file);
-  $remove_app = str_replace($new_file[0], '', $remove_app);
-  file_put_contents($app_install, $remove_app);
   $gui->newnotification($appname, $language[$_SESSION['locale'].'_name'], $language[$_SESSION['locale'].'_not_1'].': <b>'.$app_delete.'</b> '.$language[$_SESSION['locale'].'_not_2']);
 }
-
-$app_array = parse_ini_file($app_install, true);
 
 foreach (glob($_SERVER['DOCUMENT_ROOT']."/system/apps/*/main.php") as $filenames)
 {
@@ -59,15 +60,27 @@ foreach (glob($_SERVER['DOCUMENT_ROOT']."/system/apps/*/main.php") as $filenames
     $delete_button = '';
   }
 
-  $version = $app_array[$_app_name]['version'];
+  $info = file_get_contents('http://'.$_SERVER['HTTP_HOST'].'/system/apps/'.$_app_name.'/main.php?getinfo=true&h='.md5(date('dmyhis')));
+  $arrayInfo = json_decode($info);
+
+  $version = $arrayInfo->{'version'};
   if(empty($version)){
     $version = $language[$_SESSION['locale'].'_unknow_version'];
+  }
+
+  if($_SESSION['locale'] == 'en'){
+    $AppName	=	$arrayInfo->{'name'};
+  }else{
+    $AppName	=	$arrayInfo->{'secondname'};
+  }
+  if(empty($AppName)){
+    $AppName = $app_name;
   }
 
   echo'
   <div id="'.$_app_name.$appid.'" class="app-container'.$appid.'" style="display:flex; padding:10px; border-bottom:1px solid #ccc; transition:all 0.1s ease-in;">
   <div style="background-color:transparent;  background-image: url('.$app_icon.'); background-size:cover; height:30px; width:30px; float:left;"></div>
-  <div style="padding:7px 25px; width:200px; border-right:1px solid #ccc;">'.$app_name.'</div>
+  <div style="padding:7px 25px; width:200px; border-right:1px solid #ccc;">'.$AppName.'</div>
   <div id="button_layer'.$_app_name.$appid.'" class="button_layer" style="opacity:0; display:none; padding:7 10px;">
   <div style="float:right;">
   <div app-run="'.$_app_name.'" class="ui-forest-accept ui-forest-button ui-forest-center app-run'.$appid.'" >

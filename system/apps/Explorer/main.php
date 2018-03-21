@@ -102,9 +102,21 @@ if(!empty($link)){
 		$destination = str_replace($linkname,'',$link);
 		$link = '';
 		$param = '';
-		$newname = stristr($destination, 'apps/');
-		$newname = str_replace(array('apps/','/main.php', '/'),'',$newname);
-		$puplicname = $newname;
+		$file = stristr($destination, 'apps/');
+		$file = str_replace(array('apps/','/main.php', '/'),'',$file);
+  	$info = file_get_contents('http://'.$_SERVER['HTTP_HOST'].'/system/apps/'.$file.'/main.php?getinfo=true&h='.md5(date('dmyhis')));
+		$arrayInfo = json_decode($info);
+		if($_SESSION['locale'] == 'en'){
+			$newname	=	$arrayInfo->{'name'};
+			$puplicname	=	$arrayInfo->{'name'};
+		}else{
+			$newname	=	$arrayInfo->{'secondname'};
+			$puplicname	=	$arrayInfo->{'secondname'};
+		}
+		if(empty($newname) || empty($puplicname)){
+			$newname = $file;
+			$puplicname = $file;
+		}
 		$ico = stristr($ico,'?',true);
 	}else{
 		if(is_file($link)){

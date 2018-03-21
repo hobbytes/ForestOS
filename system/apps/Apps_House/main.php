@@ -165,11 +165,10 @@ echo '
     if (is_file($checkApp))
     {
 			$info = file_get_contents('http://'.$_SERVER['HTTP_HOST'].'/system/apps/'.$key['file'].'/main.php?getinfo=true&h='.md5(date('dmyhis')));
-			//echo $info;
 			$arrayInfo = json_decode($info);
 	    $curversion	=	$arrayInfo->{'version'};;
 			if(empty($curversion)){
-				//$curversion = '1.0';
+				$curversion = '1.0';
 			}
       $newversion=$key['version'];
       if($newversion>$curversion){
