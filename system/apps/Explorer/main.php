@@ -1,4 +1,12 @@
-<?$appname=$_GET['appname'];$appid=$_GET['appid'];?>
+<?
+if($_GET['getinfo'] == 'true'){
+	include '../../core/library/etc/appinfo.php';
+	$appinfo = new AppInfo;
+	$appinfo->setInfo('Explorer', '1.0', 'Forest OS Team', 'Проводник');
+}
+$appname=$_GET['appname'];
+$appid=$_GET['appid'];
+?>
 <div id="<?echo $appname.$appid?>" style="background-color:#f2f2f2; height:500px; max-width:100%; width:800px; border-radius:0px 0px 5px 5px; overflow:auto;">
 <?php
 /*Explorer*/
@@ -89,21 +97,40 @@ if(is_dir($zipfile)){
 }
 /*-Создание ярлыка-*/
 if(!empty($link)){
-	if($linkname=='main.php'){
+	if($linkname == 'main.php'){
 		$mainfile	=	str_replace('.php','',$linkname);
-		$destination=str_replace($linkname,'',$link);
-		$link='';
-		$param='';
-		$newname=stristr($destination, 'apps/');
-		$newname=str_replace(array('apps/','/main.php', '/'),'',$newname);
-		$puplicname=$newname;
+		$destination = str_replace($linkname,'',$link);
+		$link = '';
+		$param = '';
+		$newname = stristr($destination, 'apps/');
+		$newname = str_replace(array('apps/','/main.php', '/'),'',$newname);
+		$puplicname = $newname;
 		$ico = stristr($ico,'?',true);
 	}else{
-		$mainfile	=	'main';
-		$param='dir';
-		$destination="system/apps/Explorer/";
-		$puplicname=$linkname;
-		$newname='Explorer';
+		if(is_file($link)){
+			$ext =	pathinfo($link);
+			$ext = mb_strtolower($ext['extension']);
+			if($ext == 'php'){
+				$mainfile	=	str_replace('.php','',$linkname);
+				$newname = $linkname;
+				$puplicname = $linkname;
+				$destination = str_replace($linkname,'',$link);
+			}else{
+				$ini_array = parse_ini_file("../../core/extconfiguration.foc");
+				$param = $ini_array[$ext.'_key'];
+				$mainfile	=	'main';
+				$destination = str_replace('main.php','',$ini_array[$ext]);
+				$link = str_replace($_SERVER['DOCUMENT_ROOT'],'',$link);
+				$puplicname = $linkname;
+				$newname = str_replace(array('system','apps','/'),'',$destination);
+			}
+		}else{
+			$mainfile	=	'main';
+			$param='dir';
+			$destination="system/apps/Explorer/";
+			$puplicname=$linkname;
+			$newname='Explorer';
+		}
 	}
 	$file = '../../users/'.$_SESSION["loginuser"].'/desktop/'.$puplicname.'_'.uniqid().'.link';
 	$faction->makelink($file,$destination,$mainfile,$param,$link,$newname,$puplicname,$ico);
