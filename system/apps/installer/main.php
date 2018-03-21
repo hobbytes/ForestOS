@@ -61,18 +61,16 @@ if(isset($appinstall)){
     $appname=str_replace("_"," ", $appinstall);
     $myfile=fopen('../../users/'.$_SESSION["loginuser"].'/desktop/'.$appinstall.'.link',"w");
     $content="[link]\ndestination=".$_GET['appinstdest']."/\nfile=main\nkey=\nparam=\nname='$appinstall'\nlinkname='$appinstall'\n";
-    fwrite($myfile,$content);fclose($myfile);
+    fwrite($myfile,$content);
+		fclose($myfile);
 
     $ini_array = parse_ini_file('../../core/appinstall.foc', true);
     if (array_key_exists($appinstall, $ini_array))
     {
-      config_set('../../core/appinstall.foc', $appinstall, 'version', $_SESSION['appversion']);
+      //config_set('../../core/appinstall.foc', $appinstall, 'version', $_SESSION['appversion']);
       $type=$install_lang[$cl.'_installer_msg_upd_1']; $type2=$install_lang[$cl.'_installer_msg_upd_2'];
-      //unlink('./temp/'.$appinstall.$temphash.'.zip');
+      unlink('./temp/'.$appinstall.$temphash.'.zip');
     }else{
-      $myfile=fopen('../../core/appinstall.foc',"a");
-      $content='['.$appinstall.']'.PHP_EOL.'version='.$_SESSION['appversion'].PHP_EOL.'destination='.$_GET['appinstdest'].PHP_EOL;
-      fwrite($myfile,PHP_EOL.$content);fclose($myfile);
       unlink('./temp/'.$appinstall.$temphash.'.zip');
       $type=$install_lang[$cl.'_installer_msg_1']; $type2=$install_lang[$cl.'_installer_msg_2'];
     }

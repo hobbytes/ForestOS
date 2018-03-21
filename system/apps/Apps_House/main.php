@@ -85,13 +85,12 @@ $arrayu=json_decode($fileu,TRUE);
   <div id="apptab<?echo $appid?>">
 <?
 $appcounter=0;
-$ini_array = parse_ini_file('../../core/appinstall.foc', true);
 if($array!=''){
 foreach ($array as $key)
 {
 $appcounter=$appcounter+1;
 $fo->format($key['size']*1024);
-if (array_key_exists($key['file'], $ini_array)){
+if (is_file('../'.$key['file'].'/main.php')){
   $btncolor='3c83e8';
   $btntext=$apphouse_lang[$cl.'_card_button_2'];
   $btnaction='onClick="run(this);"';
@@ -159,13 +158,19 @@ echo '
 
 }
 
-  $ini_array = parse_ini_file('../../core/appinstall.foc', true);
-  if($array!=''){
+  if($array != ''){
   foreach ($array as $key)
   {
-    if (array_key_exists($key['file'], $ini_array))
+	$checkApp = '../'.$key['file'].'/main.php';
+    if (is_file($checkApp))
     {
-      $curversion=$ini_array[$key['file']]['version'];
+			$info = file_get_contents('http://'.$_SERVER['HTTP_HOST'].'/system/apps/'.$key['file'].'/main.php?getinfo=true&h='.md5(date('dmyhis')));
+			//echo $info;
+			$arrayInfo = json_decode($info);
+	    $curversion	=	$arrayInfo->{'version'};;
+			if(empty($curversion)){
+				//$curversion = '1.0';
+			}
       $newversion=$key['version'];
       if($newversion>$curversion){
         $appcounter=$appcounter+1;
