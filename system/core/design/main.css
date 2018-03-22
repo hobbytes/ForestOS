@@ -196,6 +196,17 @@ body {
 	background: #151515;
 }
 
+.ui-forest-twhite{
+	color: #fff;
+	border: 2px solid #fff;
+}
+
+.ui-forest-twhite:hover{
+	color: #151515;
+	border: 2px solid #fff;
+	background: #fff;
+}
+
 .action_button{
 	border:2px solid;
 	cursor:pointer;
