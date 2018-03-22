@@ -185,6 +185,17 @@ body {
 	background: linear-gradient(45deg,	#fe6b6b 30%,	#ff7171 90%);
 }
 
+.ui-forest-tblack{
+	color: #151515;
+	border: 2px solid #151515;
+}
+
+.ui-forest-tblack:hover{
+	color: #fff;
+	border: 2px solid #151515;
+	background: #151515;
+}
+
 .action_button{
 	border:2px solid;
 	cursor:pointer;
