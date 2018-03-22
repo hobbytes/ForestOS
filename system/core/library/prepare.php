@@ -197,7 +197,7 @@
         $key  = htmlspecialchars("'$key'");
         $name = htmlspecialchars("'$name'");
             echo'
-            <div id="link'.$id.'" class="'.$delclassname.'" on'.$click.'="makeprocess('.$destination.','.$param.','.$key.','.$name.'); releaselink();">
+            <div id="link'.$id.'" class="'.$delclassname.'" on'.$click.'="makeprocess('.$destination.','.$param.','.$key.','.str_replace(' ','_',$name).'); releaselink();">
               <div id=icons'.$id.' class="ui-widget-header ui-widget-content ico clickme'.$classtrash.'" d="'.$filenames.'" i="'.$id.'" style="padding:5px; z-index:-1000; height:auto; text-align:center; width:70px; position:relative; display:block; float:left;">
                 <div style="background-color:transparent;  background-image: url('.$linkicon.'); background-size:cover; height:64px; width:64px; margin:auto; margin-top:17px; ">
                   <div id=icon'.$id.' style="width:100%; height:auto;">
