@@ -19,7 +19,13 @@ include '../../core/library/etc/security.php';
 $fo = new filecalc;
 $faction = new fileaction;
 $security	=	new security;
-$dir = preg_replace('#%u([0-9A-F]{4})#se','iconv("UTF-16BE","UTF-8",pack("H4","$1"))',$_GET['dir']);
+
+$dir = preg_replace('#%u([0-9A-F]{4})#se','iconv("UTF-16BE","UTF-8",pack("H4","$1"))',$_GET['defaultloader']);
+if(empty($dir)){
+	$dir = preg_replace('#%u([0-9A-F]{4})#se','iconv("UTF-16BE","UTF-8",pack("H4","$1"))',$_GET['dir']);	
+}
+
+
 $del = $_GET['del'];
 $deleteforever = $_GET['delf'];
 $link	=	$_GET['linkdir'];
@@ -148,7 +154,7 @@ if(!empty($link)){
 	$faction->makelink($file,$destination,$mainfile,$param,$link,$newname,$puplicname,$ico);
 }
 
-if ($dir==''){
+if (empty($dir)){
 	$dir='../../../';
 }
 if(!is_dir($dir)){
