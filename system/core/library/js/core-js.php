@@ -38,11 +38,11 @@ function makeprocess(dest,  param,  key,  name){
 };
 
 function ProcessLogic(id, name, destination, destination_, maxwidthm, folder, click, key, param, autohide){
-  $( "#app" + id ).draggable({containment:"body",handle:"#drag" + id, snap:".ui-body, .dragwindowtoggle, #topbar"});
-  $( "#app" + id ).resizable({containment:"body",minHeight:$(window).height()*0.15,minWidth:$(window).width()*0.15,maxWidth:$(window).width()*maxwidthm,maxHeight:$(window).height()*0.95,autoHide:autohide,alsoResize:"#"+name+id});
-  $( "#app" + id ).click(function(){$("#app" + id ).addClass("windowactive")});
+  $("#app" + id).draggable({containment:"body",handle:"#drag" + id, snap:".ui-body, .dragwindowtoggle, #topbar"});
+  $("#app" + id).resizable({containment:"body",minHeight:$(window).height()*0.15,minWidth:$(window).width()*0.15,maxWidth:$(window).width()*maxwidthm,maxHeight:$(window).height()*0.95,autoHide:autohide,alsoResize:"#"+name+id});
+  $("#app" + id).click(function(){$("#app" + id ).addClass("windowactive")});
   $( "#drag" + id ).click(function(){$("#app" + id ).addClass("windowactive")});
-  $( "#drag" + id ).dblclick(function(){$("#app" + id ).css({top:"29px",left:"0"})});
+  $( "#drag" + id ).dblclick(function(){$("#app" + id ).css({top:"29px",left:"0"});});
   $( ".window" ).mouseup(function(){$(".window").removeClass("windowactive")});
   if(!$("#process" + id).hasClass('hibernatethis')){
     $("#" + id).load(""+destination+"?id=<?echo rand(0,10000)?>&appid="+id+"&appname="+name+"&destination="+folder+"/&mobile="+click+"&"+key+"="+param);
@@ -57,20 +57,36 @@ function ProcessLogic(id, name, destination, destination_, maxwidthm, folder, cl
   };
   $( ".hidewindow" + id ).on( "click", function() {
     runEffect();
-    if($( "#app" + id ).hasClass("ui-resizable")){
-        $( "#app" + id ).resizable({disabled:true,containment:"body"});
+    if($("#app" + id).hasClass("ui-resizable")){
+        $("#app" + id).resizable({disabled:true,containment:"body"});
       }
-      if($( "#app" + id ).hasClass("windowborderhide")){
-        $( "#app" + id ).resizable({disabled:false,containment:"body",minHeight:$(window).height()*0.15,minWidth:$(window).width()*0.15,maxWidth:$(window).width()*maxwidthm,maxHeight:$(window).height()*0.95,autoHide:autohide,alsoResize:"#"+name+id});
+      if($("#app" + id).hasClass("windowborderhide")){
+        $("#app" + id).resizable({disabled:false,containment:"body",minHeight:$(window).height()*0.15,minWidth:$(window).width()*0.15,maxWidth:$(window).width()*maxwidthm,maxHeight:$(window).height()*0.95,autoHide:autohide,alsoResize:"#"+name+id});
       }
       $( "#drag" + id ).toggleClass( "dragwindowtoggle", 500 );
-      $( "#app" + id ).toggleClass( "windowborderhide", 500 );
-      $( "#app" + id ).toggleClass( "bordertoggle", 1 );
+      $("#app" + id).toggleClass( "windowborderhide", 500 );
+      $("#app" + id).toggleClass( "bordertoggle", 1 );
     });
   $(".reload" + id).on( "click", function() {
     $("#" + id).load(""+destination_+"?id=<?echo rand(0,10000)?>&appid="+id+"&appname="+name+"&destination="+folder+"/&mobile="+click+"&"+key+"="+param);
   });
+  $("#app" + id).resize(function(){
+      $("#app" + id).attr("ww", $("#"+name+id).css("width"));
+      $("#app" + id).attr("wh", $("#"+name+id).css("height"));
+  });
   $("#drag" + id ).on( "dblclick", function() {
+    if(!$("#app" + id).hasClass("windowfullscreen")){
+      $("#app" + id).attr("ww", $("#"+name+id).css("width"));
+      $("#app" + id).attr("wh", $("#"+name+id).css("height"));
+      $("#app" + id).css("width","");
+      $("#app" + id).css("height","");
+    }
+    if($("#app" + id).hasClass("windowfullscreen")){
+      $("#"+name+id).css("width",$("#app" + id).attr("ww"));
+      $("#"+name+id).css("height",$("#app" + id).attr("wh"));
+      $("#app" + id).css("top","25%");
+      $("#app" + id).css("left","25%");
+    }
     $("#app" + id ).toggleClass( "windowfullscreen", 100, function(){
         UpdateWindow(id,name);
       });
