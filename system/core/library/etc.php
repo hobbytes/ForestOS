@@ -20,18 +20,26 @@ class info{
             if (!$browser && strpos($agent, 'Gecko')) return 'Browser based on Gecko'; // для неопознанных браузеров проверяем, если они на движке Gecko, и возращаем сообщение об этом
             return $browser.' '.$version; // для всех остальных возвращаем браузер и версию
     }
+
     function writestat($alarmbody,$folder){
       include '../bd.php';
       global $getdata, $getstat, $security;
+      $maxFileSize = '1000'; //Max size for journal file
+      $currentFileSize = filesize($folder); //current size of journal file
       $bd = new readbd;
       $bd->readglobal2("password","forestusers","login",$_SESSION['superuser']);
-      $key=$getdata;
-      $date= date("d.m.y,H:i:s");
+      $key  = $getdata;
+      $date = date("d.m.y,H:i:s");
       $ip = $_SERVER["REMOTE_ADDR"];
       $browser  = $this->browser($_SERVER["HTTP_USER_AGENT"]);
       $text = $alarmbody.': ['.$date.'] browser:'.$browser.', ip:'.$ip;
       $this->readstat($folder);
-      $content  = $getstat.PHP_EOL.$text;
+      if($currentFileSize > $maxFileSize){
+          $_getstat = preg_replace('/^.+\n/', '', $getstat);
+          $content  = "$_getstat\n$text";
+      }else{
+        $content  = "$getstat\n$text";
+      }
       $text = $security->__encode($content, $key);
       file_put_contents($folder,$text);
     }
