@@ -24,8 +24,8 @@ class info{
     function writestat($alarmbody,$folder){
       include '../bd.php';
       global $getdata, $getstat, $security;
-      $maxFileSize = '1000'; //Max size for journal file
-      $currentFileSize = filesize($folder); //current size of journal file
+      //$maxFileSize = '10000'; //Max size for journal file
+      //$currentFileSize = filesize($folder); //current size of journal file
       $bd = new readbd;
       $bd->readglobal2("password","forestusers","login",$_SESSION['superuser']);
       $key  = $getdata;
@@ -34,12 +34,13 @@ class info{
       $browser  = $this->browser($_SERVER["HTTP_USER_AGENT"]);
       $text = $alarmbody.': ['.$date.'] browser:'.$browser.', ip:'.$ip;
       $this->readstat($folder);
-      if($currentFileSize > $maxFileSize){
-          $_getstat = preg_replace('/^.+\n/', '', $getstat);
+      /*if($currentFileSize > $maxFileSize){
+          $_getstat = preg_replace('/^.+\n/', '', nl2br($getstat));
           $content  = "$_getstat\n$text";
+          $content = str_replace('<br />','',$content);
       }else{
-        $content  = "$getstat\n$text";
-      }
+      */
+      $content  = "$getstat\n$text";
       $text = $security->__encode($content, $key);
       file_put_contents($folder,$text);
     }
