@@ -51,7 +51,9 @@ foreach (glob($_SERVER['DOCUMENT_ROOT']."/system/apps/*/main.php") as $filenames
 
   $get_name = preg_match('/apps.*?\/(.*?)\/main.php/',$filenames, $app_name);
   $_app_name = $app_name[1];
-  $app_icon = 'system/apps/'.$_app_name.'/app.png';
+  $info = file_get_contents('http://'.$_SERVER['HTTP_HOST'].'/system/apps/'.$_app_name.'/main.php?getinfo=true&h='.md5(date('dmyhis')));
+  $arrayInfo = json_decode($info);
+  $app_icon = 'system/apps/'.$_app_name.'/app.png?h='.md5($arrayInfo->{'version'});
   $app_name = str_replace('_', ' ', $_app_name);
 
   if(!in_array($_app_name, $warn_apps)){
@@ -59,9 +61,6 @@ foreach (glob($_SERVER['DOCUMENT_ROOT']."/system/apps/*/main.php") as $filenames
   }else{
     $delete_button = '';
   }
-
-  $info = file_get_contents('http://'.$_SERVER['HTTP_HOST'].'/system/apps/'.$_app_name.'/main.php?getinfo=true&h='.md5(date('dmyhis')));
-  $arrayInfo = json_decode($info);
 
   $version = $arrayInfo->{'version'};
   if(empty($version)){

@@ -2,7 +2,7 @@
 if($_GET['getinfo'] == 'true'){
 	include '../../core/library/etc/appinfo.php';
 	$appinfo = new AppInfo;
-	$appinfo->setInfo('Explorer', '1.0', 'Forest Media', 'Проводник');
+	$appinfo->setInfo('Explorer', '1.0.1', 'Forest Media', 'Проводник');
 }
 $appname=$_GET['appname'];
 $appid=$_GET['appid'];
@@ -22,7 +22,7 @@ $security	=	new security;
 
 $dir = preg_replace('#%u([0-9A-F]{4})#se','iconv("UTF-16BE","UTF-8",pack("H4","$1"))',$_GET['defaultloader']);
 if(empty($dir)){
-	$dir = preg_replace('#%u([0-9A-F]{4})#se','iconv("UTF-16BE","UTF-8",pack("H4","$1"))',$_GET['dir']);	
+	$dir = preg_replace('#%u([0-9A-F]{4})#se','iconv("UTF-16BE","UTF-8",pack("H4","$1"))',$_GET['dir']);
 }
 
 
@@ -42,9 +42,11 @@ $security->appprepare();
 //Загружаем файл локализации
 $cl = $_SESSION['locale'];
 $explorer_lang  = parse_ini_file('assets/lang/'.$cl.'.lang');
+
+//delete
 if($erasestatus){
-$faction->deleteDir($dir);
-mkdir($dir);
+	$faction->deleteDir($dir);
+	mkdir($dir);
 }
 
 if (isset($_GET['makefile'])){
@@ -278,9 +280,9 @@ while (false !== ($entry=$d->read())) {
 	$path	=	$d->path;
 	$name	=	$entry;
 	if ($entry	!=	'..'){
-		$color	=	'#ffee00';
+		$color	=	'transparent';
 		$extension	=	'';
-		$type	=	$folder.'/assets/folderico.png';
+		$type	=	$folder.'assets/folderico.png?h=u';
 		try {
 			$fo->size_check(realpath(realpath($entry)));
 			$fo->format($size);
@@ -318,7 +320,7 @@ while (false !== ($entry=$d->read())) {
 		}else{
 			$extension	=	stristr($name, '.');
 			$extension	=	mb_strtolower(str_replace('.','',$extension));
-			$type	=	$folder.'/assets/fileico.png';
+			$type	=	$folder.'assets/fileico.png?h=u';
 			if($extension	==	'png'  || $extension	==	'jpg' || $extension	==	'jpeg' || $extension	==	'bmp' || $extension	==	'gif'){
 				$color='transparent';
 				$hashfileprefix	= $faction->filehash($entry,'false');
@@ -350,8 +352,8 @@ while (false !== ($entry=$d->read())) {
 		}
 	}
 
-	echo('<div id="'.realpath($entry).'" class="'.md5($name).' select ui-button ui-widget ui-corner-all explorer-object" onClick="'.$select.'" on'.$click.'="'.$load.'"  style="cursor:default; height:128px;	margin:5px;	text-align:center;	width:128px;	position:relative;	display:block;	text-overflow:ellipsis;	overflow:hidden;	float:left; transition:all 0.05s ease-out;" title="'.$name.'"><div style="cursor:default; width:80px; height:80px; background-image: url('.$type.'); background-size:cover; -webkit-user-select:none; user-select:none; padding:5px; background-color:'.$color.'; margin:auto; color:#d05858; font-size:25px;">
-	'.$extension.'</div><div style="text-overflow: ellipsis;overflow: hidden;font-size: 15px;"><span style="color:'.$n_color.'; white-space:nowrap;">'.$name.'</span><div style="font-size:10px; padding:5px; color:#688ad8;">'.$datecreate.'</div></div></div>');
+	echo('<div id="'.realpath($entry).'" class="'.md5($name).' select ui-button ui-widget ui-corner-all explorer-object" onClick="'.$select.'" on'.$click.'="'.$load.'"  style="cursor:default; height:128px;	margin:5px;	text-align:center;	width:128px;	position:relative;	display:block;	text-overflow:ellipsis;	overflow:hidden;	float:left; transition:all 0.05s ease-out;" title="'.$name.'"><div style="cursor:default; width:80px; height:80px; background-image: url('.$type.'); background-size:cover; -webkit-user-select:none; user-select:none; padding:5px; background-color:'.$color.'; margin:auto;">
+	<div style="margin-top:22px; color:#d05858; font-size:17px; font-weight:900;">'.$extension.'</div></div><div style="text-overflow: ellipsis;overflow: hidden;font-size: 15px;"><span style="color:'.$n_color.'; white-space:nowrap;">'.$name.'</span><div style="font-size:10px; padding:5px; color:#688ad8;">'.$datecreate.'</div></div></div>');
 }
 }
 $dir->close;
