@@ -29,6 +29,7 @@
     public function start()
     {
       global $hashfile,$getdata,$mobile,$infob,$click,$top,$left,$maxwidth;
+      $dir = 'system/users/'.$_SESSION["loginuser"].'/settings/';
       //  # get superuser
       $bd = new readbd;
       $bd->readglobal2("status","forestusers","login",$_SESSION["loginuser"]);
@@ -45,11 +46,11 @@
       }
 
       // # check lang
-      $_SESSION['locale'] = file_get_contents('system/users/'.$_SESSION["loginuser"].'/settings/language.foc');
+      $_SESSION['locale'] = file_get_contents($dir.'language.foc');
       if(empty($_SESSION['locale'])){
         $_SESSION['locale'] = file_get_contents('system/users/'.$_SESSION['superuser'].'/settings/language.foc');
         if(empty($_SESSION['locale'])){
-        file_put_contents('system/users/'.$_SESSION["loginuser"].'/settings/language.foc','en');
+        file_put_contents($dir.'language.foc','en');
         $_SESSION['locale'] = 'en';
       }
       }
@@ -75,8 +76,17 @@
       <script src="<? echo $hashfile->filehash('system/core/library/js/jquery.mousewheel.min.js')?>"></script>
       </head>
       <?
-      if (function_exists('date_default_timezone_set'))
-      date_default_timezone_set('Europe/Moscow');
+      // # check timezone
+      $_SESSION['timezone'] = file_get_contents($dir.'timezone.foc');
+      if(empty($_SESSION['locale'])){
+        $_SESSION['timezone'] = file_get_contents('system/users/'.$_SESSION['superuser'].'/settings/timezone.foc');
+        if(empty($_SESSION['timezone'])){
+        file_put_contents($dir.'timezone.foc','en');
+        $_SESSION['timezone'] = 'Europe/Moscow';
+      }
+      }
+      $timezone = $_SESSION['timezone'];
+      date_default_timezone_set("$timezone");
     }
 
 /*---------load wall---------*/
