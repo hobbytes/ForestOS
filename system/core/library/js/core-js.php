@@ -153,7 +153,7 @@ function UpdateWindow(id,name){
       var notificationColor = $(".action-buttons").css('background-color');
       //notification loader
 
-      $.get("<?echo $folder.'functions/NotificationLoader.php'?>", function(data){
+      $.get("<?echo $folder.'functions/NotificationLoader'?>", function(data){
         if(data && (data = $.trim(data))){
           $(data).appendTo("#notification-container");
           var ntf = $(".notificationclass").length;
@@ -168,7 +168,7 @@ function UpdateWindow(id,name){
 
       //notification checker
       var notificationTimer = setInterval(function(){
-        $.get("<?echo $folder.'services/NotificationChecker.php'?>", function(data){
+        $.get("<?echo $folder.'services/NotificationChecker'?>", function(data){
           if(data && (data = $.trim(data))){
             $("#notification-container").css('display','block');
             $(data).prependTo("#notification-container");
