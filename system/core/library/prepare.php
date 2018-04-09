@@ -71,7 +71,6 @@
       <link rel="stylesheet" href="<? echo $hashfile->filehash('system/core/design/jquery-ui.css')?>">
       <script src="<? echo $hashfile->filehash('system/core/library/js/jquery-1.12.4.js')?>"></script>
       <script src="<? echo $hashfile->filehash('system/core/library/js/jquery-ui.js')?>"></script>
-      <script src="<? echo $hashfile->filehash('system/core/library/js/time.js')?>"></script>
       <script src="<? echo $hashfile->filehash('system/core/library/js/jquery.ui.touch-punch.min.js')?>"></script>
       <script src="<? echo $hashfile->filehash('system/core/library/js/jquery.mousewheel.min.js')?>"></script>
       </head>
@@ -87,6 +86,7 @@
       }
       $timezone = $_SESSION['timezone'];
       date_default_timezone_set("$timezone");
+      include 'js/time.php';
     }
 
 /*---------load wall---------*/
