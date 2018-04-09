@@ -53,14 +53,12 @@ if (isset($_GET["exit"])) {
 }
 
 if(!$_SESSION['BlockDate'] || date('d-m-y H:i:s') >= $_SESSION['BlockDate']){
-  unset($_SESSION['counter']);// clear counter
   $_SESSION['BlockDate'] = false;
   $gui = new gui;
   $gui->formstart('POST');
   $gui->inputslabel('Логин', 'text', 'loginin', "$login_get",'70', $language[$_SESSION['locale'].'_login_input']);
   $gui->inputslabel('Пароль', 'password', 'passwordin', '','70', $language[$_SESSION['locale'].'_password_input']);
 }else{
-
   $date = strtotime($_SESSION['BlockDate']) - strtotime(date('d-m-y H:i:s'));
   $timeleft = round(abs($date/60));
   echo '<h2 style="color:#fff; background-color:#ec6767; border:2px solid #791a1a; width:350px; padding:13px 0; margin:10px auto; font-size:small;">'.$language[$_SESSION['locale'].'_login_error_2'].$timeleft.' min</h2>';

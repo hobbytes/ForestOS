@@ -27,7 +27,7 @@ ru_password_input = введите пароль
 ru_safemode_label = безопасный режим
 ru_login_button = Войти
 ru_login_error = 'Неверно введен логин или пароль'
-ru_login_error_2 = 'Слишком много попыток, попробуйте через: '
+ru_login_error_2 = 'Слишком много попыток, попробуйте снова через: '
 
 en_login_input = enter login
 en_password_input = enter password
