@@ -15,16 +15,30 @@ if ($status2  !=  '')
   $passwordin=$security->crypt_s(addslashes(strip_tags(htmlspecialchars($_POST['passwordin']))),$loginin);
 }
 session_start();
+if(!isset($_SESSION['counter'])){// prepare counter for capthca
+  $_SESSION['counter'] = 0;
+}
+if(!isset($_SESSION['BlockDate'])){// prepare counter for capthca
+  $_SESSION['BlockDate'] = false;
+}
+
 $auth = new AuthClassUser();
 $auth->construct('login',$loginin);
 if (isset($loginin) && isset($passwordin)) {
   $_SESSION['safemode'] = $_POST['safemode'];
   if (!$auth->auth($loginin, $passwordin)) {
-    echo "<h2 style=\"color:#fff; background-color:#ec6767; border:2px solid #791a1a; width:350px; padding:13px 0; margin:10px auto; font-size:small;\">Логин или пароль введен не правильно!</h2>";
-    $login_get=$loginin;
+    echo '<h2 style="color:#fff; background-color:#ec6767; border:2px solid #791a1a; width:350px; padding:13px 0; margin:10px auto; font-size:small;">'.$language[$_SESSION['locale'].'_login_error'].'</h2>';
+    $login_get = $loginin;
     $infob->writestat('WARNING! Wrong login or password -> '.$loginin,'system/core/journal.mcj');
+
+    $_SESSION['counter'] = $_SESSION['counter'] + 1;// count
+    if($_SESSION['counter'] >= 2 && !$_SESSION['BlockDate']){
+      $startDate  = time();
+      $_SESSION['BlockDate'] = date('d-m-y H:i:s', strtotime("+10 min", $startDate));
+    }
   }
 }
+//echo $_SESSION['BlockDate'];
 
 if (isset($_GET["exit"])) {
   if ($_GET["exit"] == 1) {
@@ -34,11 +48,24 @@ if (isset($_GET["exit"])) {
   if ($auth->isAuth()) {
     header("Location:os.php");
     $infob->writestat('Success Login  -> '.$loginin,'system/core/journal.mcj');
+    unset($_SESSION['counter']);// clear counter
+    $_SESSION['BlockDate'] = false;
 }
-$gui = new gui;
-$gui->formstart('POST');
-$gui->inputslabel('Логин', 'text', 'loginin', "$login_get",'70', $language[$_SESSION['locale'].'_login_input']);
-$gui->inputslabel('Пароль', 'password', 'passwordin', '','70', $language[$_SESSION['locale'].'_password_input']);
+
+if(!$_SESSION['BlockDate'] || date('d-m-y H:i:s') >= $_SESSION['BlockDate']){
+  unset($_SESSION['counter']);// clear counter
+  $_SESSION['BlockDate'] = false;
+  $gui = new gui;
+  $gui->formstart('POST');
+  $gui->inputslabel('Логин', 'text', 'loginin', "$login_get",'70', $language[$_SESSION['locale'].'_login_input']);
+  $gui->inputslabel('Пароль', 'password', 'passwordin', '','70', $language[$_SESSION['locale'].'_password_input']);
+}else{
+
+  $date = strtotime($_SESSION['BlockDate']) - strtotime(date('d-m-y H:i:s'));
+  $timeleft = round(abs($date/60));
+  echo '<h2 style="color:#fff; background-color:#ec6767; border:2px solid #791a1a; width:350px; padding:13px 0; margin:10px auto; font-size:small;">'.$language[$_SESSION['locale'].'_login_error_2'].$timeleft.' min</h2>';
+}
+
 ?>
 <div id="safemode" style="color:#63e47a; margin:10px 0; display:none;"><input type="checkbox" name="safemode" value="true" style="vertical-align:top; margin: 0 3px 0 0; width:17px; height:17px;"><?echo $language[$_SESSION['locale'].'_safemode_label']?></div>
 <?

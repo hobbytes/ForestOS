@@ -26,11 +26,15 @@ ru_login_input = введите логин
 ru_password_input = введите пароль
 ru_safemode_label = безопасный режим
 ru_login_button = Войти
+ru_login_error = 'Неверно введен логин или пароль'
+ru_login_error_2 = 'Слишком много попыток, попробуйте через: '
 
 en_login_input = enter login
 en_password_input = enter password
 en_safemode_label = safe mode
 en_login_button = Login
+en_login_error = 'Incorrect login or password'
+en_login_error_2 = 'too many attempts, try again after: '
 
 
 [daysofweek]
