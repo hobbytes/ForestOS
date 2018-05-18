@@ -1,0 +1,18 @@
+[about]
+ru_settings_about = О системе
+ru_version_label  = Версия
+ru_revision_label = сборка
+ru_subversion_label = версия сборки
+ru_user_label = Пользователь
+ru_username_label = Имя учетной записи
+ru_capacity_label = Диск
+ru_capacityused_label  = Занято
+
+en_settings_label = Settings
+en_version_label  = Version
+en_revision_label = build name
+en_subversion_label = build version
+en_user_label = User
+en_username_label = User name
+en_capacity_label = Capacity
+en_capacityused_label  = Used

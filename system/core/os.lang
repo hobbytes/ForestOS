@@ -1,0 +1,62 @@
+[forestmenu]
+ru_explorer_menu  = Проводник
+ru_settings_menu  = Параметры
+ru_store_menu  = Магазин
+ru_about_menu  = О системе
+ru_restart = перезагрузка
+ru_memoryrestart = мягкая перезагрузка
+ru_hibernation = гибернация
+ru_exit = выход
+ru_notification_label = Центр уведомлений
+ru_notification_clear = Отчистить
+
+en_explorer_menu  = Explorer
+en_settings_menu  = Settings
+en_store_menu  = Store
+en_about_menu  = About
+en_restart = reset
+en_memoryrestart = soft reset
+en_hibernation = hibernation
+en_exit = exit
+en_notification_label = Notification Center
+en_notification_clear = Clear All
+
+[login]
+ru_login_input = введите логин
+ru_password_input = введите пароль
+ru_safemode_label = безопасный режим
+ru_login_button = Войти
+ru_login_error = 'Неверно введен логин или пароль'
+ru_login_error_2 = 'Слишком много попыток, попробуйте снова через: '
+
+en_login_input = enter login
+en_password_input = enter password
+en_safemode_label = safe mode
+en_login_button = Login
+en_login_error = 'Incorrect login or password'
+en_login_error_2 = 'too many attempts, try again after: '
+
+
+[daysofweek]
+ru_monday = Понедельник
+ru_tuesday = Вторник
+ru_wednesday = Среда
+ru_thursday = Четверг
+ru_friday = Пятница
+ru_saturday = Суббота
+ru_sunday = Воскресенье
+
+en_monday = Monday
+en_tuesday = Tuesday
+en_wednesday = Wednesday
+en_thursday = Thursday
+en_friday = Friday
+en_saturday = Saturday
+en_sunday = Sunday
+
+[hibernation]
+ru_hibernation_name = Гибернация
+ru_hibernation_notification = 'Систем успешно загрузилась после режима гибернации. <br>Дата гибернации:'
+
+en_hibernation_name = Hibernation
+en_hibernation_notification = 'The system successfully booted after the hibernation mode.<br> Hibernation Date:'

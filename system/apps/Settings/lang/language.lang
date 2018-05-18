@@ -1,0 +1,16 @@
+[language]
+ru_settings_language = Язык и регион
+ru_label_choose = Язык
+ru_zone_choose = Регион
+ru_button_save = Сохранить
+ru_save_lang  = 'Язык системы и регион был изменен. Перезагрузите систему, чтобы изменения вступили в силу'
+
+en_settings_language = 'Language & Region'
+en_label_choose = Language
+en_zone_choose = Time zone
+en_button_save = Save
+en_save_lang  = 'The language and timezone of the system was changed. Restart the system for the changes to take effect'
+
+[etc]
+ru_restart  = Перезагрузить
+en_restart  = Restart

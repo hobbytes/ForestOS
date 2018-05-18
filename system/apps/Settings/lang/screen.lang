@@ -1,0 +1,59 @@
+[screen]
+ru_settings_screen = Персонализация
+ru_displaytab = Дисплей
+ru_window_label = Окно
+ru_control_label = Элементы управления
+ru_left_label = Слева
+ru_right_label = Справа
+ru_windowsize_label = Размер окна
+ru_correct_label = Коррекция
+ru_contrast_label = Констраст
+ru_brightness_label = Яркость
+ru_saturate_label = Насыщенность
+ru_display_label = Дисплей
+ru_scale_label = Масштабирование
+ru_rotate_label = Вращение
+ru_smooth_label = Плавность
+ru_themetab = Цветовые темы
+ru_walltab = Фоновые изображения
+ru_current_label  = Текущая
+ru_clear_label  = Убрать
+ru_notwalldelete  = 'Фоновое изображение удалено'
+ru_notwallchange  = 'Фоновое изображение рабочего стола изменено'
+ru_notthemechange_1 = 'Цветовая тема изменена на '
+ru_notthemechange_2 = 'Перезагрузите систему, чтобы изменения вступили в силу'
+ru_notthemeerror  = 'Произошла ошибка! Тема не установлена'
+
+en_settings_screen = Personalization
+en_displaytab = Display
+en_window_label = Window
+en_control_label = Control element
+en_left_label = Left
+en_right_label = Right
+en_windowsize_label = Window size
+en_correct_label = Adjustment
+en_contrast_label = Constrast
+en_brightness_label = Brightness
+en_saturate_label = Saturation
+en_display_label = Display
+en_scale_label = Scaling
+en_rotate_label = Rotation
+en_smooth_label = Smoothness
+en_themetab = Color themes
+en_walltab = Background images
+en_current_label  = Current
+en_clear_label  = Clear
+en_notwalldelete  = 'Background image deleted'
+en_notwallchange  = 'Desktop background image changed'
+en_notthemechange_1 = 'The color theme has been changed to '
+en_notthemechange_2 = 'Restart the system for the changes to take effect.'
+en_notthemeerror  = 'An error has occurred! Theme not installed'
+
+[etc]
+ru_restart  = Перезагрузить
+ru_save_button  = Сохранить
+ru_reset_button  = Сброс настроек
+
+en_restart  = Restart
+en_save_button  = Save
+en_reset_button  = Reset

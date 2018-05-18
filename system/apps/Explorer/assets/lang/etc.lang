@@ -1,0 +1,35 @@
+[upload]
+ru_upload = Загрузка файла
+ru_btn_load = Загрузить
+ru_btn_cancel = Отмена
+
+en_upload = Upload file
+en_btn_load = Upload
+en_btn_cancel = Cancel
+
+[property]
+ru_prop_type = Папка с файлами
+ru_prop_type_label = Тип
+ru_prop_destination_label = Расположение
+ru_prop_size_label = Размер
+ru_prop_date_label = Дата последнего изменения
+ru_prop_attr_label = Атрибуты
+ru_prop_link_label = Прямая ссылка
+ru_prop_rename_label = Переименовать файл
+ru_prop_rename_button = Переименовать
+ru_attr_false = не
+ru_attr_1 = доступен для чтения
+ru_attr_2 = доступен для записи
+
+en_prop_type = Folder with files
+en_prop_type_label = Type
+en_prop_destination_label = Location
+en_prop_size_label = Size
+en_prop_date_label = Date of last change
+en_prop_attr_label = Attributes
+en_prop_link_label = Direct link
+en_prop_rename_label = Rename file
+en_prop_rename_button = Rename
+en_attr_false = not
+en_attr_1 = readable
+en_attr_2 = writable

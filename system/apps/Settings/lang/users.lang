@@ -1,0 +1,30 @@
+[users]
+ru_settings_users = Учетные записи
+ru_button_deleteuser  = Удалить пользователя
+ru_button_adduser  = Добавить пользователя
+ru_button_addrule  = Добавить права администратора
+ru_button_removerule  = Убрать права администратора
+ru_newuser_label  = Новый пользователь
+ru_inputuser_label  = Введите логин
+ru_inputpass_label  = Введите пароль
+ru_deleteusernot  = Пользователь удален
+ru_addrulenot  = Вы предоставили права администратора пользователю
+ru_removerulenot  = Вы убрали права администратора у пользователя
+ru_user_error = Произошла ошибка при удалении
+ru_user_error2 = Нельзя удалить учетную запись администратора
+ru_twinuser_error = 'Такой пользователь уже существует!'
+
+en_settings_users = Users
+en_button_deleteuser = Delete user
+en_button_adduser = Add user
+en_button_addrule = Add administrator rights
+en_button_removerule = Remove admin rights
+en_newuser_label = New user
+en_inputuser_label = Enter login
+en_inputpass_label = Enter password
+en_deleteusernot = User deleted
+en_addrulenot = you provide administrator rights to the user
+en_removerulenot = You removed admin rights from the user
+en_user_error = An error occurred while deleting
+en_user_error2 = You can not delete an administrator account
+en_twinuser_error = 'This user already exists!'

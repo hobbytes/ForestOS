@@ -1,0 +1,24 @@
+[security]
+ru_settings_security = Безопасность
+ru_changepassword_label = Изменение пароля
+ru_inputoldpass = Введите старый пароль
+ru_inputnewpass = Введите новый пароль
+ru_inputnewpass_2 = Введите новый пароль еще раз
+ru_button_change  = Поменять пароль
+ru_journal_label  = Журнал
+ru_button_journal  = Отчистить журнал
+ru_notchangepass  = 'Пароль изменен!'
+ru_notnewerrorpass  = 'Новые пароли не совпадают!'
+ru_notolderrorpass  = 'Вы ввели неправильный старый пароль!'
+
+en_settings_security = Security
+en_changepassword_label = Change Password
+en_inputoldpass = Enter old password
+en_inputnewpass = Enter a new password
+en_inputnewpass_2 = Enter the new password again
+en_button_change = Change Password
+en_journal_label = Log File
+en_button_journal = Clear log
+en_notchangepass = 'Password changed!'
+en_notnewerrorpass = 'New passwords do not match!'
+en_notolderrorpass = 'You have entered the wrong old password!'
