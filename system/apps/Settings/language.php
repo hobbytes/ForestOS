@@ -1,8 +1,8 @@
 <?
 //Инициализируем переменные
-$appid  = $_GET['appid'];
-$appname  = $_GET['appname'];
-$folder = $_GET['destination'];
+$AppID  = $_GET['appid'];
+$AppName  = $_GET['appname'];
+$Folder = $_GET['destination'];
 $choose_lang  = $_GET['choose_lang'];
 $choose_zone  = $_GET['choose_zone'];
 
@@ -12,8 +12,9 @@ $newgui = new gui;
 
 /* Make new container */
 $AppContainer = new AppContainer;
-$AppContainer->appName = $appname;
-$AppContainer->appID = $appid;
+$AppContainer->appName = $AppName;
+$AppContainer->appID = $AppID;
+$AppContainer->showStatistics = true;
 $AppContainer->StartContainer();
 
 $language_lang  = parse_ini_file('lang/language.lang');
@@ -23,7 +24,7 @@ $dir = '../../users/'.$_SESSION['loginuser'].'/settings/';
 if(!empty($choose_lang)){
   file_put_contents($dir.'language.foc',$choose_lang);
   file_put_contents($dir.'timezone.foc',$choose_zone);
-  $newgui->newnotification($appname,$language_lang[$_SESSION['locale'].'_settings_language'],$language_lang[$_SESSION['locale'].'_save_lang']."<br><span id='restart' style='margin-left: 25%;' class='ui-button ui-widget ui-corner-all'>".$language_lang[$_SESSION['locale'].'_restart']."</span>");
+  $newgui->newnotification($AppName,$language_lang[$_SESSION['locale'].'_settings_language'],$language_lang[$_SESSION['locale'].'_save_lang']."<br><span id='restart' style='margin-left: 25%;' class='ui-button ui-widget ui-corner-all'>".$language_lang[$_SESSION['locale'].'_restart']."</span>");
   $_SESSION['locale']  = $choose_lang;
   $_SESSION['timezone']  = $choose_zone;
   date_default_timezone_set("$choose_zone");
@@ -59,27 +60,26 @@ function tz_list() {
 
 ?>
 <div style="width:100%; text-align:left; padding-bottom:10px; font-size:30px; border-bottom:#d8d8d8 solid 2px; text-overflow:ellipsis; overflow:hidden;">
-<span onClick="back<?echo $appid;?>();" class="ui-forest" style="background-color:#d8d8d8; color:#000; border-radius:30%; cursor:pointer; font-size:25px; margin-left:5px;"> &#9668 </span><?echo $language_lang[$_SESSION['locale'].'_settings_language']?></div>
+<span onClick="back<?echo $AppID;?>();" class="ui-forest" style="background-color:#d8d8d8; color:#000; border-radius:30%; cursor:pointer; font-size:25px; margin-left:5px;"> &#9668 </span><?echo $language_lang[$_SESSION['locale'].'_settings_language']?></div>
 <?php
 /*Settings*/
-//Подключаем библиотеки
 ?>
-<div style="margin:15%; font-size:20px">
+<div style="margin:15%; font-size:20px; text-align:center;">
 <div>
-  <span>
+  <div>
     <?echo $language_lang[$_SESSION['locale'].'_label_choose']?>
-  </span>
-<select id="selectlang<?echo $appid?>" style="margin:10px; width:200px; font-size:20px; padding:10px; -webkit-appearance:none;">
+  </div>
+<select id="selectlang<?echo $AppID?>" style="margin:10px; width:200px; font-size:20px; padding:10px; -webkit-appearance:none;">
   <option value="ru">Русский</option>
   <option value="en">English</option>
 </select>
 </div>
 
+<div style="margin-top:10px;">
 <div>
-<span>
   <?echo $language_lang[$_SESSION['locale'].'_zone_choose']?>
-</span>
-<select id="selectzone<?echo $appid?>" style="margin:10px; width:200px; font-size:20px; padding:10px; -webkit-appearance:none;">
+</div>
+<select id="selectzone<?echo $AppID?>" style="margin:10px; width:200px; font-size:20px; padding:10px; -webkit-appearance:none;">
 <?
 foreach (tz_list() as $t) {
   $zone = $t['zone'];
@@ -89,20 +89,39 @@ foreach (tz_list() as $t) {
 </select>
 </div>
 
-<div onClick="savelang<?echo $appid?>();" class="ui-forest-button ui-forest-accept ui-forest-center"><?echo $language_lang[$_SESSION['locale'].'_button_save']?></div>
+<div onClick="savesettings<?echo $AppID?>();" class="ui-forest-button ui-forest-accept ui-forest-center"><?echo $language_lang[$_SESSION['locale'].'_button_save']?></div>
 </div>
 <?
 $AppContainer->EndContainer();
 ?>
 <script>
-$("#selectlang<?echo $appid?>").val("<?echo $current_lang?>");
-$("#selectzone<?echo $appid?>").val("<?echo $current_zone?>");
+$("#selectlang<?echo $AppID?>").val("<?echo $current_lang?>");
+$("#selectzone<?echo $AppID?>").val("<?echo $current_zone?>");
 
-function back<?echo $appid;?>(el){$("#<?echo $appid;?>").load("<?echo $folder?>/main.php?id=<?echo rand(0,10000).'&destination='.$folder.'&appname='.$appname.'&appid='.$appid;?>")};
-$( "#restart" ).on( "click", function() {return location.href = 'os.php';});
-function savelang<?echo $appid?>(){
-  var choose_lang = $("#selectlang<?echo $appid?>").val();
-  var choose_zone = $("#selectzone<?echo $appid?>").val();
-  $("#<?echo $appid;?>").load("<?echo $folder?>/language.php?choose_lang="+choose_lang+"&choose_zone="+choose_zone+"&id=<?echo rand(0,10000).'&destination='.$folder.'&appname='.$appname.'&appid='.$appid;?>");
-}
+<?
+// back button
+$AppContainer->Event(
+  "back",
+  NULL,
+  $Folder,
+  'main'
+);
+
+// savesettings
+$AppContainer->Event(
+  "savesettings",
+  NULL,
+  $Folder,
+  'language',
+  array(
+    'choose_lang' => '"+$("#selectlang'.$AppID.'").val()+"',
+    'choose_zone' => '"+$("#selectzone'.$AppID.'").val()+"'
+  )
+);
+
+?>
+
+$( "#restart" ).on( "click", function() {
+  return location.href = 'os.php';
+});
 </script>
