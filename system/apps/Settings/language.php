@@ -6,17 +6,16 @@ $Folder = $_GET['destination'];
 $choose_lang  = $_GET['choose_lang'];
 $choose_zone  = $_GET['choose_zone'];
 
-include '../../core/library/gui.php';
 require '../../core/library/Mercury/AppContainer.php';
-$newgui = new gui;
 
 /* Make new container */
 $AppContainer = new AppContainer;
 $AppContainer->appName = $AppName;
 $AppContainer->appID = $AppID;
-$AppContainer->showStatistics = true;
+$AppContainer->LibraryArray = array('gui');
 $AppContainer->StartContainer();
 
+$newgui = new gui;
 $language_lang  = parse_ini_file('lang/language.lang');
 
 $dir = '../../users/'.$_SESSION['loginuser'].'/settings/';

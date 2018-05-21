@@ -1,7 +1,7 @@
 [main]
 ru_settings_label = Параметры
 ru_settings_about = О системе
-ru_settings_screen = Персонализация
+ru_settings_personalization = Персонализация
 ru_settings_language = Язык и регион
 ru_settings_security = Безопасность
 ru_settings_users = Учетные записи
@@ -11,7 +11,7 @@ ru_settings_feedback = Обратная связь
 
 en_settings_label = Settings
 en_settings_about = About
-en_settings_screen = Personalization
+en_settings_personalization = Personalization
 en_settings_language = 'Language & Region'
 en_settings_security = Security
 en_settings_users = Users

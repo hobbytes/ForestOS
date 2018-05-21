@@ -1,8 +1,8 @@
 <?
 /*Explorer*/
 
-$appname = $_GET['appname'];
-$appid = $_GET['appid'];
+$AppName = $_GET['appname'];
+$AppID = $_GET['appid'];
 
 require $_SERVER['DOCUMENT_ROOT'].'/system/core/library/Mercury/AppContainer.php';
 
@@ -19,8 +19,8 @@ $AppContainer->AuthorInfo = 'Forest Media';
 $AppContainer->LibraryArray = Array('filesystem','bd','gui');
 
 /* Container Info */
-$AppContainer->appName = $appname;
-$AppContainer->appID = $appid;
+$AppContainer->appName = $AppName;
+$AppContainer->appID = $AppID;
 $AppContainer->height = '530px';
 $AppContainer->customStyle = 'padding-top:0px; max-width:100%;';
 $AppContainer->isMobile = $_GET['mobile'];
@@ -67,7 +67,7 @@ if (isset($_GET['makefile'])){
 		}
 		file_put_contents($dir.'/'.$newFile.$defaultExt,'');
 	}else{
-		$dialogexplorer->newnotification($appname,$appname,$explorer_lang['mfile_msg_1']);
+		$dialogexplorer->newnotification($AppName,$AppName,$explorer_lang['mfile_msg_1']);
 	}
 }
 // make new dir
@@ -75,10 +75,10 @@ if (isset($_GET['makedir'])){
 	if(!is_dir($dir.'/'.$_GET['makedir']))
 	{
 		if(!mkdir($dir.'/'.$_GET['makedir'],0755)){
-			$dialogexplorer->newnotification($appname,$appname,$explorer_lang['msg_1']." ".$_GET['makedir'].$explorer_lang['msg_2']);
+			$dialogexplorer->newnotification($AppName,$AppName,$explorer_lang['msg_1']." ".$_GET['makedir'].$explorer_lang['msg_2']);
 		}
 	}else{
-		$dialogexplorer->newnotification($appname,$appname,$explorer_lang['msg_3']);
+		$dialogexplorer->newnotification($AppName,$AppName,$explorer_lang['msg_3']);
 	}
 }
 //обрабатываем кнопки удаления и перемещения в корзину
@@ -208,11 +208,11 @@ $pathmain = str_replace($_SERVER['DOCUMENT_ROOT'],'',$pathmain);
 <div style="position:absolute; width:100%; z-index:1; background:#f2f2f2; border:1px solid #d4d4d4; box-shadow: 0 1px 2px rgba(0,0,0,0.065);">
 
 <div class="menucontainer" style="display: flex;">
-<div class="ui-forest-menu-button" onmouseover="$('#filemenu<?echo $appid?>').css('display','block')" onmouseout="$('#filemenu<?echo $appid?>').css('display','none')">
+<div class="ui-forest-menu-button" onmouseover="$('#filemenu<?echo $AppID?>').css('display','block')" onmouseout="$('#filemenu<?echo $AppID?>').css('display','none')">
 	<span><?echo $explorer_lang['menu_file_label']?></span>
-	<div id="filemenu<?echo $appid?>" style="display:none; cursor:default; position:absolute; z-index:1; background:#fff; width:auto; top:31px; left:4px;">
-<ul id="mmenu<?echo $appid?>" >
-	<li><div <?echo 'id="'.$dir.'/" class="loadthis" onClick="load'.$appid.'(this);" ';?> ><?echo $explorer_lang['menu_open_label']?></div></li>
+	<div id="filemenu<?echo $AppID?>" style="display:none; cursor:default; position:absolute; z-index:1; background:#fff; width:auto; top:31px; left:4px;">
+<ul id="mmenu<?echo $AppID?>" >
+	<li><div <?echo 'id="'.$dir.'/" class="loadthis" onClick="load'.$AppID.'(this);" ';?> ><?echo $explorer_lang['menu_open_label']?></div></li>
 	<li>
 		<div <?echo 'id="'.$dir.'/" class="loadas" ';?> ><?echo $explorer_lang['menu_openas_label']?></div>
 		<ul style="background:#fff;">
@@ -227,60 +227,60 @@ $pathmain = str_replace($_SERVER['DOCUMENT_ROOT'],'',$pathmain);
 			?>
 		</ul>
 	</li>
-	<li><div <?echo 'class="loadthis" onClick="mkfileshow'.$appid.'();" ';?> ><?echo $explorer_lang['menu_newfile_label']?></div></li>
-	<li><div <? echo 'id="'.$dir.'/" class="loadthis" onClick="getproperty'.$appid.'(this);"';?>><?echo $explorer_lang['menu_rename_label']?></div></li>
-	<li><div <?echo 'onClick="mkdirshow'.$appid.'();" ';?> ><?echo $explorer_lang['menu_md_label']?></div></li>
-	<li><div <?echo 'id="'.$dir.'/" class="mklink" onClick="link'.$appid.'(this);" ';?> ><?echo $explorer_lang['menu_ml_label']?></div></li>
-	<li><div <?echo 'class="loadthis" onClick="newload'.$appid.'('."'del'".',this.id)" ';?>><?echo $explorer_lang['menu_trash_label']?></div></li>
-	<li><div <?echo 'class="loadthis" onClick="newload'.$appid.'('."'delf'".',this.id)" ';?>><?echo $explorer_lang['menu_delete_label']?></div></li>
-	<li><div <? echo 'id="'.$dir.'/" onClick="loadshow'.$appid.'(this)"';?>><?echo $explorer_lang['menu_loadfile_label']?></div></li>
-	<li><div <? echo 'class="loadthis" onClick="newload'.$appid.'('."'zipfile'".',this.id)"';?>><?echo $explorer_lang['menu_zip_label']?></div></li>
-	<li><div <? echo 'id="'.$dir.'/" class="loadthis" onClick="getproperty'.$appid.'(this);"';?>><?echo $explorer_lang['menu_property_label']?></div></li>
+	<li><div <?echo 'class="loadthis" onClick="mkfileshow'.$AppID.'();" ';?> ><?echo $explorer_lang['menu_newfile_label']?></div></li>
+	<li><div <? echo 'id="'.$dir.'/" class="loadthis" onClick="getproperty'.$AppID.'(this);"';?>><?echo $explorer_lang['menu_rename_label']?></div></li>
+	<li><div <?echo 'onClick="mkdirshow'.$AppID.'();" ';?> ><?echo $explorer_lang['menu_md_label']?></div></li>
+	<li><div <?echo 'id="'.$dir.'/" class="mklink" onClick="link'.$AppID.'(this);" ';?> ><?echo $explorer_lang['menu_ml_label']?></div></li>
+	<li><div <?echo 'class="loadthis" onClick="newload'.$AppID.'('."'del'".',this.id)" ';?>><?echo $explorer_lang['menu_trash_label']?></div></li>
+	<li><div <?echo 'class="loadthis" onClick="newload'.$AppID.'('."'delf'".',this.id)" ';?>><?echo $explorer_lang['menu_delete_label']?></div></li>
+	<li><div <? echo 'id="'.$dir.'/" onClick="loadshow'.$AppID.'(this)"';?>><?echo $explorer_lang['menu_loadfile_label']?></div></li>
+	<li><div <? echo 'class="loadthis" onClick="newload'.$AppID.'('."'zipfile'".',this.id)"';?>><?echo $explorer_lang['menu_zip_label']?></div></li>
+	<li><div <? echo 'id="'.$dir.'/" class="loadthis" onClick="getproperty'.$AppID.'(this);"';?>><?echo $explorer_lang['menu_property_label']?></div></li>
 </ul>
 </div>
 </div>
 
-<div class="ui-forest-menu-button" onmouseover="$('#editmenu_<?echo $appid?>').css('display','block')" onmouseout="$('#editmenu_<?echo $appid?>').css('display','none')">
+<div class="ui-forest-menu-button" onmouseover="$('#editmenu_<?echo $AppID?>').css('display','block')" onmouseout="$('#editmenu_<?echo $AppID?>').css('display','none')">
 	<span><?echo $explorer_lang['menu_edit_label']?></span>
-	<div id="editmenu_<?echo $appid?>" style="display:none; cursor:default; position:absolute; z-index:1; background:#fff; width:auto; top:31px; left:68px;">
-<ul id="editmenu<?echo $appid?>" >
-	<li><div <?echo 'id="" class="loadthis" onClick="copy'.$appid.'(this.id);" ';?> ><?echo $explorer_lang['menu_copy_label']?></div></li>
-	<li class="pastebutton"><div <?echo 'id="" class="loadthis" onClick="paste'.$appid.'(this.id);" ';?> ><?echo $explorer_lang['menu_paste_label']?></div></li>
-	<li><div <?echo 'id="" class="loadthis" onClick="cut'.$appid.'(this.id);" ';?> ><?echo $explorer_lang['menu_cut_label']?></div></li>
+	<div id="editmenu_<?echo $AppID?>" style="display:none; cursor:default; position:absolute; z-index:1; background:#fff; width:auto; top:31px; left:68px;">
+<ul id="editmenu<?echo $AppID?>" >
+	<li><div <?echo 'id="" class="loadthis" onClick="copy'.$AppID.'(this.id);" ';?> ><?echo $explorer_lang['menu_copy_label']?></div></li>
+	<li class="pastebutton"><div <?echo 'id="" class="loadthis" onClick="paste'.$AppID.'(this.id);" ';?> ><?echo $explorer_lang['menu_paste_label']?></div></li>
+	<li><div <?echo 'id="" class="loadthis" onClick="cut'.$AppID.'(this.id);" ';?> ><?echo $explorer_lang['menu_cut_label']?></div></li>
 </ul>
 </div>
 </div>
 </div>
 
 <div style="margin-top:7px; border-top:1px solid #d4d4d4; padding-top:7px;">
-<div class="ui-forest-blink" style="padding:4px; background:#4d94ef; margin:0px 10px; border-radius:10px; color:#2b5182; float:left; width:20px;" id="<?echo $_SERVER['DOCUMENT_ROOT'].dirname($pathmain)?>" onclick="load<?echo $appid?>(this)">
+<div class="ui-forest-blink" style="padding:4px; background:#4d94ef; margin:0px 10px; border-radius:10px; color:#2b5182; float:left; width:20px;" id="<?echo $_SERVER['DOCUMENT_ROOT'].dirname($pathmain)?>" onclick="load<?echo $AppID?>(this)">
 	&#9668
 </div>
 <input style="-webkit-appearance:none; border:1px solid #ccc; width:80%; font-size:17px; margin: 0 5px 10px;" type="search" value="os<?echo $pathmain?>"></input>
 </div>
 </div>
-<div id="mkdirdiv<?echo $appid?>" style="z-index:1; position:fixed; display:none; top:25%; left:25%; background-color:#ededed; border:1px solid #797979; padding:20px; border-radius:6px; box-shadow:1px 1px 5px #000; width:min-content; text-align:center;">
-<label for="mkdirinput<?echo $appid?>">
+<div id="mkdirdiv<?echo $AppID?>" style="z-index:1; position:fixed; display:none; top:25%; left:25%; background-color:#ededed; border:1px solid #797979; padding:20px; border-radius:6px; box-shadow:1px 1px 5px #000; width:min-content; text-align:center;">
+<label for="mkdirinput<?echo $AppID?>">
 	<?echo $explorer_lang['mdir_label']?>
-	<input id="mkdirvalue<?echo $appid?>" style="font-size:20px; margin-bottom:10px;" name="mkdirinput<?echo $appid?>" type="text" value="">
+	<input id="mkdirvalue<?echo $AppID?>" style="font-size:20px; margin-bottom:10px;" name="mkdirinput<?echo $AppID?>" type="text" value="">
 </label>
-<span onclick="$('#mkdirdiv<?echo $appid?>').css('display','none');" style="width:70px;" class="ui-button ui-widget ui-corner-all">
+<span onclick="$('#mkdirdiv<?echo $AppID?>').css('display','none');" style="width:70px;" class="ui-button ui-widget ui-corner-all">
 	<?echo $explorer_lang['mdir_cancelbtn']?>
 </span>
-<span style="width:70px;" onClick="mkdirbtn<?echo $appid?>();" class="ui-button ui-widget ui-corner-all">
+<span style="width:70px;" onClick="mkdirbtn<?echo $AppID?>();" class="ui-button ui-widget ui-corner-all">
 	<?echo $explorer_lang['mdir_okbtn']?>
 </span>
 </div>
 
-<div id="mkfilediv<?echo $appid?>" style="z-index:1; position:fixed; display:none; top:25%; left:25%; background-color:#ededed; border:1px solid #797979; padding:20px; border-radius:6px; box-shadow:1px 1px 5px #000; width:min-content; text-align:center;">
-<label for="mkfileinput<?echo $appid?>">
+<div id="mkfilediv<?echo $AppID?>" style="z-index:1; position:fixed; display:none; top:25%; left:25%; background-color:#ededed; border:1px solid #797979; padding:20px; border-radius:6px; box-shadow:1px 1px 5px #000; width:min-content; text-align:center;">
+<label for="mkfileinput<?echo $AppID?>">
 	<?echo $explorer_lang['mfile_label']?>
-	<input id="mkfilevalue<?echo $appid?>" style="font-size:20px; margin-bottom:10px;" name="mkfileinput<?echo $appid?>" type="text" value="">
+	<input id="mkfilevalue<?echo $AppID?>" style="font-size:20px; margin-bottom:10px;" name="mkfileinput<?echo $AppID?>" type="text" value="">
 </label>
-<span onclick="$('#mkfilediv<?echo $appid?>').css('display','none');" style="width:70px;" class="ui-button ui-widget ui-corner-all">
+<span onclick="$('#mkfilediv<?echo $AppID?>').css('display','none');" style="width:70px;" class="ui-button ui-widget ui-corner-all">
 	<?echo $explorer_lang['mfile_cancelbtn']?>
 </span>
-<span style="width:70px;" onClick="mkfilebtn<?echo $appid?>();" class="ui-button ui-widget ui-corner-all">
+<span style="width:70px;" onClick="mkfilebtn<?echo $AppID?>();" class="ui-button ui-widget ui-corner-all">
 	<?echo $explorer_lang['mfile_okbtn']?>
 </span>
 </div>
@@ -309,11 +309,11 @@ while (false !== ($entry=$d->read())) {
 	}
 	if(preg_match('/'.$_SESSION["loginuser"].'\/trash/',$pathmain)){
 		?>
-		<div id="erasetrash<?echo $appid?>" onClick="erasetrash<?echo $appid?>();" class="ui-forest-button ui-forest-cancel" style="margin:5px; padding:64px 10px; float:left; display:none; height:14px;">
+		<div id="erasetrash<?echo $AppID?>" onClick="erasetrash<?echo $AppID?>();" class="ui-forest-button ui-forest-cancel" style="margin:5px; padding:64px 10px; float:left; display:none; height:14px;">
 			<b><?echo $explorer_lang['trash_label']?></b>
 		</div>
 		<script>
-		$('#erasetrash<?echo $appid?>').css('display','block');
+		$('#erasetrash<?echo $AppID?>').css('display','block');
 		</script>
 		<?
 	}
@@ -352,8 +352,8 @@ while (false !== ($entry=$d->read())) {
 		$name3="'".realpath($entry)."'";
 		$name4="'".$type."'";
 		$name5="'".$name."'";
-		$select	=	'select'.$appid.'('.$name2.','.$name3.','.$name4.','.$name5.');';
-		$load = 'load'.$appid.'(this);';
+		$select	=	'select'.$AppID.'('.$name2.','.$name3.','.$name4.','.$name5.');';
+		$load = 'load'.$AppID.'(this);';
 		$n_color	=	'#000';
 		if(eregi('system/users/',realpath($entry)) || eregi('system/core',realpath($entry))){
 			if($_SESSION['superuser'] != $_SESSION['loginuser'] && !eregi('system/users/'.$_SESSION['loginuser'],realpath($entry)) || $_SESSION['superuser'] != $_SESSION['loginuser'] && eregi('system/core',realpath($entry))){
@@ -370,7 +370,7 @@ while (false !== ($entry=$d->read())) {
 $dir->close;
 ?>
 </div>
-<div id="upload<?echo $appid?>" style="z-index:1; position:fixed; display:none; top:25%; left:25%; background-color:#ededed; border:1px solid #797979; padding:20px; border-radius:6px; box-shadow:1px 1px 5px #000;">
+<div id="upload<?echo $AppID?>" style="z-index:1; position:fixed; display:none; top:25%; left:25%; background-color:#ededed; border:1px solid #797979; padding:20px; border-radius:6px; box-shadow:1px 1px 5px #000;">
 </div>
 
 <div style="padding:0 10px; background-color:#f2f2f2; width:97%; top:97%; word-wrap:break-word; font-size:10px; float:right; position:absolute; text-align:right;">
@@ -421,8 +421,8 @@ $AppContainer->EndContainer();
 		array(
 			'where' => '"+object.id+"'
 		),
-		'$("#upload'.$appid.'").css(\'display\', \'block\');',
-		"upload$appid"
+		'$("#upload'.$AppID.'").css(\'display\', \'block\');',
+		"upload$AppID"
 	);
 
 	// erase trash
@@ -444,7 +444,7 @@ $AppContainer->EndContainer();
 		$Folder,
 		'main',
 		array(
-			'makedir' => '"+$("#mkdirvalue'.$appid.'").val()+"',
+			'makedir' => '"+$("#mkdirvalue'.$AppID.'").val()+"',
 			'dir' => realpath($entry)
 		)
 	);
@@ -456,7 +456,7 @@ $AppContainer->EndContainer();
 		$Folder,
 		'main',
 		array(
-			'makefile' => '"+escape($("#mkfilevalue'.$appid.'").val())+"',
+			'makefile' => '"+escape($("#mkfilevalue'.$AppID.'").val())+"',
 			'dir' => realpath($entry)
 		)
 	);
@@ -485,11 +485,11 @@ $AppContainer->EndContainer();
 	);
 ?>
 
-function getproperty<?echo $appid?>(obj){
+function getproperty<?echo $AppID?>(obj){
 	makeprocess('<?echo $Folder?>property.php',obj.id,'object','<?echo $explorer_lang['menu_property_label']?>');
 };
 
-function select<?echo $appid?>(folder,folder2,folder3,folder4){
+function select<?echo $AppID?>(folder,folder2,folder3,folder4){
 	$(".select").css('background-color','transparent');
 	$('.'+folder).css('background-color','#d4d4d4');
 	$(".loadthis").attr("id",folder2);
@@ -499,12 +499,12 @@ function select<?echo $appid?>(folder,folder2,folder3,folder4){
 	$(".mklink").attr("link",folder4);
 };
 
-function mkdirshow<?echo $appid?>(){
-	$("#mkdirdiv<?echo $appid?>").css('display','block')
+function mkdirshow<?echo $AppID?>(){
+	$("#mkdirdiv<?echo $AppID?>").css('display','block')
 };
 
-function mkfileshow<?echo $appid?>(){
-	$("#mkfilediv<?echo $appid?>").css('display','block')
+function mkfileshow<?echo $AppID?>(){
+	$("#mkfilediv<?echo $AppID?>").css('display','block')
 };
 
 function checkbutton(){
@@ -521,12 +521,12 @@ function checkbutton(){
 	}
 }
 
-function copy<?echo $appid?>(file){
+function copy<?echo $AppID?>(file){
 	localStorage.setItem('copy', file);
 	checkbutton();
 };
 
-function paste<?echo $appid?>(file){
+function paste<?echo $AppID?>(file){
 	var getFile = localStorage.getItem('copy');
 	var action = '';
 	if(getFile != null){
@@ -546,20 +546,20 @@ function paste<?echo $appid?>(file){
 			 a:action
 		}
 	}).done(function(o) {
-		reload<?echo $appid?>();
+		reload<?echo $AppID?>();
 });
 	checkbutton();
 };
 
-function cut<?echo $appid?>(file){
+function cut<?echo $AppID?>(file){
 	localStorage.removeItem('copy');
 	localStorage.setItem('cut', file);
 	checkbutton();
 };
 
 $(function(){
-	$("#editmenu<?echo $appid?>").menu();
-	$("#mmenu<?echo $appid?>").menu();
+	$("#editmenu<?echo $AppID?>").menu();
+	$("#mmenu<?echo $AppID?>").menu();
 	$("#makeprocess").remove();
 });
 checkbutton();

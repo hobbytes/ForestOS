@@ -26,16 +26,20 @@ $language_settings  = parse_ini_file('lang/main.lang');
 /* Settings */
 function newbutton($name_btn){
 	global $Folder,	$AppID,	$language_settings;
-	echo '<div id="'.$name_btn.'" class="ui-button ui-widget ui-corner-all" onClick="loadsettings'.$AppID.'(this);" style="word-wrap:break-word; text-overflow:ellipsis; text-align:center; position:relative; display:block; float:left; margin:5px; color:#000; width:83px; height:83px; padding:13px; font-size:12px; cursor:pointer;">
-	<div style="-webkit-user-select:none; margin:auto; user-select:none; background-image: url('.$Folder.'/icons/'.$name_btn.'.png); background-size:cover; height:50px; width:50px;">
+	echo '
+	<div id="'.$name_btn.'" class="ui-button ui-widget ui-corner-all" onClick="loadsettings'.$AppID.'(this);" style="word-wrap:break-word; text-overflow:ellipsis; text-align:center; position:relative; display:block; float:left; margin:5px; color:#000; width:83px; height:83px; padding:13px; font-size:12px; cursor:pointer;">
+		<div style="-webkit-user-select:none; margin:auto; user-select:none; background-image: url('.$Folder.'/icons/'.$name_btn.'.png); background-size:cover; height:50px; width:50px;">
+		</div>
+		<div>
+			'.$language_settings[$_SESSION['locale'].'_settings_'.$name_btn].'
+		</div>
 	</div>
-	<div>'.$language_settings[$_SESSION['locale'].'_settings_'.$name_btn].'</div>
-	</div>';
+	';
 }
 
 echo '<div style="width:100%; height:auto; float:left; border-bottom:1px solid #d6d6d6;">';
 newbutton('about');
-newbutton('screen');
+newbutton('personalization');
 newbutton('language');
 echo '</div>';
 

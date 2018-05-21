@@ -1,35 +1,39 @@
 <?
-//Инициализируем переменные
-$appid  = $_GET['appid'];
-$appname  = $_GET['appname'];
-$folder = $_GET['destination'];
+/* Autorun */
+
+/* get load data */
+$AppID  = $_GET['appid'];
+$AppName  = $_GET['appname'];
+$Folder = $_GET['destination'];
 $checked  = $_GET['checked'];
 $savestatus  = $_GET['save'];
-session_start();
+
 $language_autorun  = parse_ini_file('lang/autorun.lang');
 
 /* Make new container */
 require '../../core/library/Mercury/AppContainer.php';
 $AppContainer = new AppContainer;
-$AppContainer->appName = $appname;
-$AppContainer->appID = $appid;
+$AppContainer->appName = $AppName;
+$AppContainer->appID = $AppID;
+$AppContainer->LibraryArray = array('gui');
 $AppContainer->StartContainer();
+
 ?>
+
 <div style="width:100%; text-align:left; padding-bottom:10px; font-size:30px; border-bottom:#d8d8d8 solid 2px; text-overflow:ellipsis; overflow:hidden;">
-<span onClick="back<?echo $appid;?>();" class="ui-forest" style="background-color:#d8d8d8; color:#000; border-radius:30%; cursor:pointer; font-size:25px; margin-left:5px;"> &#9668 </span><?echo $language_autorun[$_SESSION['locale'].'_settings_autorun']?></div>
+<span onClick="back<?echo $AppID;?>();" class="ui-forest" style="background-color:#d8d8d8; color:#000; border-radius:30%; cursor:pointer; font-size:25px; margin-left:5px;"> &#9668 </span><?echo $language_autorun[$_SESSION['locale'].'_settings_autorun']?></div>
+
 <?php
-/*Settings*/
-//Подключаем библиотеки
-include '../../core/library/gui.php';
+
 $newgui = new gui;
-if($savestatus=='true'){
+if($savestatus == 'true'){
   file_put_contents('../../users/'.$_SESSION["loginuser"].'/settings/autorun.foc',$checked);
   if(empty($checked)){
     $text = $language_autorun[$_SESSION['locale'].'_autorun_msg1'];
   }else{
     $text = $language_autorun[$_SESSION['locale'].'_autorun_msg2'].": <b>$checked</b>";
   }
-  $newgui->newnotification($appname,$language_autorun[$_SESSION['locale'].'_settings_autorun'],$text);
+  $newgui->newnotification($AppName,$language_autorun[$_SESSION['locale'].'_settings_autorun'],$text);
   unset($text);
 }
 echo '<div class="checkboxfix" style="width:80%; text-align:left; margin:15px auto;"><fieldest>';
@@ -39,11 +43,11 @@ foreach (glob("../*/main.php") as $filename)
   $i++;
   $name = str_replace(array('main.php','..','/'),'',$filename);
   $pubname  = str_replace('_',' ',$name);
-  echo '<label for="checkbox'.$name.$appid.'">'.$pubname.'</label>';
-  echo '<input type="checkbox" class="checkboxclass'.$appid.'" id="checkbox'.$name.$appid.'" name="'.$name.'">';
+  echo '<label for="checkbox'.$name.$AppID.'">'.$pubname.'</label>';
+  echo '<input type="checkbox" class="checkboxclass'.$AppID.'" id="checkbox'.$name.$AppID.'" name="'.$name.'">';
 }
 echo '</fieldest></div>';
-echo '<hr><div onClick="saveautoset'.$appid.'();" class="ui-forest-button ui-forest-accept ui-forest-center">'.$language_autorun[$_SESSION['locale'].'_button_save'].'</div>';
+echo '<hr><div onClick="saveautoset'.$AppID.'();" class="ui-forest-button ui-forest-accept ui-forest-center">'.$language_autorun[$_SESSION['locale'].'_button_save'].'</div>';
 
 $content  = file_get_contents('../../users/'.$_SESSION["loginuser"].'/settings/autorun.foc');
 if($content){
@@ -51,7 +55,7 @@ if($content){
   foreach ($array as $value){
     ?>
     <script>
-    $("#checkbox<?echo $value.$appid?>").prop("checked",true);
+    $("#checkbox<?echo $value.$AppID?>").prop("checked",true);
     </script>
     <?
   }
@@ -60,18 +64,26 @@ if($content){
 $AppContainer->EndContainer();
 ?>
 <script>
+<?php
+// back button
+$AppContainer->Event(
+  "back",
+  NULL,
+  $Folder,
+  'main'
+);
+?>
 $(function(){
-  $(".checkboxclass<?echo $appid;?>").checkboxradio({
+  $(".checkboxclass<?echo $AppID;?>").checkboxradio({
     icon: false
   });
 });
-function back<?echo $appid;?>(el){$("#<?echo $appid;?>").load("<?echo $folder?>main.php?id=<?echo rand(0,10000).'&destination='.$folder.'&appname='.$appname.'&appid='.$appid;?>")};
-function saveautoset<?echo $appid;?>(){
-  var checkboxradio<?echo $appid;?> = [];
-  $('.checkboxclass<?echo $appid;?>:checked').each(function(){
-    checkboxradio<?echo $appid;?>.push(this.name);
+function saveautoset<?echo $AppID;?>(){
+  var checkboxradio<?echo $AppID;?> = [];
+  $('.checkboxclass<?echo $AppID;?>:checked').each(function(){
+    checkboxradio<?echo $AppID;?>.push(this.name);
   });
-  $("#<?echo $appid;?>").load("<?echo $folder?>autorun.php?checked="+escape(checkboxradio<?echo $appid;?>)+"&save=true&id=<?echo rand(0,10000).'&destination='.$folder.'&appname='.$appname.'&appid='.$appid;?>");
+  $("#<?echo $AppID;?>").load("<?echo $Folder?>autorun.php?checked="+escape(checkboxradio<?echo $AppID;?>)+"&save=true&id=<?echo rand(0,10000).'&destination='.$Folder.'&appname='.$AppName.'&appid='.$AppID;?>");
 };
 </script>
 <style>

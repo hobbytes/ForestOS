@@ -1,33 +1,44 @@
 <?
-//Инициализируем переменные
-$appid=$_GET['appid'];
-$appname=$_GET['appname'];
-$folder=$_GET['destination'];
-session_start();
+
+/* About */
+
+/* get load data */
+$AppID = $_GET['appid'];
+$AppName = $_GET['appname'];
+$Folder = $_GET['destination'];
+
+/* get localization file */
 $language_about  = parse_ini_file('lang/about.lang');
 
 /* Make new container */
 require '../../core/library/Mercury/AppContainer.php';
+
 $AppContainer = new AppContainer;
-$AppContainer->appName = $appname;
-$AppContainer->appID = $appid;
+$AppContainer->appName = $AppName;
+$AppContainer->appID = $AppID;
+$AppContainer->LibraryArray = array('filesystem', 'bd');
 $AppContainer->height = '100%';
 $AppContainer->width = '100%';
 $AppContainer->StartContainer();
+
 ?>
+
 <div style="width:100%; text-align:left; padding-bottom:10px; font-size:30px; border-bottom:#d8d8d8 solid 2px; text-overflow:ellipsis; overflow:hidden;">
-<span onClick="back<?echo $appid;?>();" class="ui-forest" style="background-color:#d8d8d8; color:#000; border-radius:30%; cursor:pointer; font-size:25px; margin-left:5px;"> &#9668 </span><?echo $language_about[$_SESSION['locale'].'_settings_about']?></div>
+<span onClick="back<?echo $AppID;?>();" class="ui-forest" style="background-color:#d8d8d8; color:#000; border-radius:30%; cursor:pointer; font-size:25px; margin-left:5px;"> &#9668 </span><?echo $language_about[$_SESSION['locale'].'_settings_about']?></div>
+
 <?php
-/*Settings*/
-//Подключаем библиотеки
-include '../../core/library/filesystem.php';
-include '../../core/library/bd.php';
+/* make new object */
 $settingsbd = new readbd;
 $fo = new filecalc;
+
+/* get localization OS file */
 $osinfo = parse_ini_file('../../core/osinfo.foc', false);
-session_start();
+
+/* read data from BD */
 $settingsbd->readglobal2("fuid","forestusers","login",$_SESSION["loginuser"]);
-$fuid=$getdata;
+$fuid = $getdata;
+
+/* get disk capacity */
 $fo->size_check(dirname(dirname(dirname(__DIR__))));
 $fo->format($size);
 
@@ -46,6 +57,15 @@ unset($settingsbd,$fo);
 $AppContainer->EndContainer();
 ?>
 <script>
-function back<?echo $appid;?>(el){$("#<?echo $appid;?>").load("<?echo $folder?>main.php?id=<?echo rand(0,10000).'&destination='.$folder.'&appname='.$appname.'&appid='.$appid;?>")};
-UpdateWindow("<?echo $appid?>","<?echo $appname?>");
+
+<?php
+// back button
+$AppContainer->Event(
+  "back",
+  NULL,
+  $Folder,
+  'main'
+);
+?>
+
 </script>

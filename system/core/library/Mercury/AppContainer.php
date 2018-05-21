@@ -59,6 +59,7 @@ class  AppContainer {
     }
 
     // check security
+    global $security;
     require $_SERVER['DOCUMENT_ROOT'].'/system/core/library/etc/security.php';
     $security	=	new security;
     $security->appprepare();
