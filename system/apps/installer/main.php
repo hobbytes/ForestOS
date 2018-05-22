@@ -12,7 +12,7 @@ $AppContainer = new AppContainer;
 /* App Info */
 $AppContainer->AppNameInfo = 'installer';
 $AppContainer->SecondNameInfo = 'Установщик';
-$AppContainer->VersionInfo = '1.0';
+$AppContainer->VersionInfo = '1.0.1';
 $AppContainer->AuthorInfo = 'Forest Media';
 
 /* Library List */
@@ -28,7 +28,7 @@ $AppContainer->StartContainer();
 //Инициализируем переменные
 $gui = new gui;
 $click = $_GET['mobile'];
-$folder = $_GET['destination'];
+$Folder = $_GET['destination'];
 $appdownload = $_GET['appdownload'];
 $nameappdownload=str_replace('_',' ',$appdownload);
 //Загружаем файл локализации
@@ -62,7 +62,8 @@ if(isset($appinstall)){
     curl_exec($ch);
     curl_close($ch);
     fclose($fp);
-  $zip=new ZipArchive;
+    $zip = new ZipArchive;
+
   if($zip->open('./temp/'.$appinstall.$temphash.'.zip') === TRUE){
     $zip->extractTo('../../../'.str_replace($appinstall,'',$_GET['appinstdest']));
     $zip->close();
@@ -108,9 +109,28 @@ if(isset($appinstall)){
 $AppContainer->EndContainer();
 ?>
 <script>
-$(function(){$("#checkbox<?echo $AppID;?>").prop("checked",true);});
-$(function(){$("#checkbox<?echo $AppID;?>").checkboxradio();});
-function appinstall<?echo $AppID;?>(el){$("#<?echo $AppID;?>").load("<?echo $folder;?>/main.php?appinstall="+el.id+"&appinstdest="+$("#destinput<?echo $AppID;?>").val()+"&id=<?echo rand(0,10000).'&appid='.$AppID.'&mobile='.$click.'&appname='.$AppName.'&destination='.$folder;?>")};
+
+<?php
+// install
+$AppContainer->Event(
+  "appinstall",
+  'object',
+  $Folder,
+  'main',
+  array(
+    'appinstall' => '"+object.id+"',
+    'appinstdest' => '"+$("#destinput'.$AppID.'").val()+"'
+  )
+);
+?>
+
+$(function(){
+  $("#checkbox<?echo $AppID;?>").prop("checked",true);
+});
+
+$(function(){
+  $("#checkbox<?echo $AppID;?>").checkboxradio();
+});
 </script>
 <?
 unset($AppID);

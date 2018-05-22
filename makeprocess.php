@@ -21,7 +21,7 @@ if(isset($_SESSION['loginuser'])){
     $autohide='true';
     $top='1'.rand(4,9).'%';
     $left='1'.rand(4,9).'%';
-    $maxwidth='95%';
+    $maxwidth='99%';
     $maxwidthm='0.95';
   }
 
@@ -50,8 +50,8 @@ if(isset($_SESSION['loginuser'])){
     if(!preg_match('/.php/',$destination_)){
       $destination_ = $destination_.'.php';
     }
-    $style="'display','block'";
-    $style2="'display','none'";
+    $style = "'display','block'";
+    $style_ = "'display','none'";
     echo '
     <div id=app'.$idprocess.' style="max-width:'.$maxwidth.'; position:absolute; left:'.$left.'; top:'.$top.'; overflow:hidden;" class="ui-widget-content window windownormal windowborder" wh="" ww="">
     <div id=drag'.$idprocess.' class="ui-widget-header dragwindow">
@@ -61,7 +61,7 @@ if(isset($_SESSION['loginuser'])){
           '.str_replace('_',  ' ',  $name).'
         </div>
         <div class="appwindowbutton-container" style="margin:0 10px;">
-          <div class="appwindowbutton ui-forest-blink" onClick=" $(';echo "'#"; echo 'process'.$idprocess; echo "'"; echo ').remove();';echo ' $(';echo "'#"; echo "app$idprocess"; echo "'"; echo ').css('; echo "$style2"; echo '); checkwindows();" style="background-color:#ed2020; cursor: default;">
+          <div class="appwindowbutton ui-forest-blink" onClick=" $(';echo "'#"; echo 'process'.$idprocess; echo "'"; echo ').remove();';echo ' $(';echo "'#"; echo "app$idprocess"; echo "'"; echo ').css('; echo "$style_"; echo '); checkwindows();" style="background-color:#ed2020; cursor: default;">
           x
           </div>
           <div class="hidewindow'.$idprocess.' appwindowbutton ui-forest-blink" onClick="" style="background-color:#37a22e; cursor: default;">

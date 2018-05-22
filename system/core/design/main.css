@@ -280,18 +280,18 @@ body {
 .windownormal{
 	 height:auto;
 	 width:auto;
-	 max-height:95%;
+	 max-height:96%;
 	 margin:0 auto;
 	 display:block;
 }
 
 .windowfullscreen{
-	 width:95%;
+	 width:99%;
 	 margin:0 auto;
 	 display:block;
 	 top:21px;
 	 left:0;
-	 height:90%;
+	 height:96%;
 }
 
 .blurwindowpassive{

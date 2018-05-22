@@ -86,7 +86,7 @@ class  AppContainer {
 
     // check var and make new container
     if($this->appName && $this->appID){
-      echo '<div id="'.$this->appName.$this->appID.'" style="background-color:'.$this->backgroundColor.'; color:'.$this->fontColor.'; height:'.$this->height.'; max-height:95%; width:'.$this->width.'; padding-top:10px; border-radius:0px 0px 5px 5px; overflow:auto; '.$this->customStyle.'">';
+      echo '<div id="'.$this->appName.$this->appID.'" style="background-color:'.$this->backgroundColor.'; color:'.$this->fontColor.'; height:'.$this->height.'; max-height:96%; width:'.$this->width.'; padding-top:10px; border-radius:0px 0px 5px 5px; overflow:auto; '.$this->customStyle.'">';
     }
 
   }

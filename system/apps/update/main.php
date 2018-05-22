@@ -26,7 +26,7 @@ $AppContainer->height = '100%';
 $AppContainer->width = '100%';
 $AppContainer->StartContainer();
 
-//Инициализируем переменные
+//get data
 $gui=new gui;
 $fo = new filecalc;
 $click=$_GET['mobile'];
@@ -105,7 +105,6 @@ if($current['subversion'] == $subversion){
 }else{
   echo '<br><b>'.$update_lang[$cl.'_update_error_prv'].'</b>';
 }
-
   ?>
 </div>
 </div>
@@ -113,5 +112,17 @@ if($current['subversion'] == $subversion){
 $AppContainer->EndContainer();
 ?>
 <script>
-function updatenow<?echo $AppID;?>(el){$("#<?echo $AppID;?>").load("<?echo $folder;?>/main.php?updatefile="+el.id+"&id=<?echo rand(0,10000).'&appid='.$AppID.'&mobile='.$click.'&appname='.$AppName.'&destination='.$folder;?>")};
+<?php
+// update
+$AppContainer->Event(
+  "updatenow",
+  'object',
+  $Folder,
+  'main',
+  array(
+    'updatefile' => '"+object.id+"',
+    'appinstdest' => '"+$("#destinput'.$AppID.'").val()+"'
+  )
+);
+?>
 </script>
