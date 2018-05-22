@@ -71,11 +71,15 @@ class  AppContainer {
         $key = $key.'.php'; // library file
         $FirstFindPlace = $_SERVER['DOCUMENT_ROOT'].'/system/core/library/'.$key; // First find place
         $SecondFindPlace = $_SERVER['DOCUMENT_ROOT'].'/system/core/library/etc/'.$key; // Second find place
+        $ThirdFindPlace = $_SERVER['DOCUMENT_ROOT'].'/system/core/library/Mercury/'.$key; // Third find place
         if(is_file($FirstFindPlace)){ // if find then require this!
           require $FirstFindPlace;
         }
         elseif(is_file($SecondFindPlace)){ // if find then require this!
           require $SecondFindPlace;
+        }
+        elseif(is_file($ThirdFindPlace)){ // if find then require this!
+          require $ThirdFindPlace;
         }
       }
     }
@@ -116,7 +120,7 @@ class  AppContainer {
   }
 
 /* Event function */
-  public function Event($FunctionName, $Argument = NULL, $Folder, $File, $RequestData = array(), $CustomFunction = NULL, $CustomContainer = NULL){
+  public function Event($FunctionName, $Argument = NULL, $Folder, $File, $RequestData = array(), $CustomFunction = NULL, $CustomFunctionMode = 1, $CustomContainer = NULL){
 
     /**
      @param string $FunctionName
@@ -125,6 +129,7 @@ class  AppContainer {
      @param string $File
      @param array $RequestData
      @param string $CustomFunction
+     @param string $CustomFunctionMode
      @param string $CustomContainer
      */
 
@@ -154,18 +159,24 @@ class  AppContainer {
 
     /* print function (dirty code...)*/
     echo '
-
     /* function '.$FunctionName.$this->appID.' */
     function '.$FunctionName.$this->appID.'('.$Argument.'){
-      $("#'.$ContainerName.'").load("'.$Folder.$File.'.php?id='.rand(0,10000).'&destination='.$Folder.'&appname='.$this->appName.'&appid='.$this->appID.$_RequestData.$_isMobile.'");';
+      ';
 
-      /* print custom function */
-      if(!empty($CustomFunction)){
-        echo "\r\n$CustomFunction";
-      }
+    /* print custom function */
+    if(!empty($CustomFunction && $CustomFunctionMode == 0)){
+      echo "$CustomFunction\r\n";
+    }
+
+    echo '$("#'.$ContainerName.'").load("'.$Folder.$File.'.php?id='.rand(0,10000).'&destination='.$Folder.'&appname='.$this->appName.'&appid='.$this->appID.$_RequestData.$_isMobile.'");';
+
+    /* print custom function */
+    if(!empty($CustomFunction && $CustomFunctionMode == 1)){
+      echo "\r\n$CustomFunction";
+    }
 
     /* close function */
-    echo "\r\n};";
+    echo "\r\n};\r\n";
 
   }
 

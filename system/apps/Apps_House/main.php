@@ -25,23 +25,38 @@ $AppContainer->StartContainer();
 
 //Инициализируем переменные
 $click = $_GET['mobile'];
+
 if(isset($_GET['appdownload'])){
 	$appdownload = $_GET['appdownload'];
 }
+
 if(isset($_GET['type'])){
 	$type = $_GET['type'];
 }
+
 $folder = $_GET['destination'];
 $fo = new filecalc;
 $fileaction = new fileaction;
+
 //Загружаем файл локализации
 $apphouse_lang  = parse_ini_file('app.lang');
 $cl = $_SESSION['locale'];
-//Логика
+
 if(!empty($appdownload)){
-  if($type=="app_h"){$_SESSION['appversion']=$_GET['v'];?><script>makeprocess('system/apps/installer/main.php','<?echo $appdownload;?>','appdownload','Installer');</script><?}else{$link='walls/'.$appdownload; $l='.jpg';}
- $ch=curl_init('http://forest.hobbytes.com/media/os/'.$link.$l);
-  if(!is_dir('./temp/')){mkdir('./temp/');}
+  if($type == "app_h"){
+		$_SESSION['appversion'] = $_GET['v'];
+		?>
+		<script>
+			makeprocess('system/apps/installer/main.php','<?echo $appdownload;?>','appdownload','Installer');
+		</script>
+		<?
+	}else{
+		$link='walls/'.$appdownload; $l='.jpg';
+	}
+ 	$ch=curl_init('http://forest.hobbytes.com/media/os/'.$link.$l);
+  if(!is_dir('./temp/')){
+		mkdir('./temp/');
+	}
   $temphash=md5(date('d.m.y.h.i.s').$appdownload);
   $fp=fopen('./temp/'.$appdownload.$temphash.$l,'wb');
   curl_setopt($ch, CURLOPT_FILE,$fp);
@@ -50,37 +65,38 @@ if(!empty($appdownload)){
   curl_close($ch);
   fclose($fp);
   if($type=="wall_h"){
-if(copy('./temp/'.$appdownload.$temphash.$l,'../../core/design/walls/'.$appdownload.$l)){
-  $wall_link = '../../../system/users/'.$_SESSION["loginuser"].'/settings/etc/wall.jpg';
-  if(copy('../../../system/core/design/walls/'.$appdownload.$l, $wall_link))  {
-      $wall_link = $fileaction->filehash($wall_link);
-    ?>
-  <script>
+		if(copy('./temp/'.$appdownload.$temphash.$l,'../../core/design/walls/'.$appdownload.$l)){
+			$wall_link = '../../../system/users/'.$_SESSION["loginuser"].'/settings/etc/wall.jpg';
+			if(copy('../../../system/core/design/walls/'.$appdownload.$l, $wall_link)){
+				$wall_link = $fileaction->filehash($wall_link);
+?>
+<script>
 function wallchange(){
-      $("#background-wall").attr("src", "<?echo $wall_link?>");
+	$("#background-wall").attr("src", "<?echo $wall_link?>");
 };
 wallchange();
-  </script>
+</script>
   <?
 echo $apphouse_lang[$cl.'_wall_msg'];
 }
-
-}else{echo $apphouse_lang[$cl.'_wall_error'];}
-      }
+}else{
+	echo $apphouse_lang[$cl.'_wall_error'];
+}
+}
   unlink('./temp/'.$appdownload.$temphash.$l);
 }
 
-$url='http://forest.hobbytes.com/media/os/app.php';
-$file=file_get_contents($url);
-$array=json_decode($file,TRUE);
+$url = 'http://forest.hobbytes.com/media/os/app.php';
+$file = file_get_contents($url);
+$array = json_decode($file,TRUE);
 
-$urlw='http://forest.hobbytes.com/media/os/wall.php';
-$filew=file_get_contents($urlw);
-$arrayw=json_decode($filew,TRUE);
+$urlw = 'http://forest.hobbytes.com/media/os/wall.php';
+$filew = file_get_contents($urlw);
+$arrayw = json_decode($filew,TRUE);
 
-$urlu='http://forest.hobbytes.com/media/os/update.php';
-$fileu=file_get_contents($urlu);
-$arrayu=json_decode($fileu,TRUE);
+$urlu = 'http://forest.hobbytes.com/media/os/update.php';
+$fileu = file_get_contents($urlu);
+$arrayu = json_decode($fileu,TRUE);
 
 ?>
 <div id="tabs<?echo $AppID?>">
@@ -93,11 +109,11 @@ $arrayu=json_decode($fileu,TRUE);
 
   <div id="apptab<?echo $AppID?>">
 <?
-$appcounter=0;
-if($array!=''){
+$appcounter = 0;
+if($array != ''){
 foreach ($array as $key)
 {
-$appcounter=$appcounter+1;
+$appcounter = $appcounter+1;
 $fo->format($key['size']*1024);
 if (is_file('../'.$key['file'].'/main.php')){
   $btncolor='3c83e8';

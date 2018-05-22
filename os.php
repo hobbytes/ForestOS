@@ -1,8 +1,9 @@
 <?
-/* #Display errors
-ini_set('display_errors','On');
-error_reporting(E_ALL);
-*/
+
+/* #Display errors */
+ini_set('display_errors','Off');
+/* error_reporting(E_ALL); */
+
 require 'system/core/library/gui.php';
 require 'system/core/library/bd.php';
 require 'system/core/library/auth.php';

@@ -3,10 +3,11 @@
 <div id="loginin" style="padding-top: 50%;">
 <div id="labelos" style="font-size:30px; padding:30px; color:#fff; text-shadow: 1px 1px 1px grey; user-select: none; cursor: default; text-transform:uppercase; font-weight: 700;">Forest OS</div>
 <?
-/* #Display errors
-ini_set('display_errors','On');
-error_reporting(E_ALL);
-*/
+
+/* #Display errors */
+ini_set('display_errors','Off');
+/* error_reporting(E_ALL); */
+
 if (function_exists('date_default_timezone_set'))
 date_default_timezone_set('Europe/Moscow');
 global $loginin, $infob, $security, $language, $mobile;

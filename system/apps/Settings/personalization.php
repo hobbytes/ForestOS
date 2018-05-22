@@ -30,6 +30,13 @@ $AppContainer->StartContainer();
 /* make new object */
 $fileaction = new fileaction;
 $object = new gui;
+
+/* get data */
+$activeTab = 0;
+if(isset($_GET['activetab'])){
+  $activeTab = $_GET['activetab'];
+}
+
 if(!empty($wall)){
   $wall_link = '../../../system/users/'.$_SESSION["loginuser"].'/settings/etc/wall.jpg';
   if($wall=='none'){
@@ -194,7 +201,7 @@ while (false !== ($entry2=$d2->read())) {
       $select_text  = '<span style="font-size:10px;">('.$language_screen[$_SESSION['locale'].'_current_label'].')</span>';
     }
         echo(
-          '<div id="'.$name2.'" class="ui-button ui-widget ui-corner-all" onClick="loadtheme'.$AppID.'(this);" style="-webkit-user-select:none; cursor:pointer; '.$select_style.' user-select:none; padding:5px; background-color:'.$themeloadset['backgroundcolor'].'; margin:5px; color:'.$themeloadset['backgroundfontcolor'].'; width:80px; height:80px; word-wrap:break-word; text-overflow:ellipsis; overflow:hidden; text-transform:uppercase; ">
+          '<div id="'.$name2.'" class="ui-button ui-widget ui-corner-all ui-forest-blink" onClick="loadtheme'.$AppID.'(this);" style="-webkit-user-select:none; cursor:pointer; '.$select_style.' user-select:none; padding:5px; background-color:'.$themeloadset['backgroundcolor'].'; margin:5px; color:'.$themeloadset['backgroundfontcolor'].'; width:80px; height:80px; word-wrap:break-word; text-overflow:ellipsis; overflow:hidden; text-transform:uppercase; ">
           <div style="height:15%; background-color:'.$themeloadset['topbarbackcolor'].';"></div><div style="height:15%; background-color:'.$themeloadset['draggablebackcolor'].'; margin-bottom: 5px;"></div>'.$themeloadset['Name'].'<br>'.$select_text.'</div>
           ');
         $select_style  = '';
@@ -210,13 +217,17 @@ while (false !== ($entry2=$d2->read())) {
   $dir = '../../core/design/walls/';
   $d = dir($dir);
   chdir($d->path);
-  echo('<div id="clearwall" class="ui-button ui-widget ui-corner-all" onClick="clearwall'.$AppID.'();" style="-webkit-user-select:none; border:2px dashed #4a4a4a; background-color:#e4e4e4; cursor:pointer; user-select:none; padding:5px; margin:5px; color:#000; width:80px; height:80px; word-wrap:break-word; text-overflow:ellipsis; overflow:hidden; ">'.$language_screen[$_SESSION['locale'].'_clear_label'].'</div>');
+  echo(
+    '<div id="clearwall" class="ui-button ui-widget ui-corner-all ui-forest-blink" onClick="clearwall'.$AppID.'();" style="-webkit-user-select:none; border:2px dashed #da362a; background-color:#ffcece; cursor:pointer; user-select:none; padding:5px; margin:5px; color:#000; width:80px; height:80px; word-wrap:break-word; text-overflow:ellipsis; overflow:hidden; ">
+      <div style="padding-top:35%; font-variant:all-small-caps; font-weight:900; font-size:17px; color:#da362a;">'.$language_screen[$_SESSION['locale'].'_clear_label'].'</div>
+    </div>'
+  );
   while (false !== ($entry=$d->read())) {
   	$path = $d->path;
   	$name = $entry;
     $color = '#80abc6';
   	if ($entry != '.' && $entry != '..'){
-  	   echo('<div id="'.$name.'" class="ui-button ui-widget ui-corner-all" onClick="loadwall'.$AppID.'(this);" style="-webkit-user-select:none; cursor:pointer; user-select:none; padding:5px; background-color:'.$color.'; margin:5px; color:#000; width:80px; height:80px; word-wrap:break-word; text-overflow:ellipsis; overflow:hidden; background-color:transparent;  background-image: url(../../system/core/design/walls/'.$name.'); background-size:cover;"></div>');
+  	   echo('<div id="'.$name.'" class="ui-button ui-widget ui-corner-all ui-forest-blink" onClick="loadwall'.$AppID.'(this);" style="-webkit-user-select:none; cursor:pointer; user-select:none; padding:5px; background-color:'.$color.'; margin:5px; color:#000; width:80px; height:80px; word-wrap:break-word; text-overflow:ellipsis; overflow:hidden; background-color:transparent;  background-image: url(../../system/core/design/walls/'.$name.'); background-size:cover;"></div>');
      }
    }
 $dir->close;
@@ -228,7 +239,14 @@ $AppContainer->EndContainer();
 ?>
 <script>
 
-  $("#tabssettings<?echo $AppID?>").tabs();
+$("#tabssettings<?echo $AppID?>").tabs();
+
+//set active tab
+  $(function(){
+    $("#tabssettings<?echo $AppID?>").tabs({
+      active: <?echo $activeTab?>
+    });
+  });
 
   ControlMode = "<?echo $getWindow['ControlMode'];?>";
   if(!ControlMode){
@@ -418,13 +436,6 @@ $( "#restart" ).on( "click", function() {
   return location.href = 'os.php';
 });
 
-function loadwall<?echo $AppID?>(el){
-  if(el!='none'){
-    el=el.id;
-  }
-  $("#<?echo $AppID?>").load("<?echo $Folder?>personalization.php?wall="+el+"&id=<?echo rand(0,10000).'&appname='.$AppName.'&destination='.$Folder.'&appid='.$AppID;?>");
-};
-
 <?
 
 // back button
@@ -442,7 +453,8 @@ $AppContainer->Event(
 	$Folder,
 	'personalization',
 	array(
-		'theme' => '"+object.id+"'
+		'theme' => '"+object.id+"',
+    'activetab' => '"+$("#tabssettings'.$AppID.'").tabs(\'option\',\'active\')+"'
 	)
 );
 
@@ -460,8 +472,22 @@ $AppContainer->Event(
   	'brightness' => '"+brightnessValue+"',
   	'saturate' => '"+saturateValue+"',
   	'controlemode' => '"+getMode+"',
-  	'windowsize' => '"+windowValue+"',  
+  	'windowsize' => '"+windowValue+"',
 	)
+);
+
+// load wall
+$AppContainer->Event(
+  "loadwall",
+  'object',
+  $Folder,
+  'personalization',
+  array(
+    'wall' => '"+object+"',
+    'activetab' => '"+$("#tabssettings'.$AppID.'").tabs(\'option\',\'active\')+"'
+  ),
+  'if(object != \'none\'){object = object.id;}',
+  0
 );
 ?>
 

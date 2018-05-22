@@ -422,6 +422,7 @@ $AppContainer->EndContainer();
 			'where' => '"+object.id+"'
 		),
 		'$("#upload'.$AppID.'").css(\'display\', \'block\');',
+		1,
 		"upload$AppID"
 	);
 
