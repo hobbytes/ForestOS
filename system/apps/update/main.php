@@ -29,9 +29,8 @@ $AppContainer->StartContainer();
 //get data
 $gui=new gui;
 $fo = new filecalc;
-$click=$_GET['mobile'];
-$folder=$_GET['destination'];
-$updatefile=$_GET['updatefile'];
+$Folder = $_GET['destination'];
+$updatefile = $_GET['updatefile'];
 
 //Загружаем файл локализации
 $update_lang  = parse_ini_file('app.lang');
@@ -120,8 +119,7 @@ $AppContainer->Event(
   $Folder,
   'main',
   array(
-    'updatefile' => '"+object.id+"',
-    'appinstdest' => '"+$("#destinput'.$AppID.'").val()+"'
+    'updatefile' => '"+object.id+"'
   )
 );
 ?>
