@@ -1,5 +1,9 @@
 <?
-session_start();
+
+if(!isset($_SESSION)){
+  session_start();
+}
+
 if(isset($_SESSION['loginuser'])){
   include 'system/core/library/etc.php';
   include 'system/core/library/gui.php';
