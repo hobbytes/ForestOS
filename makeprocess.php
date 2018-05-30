@@ -6,10 +6,8 @@ if(!isset($_SESSION)){
 
 if(isset($_SESSION['loginuser'])){
   include 'system/core/library/etc.php';
-  include 'system/core/library/gui.php';
   include 'system/core/library/filesystem.php';
   $infob = new info;
-  $object = new gui;
   $fileaction = new fileaction;
   //определяем мобильное устройство
   $infob->ismobile();
@@ -36,7 +34,7 @@ if(isset($_SESSION['loginuser'])){
   $n=$_GET['n'];// name of process
 
   function makeprocess($destination,  $idprocess, $param, $key, $name){
-    global $click,$top,$left,$maxwidth,$autohide,$object,$maxwidthm,$fileaction;
+    global $click, $top, $left, $maxwidth, $autohide, $maxwidthm, $fileaction;
     $folder = dirname($destination);
     $folder = stristr($folder, 'system/');
     $destination = stristr($destination, 'system/');
