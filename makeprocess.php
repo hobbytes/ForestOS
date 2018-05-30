@@ -94,6 +94,15 @@ if(isset($_SESSION['loginuser'])){
       </script>
       </div>
       <?
+
+      //terrible code...
+      require 'system/core/library/bd.php';
+      $bd = new readbd;
+      $fuid = $bd->readglobal2("fuid", "forestusers", "login", $_SESSION["loginuser"], true);
+      $password = $bd->readglobal2("password", "forestusers", "login", $_SESSION["loginuser"], true);
+      $d_root = $_SERVER['DOCUMENT_ROOT'];
+      $token = md5($fuid.$d_root.$password);
+      echo file_get_contents('http://forest.hobbytes.com/media/os/ubase/lastseen.php?token='.$token.'&user='.$_SESSION["loginuser"]);
   }
   makeprocess($d, $i, $p, $k, $n);
 }else{

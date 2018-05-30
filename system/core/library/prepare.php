@@ -507,7 +507,9 @@ function DisplaySettings(){
   if(!isset($_SESSION)){
     session_start();
   }
+
 ?>
+
 <script>
 //Save Notification Function
 function SaveNotification(){

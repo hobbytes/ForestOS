@@ -31,14 +31,18 @@ $sql="UPDATE $table SET $key='$value' WHERE $key_2='$value_2'";
 $conn->query($sql);
 }
 
-public static function readglobal2($globaldata,$from,$what,$like){
+public static function readglobal2($globaldata,$from,$what,$like, $Return = false){
 global $getdata;
 $conn = new PDO (DB_DSN, DB_USERNAME, DB_PASSWORD);
-$sql="SELECT $globaldata,$what FROM $from where $what='$like'";
-$id=$conn->query($sql);
+$sql = "SELECT $globaldata,$what FROM $from where $what='$like'";
+$id = $conn->query($sql);
 $row = $id->fetch();
-$getdata=$row[0];
-$conn=null;
+if(!$Return){
+  $getdata = $row[0];
+}else{
+  return $row[0];
+}
+unset($conn);
 }
 
 public static function readglobalfunction($globaldata,$table,$what,$this){
