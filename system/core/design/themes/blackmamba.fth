@@ -2,7 +2,7 @@
 Name="Black Mamba"
 
 [topbar]
-topbarbackcolor="#191919;"
+topbarbackcolor="rgba(25, 25, 25, 0.8);"
 topbarfontcolor="#bdbdbd;"
 
 [menu]
