@@ -20,7 +20,7 @@ Forest OS is a network operating system (shell) with open source code, which is 
 # Скриншоты / Screenshots:
 
 <img src="http://forest.hobbytes.com/media/os/screenshot/login.png" width="512">
-<img src="http://forest.hobbytes.com/media/os/screenshot/workplaceы.png" width="512">
-<img src="http://forest.hobbytes.com/media/os/screenshot/workplace_2ы.png" width="512">
-<img src="http://forest.hobbytes.com/media/os/screenshot/workplace_mobileы.png" width="256">
-<img src="http://forest.hobbytes.com/media/os/screenshot/workplace_mobile_2ы.png" width="256">
+<img src="http://forest.hobbytes.com/media/os/screenshot/workplace.png" width="512">
+<img src="http://forest.hobbytes.com/media/os/screenshot/workplace_2.png" width="512">
+<img src="http://forest.hobbytes.com/media/os/screenshot/workplace_mobile.png" width="256">
+<img src="http://forest.hobbytes.com/media/os/screenshot/workplace_mobile_2.png" width="256">
