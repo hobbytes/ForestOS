@@ -72,13 +72,13 @@ $_SESSION['appid']=-1;
 <div class="selectors-container">
   <div id="selector-1" desktop="1" class="selector ui-forest-blink"></div>
 </div>
+<script>
+var id=<?echo $_SESSION['appid']=$_SESSION['appid']+1?>;
+<?
+require 'system/core/library/js/core-js.php';
+?>
+</script>
 <div id="proceses">
-  <script>
-  var id=<?echo $_SESSION['appid']=$_SESSION['appid']+1?>;
-  <?
-  require 'system/core/library/js/core-js.php';
-  ?>
-  </script>
   <?
   $prepare->hibernation();
   ?>
