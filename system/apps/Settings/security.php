@@ -82,7 +82,7 @@ if(!empty($oldpassword) && !empty($newpassword) && !empty($checkpassword)){
   echo '<div id="changepassword'.$AppID.'" onClick="changepassword'.$AppID.'();" class="ui-forest-button ui-forest-accept">'.$language_security[$_SESSION['locale'].'_button_change'].'</div><hr>';
 
 $infob->readstat('../../core/journal.mcj');
-$text=$getstat;
+$text = $getstat;
 echo '<div style="text-align:left; margin-top:10px; margin-left:10px;"><b style="font-size:20px;">'.$language_security[$_SESSION['locale'].'_journal_label'].'</b>';
 echo '<div><textarea style="width:95%; max-width:95%;" rows="10" cols="80" >'.$text.'</textarea></div></div>';
 if($_SESSION['loginuser'] == $_SESSION['superuser']){

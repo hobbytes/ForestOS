@@ -50,6 +50,14 @@ $zipfile = $_GET['zipfile'];
 $cl = $_SESSION['locale'];
 $explorer_lang  = parse_ini_file('assets/lang/'.$cl.'.lang');
 
+
+//set action
+if($isMobile == 'true'){
+	$action = 'click';
+}else{
+	$action = 'dblclick';
+}
+
 //delete
 if($erasestatus){
 	$faction->deleteDir($dir);
@@ -363,7 +371,7 @@ while (false !== ($entry=$d->read())) {
 		}
 	}
 
-	echo('<div id="'.realpath($entry).'" class="'.md5($name).' select ui-button ui-widget ui-corner-all explorer-object" onClick="'.$select.'" on'.$isMobile.'="'.$load.'"  style="cursor:default; height:128px;	margin:5px;	text-align:center;	width:128px;	position:relative;	display:block;	text-overflow:ellipsis;	overflow:hidden;	float:left; transition:all 0.05s ease-out;" title="'.$name.'"><div style="cursor:default; width:80px; height:80px; background-image: url('.$type.'); background-size:cover; -webkit-user-select:none; user-select:none; padding:5px; background-color:'.$color.'; margin:auto;">
+	echo('<div id="'.realpath($entry).'" class="'.md5($name).' select ui-button ui-widget ui-corner-all explorer-object" onClick="'.$select.'" on'.$action.'="'.$load.'"  style="cursor:default; height:128px;	margin:5px;	text-align:center;	width:128px;	position:relative;	display:block;	text-overflow:ellipsis;	overflow:hidden;	float:left; transition:all 0.05s ease-out;" title="'.$name.'"><div style="cursor:default; width:80px; height:80px; background-image: url('.$type.'); background-size:cover; -webkit-user-select:none; user-select:none; padding:5px; background-color:'.$color.'; margin:auto;">
 	<div style="margin-top:22px; color:#d05858; font-size:17px; font-weight:900;">'.$extension.'</div></div><div style="text-overflow: ellipsis;overflow: hidden;font-size: 15px;"><span style="color:'.$n_color.'; white-space:nowrap;">'.$name.'</span><div style="font-size:10px; padding:5px; color:#688ad8;">'.$datecreate.'</div></div></div>');
 }
 }

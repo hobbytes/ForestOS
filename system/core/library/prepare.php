@@ -36,7 +36,7 @@
       if($getdata != 'superuser'){
         $bd->readglobal2("login","forestusers","status",superuser);
       }else{
-        $getdata  = $_SESSION["loginuser"];
+        $getdata = $_SESSION["loginuser"];
       }
       $_SESSION['superuser'] = $getdata;
 

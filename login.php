@@ -13,30 +13,36 @@ if (function_exists('date_default_timezone_set'))
 date_default_timezone_set('Europe/Moscow');
 global $loginin, $infob, $security, $language, $mobile;
 $date = date("d.m.y, H:i:s");
+
 if(isset($_POST['logins'])){
   $status2 = $_POST['logins'];
 }
+
 if (!empty($status2))
 {
-  $loginin=strtolower(addslashes(strip_tags(htmlspecialchars($_POST['loginin']))));
+  $loginin = strtolower(addslashes(strip_tags(htmlspecialchars($_POST['loginin']))));
   $loginin = str_replace(' ', '_', $loginin);
-  $passwordin=$security->crypt_s(addslashes(strip_tags(htmlspecialchars($_POST['passwordin']))),$loginin);
+  $passwordin = $security->crypt_s(addslashes(strip_tags(htmlspecialchars($_POST['passwordin']))),$loginin);
 }
 
 if(!isset($_SESSION)){
   session_start();
 }
+
 if(!isset($_SESSION['counter'])){// prepare counter for capthca
   $_SESSION['counter'] = 0;
 }
+
 if(!isset($_SESSION['BlockDate'])){// prepare counter for capthca
   $_SESSION['BlockDate'] = false;
 }
 
 $auth = new AuthClassUser();
 $auth->construct('login',$loginin);
+
 if (isset($loginin) && isset($passwordin)) {
   $_SESSION['safemode'] = $_POST['safemode'];
+
   if (!$auth->auth($loginin, $passwordin)) {
     echo '<h2 style="color:#fff; background-color:#ec6767; border:2px solid #791a1a; width:350px; padding:13px 0; margin:10px auto; font-size:small;">'.$language[$_SESSION['locale'].'_login_error'].'</h2>';
     $login_get = $loginin;

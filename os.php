@@ -23,14 +23,11 @@ $prepare = new prepare;
 $security = new security;
 $auth = new AuthClassUser();
 
-global $prepare;
-
 $auth->checkout();
 $prepare->showversion();
 $prepare->language();
 $prepare->start();
 $prepare->wall();
-$prepare->beacon();
 
 ?>
 <body class="ui-body backgroundtheme" style="position:relative; z-index:-2000; overflow-x:hidden; overflow-y:hidden; transition: all 0.5s ease;">
@@ -41,6 +38,7 @@ $prepare->themeload();
 $prepare->DisplaySettings();
 $prepare->welcomescreen();
 $prepare->topbar();
+$prepare->beacon();
 ?>
 <div id="desktops">
 <div id="desktop-1" class="desktop">

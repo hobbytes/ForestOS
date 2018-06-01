@@ -12,14 +12,12 @@ if(isset($_SESSION['loginuser'])){
   //определяем мобильное устройство
   $infob->ismobile();
   if($mobile == 'true'){
-    $click = 'click';
     $autohide = 'false';
-    $top = '31px';
+    $top = '33px';
     $left = '3px';
     $maxwidthm = '1';
     $maxwidth = '97%';
   }else{
-    $click = 'dblclick';
     $autohide = 'true';
     $top = '1'.rand(4,9).'%';
     $left = '1'.rand(4,9).'%';
@@ -34,7 +32,7 @@ if(isset($_SESSION['loginuser'])){
   $n = $_GET['n'];// name of process
 
   function makeprocess($destination,  $idprocess, $param, $key, $name){
-    global $click, $top, $left, $maxwidth, $autohide, $maxwidthm, $fileaction;
+    global $mobile, $top, $left, $maxwidth, $autohide, $maxwidthm, $fileaction;
     $folder = dirname($destination);
     $folder = stristr($folder, 'system/');
     $destination = stristr($destination, 'system/');
@@ -90,7 +88,7 @@ if(isset($_SESSION['loginuser'])){
         "<?echo $destination_?>",
         "<?echo $maxwidthm?>",
         "<?echo $folder?>",
-        "<?echo $click?>",
+        "<?echo $mobile?>",
         "<?echo $key?>",
         "<?echo $param?>",
         "<?echo $autohide?>"
