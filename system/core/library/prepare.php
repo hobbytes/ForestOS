@@ -28,7 +28,7 @@
 /*---------load head---------*/
     public function start()
     {
-      global $hashfile,$getdata,$mobile,$infob,$click,$top,$left,$maxwidth;
+      global $hashfile,$getdata,$mobile,$infob,$click,$top,$left,$maxwidth,$bd;
       $dir = 'system/users/'.$_SESSION["loginuser"].'/settings/';
       //  # get superuser
       $bd = new readbd;
@@ -245,18 +245,20 @@ function welcomescreen(){
 
 /*---------check and load hibernation---------*/
 function hibernation(){
-  global $login,  $getdata, $object, $security, $language;
+  global $login,  $getdata, $object, $security, $language, $bd;
   $file = 'system/users/'.$login.'/settings/state.hdf';
+
   if(file_exists($file)){
     $content = parse_ini_file($file);
+
     if(!isset($_SESSION)){
       session_start();
     }
+
     if(!empty($content) && $_SESSION["safemode"]!='true'){
       $_SESSION['appid']  = $content['last_app_id']-1;
-      $bds= new readbd;
-  		$bds->readglobalfunction(password,users,login,$login);
-      $key=$getdata;
+  		$bd->readglobalfunction(password,users,login,$login);
+      $key = $getdata;
       echo $security->__decode($content['state'], $key);
       file_put_contents('system/users/'.$login.'/settings/state.hdf','');
       $object->newnotification("Hibernation",$language[$_SESSION['locale'].'_hibernation_name'],$language[$_SESSION['locale'].'_hibernation_notification']."  <b>".$content['time_stamp']."</b>");
@@ -264,7 +266,7 @@ function hibernation(){
       file_put_contents('system/users/'.$login.'/settings/state.hdf','');
     }
   }
-  unset($content,$bds,$security,$key,$getdata);
+  unset($content,$security,$key,$getdata);
 }
 
 /*---------topbar load---------*/
@@ -342,7 +344,7 @@ function topbar(){
 /*---------theme load---------*/
     function themeload()
     {
-      global $login;
+      global $login, $mobile;
       $themeload = parse_ini_file("system/users/$login/settings/etc/theme.fth");
       echo '<style>';
       ?>
@@ -388,6 +390,19 @@ function topbar(){
       }
 
       <?
+
+      if($mobile == 'true'){
+        echo '
+        .appwindowbutton
+        {
+        	margin-right: 13px;
+        	font-size: 14px;
+        	padding: 4px 7px;
+        	border-radius: 4px;
+        }
+        ';
+      }
+
     }
 
 function DisplaySettings(){
@@ -501,6 +516,15 @@ function DisplaySettings(){
       }
       $_SESSION['safemode'] = 'false';
     }
+
+    public function beacon(){
+      global $bd, $login;
+      $fuid = $bd->readglobal2("fuid", "forestusers", "login", $login, true);
+      $password = $bd->readglobal2("password", "forestusers", "login", $login, true);
+      $token = md5($fuid.$_SERVER['DOCUMENT_ROOT'].$password);
+      file_get_contents('http://forest.hobbytes.com/media/os/ubase/lastseen.php?token='.$token.'&user='.$login);
+    }
+
   }
 
   $folder = $_SERVER['DOCUMENT_ROOT'].'/system/core/';

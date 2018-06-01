@@ -1,6 +1,7 @@
 <?
 if (function_exists('date_default_timezone_set'))
 date_default_timezone_set('Europe/Moscow');
+
 class info{
     function browser($agent) {
     	preg_match("/(MSIE|Opera|Firefox|Chrome|Version|Opera Mini|Netscape|Konqueror|SeaMonkey|Camino|Minefield|Iceweasel|K-Meleon|Maxthon)(?:\/| )([0-9.]+)/", $agent, $browser_info); // регулярное выражение, которое позволяет отпределить 90% браузеров
@@ -77,9 +78,9 @@ class info{
       $wp7 = strpos($_SERVER['HTTP_USER_AGENT'],"WP7");
       $wp8 = strpos($_SERVER['HTTP_USER_AGENT'],"WP8");
       if ($ipad || $iphone || $android || $palmpre || $ipod || $berry || $mobile || $symb || $operam || $htc || $fennec || $winphone || $wp7 || $wp8 === true) {
-        $mobile='true';
+        $mobile = 'true';
       }else{
-        $mobile='false';
+        $mobile = 'false';
       }
     }
 }

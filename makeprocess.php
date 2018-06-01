@@ -11,27 +11,27 @@ if(isset($_SESSION['loginuser'])){
   $fileaction = new fileaction;
   //определяем мобильное устройство
   $infob->ismobile();
-  if($mobile=='true'){
-    $click='click';
-    $autohide='false';
-    $top='30px';
-    $left='0px';
-    $maxwidthm='1';
-    $maxwidth='100%';
+  if($mobile == 'true'){
+    $click = 'click';
+    $autohide = 'false';
+    $top = '31px';
+    $left = '3px';
+    $maxwidthm = '1';
+    $maxwidth = '97%';
   }else{
-    $click='dblclick';
-    $autohide='true';
-    $top='1'.rand(4,9).'%';
-    $left='1'.rand(4,9).'%';
-    $maxwidth='99%';
-    $maxwidthm='0.95';
+    $click = 'dblclick';
+    $autohide = 'true';
+    $top = '1'.rand(4,9).'%';
+    $left = '1'.rand(4,9).'%';
+    $maxwidth = '99%';
+    $maxwidthm = '0.95';
   }
 
-  $d=$_GET['d'];//  destination
-  $i=$_GET['i'];// id process
-  $p=$_GET['p'];// name of property
-  $k=$_GET['k'];// key property
-  $n=$_GET['n'];// name of process
+  $d = $_GET['d'];//  destination
+  $i = $_GET['i'];// id process
+  $p = $_GET['p'];// name of property
+  $k = $_GET['k'];// key property
+  $n = $_GET['n'];// name of process
 
   function makeprocess($destination,  $idprocess, $param, $key, $name){
     global $click, $top, $left, $maxwidth, $autohide, $maxwidthm, $fileaction;
@@ -52,8 +52,10 @@ if(isset($_SESSION['loginuser'])){
     if(!preg_match('/.php/',$destination_)){
       $destination_ = $destination_.'.php';
     }
+
     $style = "'display','block'";
     $style_ = "'display','none'";
+
     echo '
     <div id=app'.$idprocess.' style="max-width:'.$maxwidth.'; position:absolute; left:'.$left.'; top:'.$top.'; overflow:hidden;" class="ui-widget-content window windownormal windowborder" wh="" ww="">
     <div id=drag'.$idprocess.' class="ui-widget-header dragwindow">
@@ -96,7 +98,6 @@ if(isset($_SESSION['loginuser'])){
       </script>
       </div>
       <?
-
       // get status, terrible code...
       require 'system/core/library/bd.php';
       $bd = new readbd;
