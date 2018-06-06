@@ -12,7 +12,7 @@ $AppContainer = new AppContainer;
 /* App Info */
 $AppContainer->AppNameInfo = 'Explorer';
 $AppContainer->SecondNameInfo = 'Проводник';
-$AppContainer->VersionInfo = '1.0.1';
+$AppContainer->VersionInfo = '1.0.2';
 $AppContainer->AuthorInfo = 'Forest Media';
 
 /* Library List */
@@ -30,6 +30,7 @@ $AppContainer->StartContainer();
 $fo = new filecalc;
 $faction = new fileaction;
 $dialogexplorer = new gui;
+$hashImage = md5($AppContainer->VersionInfo);
 
 $dir = preg_replace('#%u([0-9A-F]{4})#se','iconv("UTF-16BE","UTF-8",pack("H4","$1"))',$_GET['defaultloader']);
 if(empty($dir)){
@@ -49,14 +50,6 @@ $zipfile = $_GET['zipfile'];
 //load lang
 $cl = $_SESSION['locale'];
 $explorer_lang  = parse_ini_file('assets/lang/'.$cl.'.lang');
-
-
-//set action
-if($isMobile == 'true'){
-	$action = 'click';
-}else{
-	$action = 'dblclick';
-}
 
 //delete
 if($erasestatus){
@@ -258,6 +251,17 @@ $pathmain = str_replace($_SERVER['DOCUMENT_ROOT'],'',$pathmain);
 </ul>
 </div>
 </div>
+	<?
+
+	//show select button if is mobile
+	if($isMobile == 'true'){
+		if(empty($_GET['select']) || $_GET['select'] == 'false'){
+			echo '<div id="selectbutton-'.$AppID.'" onclick="selectButtonActive'.$AppID.'(true)" style="margin-top:2px;" class="ui-forest-button ui-forest-accept">'.$explorer_lang['selectButton'].'</div>';
+		}else{
+			echo '<div id="selectbutton-'.$AppID.'" onclick="selectButtonActive'.$AppID.'(false)" style="margin-top:2px;" class="ui-forest-button ui-forest-cancel">'.$explorer_lang['cancelButton'].'</div>';
+		}
+	}
+	?>
 </div>
 
 <div style="margin-top:7px; border-top:1px solid #d4d4d4; padding-top:7px;">
@@ -295,13 +299,15 @@ $pathmain = str_replace($_SERVER['DOCUMENT_ROOT'],'',$pathmain);
 
 <div style="margin: 92px 0;">
 <?
+$countState = true;
+
 while (false !== ($entry=$d->read())) {
 	$path	=	$d->path;
 	$name	=	$entry;
-	if ($entry	!=	'..'){
+	if ($entry	!=	'..' && $countState){
 		$color	=	'transparent';
 		$extension	=	'';
-		$type	=	$Folder.'assets/folderico.png?h=u';
+		$type	=	$Folder.'assets/folderico.png?h='.$hashImage;
 		try {
 			$fo->size_check(realpath(realpath($entry)));
 			$fo->format($size);
@@ -327,7 +333,7 @@ while (false !== ($entry=$d->read())) {
 	}
 	if(is_file(realpath($entry))){
 		$object	=	$dialogexplorer;
-		$color='rgba(0,0,0,0)';
+		$color = 'rgba(0,0,0,0)';
 		if($name	==	'main.php'){
 			if(file_exists('app.png')){
 				$hashfileprefix	= $faction->filehash('app.png','false');
@@ -339,7 +345,7 @@ while (false !== ($entry=$d->read())) {
 		}else{
 			$extension	=	stristr($name, '.');
 			$extension	=	mb_strtolower(str_replace('.','',$extension));
-			$type	=	$Folder.'assets/fileico.png?h=u';
+			$type	=	$Folder.'assets/fileico.png?h='.$hashImage;
 			if($extension	==	'png'  || $extension	==	'jpg' || $extension	==	'jpeg' || $extension	==	'bmp' || $extension	==	'gif'){
 				$color='transparent';
 				$hashfileprefix	= $faction->filehash($entry,'false');
@@ -351,9 +357,11 @@ while (false !== ($entry=$d->read())) {
 		$datecreate = $explorer_lang['date'].': '.date('d.m.y H:i:s', filectime(realpath($entry))).'<br> '.$explorer_lang['size'].': '.$format;
 	}
 
-	$wardir = $_SERVER['DOCUMENT_ROOT'];
-	$wardir = stristr($wardir, 'public_html');
-	$wardir	= str_replace('public_html/','',$wardir);
+	if($countState){
+		$wardir = $_SERVER['DOCUMENT_ROOT'];
+		$wardir = stristr($wardir, 'public_html');
+		$wardir	= str_replace('public_html/','',$wardir);
+	}
 
 	if ($entry!='.' && $entry!='..' && !in_array($entry,$warfile) && realpath($entry).'/'.$wardir!=$_SERVER['DOCUMENT_ROOT']){
 		$name2="'".md5($name)."'";
@@ -371,9 +379,21 @@ while (false !== ($entry=$d->read())) {
 		}
 	}
 
-	echo('<div id="'.realpath($entry).'" class="'.md5($name).' select ui-button ui-widget ui-corner-all explorer-object" onClick="'.$select.'" on'.$action.'="'.$load.'"  style="cursor:default; height:128px;	margin:5px;	text-align:center;	width:128px;	position:relative;	display:block;	text-overflow:ellipsis;	overflow:hidden;	float:left; transition:all 0.05s ease-out;" title="'.$name.'"><div style="cursor:default; width:80px; height:80px; background-image: url('.$type.'); background-size:cover; -webkit-user-select:none; user-select:none; padding:5px; background-color:'.$color.'; margin:auto;">
+	//is mobile?
+	if($countState){
+		if($isMobile == 'true' && empty($_GET['select']) || $_GET['select'] == 'false'){
+			$action = 'click';
+			$selectAction = 'ondblclick="'.$select.'"';
+		}else{
+			$action = 'dblclick';
+			$selectAction = 'onclick="'.$select.'"';
+		}
+	}
+
+	echo('<div id="'.realpath($entry).'" class="'.md5($name).' select ui-button ui-widget ui-corner-all explorer-object" '.$selectAction.' on'.$action.'="'.$load.'"  style="cursor:default; height:128px;	margin:5px;	text-align:center;	width:128px;	position:relative;	display:block;	text-overflow:ellipsis;	overflow:hidden;	float:left; transition:all 0.05s ease-out;" title="'.$name.'"><div style="cursor:default; width:80px; height:80px; background-image: url('.$type.'); background-size:cover; -webkit-user-select:none; user-select:none; padding:5px; background-color:'.$color.'; margin:auto;">
 	<div style="margin-top:22px; color:#d05858; font-size:17px; font-weight:900;">'.$extension.'</div></div><div style="text-overflow: ellipsis;overflow: hidden;font-size: 15px;"><span style="color:'.$n_color.'; white-space:nowrap;">'.$name.'</span><div style="font-size:10px; padding:5px; color:#688ad8;">'.$datecreate.'</div></div></div>');
 }
+$countState = false;
 }
 $dir->close;
 ?>
@@ -402,7 +422,8 @@ $AppContainer->EndContainer();
 		'main',
 		array(
 			'mobile' => $isMobile,
-			'dir' => '"+object.id+"'
+			'dir' => '"+object.id+"',
+			'select' => $_GET['select']
 		)
 	);
 
@@ -416,7 +437,8 @@ $AppContainer->EndContainer();
 			'linkdir' => '"+object.id+"',
 			'ico' => '"+object.getAttribute(\'ico\')+"',
 			'linkname' => '"+object.getAttribute(\'link\')+"',
-			'dir' => realpath($entry)
+			'dir' => realpath($entry),
+			'select' => $_GET['select']
 		)
 	);
 
@@ -427,7 +449,8 @@ $AppContainer->EndContainer();
 		$Folder,
 		'uploadwindow',
 		array(
-			'where' => '"+object.id+"'
+			'where' => '"+object.id+"',
+			'select' => $_GET['select']
 		),
 		'$("#upload'.$AppID.'").css(\'display\', \'block\');',
 		1,
@@ -442,7 +465,8 @@ $AppContainer->EndContainer();
 		'main',
 		array(
 			'erasestatus' => 'true',
-			'dir' => realpath($entry)
+			'dir' => realpath($entry),
+			'select' => $_GET['select']
 		)
 	);
 
@@ -454,7 +478,8 @@ $AppContainer->EndContainer();
 		'main',
 		array(
 			'makedir' => '"+$("#mkdirvalue'.$AppID.'").val()+"',
-			'dir' => realpath($entry)
+			'dir' => realpath($entry),
+			'select' => $_GET['select']
 		)
 	);
 
@@ -466,7 +491,8 @@ $AppContainer->EndContainer();
 		'main',
 		array(
 			'makefile' => '"+escape($("#mkfilevalue'.$AppID.'").val())+"',
-			'dir' => realpath($entry)
+			'dir' => realpath($entry),
+			'select' => $_GET['select']
 		)
 	);
 
@@ -478,7 +504,8 @@ $AppContainer->EndContainer();
 		'main',
 		array(
 			'"+key+"' => '"+value+"',
-			'dir' => realpath($entry)
+			'dir' => realpath($entry),
+			'select' => $_GET['select']
 		)
 	);
 
@@ -489,7 +516,20 @@ $AppContainer->EndContainer();
 		$Folder,
 		'main',
 		array(
-			'dir' => realpath($entry)
+			'dir' => realpath($entry),
+			'select' => $_GET['select']
+		)
+	);
+
+	// select | deselect
+	$AppContainer->Event(
+		"selectButtonActive",
+		'state',
+		$Folder,
+		'main',
+		array(
+			'dir' => realpath($entry),
+			'select' => '"+state+"'
 		)
 	);
 ?>

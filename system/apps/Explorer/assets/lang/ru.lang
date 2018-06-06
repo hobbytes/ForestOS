@@ -11,6 +11,8 @@ menu_delete_label = Удалить
 menu_loadfile_label = Загрузить файл
 menu_property_label = Свойства
 menu_zip_label = Добавить в архив
+selectButton = Выбрать
+cancelButton = Отменить
 
 menu_edit_label = Изменить
 menu_copy_label = Копировать
