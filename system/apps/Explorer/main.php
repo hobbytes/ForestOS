@@ -12,7 +12,7 @@ $AppContainer = new AppContainer;
 /* App Info */
 $AppContainer->AppNameInfo = 'Explorer';
 $AppContainer->SecondNameInfo = 'Проводник';
-$AppContainer->VersionInfo = '1.0.2';
+$AppContainer->VersionInfo = '1.0.3';
 $AppContainer->AuthorInfo = 'Forest Media';
 
 /* Library List */
@@ -172,20 +172,20 @@ if (empty($dir)){
 	$dir='../../../';
 }
 if(!is_dir($dir)){
-	$ext=pathinfo($dir);
-	$ext=mb_strtolower($ext['extension']);
-	if($ext=='php'){
-		$file=basename($dir,'.php');
-		$dest=$dir;
-		$dir=dirname($dir);
-		$param='';
-		$keys='';
+	$ext = pathinfo($dir);
+	$ext = mb_strtolower($ext['extension']);
+	if($ext == 'php'){
+		$file = basename($dir,'.php');
+		$dest = $dir;
+		$dir = dirname($dir);
+		$param = '';
+		$keys = '';
 	}else{
-		$ini_array=parse_ini_file("../../core/extconfiguration.foc");
-		$dest=$ini_array[$ext];
+		$ini_array = parse_ini_file("../../core/extconfiguration.foc");
+		$dest = $ini_array[$ext];
 		$param	= str_replace($_SERVER['DOCUMENT_ROOT'],'',$dir);
-		$keys=$ini_array[$ext.'_key'];
-		$dir=dirname($dir);
+		$keys = $ini_array[$ext.'_key'];
+		$dir = dirname($dir);
 	}
 	if (!empty($dest)){
 		$name_launch = basename($param);
@@ -197,12 +197,12 @@ if(!is_dir($dir)){
 			$dialogexplorer->dialog($explorer_lang['error_open']."*.$ext</b>",$explorer_lang['error_label'],"bounce");
 		}
 	}
-$d=dir($dir);
+$d = dir($dir);
 chdir($d->path);
-$warfile=array(".htaccess");
-$pathmain=$d->path;
-if ($pathmain=='../../../'){
-	$pathmain=realpath($entry);
+$warfile = array(".htaccess");
+$pathmain = $d->path;
+if ($pathmain == '../../../'){
+	$pathmain = realpath($entry);
 }
 $pathmain = str_replace($_SERVER['DOCUMENT_ROOT'],'',$pathmain);
 ?>
@@ -300,8 +300,9 @@ $pathmain = str_replace($_SERVER['DOCUMENT_ROOT'],'',$pathmain);
 <div style="margin: 92px 0;">
 <?
 $countState = true;
+$objectArray = array();
 
-while (false !== ($entry=$d->read())) {
+while (false !== ($entry = $d->read())) {
 	$path	=	$d->path;
 	$name	=	$entry;
 	if ($entry	!=	'..'){
@@ -388,12 +389,52 @@ while (false !== ($entry=$d->read())) {
 		$selectAction = 'onclick="'.$select.'"';
 	}
 
-	echo('<div id="'.realpath($entry).'" class="'.md5($name).' select ui-button ui-widget ui-corner-all explorer-object" '.$selectAction.' on'.$action.'="'.$load.'"  style="cursor:default; height:128px;	margin:5px;	text-align:center;	width:128px;	position:relative;	display:block;	text-overflow:ellipsis;	overflow:hidden;	float:left; transition:all 0.05s ease-out;" title="'.$name.'"><div style="cursor:default; width:80px; height:80px; background-image: url('.$type.'); background-size:cover; -webkit-user-select:none; user-select:none; padding:5px; background-color:'.$color.'; margin:auto;">
-	<div style="margin-top:22px; color:#d05858; font-size:17px; font-weight:900;">'.$extension.'</div></div><div style="text-overflow: ellipsis;overflow: hidden;font-size: 15px;"><span style="color:'.$n_color.'; white-space:nowrap;">'.$name.'</span><div style="font-size:10px; padding:5px; color:#688ad8;">'.$datecreate.'</div></div></div>');
+	//what is type object
+	if(!is_file(realpath($entry))){
+		$typeObject = 'dir';
+	}else{
+		$typeObject = 'file';
+	}
+
+	$objectArray[$typeObject] [] = urlencode('<div id="'.realpath($entry).'" class="'.md5($name).' select ui-button ui-widget ui-corner-all explorer-object" '.$selectAction.' on'.$action.'="'.$load.'"  style="cursor:default; height:128px;	margin:5px;	text-align:center;	width:128px;	position:relative;	display:block;	text-overflow:ellipsis;	overflow:hidden;	float:left; transition:all 0.05s ease-out;" title="'.$name.'"><div style="cursor:default; width:80px; height:80px; background-image: url('.$type.'); background-size:cover; -webkit-user-select:none; user-select:none; padding:5px; background-color:'.$color.'; margin:auto;">
+	<div style="margin-top:22px; color:#d05858; font-size:17px; font-weight:900;">
+	'.$extension.'
+		</div>
+	</div>
+	<div style="text-overflow: ellipsis;overflow: hidden;font-size: 15px;">
+		<span style="color:'.$n_color.'; white-space:nowrap;">
+			'.$name.'
+		</span>
+		<div style="font-size:10px; padding:5px; color:#688ad8;">
+		'.$datecreate.'
+		</div>
+		</div>
+		</div>');
 }
+
 $countState = false;
 }
 $dir->close;
+
+//show dir first
+foreach($objectArray as $type => $object){
+	if($type == 'dir'){
+		foreach($object as $dirObject){
+			echo urldecode($dirObject);
+		}
+	}
+}
+
+//show files
+foreach($objectArray as $type => $object){
+	if($type == 'file'){
+		foreach($object as $fileObject){
+			echo urldecode($fileObject);
+		}
+	}
+}
+
+unset($objectArray);
 ?>
 </div>
 <div id="upload<?echo $AppID?>" style="z-index:1; position:fixed; display:none; top:25%; left:25%; background-color:#ededed; border:1px solid #797979; padding:20px; border-radius:6px; box-shadow:1px 1px 5px #000;">
