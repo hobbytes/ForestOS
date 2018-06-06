@@ -121,6 +121,7 @@ function ProcessLogic(id, name, destination, destination_, maxwidthm, folder, is
       $("#app" + id).attr("ww", $("#"+name+id).css("width"));
       $("#app" + id).attr("wh", $("#"+name+id).css("height"));
     }
+    $("#app" + id ).addClass("windowactive");
   });
 
   $("#drag" + id ).on( "dblclick", function() {

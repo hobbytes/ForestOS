@@ -84,13 +84,13 @@ body {
 	float: right;
 	margin-right: 6px;
 	cursor: pointer;
-	color: #eaeaea;
 	font-size: 10px;
 	padding: 2px 5px;
 	border-radius: 100px;
 	text-align: center;
 	font-family: monospace;
 	font-weight: 900;
+	color: transparent;
 }
 
 .dragwindow
@@ -303,9 +303,27 @@ body {
 	filter: blur(20px);
 }
 
+.window{
+	filter: contrast(0.9) brightness(1.01);
+}
+
 .windowactive{
+	filter: contrast(1) brightness(1);
 	z-index:9990;
 	box-shadow:rgba(0,0,0,0.3) 0px 0px 25px -4px;
+}
+
+.appwindowbutton-container{
+	filter: saturate(25%);
+	transition: all 0.1s ease;
+}
+
+.windowactive .appwindowbutton-container{
+	filter: saturate(100%);
+}
+
+.windowactive .appwindowbutton{
+	color: #eaeaea;
 }
 
 .topbartheme{
