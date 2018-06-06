@@ -36,12 +36,23 @@ function makeprocess(dest,  param,  key,  name){
   checkwindows();
 };
 
-function ProcessLogic(id, name, destination, destination_, maxwidthm, folder, click, key, param, autohide){
+function ProcessLogic(id, name, destination, destination_, maxwidthm, folder, isMobile, key, param, autohide){
+
+  let snapState = null;
+  if(isMobile == "false"){
+    snapState = ".ui-body, .dragwindowtoggle, #topbar";
+  }
 
   $("#app" + id).draggable({
-    containment:"body",
-    handle:"#drag" + id,
-    snap:".ui-body, .dragwindowtoggle, #topbar"
+    containment: "body",
+    handle: "#drag" + id,
+    snap: snapState,
+    stop: function(){
+      if(!$("#app" + id).hasClass("windowfullscreen")){
+       $("#app" + id).attr("wt", $("#app" + id).css("top"));
+       $("#app" + id).attr("wl", $("#app" + id).css("left"));
+     }
+    }
   });
 
   $("#app" + id).resizable({
@@ -62,18 +73,12 @@ function ProcessLogic(id, name, destination, destination_, maxwidthm, folder, cl
     $("#app" + id ).addClass("windowactive");
   });
 
-  $( "#drag" + id ).dblclick(function(){
-    if(!$("#app" + id).hasClass("windowborderhide")){
-      $("#app" + id ).css({top:"31px",left:"2px"});
-    }
-  });
-
   $( ".window" ).mouseup(function(){
     $(".window").removeClass("windowactive")
   });
 
   if(!$("#process" + id).hasClass('hibernatethis')){
-    $("#" + id).load(""+destination+"?id=<?echo rand(0,10000)?>&appid="+id+"&appname="+name+"&destination="+folder+"/&mobile="+click+"&"+key+"="+param);
+    $("#" + id).load(""+destination+"?id=<?echo rand(0,10000)?>&appid="+id+"&appname="+name+"&destination="+folder+"/&mobile="+isMobile+"&"+key+"="+param);
   }
 
   $(function() {
@@ -108,26 +113,32 @@ function ProcessLogic(id, name, destination, destination_, maxwidthm, folder, cl
     });
 
   $(".reload" + id).on( "click", function() {
-    $("#" + id).load(""+destination_+"?id=<?echo rand(0,10000)?>&appid="+id+"&appname="+name+"&destination="+folder+"/&mobile="+click+"&"+key+"="+param);
+    $("#" + id).load(""+destination_+"?id=<?echo rand(0,10000)?>&appid="+id+"&appname="+name+"&destination="+folder+"/&mobile="+isMobile+"&"+key+"="+param);
   });
 
   $("#app" + id).resize(function(){
+    if(!$("#app" + id).hasClass("windowfullscreen")){
       $("#app" + id).attr("ww", $("#"+name+id).css("width"));
       $("#app" + id).attr("wh", $("#"+name+id).css("height"));
+    }
   });
+
   $("#drag" + id ).on( "dblclick", function() {
     if(!$("#app" + id).hasClass("windowborderhide")){
       if(!$("#app" + id).hasClass("windowfullscreen")){
         $("#app" + id).attr("ww", $("#"+name+id).css("width"));
         $("#app" + id).attr("wh", $("#"+name+id).css("height"));
+        $("#app" + id).attr("wt", $("#app" + id).css("top"));
+        $("#app" + id).attr("wl", $("#app" + id).css("left"));
         $("#app" + id).css("width","");
         $("#app" + id).css("height","");
+        $("#app" + id ).css({top:"31px",left:"2px"});
       }
       if($("#app" + id).hasClass("windowfullscreen")){
-        $("#"+name+id).css("width",$("#app" + id).attr("ww"));
-        $("#"+name+id).css("height",$("#app" + id).attr("wh"));
-        $("#app" + id).css("top","20%");
-        $("#app" + id).css("left","20%");
+        $("#"+name+id).css("width", $("#app" + id).attr("ww"));
+        $("#"+name+id).css("height", $("#app" + id).attr("wh"));
+        $("#app" + id).css("top", $("#app" + id).attr("wt"));
+        $("#app" + id).css("left", $("#app" + id).attr("wl"));
       }
       $("#app" + id ).toggleClass( "windowfullscreen", 100, function(){
           UpdateWindow(id,name);
@@ -213,9 +224,16 @@ function releaselink(){
 }
 
 function UpdateWindow(id,name){
-  var parentWidth = $("#app"+id).css('width');
-  var parentHeight = $("#app"+id).css('height');
-  if(parentHeight!='0px'){
+  parentWidth = $("#app"+id).css('width');
+  parentHeight = $("#app"+id).css('height');
+  match = 0;
+  if(parentHeight != '0px'){
+    //get difference
+    if(!$("#app" + id).hasClass("windowfullscreen")){
+      match = $("#app"+id).height() - $("#"+name+id).height();
+      parentHeight = $("#app"+id).height() - match + "px";
+    }
+    //update window
     $("#"+name+id).css('width', parentWidth);
     $("#"+name+id).css('height', parentHeight);
   }

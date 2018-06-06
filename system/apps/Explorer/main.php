@@ -304,7 +304,7 @@ $countState = true;
 while (false !== ($entry=$d->read())) {
 	$path	=	$d->path;
 	$name	=	$entry;
-	if ($entry	!=	'..' && $countState){
+	if ($entry	!=	'..'){
 		$color	=	'transparent';
 		$extension	=	'';
 		$type	=	$Folder.'assets/folderico.png?h='.$hashImage;
@@ -380,14 +380,12 @@ while (false !== ($entry=$d->read())) {
 	}
 
 	//is mobile?
-	if($countState){
-		if($isMobile == 'true' && empty($_GET['select']) || $_GET['select'] == 'false'){
-			$action = 'click';
-			$selectAction = 'ondblclick="'.$select.'"';
-		}else{
-			$action = 'dblclick';
-			$selectAction = 'onclick="'.$select.'"';
-		}
+	if($isMobile == 'true' && empty($_GET['select']) || $_GET['select'] == 'false'){
+		$action = 'click';
+		$selectAction = 'ondblclick="'.$select.'"';
+	}else{
+		$action = 'dblclick';
+		$selectAction = 'onclick="'.$select.'"';
 	}
 
 	echo('<div id="'.realpath($entry).'" class="'.md5($name).' select ui-button ui-widget ui-corner-all explorer-object" '.$selectAction.' on'.$action.'="'.$load.'"  style="cursor:default; height:128px;	margin:5px;	text-align:center;	width:128px;	position:relative;	display:block;	text-overflow:ellipsis;	overflow:hidden;	float:left; transition:all 0.05s ease-out;" title="'.$name.'"><div style="cursor:default; width:80px; height:80px; background-image: url('.$type.'); background-size:cover; -webkit-user-select:none; user-select:none; padding:5px; background-color:'.$color.'; margin:auto;">
