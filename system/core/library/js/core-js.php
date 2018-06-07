@@ -111,7 +111,9 @@ function ProcessLogic(id, name, destination, destination_, maxwidthm, folder, is
     });
 
   $(".reload" + id).on( "click", function() {
-    $("#" + id).load(""+destination_+"?id=<?echo rand(0,10000)?>&appid="+id+"&appname="+name+"&destination="+folder+"/&mobile="+isMobile+"&"+key+"="+param);
+    $("#" + id).load(""+destination_+"?id=<?echo rand(0,10000)?>&appid="+id+"&appname="+name+"&destination="+folder+"/&mobile="+isMobile+"&"+key+"="+param, function(){
+      $("#app" + id).attr("applength", parseInt($("#app" + id).attr("applength")) + $("#" + name + id).html().length);
+    });
   });
 
   $("#app" + id).resize(function(){

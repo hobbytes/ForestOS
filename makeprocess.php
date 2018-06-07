@@ -55,7 +55,7 @@ if(isset($_SESSION['loginuser'])){
     $style_ = "'display','none'";
 
     echo '
-    <div id=app'.$idprocess.' style="max-width:'.$maxwidth.'; position:absolute; left:'.$left.'; top:'.$top.'; overflow:hidden;" class="ui-widget-content window windownormal windowborder" wh="" ww="">
+    <div id=app'.$idprocess.' style="max-width:'.$maxwidth.'; position:absolute; left:'.$left.'; top:'.$top.'; overflow:hidden;" class="ui-widget-content window windownormal windowborder" wh="" ww="" applength="0">
     <div id=drag'.$idprocess.' class="ui-widget-header dragwindow">
         <div class="process-title" style="cursor:default; font-size:17px; margin:0 10px; text-overflow:ellipsis; overflow:hidden;">
           <div style="background-color:transparent;  background-image: url('.$appicon.'); background-size:cover; height:20px; width:20px; margin:0px 3px 0px 3px; float:left;">
