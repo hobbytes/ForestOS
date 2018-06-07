@@ -66,15 +66,13 @@ function ProcessLogic(id, name, destination, destination_, maxwidthm, folder, is
   });
 
   $("#app" + id).click(function(){
+    $(".window").removeClass("windowactive")
     $("#app" + id ).addClass("windowactive");
   });
 
   $( "#drag" + id ).click(function(){
-    $("#app" + id ).addClass("windowactive");
-  });
-
-  $( ".window" ).mouseup(function(){
     $(".window").removeClass("windowactive")
+    $("#app" + id ).addClass("windowactive");
   });
 
   if(!$("#process" + id).hasClass('hibernatethis')){
@@ -185,6 +183,19 @@ function showTime()
 showTime();
 
 $( function() {
+
+    $( "#desktops" ).on( "click", function() {
+      $(".window").removeClass("windowactive")
+    })
+
+    $( "#background-wall" ).on( "click", function() {
+      $(".window").removeClass("windowactive")
+    })
+
+    $( "#topbar" ).on( "click", function() {
+      $(".window").removeClass("windowactive")
+    })
+
   $( "#notificationsbtn" ).on( "click", function() {
     $("#notificationsbtn").css({'border':'2px solid #fff','background-color':'rgba(0,0,0,0)'});
     $('.notificationclass').css('opacity','0');

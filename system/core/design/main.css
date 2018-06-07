@@ -314,7 +314,7 @@ body {
 }
 
 .appwindowbutton-container{
-	filter: saturate(25%);
+	filter: saturate(50%);
 	transition: all 0.1s ease;
 }
 

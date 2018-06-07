@@ -277,11 +277,11 @@ function topbar(){
   $about_name = $language[$_SESSION['locale'].'_about_menu'];
   $explorer_name = $language[$_SESSION['locale'].'_explorer_menu'];
   ?>
-  <div id="topbar" class="ui-widget-content topbartheme" style="display:none; z-index:9999; height:25px; padding-top:5px;">
-    <span id="hideall" class="topbaractbtn ui-forest-blink" style="cursor:default; display:none; background-color:#37a22e; color:#fff; width:12px; float:right; text-align:center; width:15px; margin-right: 8px; font-family:monospace; padding:2px 0;">
+  <div id="topbar" class="ui-widget-content topbartheme" style="display:none; z-index:9999; height:auto; padding-top:5px;">
+    <span id="hideall" class="topbaractbtn ui-forest-blink" style="cursor:default; display:none; background-color:#37a22e; color:#fff; width:12px; float:right; text-align:center; width:20px; margin-right: 8px; font-family:monospace; padding:3px 0; border-radius:0px 4px 4px 0px;">
       -
     </span>
-    <span id="closeall" class="topbaractbtn ui-forest-blink" style="cursor:default; display:none; background-color:#ed2020; color:#fff; float:right; text-align:center; width:15px; font-family:monospace; padding:2px 0;" onclick="$('.process').remove(); $('.topbaractbtn').css('display','none');">
+    <span id="closeall" class="topbaractbtn ui-forest-blink" style="cursor:default; display:none; background-color:#ed2020; color:#fff; float:right; text-align:center; width:20px; font-family:monospace; padding:3px 0; border-radius:4px 0px 0px 4px;" onclick="$('.process').remove(); $('.topbaractbtn').css('display','none');">
       x
     </span>
     <div class="date " style="float:right; font-size:15px; padding-right:10px; user-select: none; cursor: default;">
