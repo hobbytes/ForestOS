@@ -100,10 +100,11 @@ class  AppContainer {
     }
 
     if($this->appName && $this->appID){
-      echo '<script>UpdateWindow("'.$this->appID.'","'.$this->appName.'");';
+      echo '<script>';
+      echo 'UpdateWindow("'.$this->appID.'","'.$this->appName.'");';
 
       //update app length
-      echo '$("#app'.$this->appID.'").attr("applength", parseInt($("#app'.$this->appID.'").attr("applength")) + $("#'.$this->appName.$this->appID.'").html().length);';
+      echo '$("#app'.$this->appID.'").attr("applength-'.$this->appID.'", parseInt($("#app'.$this->appID.'").attr("applength-'.$this->appID.'")) + $("#'.$this->appName.$this->appID.'").html().length);';
 
       //show statistics data
       if($this->showStatistics){
@@ -112,7 +113,7 @@ class  AppContainer {
         let readyTime = (performance.now() - timerStart).toPrecision(3);
         $("#statistics-'.$this->appID.'").append("Load time: "+ readyTime + " ms.<br>");
         $("#statistics-'.$this->appID.'").append("Size: "+ (pagebytes / 1024).toPrecision(3) + " kb.<br>");
-        $("#statistics-'.$this->appID.'").append("App traffic: "+ ($("#app" + id).attr("applength") / 1024).toPrecision(3) + " kb.");
+        $("#statistics-'.$this->appID.'").append("App traffic: "+ ($("#app'.$this->appID.'").attr("applength-'.$this->appID.'") / 1024).toPrecision(3) + " kb.");
         ';
       }
 
