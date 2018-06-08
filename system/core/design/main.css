@@ -54,7 +54,8 @@ body {
 	cursor:default;
 	overflow:hidden;
 	font-size:0.9em;
-	text-shadow:0px 0px 1px rgba(0,0,0,0.9);
+	height: 20px;
+	text-shadow:2px 2px 5px rgba(0,0,0,0.8), 0px 0px 2px rgba(0,0,0,1);
 }
 
 .welcomescreen img{
@@ -310,7 +311,7 @@ body {
 .windowactive{
 	filter: contrast(1) brightness(1);
 	z-index:9990;
-	box-shadow:rgba(0,0,0,0.3) 0px 0px 25px -4px;
+	box-shadow:rgba(0,0,0,0.5) 0px 0px 25px -4px;
 }
 
 .appwindowbutton-container{
