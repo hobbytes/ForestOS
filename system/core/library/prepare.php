@@ -186,6 +186,7 @@
         releaselink();
         var border_color = $('.action-buttons').css('background-color');
         $("#link_content<?echo $id?>").css({
+          'height' : 'auto',
           'white-space' : 'pre-line',
           'background-color' : 'rgba(177,207,228,0.3)',
           'border' : '1px solid ' + border_color,
