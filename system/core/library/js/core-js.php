@@ -142,13 +142,13 @@ function ProcessLogic(id, name, destination, destination_, maxwidthm, folder, is
         $("#app" + id).css("left", $("#app" + id).attr("wl"));
       }
       $("#app" + id ).toggleClass( "windowfullscreen", 100, function(){
-          UpdateWindow(id,name);
+          UpdateWindow(id, name, 0);
         });
     }
     });
 
     $("#app" + id).resize(function(){
-      UpdateWindow(id,name);
+      UpdateWindow(id, name);
     });
   $("#process" + id ).appendTo("#proceses");
 };
@@ -237,16 +237,19 @@ function releaselink(){
   });
 }
 
-function UpdateWindow(id,name){
+function UpdateWindow(id, name, mode = 1){
   parentWidth = $("#app"+id).css('width');
   parentHeight = $("#app"+id).css('height');
-  match = 0;
+
   if(parentHeight != '0px'){
+
     //get difference
-    if(!$("#app" + id).hasClass("windowfullscreen")){
+    if(!$("#app" + id).hasClass("windowfullscreen")  && mode == 0){
+      match = 0;
       match = $("#app"+id).height() - $("#"+name+id).height();
       parentHeight = $("#app"+id).height() - match + "px";
     }
+
     //update window
     $("#"+name+id).css('width', parentWidth);
     $("#"+name+id).css('height', parentHeight);

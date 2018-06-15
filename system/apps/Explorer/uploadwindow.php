@@ -1,17 +1,19 @@
 <?
+
 include '../../core/library/etc/security.php';
 $security	=	new security;
-session_start();
+
 $security->appprepare();
 
 //Загружаем файл локализации
 $upload_lang  = parse_ini_file('assets/lang/etc.lang');
 $cl = $_SESSION['locale'];
 
-$where=$_GET['where'];
-$appname=$_GET['appname'];
-$appid=$_GET['appid'];
-$folder=$_GET['destination'];
+$where = str_replace(' ', '_', strip_tags($_GET['where']));
+$appname = $_GET['appname'];
+$appid = $_GET['appid'];
+$folder = $_GET['destination'];
+
 $data = array();
 if(isset($_GET['uploadfiles'])){
   if($_SESSION['superuser'] == $_SESSION['loginuser']){
@@ -42,7 +44,8 @@ if(isset($_GET['uploadfiles'])){
 <input type="file" multiple="multiple" accept="*">
 <div class="submit button ui-forest-button ui-forest-accept ui-forest-center"><?echo $upload_lang[$cl.'_btn_load']?></div>
 <div onClick="hideload<?echo $appid?>();" class="ui-forest-button ui-forest-cancel ui-forest-center"><?echo $upload_lang[$cl.'_btn_cancel']?></div>
-<div class="ajax-respond"></div></div>
+<div class="ajax-respond"></div>
+</div>
 <script>
 
 var files;
@@ -54,9 +57,10 @@ $('input[type=file]').change(function(){
 function hideload<?echo $appid?>(){
   event.stopPropagation();
   event.preventDefault();
-  $('#upload<?echo $appid;?>').html('');
-  $("#upload<?echo $appid;?>").css('display', 'none');
+  $('#upload<?echo $appid?>').html('');
+  $("#upload<?echo $appid?>").css('display', 'none');
 }
+
 $('.submit.button').click(function( event ){
     event.stopPropagation();
     event.preventDefault();

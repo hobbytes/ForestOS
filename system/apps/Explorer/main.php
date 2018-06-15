@@ -12,7 +12,7 @@ $AppContainer = new AppContainer;
 /* App Info */
 $AppContainer->AppNameInfo = 'Explorer';
 $AppContainer->SecondNameInfo = 'Проводник';
-$AppContainer->VersionInfo = '1.0.3';
+$AppContainer->VersionInfo = '1.0.4';
 $AppContainer->AuthorInfo = 'Forest Media';
 
 /* Library List */
@@ -32,9 +32,14 @@ $faction = new fileaction;
 $dialogexplorer = new gui;
 $hashImage = md5($AppContainer->VersionInfo);
 
-$dir = preg_replace('#%u([0-9A-F]{4})#se','iconv("UTF-16BE","UTF-8",pack("H4","$1"))',$_GET['defaultloader']);
+function convert($string){
+	$string = preg_replace('#%u([0-9A-F]{4})#se','iconv("UTF-16BE","UTF-8",pack("H4","$1"))',$string);
+	return $string;
+}
+
+$dir = convert($_GET['defaultloader']);
 if(empty($dir)){
-	$dir = preg_replace('#%u([0-9A-F]{4})#se','iconv("UTF-16BE","UTF-8",pack("H4","$1"))',$_GET['dir']);
+	$dir = convert($_GET['dir']);
 }
 
 $del = $_GET['del'];
@@ -57,8 +62,9 @@ if($erasestatus){
 	mkdir($dir);
 }
 
+//make file
 if (isset($_GET['makefile'])){
-	$newFile =str_replace(' ','_',$_GET['makefile']);
+	$newFile = convert(str_replace(' ', '_', $_GET['makefile']));
 	if(!is_file($dir.'/'.$newFile))
 	{
 		$defaultExt = '';
@@ -71,17 +77,19 @@ if (isset($_GET['makefile'])){
 		$dialogexplorer->newnotification($AppName,$AppName,$explorer_lang['mfile_msg_1']);
 	}
 }
+
 // make new dir
 if (isset($_GET['makedir'])){
 	if(!is_dir($dir.'/'.$_GET['makedir']))
 	{
-		if(!mkdir($dir.'/'.$_GET['makedir'],0755)){
-			$dialogexplorer->newnotification($AppName,$AppName,$explorer_lang['msg_1']." ".$_GET['makedir'].$explorer_lang['msg_2']);
+		if(!mkdir($dir.'/'.convert(str_replace(' ', '_', $_GET['makedir'])),0755)){
+			$dialogexplorer->newnotification($AppName, $AppName, $explorer_lang['msg_1']." ".$_GET['makedir'].$explorer_lang['msg_2']);
 		}
 	}else{
-		$dialogexplorer->newnotification($AppName,$AppName,$explorer_lang['msg_3']);
+		$dialogexplorer->newnotification($AppName, $AppName, $explorer_lang['msg_3']);
 	}
 }
+
 //обрабатываем кнопки удаления и перемещения в корзину
 if(!empty($del)){
 	$faction->rmdir_recursive($del);
@@ -98,6 +106,7 @@ if(!empty($deleteforever)){
 		}
 	}
 }
+
 //Логика
 /*-Упаковка объектов-*/
 if(!empty($zipfile)){
@@ -304,7 +313,7 @@ $objectArray = array();
 
 while (false !== ($entry = $d->read())) {
 	$path	=	$d->path;
-	$name	=	$entry;
+	$name	=	convert($entry);
 	if ($entry	!=	'..'){
 		$color	=	'transparent';
 		$extension	=	'';
@@ -365,11 +374,7 @@ while (false !== ($entry = $d->read())) {
 	}
 
 	if ($entry!='.' && $entry!='..' && !in_array($entry,$warfile) && realpath($entry).'/'.$wardir!=$_SERVER['DOCUMENT_ROOT']){
-		$name2="'".md5($name)."'";
-		$name3="'".realpath($entry)."'";
-		$name4="'".$type."'";
-		$name5="'".$name."'";
-		$select	=	'select'.$AppID.'('.$name2.','.$name3.','.$name4.','.$name5.');';
+		$select	=	'select'.$AppID.'(\''.md5($name).'\',\''.convert(realpath($entry)).'\',\''.$type.'\',\''.$name.'\');';
 		$load = 'load'.$AppID.'(this);';
 		$n_color	=	'#000';
 		if(eregi('system/users/',realpath($entry)) || eregi('system/core',realpath($entry))){
@@ -396,7 +401,7 @@ while (false !== ($entry = $d->read())) {
 		$typeObject = 'file';
 	}
 
-	$objectArray[$typeObject] [] = urlencode('<div id="'.realpath($entry).'" class="'.md5($name).' select ui-button ui-widget ui-corner-all explorer-object" '.$selectAction.' on'.$action.'="'.$load.'"  style="cursor:default; height:128px;	margin:5px;	text-align:center;	width:128px;	position:relative;	display:block;	text-overflow:ellipsis;	overflow:hidden;	float:left; transition:all 0.05s ease-out;" title="'.$name.'"><div style="cursor:default; width:80px; height:80px; background-image: url('.$type.'); background-size:cover; -webkit-user-select:none; user-select:none; padding:5px; background-color:'.$color.'; margin:auto;">
+	$objectArray[$typeObject] [] = urlencode('<div id="'.convert(realpath($entry)).'" class="'.md5($name).' select ui-button ui-widget ui-corner-all explorer-object" '.$selectAction.' on'.$action.'="'.$load.'"  style="cursor:default; height:128px;	margin:5px;	text-align:center;	width:128px;	position:relative;	display:block;	text-overflow:ellipsis;	overflow:hidden;	float:left; transition:all 0.05s ease-out;" title="'.$name.'"><div style="cursor:default; width:80px; height:80px; background-image: url('.$type.'); background-size:cover; -webkit-user-select:none; user-select:none; padding:5px; background-color:'.$color.'; margin:auto;">
 	<div style="margin-top:22px; color:#d05858; font-size:17px; font-weight:900;">
 	'.$extension.'
 		</div>
@@ -516,7 +521,7 @@ $AppContainer->EndContainer();
 		$Folder,
 		'main',
 		array(
-			'makedir' => '"+$("#mkdirvalue'.$AppID.'").val()+"',
+			'makedir' => '"+escape($("#mkdirvalue'.$AppID.'").val())+"',
 			'dir' => realpath($entry),
 			'select' => $_GET['select']
 		)
@@ -574,7 +579,7 @@ $AppContainer->EndContainer();
 ?>
 
 function getproperty<?echo $AppID?>(obj){
-	makeprocess('<?echo $Folder?>property.php',obj.id,'object','<?echo $explorer_lang['menu_property_label']?>');
+	makeprocess('<?echo $Folder?>property.php', obj.id, 'object', '<?echo $explorer_lang['menu_property_label']?>');
 };
 
 function select<?echo $AppID?>(folder,folder2,folder3,folder4){
@@ -630,7 +635,7 @@ function paste<?echo $AppID?>(file){
 		url: "system/core/functions/filesystem",
 		data: {
 			 f:getFile,
-			 n:"<?echo realpath($entry).'/'?>",
+			 n:"<?echo convert(realpath($entry)).'/'?>",
 			 a:action
 		}
 	}).done(function(o) {
@@ -650,6 +655,7 @@ $(function(){
 	$("#mmenu<?echo $AppID?>").menu();
 	$("#makeprocess").remove();
 });
+
 checkbutton();
 </script>
 <style>.ui-menu{width: 150px;}</style>
