@@ -11,7 +11,7 @@ $cl = $_SESSION['locale'];
 
 $where = str_replace(' ', '_', strip_tags($_GET['where']));
 $appname = $_GET['appname'];
-$appid = $_GET['appid'];
+$AppID = $_GET['appid'];
 $folder = $_GET['destination'];
 
 $data = array();
@@ -43,7 +43,7 @@ if(isset($_GET['uploadfiles'])){
   <?echo $upload_lang[$cl.'_upload']?><br><br>
 <input type="file" multiple="multiple" accept="*">
 <div class="submit button ui-forest-button ui-forest-accept ui-forest-center"><?echo $upload_lang[$cl.'_btn_load']?></div>
-<div onClick="hideload<?echo $appid?>();" class="ui-forest-button ui-forest-cancel ui-forest-center"><?echo $upload_lang[$cl.'_btn_cancel']?></div>
+<div onClick="hideload<?echo $AppID?>();" class="ui-forest-button ui-forest-cancel ui-forest-center"><?echo $upload_lang[$cl.'_btn_cancel']?></div>
 <div class="ajax-respond"></div>
 </div>
 <script>
@@ -54,11 +54,12 @@ $('input[type=file]').change(function(){
     files = this.files;
 });
 
-function hideload<?echo $appid?>(){
+function hideload<?echo $AppID?>(){
   event.stopPropagation();
   event.preventDefault();
-  $('#upload<?echo $appid?>').html('');
-  $("#upload<?echo $appid?>").css('display', 'none');
+  $('#upload<?echo $AppID?>').html('');
+  $("#upload<?echo $AppID?>").css('display', 'none');
+  reload<?echo $AppID?>();
 }
 
 $('.submit.button').click(function( event ){
@@ -84,15 +85,15 @@ $('.submit.button').click(function( event ){
                 var html = '';
                 $.each( files_path, function( key, val ){ html += val +'<br>'; } )
                 $('.ajax-respond').html( html );
-                hideload<?echo $appid?>();
+                hideload<?echo $AppID?>();
             }
             else{
-              hideload<?echo $appid?>();
+              hideload<?echo $AppID?>();
                 //console.log('ОШИБКИ ОТВЕТА сервера: ' + respond.error );
             }
         },
         error: function( jqXHR, textStatus, errorThrown ){
-          hideload<?echo $appid?>();
+          hideload<?echo $AppID?>();
             //console.log('ОШИБКИ AJAX запроса: ' + textStatus );
         }
     });

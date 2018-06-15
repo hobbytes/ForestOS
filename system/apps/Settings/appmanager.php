@@ -75,18 +75,18 @@ foreach (glob($_SERVER['DOCUMENT_ROOT']."/system/apps/*/main.php") as $filenames
   }
 
   if($_SESSION['locale'] == 'en'){
-    $AppName	=	$arrayInfo->{'name'};
+    $AppName_	=	$arrayInfo->{'name'};
   }else{
-    $AppName	=	$arrayInfo->{'secondname'};
+    $AppName_	=	$arrayInfo->{'secondname'};
   }
   if(empty($AppName)){
-    $AppName = $app_name;
+    $AppName_ = $app_name;
   }
 
   echo'
   <div id="'.$_app_name.$AppID.'" class="app-container'.$AppID.'" style="display:flex; padding:10px; border-bottom:1px solid #ccc; transition:all 0.1s ease-in;">
   <div style="background-color:transparent;  background-image: url('.$app_icon.'); background-size:cover; height:30px; width:30px; float:left;"></div>
-  <div style="padding:7px 25px; width:200px; border-right:1px solid #ccc;">'.$AppName.'</div>
+  <div style="padding:7px 25px; width:200px; border-right:1px solid #ccc;">'.$AppName_.'</div>
   <div id="button_layer'.$_app_name.$AppID.'" class="button_layer" style="opacity:0; display:none; padding:7 10px;">
   <div style="float:right;">
   <div app-run="'.$_app_name.'" class="ui-forest-accept ui-forest-button ui-forest-center app-run'.$AppID.'" >
