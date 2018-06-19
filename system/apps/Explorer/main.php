@@ -199,7 +199,7 @@ if(!is_dir($dir)){
 	}
 
 	if (!empty($dest)){
-		$name_launch = basename($param);
+		$name_launch = str_replace(array('system/apps/','/main.php'), '', $dest);
 		?>
 		<div id="makeprocess">
 			<script>makeprocess('<?echo $dest?>','<?echo $param;?>','<?echo $keys;?>','<?echo $name_launch?>');</script>
