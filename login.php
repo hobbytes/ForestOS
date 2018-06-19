@@ -6,12 +6,16 @@
 <?
 
 /* #Display errors */
-ini_set('display_errors','Off');
-/* error_reporting(E_ALL); */
+/*
+ini_set('display_errors','On');
+error_reporting(E_ALL);
+*/
 
 if (function_exists('date_default_timezone_set'))
 date_default_timezone_set('Europe/Moscow');
+
 global $loginin, $infob, $security, $language, $mobile;
+
 $date = date("d.m.y, H:i:s");
 
 if(isset($_POST['logins'])){
@@ -49,7 +53,7 @@ if (isset($loginin) && isset($passwordin)) {
     $infob->writestat('WARNING! Wrong login or password -> '.$loginin,'system/core/journal.mcj');
 
     $_SESSION['counter'] = $_SESSION['counter'] + 1;// count
-    if($_SESSION['counter'] >= 2 && !$_SESSION['BlockDate']){
+    if($_SESSION['counter'] >= 150 && !$_SESSION['BlockDate']){
       $startDate  = time();
       $_SESSION['BlockDate'] = date('d-m-y H:i:s', strtotime("+10 min", $startDate));
     }

@@ -1,8 +1,9 @@
 <?
 
-/* #Display errors */
+/* #Display errors
 ini_set('display_errors','Off');
-/* error_reporting(E_ALL); */
+error_reporting(E_ALL);
+*/
 
 require 'system/core/library/gui.php';
 require 'system/core/library/bd.php';
@@ -44,7 +45,7 @@ $prepare->beacon();
 <div id="desktop-1" class="desktop">
 <?
 $prepare->desktop("linkdiv");
-$_SESSION['appid']=-1;
+$_SESSION['appid'] = -1;
 ?>
 <div id="notifications" class="notificationhide" style="display:block; position:absolute; right: 0; height: 100%; padding: 10px; transition:all 0.2s ease; z-index:2;">
 <div id="notificationTopLabel" style="width:310px; color:#fff; font-size:20pt; text-align:center; user-select: none; cursor: default; display:none; padding: 10 0; background: rgba(160,160,160,0.9);">

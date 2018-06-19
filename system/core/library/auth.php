@@ -4,12 +4,12 @@ class AuthClassUser {
     private $_login;
   	private $_password;
 
-  public function construct($what,$type){
+  public function construct($what, $type){
       $bds = new readbd;
   		global $getdata;
-  		$bds->readglobalfunction('login','users',$what,$type);
+  		$bds->readglobalfunction('login', 'users', $what, $type);
   		$this->_login = $getdata;
-  		$bds->readglobalfunction('password','users',$what,$type);
+  		$bds->readglobalfunction('password', 'users', $what, $type);
   		$this->_password = $getdata;
   	}
       public function isAuth() {
@@ -47,7 +47,7 @@ class AuthClassUser {
       }
 
       function checkout(){
-        global $infob,$login_get,$action,$login,$auth;
+        global $infob, $login_get, $action, $login, $auth;
         if(isset($_GET['login'])){
           $login_get = $_GET['login'];
         }

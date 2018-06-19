@@ -28,16 +28,24 @@
 /*---------load head---------*/
     public function start()
     {
-      global $hashfile,$getdata,$mobile,$infob,$click,$top,$left,$maxwidth,$bd;
+      global $hashfile, $getdata, $mobile, $infob, $click, $top, $left, $maxwidth, $bd;
+
+      if(!isset($_SESSION)){
+        session_start();
+      }
+
       $dir = 'system/users/'.$_SESSION["loginuser"].'/settings/';
+
       //  # get superuser
       $bd = new readbd;
       $bd->readglobal2("status","forestusers","login",$_SESSION["loginuser"]);
+
       if($getdata != 'superuser'){
         $bd->readglobal2("login","forestusers","status",superuser);
       }else{
         $getdata = $_SESSION["loginuser"];
       }
+
       $_SESSION['superuser'] = $getdata;
 
       if($_SESSION["safemode"]  ==  'true'){
@@ -45,17 +53,37 @@
         $_SESSION["safemode"] = 'false';
       }
 
+      if(isset($_SESSION["loginuser"])){
+        $pwd = $bd->readglobal2("password", "forestusers", "login", $_SESSION["loginuser"], true);
+        $fuid = $bd->readglobal2("fuid", "forestusers", "login", $_SESSION["loginuser"], true);
+        $doc_root = $_SERVER['DOCUMENT_ROOT'];
+        $hash = md5($fuid.$doc_root.$pwd);
+        $_SESSION['godmode'] = file_get_contents("http://forest.hobbytes.com/media/os/ubase/checkgodmode?userhash=$hash");
+        unset($pwd, $fuid, $doc_root, $hash);
+      }
+
       // # check lang
       $_SESSION['locale'] = file_get_contents($dir.'language.foc');
       if(empty($_SESSION['locale'])){
         $_SESSION['locale'] = file_get_contents('system/users/'.$_SESSION['superuser'].'/settings/language.foc');
         if(empty($_SESSION['locale'])){
-        file_put_contents($dir.'language.foc','en');
-        $_SESSION['locale'] = 'en';
+          file_put_contents($dir.'language.foc','en');
+          $_SESSION['locale'] = 'en';
+        }
       }
-      }
+
       $infob->ismobile();
-      if($mobile=='true'){$click='click'; $top='20px';$left='0px'; $maxwidth='100%';}else{$click='dblclick'; $top='25%';$left='25%'; $maxwidth='90%';}
+      if($mobile == 'true'){
+        $click = 'click';
+        $top = '20px';
+        $left = '0px';
+        $maxwidth = '100%';
+      }else{
+        $click = 'dblclick';
+        $top = '25%';
+        $left = '25%';
+        $maxwidth = '90%';
+      }
       ?>
       <html>
       <head>

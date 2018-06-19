@@ -12,7 +12,7 @@ $AppContainer = new AppContainer;
 /* App Info */
 $AppContainer->AppNameInfo = 'Explorer';
 $AppContainer->SecondNameInfo = 'Проводник';
-$AppContainer->VersionInfo = '1.0.4';
+$AppContainer->VersionInfo = '1.0.5';
 $AppContainer->AuthorInfo = 'Forest Media';
 
 /* Library List */
@@ -180,6 +180,7 @@ if(!empty($link)){
 if (empty($dir)){
 	$dir='../../../';
 }
+
 if(!is_dir($dir)){
 	$ext = pathinfo($dir);
 	$ext = mb_strtolower($ext['extension']);
@@ -196,6 +197,7 @@ if(!is_dir($dir)){
 		$keys = $ini_array[$ext.'_key'];
 		$dir = dirname($dir);
 	}
+
 	if (!empty($dest)){
 		$name_launch = basename($param);
 		?>
@@ -206,14 +208,29 @@ if(!is_dir($dir)){
 			$dialogexplorer->dialog($explorer_lang['error_open']."*.$ext</b>",$explorer_lang['error_label'],"bounce");
 		}
 	}
+
 $d = dir($dir);
 chdir($d->path);
 $warfile = array(".htaccess");
 $pathmain = $d->path;
+
+$prefix = 'os';
+
 if ($pathmain == '../../../'){
 	$pathmain = realpath($entry);
 }
-$pathmain = str_replace($_SERVER['DOCUMENT_ROOT'],'',$pathmain);
+
+if($_SESSION['godmode'] == 'false'){
+	$pathmain = str_replace($_SERVER['DOCUMENT_ROOT'], '', $pathmain);
+	$back = $_SERVER['DOCUMENT_ROOT'].dirname($pathmain);
+}
+
+if($_SESSION['godmode'] == 'true'){
+	$back = dirname($pathmain);
+}
+
+$pathmain = str_replace($_SERVER['DOCUMENT_ROOT'], '', $pathmain);
+
 ?>
 <div style="position:absolute; width:100%; z-index:1; background:#f2f2f2; border:1px solid #d4d4d4; box-shadow: 0 1px 2px rgba(0,0,0,0.065);">
 
@@ -274,10 +291,10 @@ $pathmain = str_replace($_SERVER['DOCUMENT_ROOT'],'',$pathmain);
 </div>
 
 <div style="margin-top:7px; border-top:1px solid #d4d4d4; padding-top:7px;">
-<div class="ui-forest-blink" style="padding:4px; background:#4d94ef; margin:0px 10px; border-radius:10px; color:#2b5182; float:left; width:20px;" id="<?echo $_SERVER['DOCUMENT_ROOT'].dirname($pathmain)?>" onclick="load<?echo $AppID?>(this)">
+<div class="ui-forest-blink" style="padding:4px; background:#4d94ef; margin:0px 10px; border-radius:10px; color:#2b5182; float:left; width:20px;" id="<?echo $back?>" onclick="load<?echo $AppID?>(this)">
 	&#9668
 </div>
-<input style="-webkit-appearance:none; border:1px solid #ccc; width:80%; font-size:17px; margin: 0 5px 10px;" type="search" value="os<?echo $pathmain?>"></input>
+<input style="-webkit-appearance:none; border:1px solid #ccc; width:80%; font-size:17px; margin: 0 5px 10px;" type="search" value="<?echo $prefix.$pathmain?>"></input>
 </div>
 </div>
 <div id="mkdirdiv<?echo $AppID?>" style="z-index:1; position:fixed; display:none; top:25%; left:25%; background-color:#ededed; border:1px solid #797979; padding:20px; border-radius:6px; box-shadow:1px 1px 5px #000; width:min-content; text-align:center;">
@@ -357,7 +374,7 @@ while (false !== ($entry = $d->read())) {
 			$extension	=	mb_strtolower(str_replace('.','',$extension));
 			$type	=	$Folder.'assets/fileico.png?h='.$hashImage;
 			if($extension	==	'png'  || $extension	==	'jpg' || $extension	==	'jpeg' || $extension	==	'bmp' || $extension	==	'gif'){
-				$color='transparent';
+				$color = 'transparent';
 				$hashfileprefix	= $faction->filehash($entry,'false');
 				$type	=	$pathmain.'/'.$hashfileprefix;
 				$extension	=	"";
@@ -373,7 +390,7 @@ while (false !== ($entry = $d->read())) {
 		$wardir	= str_replace('public_html/','',$wardir);
 	}
 
-	if ($entry!='.' && $entry!='..' && !in_array($entry,$warfile) && realpath($entry).'/'.$wardir!=$_SERVER['DOCUMENT_ROOT']){
+	if ($entry != '.' && $entry != '..' && !in_array($entry, $warfile) && realpath($entry).'/'.$wardir != $_SERVER['DOCUMENT_ROOT']){
 		$select	=	'select'.$AppID.'(\''.md5($name).'\',\''.convert(realpath($entry)).'\',\''.$type.'\',\''.$name.'\');';
 		$load = 'load'.$AppID.'(this);';
 		$n_color	=	'#000';
