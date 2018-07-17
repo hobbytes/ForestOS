@@ -53,7 +53,7 @@ if (isset($loginin) && isset($passwordin)) {
     $infob->writestat('WARNING! Wrong login or password -> '.$loginin,'system/core/journal.mcj');
 
     $_SESSION['counter'] = $_SESSION['counter'] + 1;// count
-    if($_SESSION['counter'] >= 150 && !$_SESSION['BlockDate']){
+    if($_SESSION['counter'] >= 3 && !$_SESSION['BlockDate']){
       $startDate  = time();
       $_SESSION['BlockDate'] = date('d-m-y H:i:s', strtotime("+10 min", $startDate));
     }
