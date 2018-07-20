@@ -7,12 +7,12 @@ include ('bd_inc.php');
 class readbd{
 public static function read($data){
 $conn = new PDO (DB_DSN, DB_USERNAME, DB_PASSWORD);
-$sql="SELECT $data FROM forestos";
-$id=$conn->query($sql);
+$sql = "SELECT $data FROM forestos";
+$id = $conn->query($sql);
 $row = $id->fetch();
-$f_data=$row[0];
+$f_data = $row[0];
 echo $f_data;
-$conn=null;
+$conn = null;
 }
 
 public static function readglobal($globaldata){
@@ -29,6 +29,20 @@ public static function updatebd($table,$key,$value,$key_2,$value_2){
 $conn = new PDO (DB_DSN, DB_USERNAME, DB_PASSWORD);
 $sql="UPDATE $table SET $key='$value' WHERE $key_2='$value_2'";
 $conn->query($sql);
+}
+
+public static function addColumn($table, $newColumn, $type, $size){
+  $dirname = $_SERVER['DOCUMENT_ROOT'].'/system/core/TempTable/';
+  if(!is_dir($dirname)){
+    mkdir($dirname,0777);
+  }
+  if(!file_exists($dirname.$newColumn.'.foc')){
+    $type = mb_strtoupper($type);
+    $conn = new PDO (DB_DSN, DB_USERNAME, DB_PASSWORD);
+    $sql="ALTER TABLE $table ADD $newColumn $type( $size )";
+    $conn->query($sql);
+    file_put_contents($dirname.$newColumn.'.foc','0');
+  }
 }
 
 public static function readglobal2($globaldata,$from,$what,$like, $Return = false){

@@ -11,6 +11,8 @@ $oldpassword  = $_GET['oldpassword'];
 $newpassword  =  $_GET['newpassword'];
 $checkpassword  =  $_GET['checkpassword'];
 
+$GetKeyStatus = $_GET['getkey'];
+
 /* get localization file */
 $language_security  = parse_ini_file('lang/security.lang');
 
@@ -38,14 +40,28 @@ $gui = new gui;
 $infob  = new info;
 global $security;
 
+if($GetKeyStatus == 'true'){
+  $settingsbd->readglobal2("password", "forestusers", "login", $_SESSION["loginuser"]);
+  $settingsbd->addColumn("forestusers", "TempKey", "VARCHAR", "255");
+  $GetKey = uniqid('fos-',$security->crypt_s(md5($getdata.date('d-m-y-h-i-s')), $_SESSION["loginuser"]));
+
+  if(!empty($GetKey)){
+    $settingsbd->updatebd("forestusers","TempKey",$GetKey,"login",$_SESSION["loginuser"]);
+  }
+}
+
+if($GetKeyStatus == 'false'){
+  $settingsbd->updatebd("forestusers","TempKey","0","login",$_SESSION["loginuser"]);
+}
+
 if(!empty($oldpassword) && !empty($newpassword) && !empty($checkpassword)){
 
-  $oldpassword  = $security->crypt_s($_GET['oldpassword'],$_SESSION["loginuser"]);
-  $newpassword  =  $security->crypt_s($_GET['newpassword'],$_SESSION["loginuser"]);
-  $checkpassword  =  $security->crypt_s($_GET['checkpassword'],$_SESSION["loginuser"]);
+  $oldpassword  = $security->crypt_s($_GET['oldpassword'], $_SESSION["loginuser"]);
+  $newpassword  =  $security->crypt_s($_GET['newpassword'], $_SESSION["loginuser"]);
+  $checkpassword  =  $security->crypt_s($_GET['checkpassword'], $_SESSION["loginuser"]);
 
-  $settingsbd->readglobal2("password","forestusers","login",$_SESSION["loginuser"]);
-  $bdpass=$getdata;
+  $settingsbd->readglobal2("password", "forestusers", "login", $_SESSION["loginuser"]);
+  $bdpass = $getdata;
 
   if($bdpass == $oldpassword){
     if($newpassword == $checkpassword){
@@ -81,13 +97,36 @@ if(!empty($oldpassword) && !empty($newpassword) && !empty($checkpassword)){
 
   echo '<div id="changepassword'.$AppID.'" onClick="changepassword'.$AppID.'();" class="ui-forest-button ui-forest-accept">'.$language_security[$_SESSION['locale'].'_button_change'].'</div><hr>';
 
+  echo '
+  <div style="text-align:left; margin-top:10px;">
+    <b style="font-size:20px;">
+      '.$language_security[$_SESSION['locale'].'_tempkey_label'].'
+    </b>
+    <div id="GetKey'.$AppID.'" onClick="GetKey'.$AppID.'();" class="ui-forest-button ui-forest-accept" style="margin:10 0;">
+      '.$language_security[$_SESSION['locale'].'_tempkey_button'].'
+    </div>
+
+    <div id="EraseKey'.$AppID.'" onClick="EraseKey'.$AppID.'();" class="ui-forest-button ui-forest-cancel" style="margin:10 0;">
+      '.$language_security[$_SESSION['locale'].'_tempkeyerase_button'].'
+    </div>';
+
+    if(!empty($GetKey)){
+      echo
+      $language_security[$_SESSION['locale'].'_tempkey_copy'].'
+      <div style="margin: 10 0; padding: 7px; font-weight: 900; width: max-content; border: 2px dashed #8c7f3b; background: #e6d26a;">
+       '.$GetKey.'
+      </div>';
+    }
+  echo '</div><hr>';
+
 $infob->readstat('../../core/journal.mcj');
 $text = $getstat;
-echo '<div style="text-align:left; margin-top:10px; margin-left:10px;"><b style="font-size:20px;">'.$language_security[$_SESSION['locale'].'_journal_label'].'</b>';
+echo '<div style="text-align:left; margin-top:10px;"><b style="font-size:20px;">'.$language_security[$_SESSION['locale'].'_journal_label'].'</b>';
 echo '<div><textarea style="width:95%; max-width:95%;" rows="10" cols="80" >'.$text.'</textarea></div></div>';
 if($_SESSION['loginuser'] == $_SESSION['superuser']){
-  echo '<div onClick="eraselog'.$AppID.'();" style="margin:10px;" class="ui-forest-button ui-forest-cancel">'.$language_security[$_SESSION['locale'].'_button_journal'].'</div><hr>';
+  echo '<div onClick="eraselog'.$AppID.'();" style="margin:10px 0;" class="ui-forest-button ui-forest-cancel">'.$language_security[$_SESSION['locale'].'_button_journal'].'</div><hr>';
 }
+
 unset($settingsbd);
 
 $AppContainer->EndContainer();
@@ -100,6 +139,28 @@ $AppContainer->Event(
   NULL,
   $Folder,
   'main'
+);
+
+// Get Key
+$AppContainer->Event(
+	"GetKey",
+  NULL,
+	$Folder,
+	'security',
+	array(
+		'getkey' => 'true'
+	)
+);
+
+// Erase Key
+$AppContainer->Event(
+	"EraseKey",
+  NULL,
+	$Folder,
+	'security',
+	array(
+		'getkey' => 'false'
+	)
 );
 
 // erase log

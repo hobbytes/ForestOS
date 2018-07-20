@@ -24,6 +24,7 @@ if(isset($_POST['logins'])){
 
 if (!empty($status2))
 {
+  $keyaccess = $_POST['keyaccess'];
   $loginin = strtolower(addslashes(strip_tags(htmlspecialchars($_POST['loginin']))));
   $loginin = str_replace(' ', '_', $loginin);
   $passwordin = $security->crypt_s(addslashes(strip_tags(htmlspecialchars($_POST['passwordin']))),$loginin);
@@ -42,12 +43,12 @@ if(!isset($_SESSION['BlockDate'])){// prepare counter for capthca
 }
 
 $auth = new AuthClassUser();
-$auth->construct('login',$loginin);
+$auth->construct('login',$loginin, $keyaccess);
 
 if (isset($loginin) && isset($passwordin)) {
   $_SESSION['safemode'] = $_POST['safemode'];
 
-  if (!$auth->auth($loginin, $passwordin)) {
+  if (!$auth->auth($loginin, $passwordin, $keyaccess)) {
     echo '<h2 style="color:#fff; background-color:#ec6767; border:2px solid #791a1a; width:350px; padding:13px 0; margin:10px auto; font-size:small;">'.$language[$_SESSION['locale'].'_login_error'].'</h2>';
     $login_get = $loginin;
     $infob->writestat('WARNING! Wrong login or password -> '.$loginin,'system/core/journal.mcj');
@@ -68,8 +69,11 @@ if (isset($_GET["exit"])) {
 }
 
   if ($auth->isAuth()) {
+    if(!empty($keyaccess)){
+      $prefix = '[via Access Key: '.$keyaccess.']';
+    }
     header("Location:os.php");
-    $infob->writestat('Success Login  -> '.$loginin,'system/core/journal.mcj');
+    $infob->writestat('Success Login -> '.$prefix.$loginin,'system/core/journal.mcj');
     unset($_SESSION['counter']);
     $_SESSION['BlockDate'] = false;
 }
@@ -87,7 +91,15 @@ if(!$_SESSION['BlockDate'] || date('d-m-y H:i:s') >= $_SESSION['BlockDate']){
 }
 
 ?>
-<div id="safemode" style="color:#63e47a; margin:10px 0; display:none;"><input type="checkbox" name="safemode" value="true" style="vertical-align:top; margin: 0 3px 0 0; width:17px; height:17px;"><?echo $language[$_SESSION['locale'].'_safemode_label']?></div>
+<div id="safemode" style="color:#63e47a; margin:10px 0; display:none;">
+  <div style="margin:10 0;">
+  <input type="checkbox" name="safemode" value="true" style="vertical-align:top; margin: 0 3px 0 0; width:17px; height:17px;">
+  <?
+  echo $language[$_SESSION['locale'].'_safemode_label'].'</div>';
+
+  $gui->inputslabel('keyaccess', 'text', 'keyaccess', "$keyaccess",'70', 'Key Access');
+  ?>
+</div>
 <?
 $gui->button($language[$_SESSION['locale'].'_login_button'], '#fff', '#092738', '30','logins');
 $gui->formend();
