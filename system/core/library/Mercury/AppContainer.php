@@ -31,6 +31,11 @@ class  AppContainer {
 /* start container */
   public function StartContainer(){
 
+    //start session
+    if(!isset($_SESSION)){
+      session_start();
+    }
+
     //start timer for stats
     if($this->showStatistics){
       echo '
@@ -44,6 +49,12 @@ class  AppContainer {
     if($this->showError){
       ini_set('display_errors','On');
       error_reporting(E_ALL);
+    }
+
+    //set timezone
+    $timezone = $_SESSION['timezone'];
+    if (function_exists('date_default_timezone_set')){
+      date_default_timezone_set("$timezone");
     }
 
     //set Application Information
