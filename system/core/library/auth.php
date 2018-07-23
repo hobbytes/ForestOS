@@ -27,18 +27,24 @@ class AuthClassUser {
 
       /**
        * @param string $login
-       * @param string $passwors
+       * @param string $password
        */
-      public function auth($login, $passwors, $keyaccess = NULL) {
+      public function auth($login, $password, $keyaccess = NULL) {
 
           if(!empty($keyaccess)){
             $bds = new readbd;
             global $getdata;
             $login = $bds->readglobal2("login", "forestusers", "TempKey", $keyaccess, true);
-            $passwors = $bds->readglobal2("password", "forestusers", "TempKey", $keyaccess, true);
+            $password = $bds->readglobal2("password", "forestusers", "TempKey", $keyaccess, true);
+            if(empty($login) && empty($password)){
+              global $infob;
+              $infob->writestat('WARNING! Wrong Access Key -> '.$keyaccess, 'system/core/journal.mcj');
+              $login = 'wrong access key!';
+              $password = '0';
+            }
           }
 
-          if ($login == $this->_login && $passwors == $this->_password) {
+          if ($login == $this->_login && $password == $this->_password) {
             $_SESSION["is_authuser"] = true;
             $_SESSION["loginuser"] = $login;
 
@@ -47,7 +53,7 @@ class AuthClassUser {
               global $getdata;
               $bds->updatebd("forestusers", "TempKey", "0", "login", $login);
             }
-            
+
             return true;
           }
           else {$_SESSION["is_authuser"] = false;
@@ -84,7 +90,8 @@ class AuthClassUser {
         if (isset($_GET['action']) && $_GET["action"] == 'logout')
         {
           $infob->writestat('Success Logout -> '.$login, 'system/core/journal.mcj');
-          $auth->out(); header("Location: ?exit=0");
+          $auth->out();
+          header("Location: ?exit=0");
         }
       }
   }

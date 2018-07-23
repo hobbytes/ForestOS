@@ -49,9 +49,13 @@ if (isset($loginin) && isset($passwordin)) {
   $_SESSION['safemode'] = $_POST['safemode'];
 
   if (!$auth->auth($loginin, $passwordin, $keyaccess)) {
+
     echo '<h2 style="color:#fff; background-color:#ec6767; border:2px solid #791a1a; width:350px; padding:13px 0; margin:10px auto; font-size:small;">'.$language[$_SESSION['locale'].'_login_error'].'</h2>';
     $login_get = $loginin;
-    $infob->writestat('WARNING! Wrong login or password -> '.$loginin,'system/core/journal.mcj');
+
+    if(empty($keyaccess)){
+      $infob->writestat('WARNING! Wrong login or password -> '.$loginin,'system/core/journal.mcj');
+    }
 
     $_SESSION['counter'] = $_SESSION['counter'] + 1;// count
     if($_SESSION['counter'] >= 3 && !$_SESSION['BlockDate']){
