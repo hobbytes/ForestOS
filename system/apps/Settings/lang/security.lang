@@ -14,6 +14,7 @@ ru_tempkey_copy = 'Скопируйте этот ключ: '
 ru_notchangepass  = 'Пароль изменен!'
 ru_notnewerrorpass  = 'Новые пароли не совпадают!'
 ru_notolderrorpass  = 'Вы ввели неправильный старый пароль!'
+ru_namekey_label = 'Введите имя ключа'
 
 en_settings_security = Security
 en_changepassword_label = Change Password
@@ -30,3 +31,4 @@ en_tempkey_copy = 'Copy this key: '
 en_notchangepass = 'Password changed!'
 en_notnewerrorpass = 'New passwords do not match!'
 en_notolderrorpass = 'You have entered the wrong old password!'
+en_namekey_label = 'Enter the key name'

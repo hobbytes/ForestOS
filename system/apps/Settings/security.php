@@ -6,12 +6,7 @@
 $AppID  = $_GET['appid'];
 $AppName  = $_GET['appname'];
 $Folder = $_GET['destination'];
-$erase  = $_GET['erase'];
-$oldpassword  = $_GET['oldpassword'];
-$newpassword  =  $_GET['newpassword'];
-$checkpassword  =  $_GET['checkpassword'];
 
-$GetKeyStatus = $_GET['getkey'];
 
 /* get localization file */
 $language_security  = parse_ini_file('lang/security.lang');
@@ -32,26 +27,64 @@ $AppContainer->StartContainer();
 
 <?php
 
+/* get data */
+
+$erase  = $_GET['erase'];
+$oldpassword  = $_GET['oldpassword'];
+$newpassword  =  $_GET['newpassword'];
+$checkpassword  =  $_GET['checkpassword'];
+$GetKeyStatus = $_GET['getkey'];
+
 if($erase == 'true'){
   file_put_contents('../../core/journal.mcj','');
 }
+
 $settingsbd = new readbd;
 $gui = new gui;
 $infob  = new info;
 global $security;
 
+if(isset($_GET['delete_key_name'])){
+  $delete_key_name = $_GET['delete_key_name'];
+  $TempKeyArray = $settingsbd->readglobal2("TempKey", "forestusers", "login", $_SESSION["loginuser"], true);
+
+  $get_keys = explode("[", $TempKeyArray);
+
+  foreach ($get_keys as $key) {
+    if(!empty($key)){
+      $key = str_replace(']', '', $key);
+      if(preg_match("/$delete_key_name/",$key)){
+        $_TempKeyArray = str_replace('['.$key.']', '', $TempKeyArray);
+        if($_TempKeyArray != $TempKeyArray){
+          $settingsbd->updatebd("forestusers", "TempKey", $_TempKeyArray, "login", $_SESSION["loginuser"]);
+        }
+      }
+    }
+  }
+}
+
 if($GetKeyStatus == 'true'){
-  $settingsbd->readglobal2("password", "forestusers", "login", $_SESSION["loginuser"]);
+
+  $GetKeyName = $_GET['key_name'];
+
+  if(empty($GetKeyName)){
+    $GetKeyName = 'fos';
+  }
+
+  $_p = $settingsbd->readglobal2("password", "forestusers", "login", $_SESSION["loginuser"], true);
+  $TempKeyArray = $settingsbd->readglobal2("TempKey", "forestusers", "login", $_SESSION["loginuser"], true);
   $settingsbd->addColumn("forestusers", "TempKey", "VARCHAR", "255");
-  $GetKey = uniqid('fos-',$security->crypt_s(md5($getdata.date('d-m-y-h-i-s')), $_SESSION["loginuser"]));
+
+  $GetKey = uniqid($GetKeyName.'-', $security->crypt_s(md5($_p.date('d-m-y-h-i-s')), $_SESSION["loginuser"]));
+  $TempKeyArray = $TempKeyArray.'['.$GetKey.']';
 
   if(!empty($GetKey)){
-    $settingsbd->updatebd("forestusers","TempKey",$GetKey,"login",$_SESSION["loginuser"]);
+    $settingsbd->updatebd("forestusers", "TempKey", $TempKeyArray, "login", $_SESSION["loginuser"]);
   }
 }
 
 if($GetKeyStatus == 'false'){
-  $settingsbd->updatebd("forestusers","TempKey","0","login",$_SESSION["loginuser"]);
+  $settingsbd->updatebd("forestusers","TempKey","","login",$_SESSION["loginuser"]);
 }
 
 if(!empty($oldpassword) && !empty($newpassword) && !empty($checkpassword)){
@@ -102,21 +135,47 @@ if(!empty($oldpassword) && !empty($newpassword) && !empty($checkpassword)){
     <b style="font-size:20px;">
       '.$language_security[$_SESSION['locale'].'_tempkey_label'].'
     </b>
-    <div id="GetKey'.$AppID.'" onClick="GetKey'.$AppID.'();" class="ui-forest-button ui-forest-accept" style="margin:10 0;">
-      '.$language_security[$_SESSION['locale'].'_tempkey_button'].'
-    </div>
 
-    <div id="EraseKey'.$AppID.'" onClick="EraseKey'.$AppID.'();" class="ui-forest-button ui-forest-cancel" style="margin:10 0;">
-      '.$language_security[$_SESSION['locale'].'_tempkeyerase_button'].'
-    </div>';
+    <br><br>
+    <div>'.$language_security[$_SESSION['locale'].'_namekey_label'].':</div>';
+    $gui->inputslabel('', 'text', 'key_name'.$AppID, 'fos','25', $language_security[$_SESSION['locale'].'_namekey_label']);
 
     if(!empty($GetKey)){
       echo
       $language_security[$_SESSION['locale'].'_tempkey_copy'].'
-      <div style="margin: 10 0; padding: 7px; font-weight: 900; width: max-content; border: 2px dashed #8c7f3b; background: #e6d26a;">
+      <div style="margin: 10 0; padding: 7px; font-weight: 900; width: max-content; border: 2px dashed #144015; background: #4caf50; color: #074009;">
        '.$GetKey.'
       </div>';
     }
+
+    echo '<div id="GetKey'.$AppID.'" onClick="GetKey'.$AppID.'();" class="ui-forest-button ui-forest-accept" style="margin:10 0;">
+      '.$language_security[$_SESSION['locale'].'_tempkey_button'].'
+    </div>';
+
+    $TempKeyArray = $settingsbd->readglobal2("TempKey", "forestusers", "login", $_SESSION["loginuser"], true);
+
+    if(!empty($TempKeyArray)){
+      $get_keys = explode("[", $TempKeyArray);
+
+      foreach ($get_keys as $key) {
+       $temp = stristr($key, '.', true);
+       $key = stristr($key, '-', true);
+
+        if(!empty($key)){
+          echo '<div style="margin: 10 0; padding: 7px; min-width:70px; font-weight: 900; width: max-content; border: 2px dashed #8c7f3b; background: #e6d26a;">
+           '.$key.'
+           <div style="float:right; color:#e66a6a;" onClick="DeleteKey'.$AppID.'(\''.$temp.'\')" class="ui-forest-blink">x</div>
+          </div>';
+        }
+      }
+  }
+
+    unset($get_keys, $key, $TempKeyArray);
+
+    echo '<div id="EraseKey'.$AppID.'" onClick="EraseKey'.$AppID.'();" class="ui-forest-button ui-forest-cancel" style="margin:10 0;">
+      '.$language_security[$_SESSION['locale'].'_tempkeyerase_button'].'
+    </div>';
+
   echo '</div><hr>';
 
 $infob->readstat('../../core/journal.mcj');
@@ -131,7 +190,9 @@ unset($settingsbd);
 
 $AppContainer->EndContainer();
 ?>
+
 <script>
+
 <?php
 // back button
 $AppContainer->Event(
@@ -148,7 +209,19 @@ $AppContainer->Event(
 	$Folder,
 	'security',
 	array(
+    'key_name' => '"+escape($("#key_name'.$AppID.'").val())+"',
 		'getkey' => 'true'
+	)
+);
+
+// Delete Key
+$AppContainer->Event(
+	"DeleteKey",
+  'key',
+	$Folder,
+	'security',
+	array(
+    'delete_key_name' => '"+key+"'
 	)
 );
 

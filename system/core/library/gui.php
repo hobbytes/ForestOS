@@ -21,7 +21,7 @@ class gui{
   //для кнопочек
   function button($article, $textcolor, $backgroundcolor, $size,$name)
   {
-    echo '<input class="buttoncustom" style="-webkit-appearance:none; background-color:'.$backgroundcolor.'; border:none; width:'.$size.'%; color:'.$textcolor.'; padding:10px 20px; border-radius:5px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; margin: 0; cursor: pointer;" type="submit" name="'.$name.'" value="'.$article.'" /><br/><br/>';
+    echo '<input class="buttoncustom" style="-webkit-appearance:none; background:'.$backgroundcolor.'; border:none; width:'.$size.'%; color:'.$textcolor.'; padding:10px 20px; border-radius:5px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; margin: 0; cursor: pointer;" type="submit" name="'.$name.'" value="'.$article.'" /><br/><br/>';
   }
   function inputslabel($article, $type, $name, $value, $size, $placeholder)
   {

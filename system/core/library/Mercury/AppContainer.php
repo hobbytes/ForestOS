@@ -25,6 +25,7 @@ class  AppContainer {
   public $width = '800px'; // app container width @string
   public $customStyle = NULL; // custom CSS style @string
   public $isMobile = NULL; // which device style @string
+  public $securityMode = true; // use security fucntion @boolean
   public $showError = false; // error display @boolean
   public $showStatistics = false; // statistics display @boolean
 
@@ -70,10 +71,12 @@ class  AppContainer {
     }
 
     // check security
-    global $security;
-    require $_SERVER['DOCUMENT_ROOT'].'/system/core/library/etc/security.php';
-    $security	=	new security;
-    $security->appprepare();
+    if($this->securityMode){
+      global $security;
+      require_once $_SERVER['DOCUMENT_ROOT'].'/system/core/library/etc/security.php';
+      $security	=	new security;
+      $security->appprepare();
+    }
 
     // find libraries
     if(!empty($this->LibraryArray)){

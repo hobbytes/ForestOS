@@ -23,7 +23,7 @@ class info{
     }
 
     function writestat($alarmbody,$folder){
-      include '../bd.php';
+      require_once $_SERVER['DOCUMENT_ROOT'].'/system/core/library/bd.php';
       global $getdata, $getstat, $security;
       //$maxFileSize = '10000'; //Max size for journal file
       //$currentFileSize = filesize($folder); //current size of journal file
@@ -47,11 +47,13 @@ class info{
     }
 
     function readstat($folder){
+
       if(!isset($_SESSION)){
         session_start();
       }
-      include './etc/security.php';
-      include '../bd.php';
+
+      require_once $_SERVER['DOCUMENT_ROOT'].'/system/core/library/etc/security.php';
+      require_once $_SERVER['DOCUMENT_ROOT'].'/system/core/library/bd.php';
       global $getdata, $getstat;
       $security = new security;
       $bd = new readbd;

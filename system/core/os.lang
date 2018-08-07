@@ -10,6 +10,8 @@ ru_exit = выход
 ru_notification_label = Центр уведомлений
 ru_notification_clear = Отчистить
 
+ru_error_370 = 'Ваш аккаунт был заморожен, свяжитесь с администратором для выяснения причин: contact@hobbytes.com'
+
 en_explorer_menu  = Explorer
 en_settings_menu  = Settings
 en_store_menu  = Store
@@ -20,6 +22,8 @@ en_hibernation = hibernation
 en_exit = exit
 en_notification_label = Notification Center
 en_notification_clear = Clear All
+
+en_error_370 = 'Your account has been blocked, contact the administrator for the reasons: contact@hobbytes.com'
 
 [login]
 ru_login_input = введите логин

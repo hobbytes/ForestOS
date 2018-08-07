@@ -2,14 +2,12 @@
 <div id="login" style="margin:auto; text-align:center; max-width:500px; height:80%;">
 <div style="text-align:center; margin:auto; width:auto; height:auto; ">
 <div id="loginin" style="padding-top: 50%;">
-<div id="labelos" style="font-size:30px; padding:30px; color:#fff; text-shadow: 1px 1px 1px grey; user-select: none; cursor: default; text-transform:uppercase; font-weight: 700;">Forest OS</div>
+<div id="labelos">Forest OS</div>
 <?
 
 /* #Display errors */
-/*
-ini_set('display_errors','On');
-error_reporting(E_ALL);
-*/
+
+ini_set('display_errors','Off');
 
 if (function_exists('date_default_timezone_set'))
 date_default_timezone_set('Europe/Moscow');
@@ -105,7 +103,7 @@ if(!$_SESSION['BlockDate'] || date('d-m-y H:i:s') >= $_SESSION['BlockDate']){
   ?>
 </div>
 <?
-$gui->button($language[$_SESSION['locale'].'_login_button'], '#fff', '#092738', '30','logins');
+$gui->button($language[$_SESSION['locale'].'_login_button'], '#fff', '#f45c43', '30','logins');
 $gui->formend();
 
 $timezone = file_get_contents('system/users/'.$_SESSION['superuser'].'/settings/timezone.foc');

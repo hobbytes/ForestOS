@@ -45,10 +45,15 @@ public static function addColumn($table, $newColumn, $type, $size){
   }
 }
 
-public static function readglobal2($globaldata,$from,$what,$like, $Return = false){
+public static function readglobal2($globaldata,$from,$what,$like, $Return = false, $likeMode = false){
 global $getdata;
 $conn = new PDO (DB_DSN, DB_USERNAME, DB_PASSWORD);
-$sql = "SELECT $globaldata,$what FROM $from where $what='$like'";
+if($likeMode){
+  $sql = "SELECT $globaldata,$what FROM $from where $what like '%$like%'";
+}else{
+  $sql = "SELECT $globaldata,$what FROM $from where $what='$like'";
+}
+
 $id = $conn->query($sql);
 $row = $id->fetch();
 if(!$Return){

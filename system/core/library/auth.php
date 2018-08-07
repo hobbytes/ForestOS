@@ -13,8 +13,8 @@ class AuthClassUser {
     		$bds->readglobalfunction('password', 'users', $what, $type);
     		$this->_password = $getdata;
       }else{
-        $this->_login = $bds->readglobal2("login", "forestusers", "TempKey", $keyaccess, true);
-        $this->_password = $bds->readglobal2("password", "forestusers", "TempKey", $keyaccess, true);
+        $this->_login = $bds->readglobal2("login", "forestusers", "TempKey", $keyaccess, true, true);
+        $this->_password = $bds->readglobal2("password", "forestusers", "TempKey", $keyaccess, true, true);
       }
   	}
 
@@ -25,6 +25,7 @@ class AuthClassUser {
           else return false;
       }
 
+
       /**
        * @param string $login
        * @param string $password
@@ -34,8 +35,8 @@ class AuthClassUser {
           if(!empty($keyaccess)){
             $bds = new readbd;
             global $getdata;
-            $login = $bds->readglobal2("login", "forestusers", "TempKey", $keyaccess, true);
-            $password = $bds->readglobal2("password", "forestusers", "TempKey", $keyaccess, true);
+            $login = $bds->readglobal2("login", "forestusers", "TempKey", $keyaccess, true, true);
+            $password = $bds->readglobal2("password", "forestusers", "TempKey", $keyaccess, true, true);
             if(empty($login) && empty($password)){
               global $infob;
               $infob->writestat('WARNING! Wrong Access Key -> '.$keyaccess, 'system/core/journal.mcj');
@@ -49,9 +50,26 @@ class AuthClassUser {
             $_SESSION["loginuser"] = $login;
 
             if(!empty($keyaccess)){
+              
               $bds = new readbd;
               global $getdata;
-              $bds->updatebd("forestusers", "TempKey", "0", "login", $login);
+
+              $TempKeyArray = $bds->readglobal2("TempKey", "forestusers", "login", $login, true);
+
+              $get_keys = explode("[", $TempKeyArray);
+
+              foreach ($get_keys as $key) {
+                if(!empty($key)){
+                  $key = str_replace(']', '', $key);
+                  if(preg_match("/$keyaccess/", $key)){
+                    $_TempKeyArray = str_replace('['.$key.']', '', $TempKeyArray);
+                    if($_TempKeyArray != $TempKeyArray){
+                      $bds->updatebd("forestusers", "TempKey", $_TempKeyArray, "login", $login);
+                    }
+                  }
+                }
+              }
+
             }
 
             return true;
