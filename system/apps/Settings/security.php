@@ -44,6 +44,8 @@ $gui = new gui;
 $infob  = new info;
 global $security;
 
+$settingsbd->addColumn("forestusers", "TempKey", "VARCHAR", "255");
+
 if(isset($_GET['delete_key_name'])){
   $delete_key_name = $_GET['delete_key_name'];
   $TempKeyArray = $settingsbd->readglobal2("TempKey", "forestusers", "login", $_SESSION["loginuser"], true);
