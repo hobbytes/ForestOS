@@ -2,7 +2,14 @@
 <img src="http://forest.hobbytes.com/media/os/updates/uplogo.png" width="128">
 Forest OS is a network operating system (shell) with open source code, which is based on PHP and JS technologies.
 
-**Requires PHP <= v5.6**
+## Requires:
+
+| Value | Argument |
+| ------ | ------ |
+| *Free space* | 6 MB |
+| *PHP version* | <= v5.6 |
+| *PHP short_open_tag* | On |
+| *PHP display_errors* | Off |
 
 ## How to install:
 1. Download the file http://forest.hobbytes.com/media/os/installer.zip and unzip it into the root of the site
