@@ -52,7 +52,12 @@ function ProcessLogic(id, name, destination, destination_, maxwidthm, folder, is
        $("#app" + id).attr("wt", $("#app" + id).css("top"));
        $("#app" + id).attr("wl", $("#app" + id).css("left"));
      }
-    }
+   },
+   drag: function(){
+     if(typeof window["moveApp" + id] == 'function'){
+       window["moveApp" + id]();
+     }
+   }
   });
 
   $("#app" + id).resizable({
@@ -68,6 +73,11 @@ function ProcessLogic(id, name, destination, destination_, maxwidthm, folder, is
   $("#app" + id).click(function(){
     $(".window").removeClass("windowactive")
     $("#app" + id ).addClass("windowactive");
+
+    if(typeof window["activeApp" + id] == 'function'){
+      window["activeApp" + id]();
+    }
+
   });
 
   $( "#drag" + id ).click(function(){
@@ -89,7 +99,22 @@ function ProcessLogic(id, name, destination, destination_, maxwidthm, folder, is
     $( "#" + id).toggle( "slide", options, 100 );
   };
 
+  $(".close" + id).on( "click", function() {
+
+    if(typeof window["closeApp" + id] == 'function'){
+      window["closeApp" + id]();
+    }
+
+    $("#process" + id).remove();
+
+  });
+
   $( ".hidewindow" + id ).on( "click", function() {
+
+    if(typeof window["hideApp" + id] == 'function'){
+      window["hideApp" + id]();
+    }
+
       runEffect();
 
       if($("#app" + id).hasClass("ui-resizable")){
@@ -111,12 +136,22 @@ function ProcessLogic(id, name, destination, destination_, maxwidthm, folder, is
     });
 
   $(".reload" + id).on( "click", function() {
+
+    if(typeof window["reloadApp" + id] == 'function'){
+      window["reloadApp" + id]();
+    }
+
     let oldbytes = $("#app" + id).attr("applength-" + id);
     $("#" + id).load(""+destination_+"?id=<?echo rand(0,10000)?>&appid="+id+"&appname="+name+"&destination="+folder+"/&mobile="+isMobile+"&"+key+"="+param);
     $("#app" + id).attr("applength-" + id, parseInt(oldbytes) + $("#" + name + id).html().length);
   });
 
   $("#app" + id).resize(function(){
+
+    if(typeof window["resizeApp" + id] == 'function'){
+      window["resizeApp" + id]();
+    }
+
     if(!$("#app" + id).hasClass("windowfullscreen")){
       $("#app" + id).attr("ww", $("#"+name+id).css("width"));
       $("#app" + id).attr("wh", $("#"+name+id).css("height"));
@@ -134,12 +169,22 @@ function ProcessLogic(id, name, destination, destination_, maxwidthm, folder, is
         $("#app" + id).css("width","");
         $("#app" + id).css("height","");
         $("#app" + id ).css({top:"31px",left:"2px"});
+
+        if(typeof window["windowFullScreenApp" + id] == 'function'){
+          window["windowFullScreenApp" + id]();
+        }
       }
+
       if($("#app" + id).hasClass("windowfullscreen")){
         $("#"+name+id).css("width", $("#app" + id).attr("ww"));
         $("#"+name+id).css("height", $("#app" + id).attr("wh"));
         $("#app" + id).css("top", $("#app" + id).attr("wt"));
         $("#app" + id).css("left", $("#app" + id).attr("wl"));
+
+        if(typeof window["windowNormalScreenApp" + id] == 'function'){
+          window["windowNormalScreenApp" + id]();
+        }
+
       }
       $("#app" + id ).toggleClass( "windowfullscreen", 100, function(){
           UpdateWindow(id, name, 0);
@@ -150,7 +195,7 @@ function ProcessLogic(id, name, destination, destination_, maxwidthm, folder, is
     $("#app" + id).resize(function(){
       UpdateWindow(id, name);
     });
-  $("#process" + id ).appendTo("#proceses");
+    $("#process" + id ).appendTo("#proceses");
 };
 
 <?

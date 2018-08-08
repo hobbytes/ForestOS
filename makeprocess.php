@@ -63,7 +63,7 @@ if(isset($_SESSION['loginuser'])){
           '.str_replace('_',  ' ',  $name).'
         </div>
         <div class="appwindowbutton-container" style="margin:0 10px;">
-          <div class="appwindowbutton ui-forest-blink" onClick=" $(';echo "'#"; echo 'process'.$idprocess; echo "'"; echo ').remove();';echo ' $(';echo "'#"; echo "app$idprocess"; echo "'"; echo ').css('; echo "$style_"; echo '); checkwindows();" style="background-color:#ed2020; cursor: default;">
+          <div class="close'.$idprocess.' appwindowbutton ui-forest-blink" onClick=" $(\'#app'.$idprocess.'\').css('.$style_.'); checkwindows();" style="background-color:#ed2020; cursor: default;">
           x
           </div>
           <div class="hidewindow'.$idprocess.' appwindowbutton ui-forest-blink" onClick="" style="background-color:#37a22e; cursor: default;">
@@ -102,7 +102,10 @@ if(isset($_SESSION['loginuser'])){
       $fuid = $bd->readglobal2("fuid", "forestusers", "login", $_SESSION["loginuser"], true);
       $password = $bd->readglobal2("password", "forestusers", "login", $_SESSION["loginuser"], true);
       $token = md5($fuid.$_SERVER['DOCUMENT_ROOT'].$password);
-      file_get_contents('http://forest.hobbytes.com/media/os/ubase/lastseen.php?token='.$token.'&user='.$_SESSION["loginuser"]);
+      $check = file_get_contents('http://forest.hobbytes.com/media/os/ubase/lastseen.php?token='.$token.'&user='.$_SESSION["loginuser"]);
+      if($check == 'true'){
+        header("Location: os.php");
+      }
   }
   makeprocess($d, $i, $p, $k, $n);
 }else{
