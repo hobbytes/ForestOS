@@ -145,10 +145,11 @@ function ProcessLogic(id, name, destination, destination_, maxwidthm, folder, is
 
     if(typeof window["reloadApp" + id] == 'function'){
       window["reloadApp" + id]();
+    }else{
+      $("#" + id).load(""+destination_+"?id=<?echo rand(0,10000)?>&appid="+id+"&appname="+name+"&destination="+folder+"/&mobile="+isMobile+"&"+key+"="+param);
     }
 
     let oldbytes = $("#app" + id).attr("applength-" + id);
-    $("#" + id).load(""+destination_+"?id=<?echo rand(0,10000)?>&appid="+id+"&appname="+name+"&destination="+folder+"/&mobile="+isMobile+"&"+key+"="+param);
     $("#app" + id).attr("applength-" + id, parseInt(oldbytes) + $("#" + name + id).html().length);
   });
 

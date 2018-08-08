@@ -12,7 +12,7 @@ $AppContainer = new AppContainer;
 /* App Info */
 $AppContainer->AppNameInfo = 'Explorer';
 $AppContainer->SecondNameInfo = 'Проводник';
-$AppContainer->VersionInfo = '1.0.5';
+$AppContainer->VersionInfo = '1.0.6';
 $AppContainer->AuthorInfo = 'Forest Media';
 
 /* Library List */
@@ -178,7 +178,7 @@ if(!empty($link)){
 }
 
 if (empty($dir)){
-	$dir='../../../';
+	$dir = '../../../';
 }
 
 if(!is_dir($dir)){
@@ -199,7 +199,24 @@ if(!is_dir($dir)){
 	}
 
 	if (!empty($dest)){
-		$name_launch = str_replace(array('system/apps/','/main.php'), '', $dest);
+
+		$_dest = str_replace($_SERVER['DOCUMENT_ROOT'], '', $dest);
+
+		$info = 'http://'.$_SERVER['HTTP_HOST'].file_get_contents($_dest.'?getinfo=true&h='.md5(date('dmyhis')));
+
+	  $arrayInfo = json_decode($info);
+	  if($_SESSION['locale'] == 'en'){
+	    $name_launch = $arrayInfo->{'name'};
+	  }else{
+	    $name_launch = $arrayInfo->{'secondname'};
+	  }
+
+		$name_launch = str_replace(' ', '_', $name_launch);
+
+		if(empty($name_launch)){
+			$name_launch = 'Unknow_App';
+		}
+
 		?>
 		<div id="makeprocess">
 			<script>makeprocess('<?echo $dest?>','<?echo $param;?>','<?echo $keys;?>','<?echo $name_launch?>');</script>
@@ -673,6 +690,10 @@ $(function(){
 	$("#mmenu<?echo $AppID?>").menu();
 	$("#makeprocess").remove();
 });
+
+function reloadApp<?echo $AppID?>(){
+	reload<?echo $AppID?>();
+}
 
 checkbutton();
 </script>

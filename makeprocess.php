@@ -43,7 +43,7 @@ if(isset($_SESSION['loginuser'])){
     }
 
     if(empty($name)){
-      $name=basename($destination);
+      $name = basename($destination);
     }
 
     $destination_ =  $destination.$file;
