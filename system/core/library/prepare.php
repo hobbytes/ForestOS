@@ -379,29 +379,29 @@ function topbar(){
       ?>
       .dragwindow
       {
-        background-color: <?echo $themeload['draggablebackcolor'];?>;
+        background: <?echo $themeload['draggablebackcolor'];?>;
         color: <?echo $themeload['draggablefontcolor'];?>;
       }
       .topbartheme
       {
-        background-color: <?echo $themeload['topbarbackcolor'];?>;
+        background: <?echo $themeload['topbarbackcolor'];?>;
         color: <?echo $themeload['topbarfontcolor'];?>;
       }
       .menutheme
       {
-        background-color: <?echo $themeload['menubackcolor'];?>;
+        background: <?echo $themeload['menubackcolor'];?>;
         color: <?echo $themeload['menufontcolor'];?>;
       }
       .menulines{
         height: 2px;
         border:none;
-        background-color: <?echo $themeload['topbarbackcolor'];?>;
+        background: <?echo $themeload['topbarbackcolor'];?>;
         color: <?echo $themeload['topbarbackcolor'];?>;
         filter:contrast(0.9);
       }
       .backgroundtheme
       {
-        background-color: <?echo $themeload['backgroundcolor'];?>;
+        background: <?echo $themeload['backgroundcolor'];?>;
       }
       .linktheme
       {
