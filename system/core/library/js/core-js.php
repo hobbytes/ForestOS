@@ -111,10 +111,6 @@ function ProcessLogic(id, name, destination, destination_, maxwidthm, folder, is
 
   $( ".hidewindow" + id ).on( "click", function() {
 
-    if(typeof window["hideApp" + id] == 'function'){
-      window["hideApp" + id]();
-    }
-
       runEffect();
 
       if($("#app" + id).hasClass("ui-resizable")){
@@ -122,8 +118,18 @@ function ProcessLogic(id, name, destination, destination_, maxwidthm, folder, is
         }
 
         if($("#app" + id).hasClass("windowborderhide")){
+
+          if(typeof window["showApp" + id] == 'function'){
+            window["showApp" + id]();
+          }
+
           $("#app" + id).resizable({disabled:false,containment:"body",minHeight:$(window).height()*0.15,minWidth:$(window).width()*0.15,maxWidth:$(window).width()*maxwidthm,maxHeight:$(window).height()*0.95,autoHide:autohide,alsoResize:"#"+name+id});
         }else{
+
+          if(typeof window["hideApp" + id] == 'function'){
+            window["hideApp" + id]();
+          }
+
           $("#app" + id).css({
             'width':'auto',
             'height' : 'auto'

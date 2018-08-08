@@ -473,6 +473,7 @@ echo $explorer_lang['use_label'].': '.$format;
 $AppContainer->EndContainer();
 ?>
 <script>
+
 <?
 
 	// load dir
