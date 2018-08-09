@@ -213,6 +213,7 @@ body {
 	cursor: pointer;
 	text-align: center;
 	font-size: 14px;
+	user-select: none;
 }
 
 .ui-forest-button:hover{
@@ -221,6 +222,16 @@ body {
 
 .ui-forest-center{
 	margin: 10px auto;
+}
+
+.ui-forest-left{
+	margin: 10px;
+	float: left
+}
+
+.ui-forest-right{
+	margin: 10px;
+	float: left
 }
 
 .ui-forest-accept{
