@@ -250,7 +250,7 @@ $( function() {
       $(".window").removeClass("windowactive")
     })
 
-  $( "#notificationsbtn" ).on( "click", function() {
+  $( ".not-btn" ).on( "click", function() {
     $("#notificationsbtn").css({'border':'2px solid #fff','background-color':'rgba(0,0,0,0)'});
     $('.notificationclass').css('opacity','0');
     $("#notification-container").css('display','block');
@@ -264,6 +264,7 @@ $( function() {
     }
     $( ".notificationhide" ).toggleClass( "notificationshow", 100 );
   });
+
 $( "#topbar" ).on( "dblclick", function() {
   $( ".blurwindowpassive" ).toggleClass( "blurwindowactive", 100 );
 });
@@ -333,8 +334,10 @@ function UpdateWindow(id, name, mode = 1){
         }
       });
 
-      //notification checker
-      var notificationTimer = setInterval(function(){
+      var notificationTimer;
+      var CheckStatus = true;
+
+      function CheckNotification(){
         $.get("<?echo $folder.'services/NotificationChecker'?>", function(data){
           if(data && (data = $.trim(data))){
             $("#notification-container").css('display','block');
@@ -343,7 +346,31 @@ function UpdateWindow(id, name, mode = 1){
             $("#notificationsbtn").css({'border':'2px solid '+notificationColor,'background-color':notificationColor});
           }
         });
-      },10000);
+      }
+
+      function StartCheckNotification(){
+
+        if(CheckStatus){
+          CheckNotification();
+          CheckStatus = false;
+        }
+
+        notificationTimer = setInterval(function(){
+          CheckNotification();
+        },10000);
+
+      }
+
+      function StopCheckNotification(){
+        window.clearInterval(notificationTimer);
+        CheckStatus = true;
+      }
+
+      //start check if window is active
+      window.addEventListener('focus', StartCheckNotification);
+
+      //stop check if window is not active
+      window.addEventListener('blur', StopCheckNotification);
 
       $(".welcomescreen").hide('fade',500);
       $("#topbar").show('fade', 1500);

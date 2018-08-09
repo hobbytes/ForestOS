@@ -317,7 +317,7 @@ function topbar(){
       <?php echo $object->getDayRus().' '.date('d').',';?>
       <span id="time"></span>
     </div>
-    <div id="notificationsbtn" class="ui-forest-blink" style="float:right; font-size: 11px; margin-right: 10px; padding: 1px; user-select: none; border: 2px solid #fff; border-radius: 4px; cursor: default; color:#fff; filter:hue-rotate(90deg);">
+    <div id="notificationsbtn" class="ui-forest-blink not-btn" style="float:right; font-size: 11px; margin-right: 10px; padding: 1px; user-select: none; border: 2px solid #fff; border-radius: 4px; cursor: default; color:#fff; filter:hue-rotate(90deg);">
       N
     </div>
     <div id="menu1" class="ui-forest" onmouseover="$('#aboutmenu').css('display','block')" onmouseout="$('#aboutmenu').css('display','none')" style="z-index:9999; user-select: none; cursor: default; text-align:center; width:50px; font-size:19px; padding:2px 0;">

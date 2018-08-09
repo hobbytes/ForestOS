@@ -11,6 +11,9 @@ $appname = strip_tags($_POST['appname']);
 $_key = strip_tags($_POST['key']);
 $value = strip_tags($_POST['value']);
 $_appname = str_replace(" ","_",$appname);
+
+$_target = md5($appname);
+
 if(isset($login) && !empty($body) && isset($appname)){
   $bd->readglobal2("password","forestusers","login",$login);
   $key  = $getdata;
@@ -18,11 +21,12 @@ if(isset($login) && !empty($body) && isset($appname)){
   if(!is_dir($dir)){
     mkdir($dir);
   }
+  $hash = md5($login.$appname.date('dmy_His'));
   if(!empty($_key) && !empty($value)){
-    $body = $body."<br><span style='margin-left: 37%;' class='ui-button ui-widget ui-corner-all' onclick='makeprocess(&quot;system/apps/$_appname/main.php&quot; , &quot;$value&quot; , &quot;$_key&quot; , &quot;$_appname&quot;);'>Open</span>";
+    $body = $body."<br><span style='margin-left: 37%;' class='not-btn ui-button ui-widget ui-corner-all' onclick='makeprocess(&quot;system/apps/$_appname/main.php&quot; , &quot;$value&quot; , &quot;$_key&quot; , &quot;$_appname&quot;); $(&quot;.$_target&quot;).remove();'>Open</span>";
   }
   $body = $security->__encode($body, $key);
-  $file = date('dmy_His').md5($login.$appname.date('dmy_His')).'.not';
+  $file = date('dmy_His').$hash.'.not';
   $content  = "[info]\rappname = ".$appname."\rdate = ".date('d.m.y, H:i:s')."\rbody = "."'$body'";
   file_put_contents($dir.$file,$content);
   echo 'TRUE';

@@ -60,7 +60,7 @@ $_SESSION['appid'] = -1;
     echo $language[$_SESSION['locale'].'_notification_label'];
     ?>
   </div>
-  <div id="clearNotifications" class="ui-forest-blink" onclick="NotificationClear();" style="font-size: 10pt; background: rgba(244,67,54,0.61); width:fit-content; padding:7px; margin:20 0; float:right; color:#fff; cursor:default; user-select: none;">
+  <div id="clearNotifications" class="not-btn ui-forest-blink" onclick="NotificationClear();" style="font-size: 10pt; background: rgba(244,67,54,0.61); width:fit-content; padding:7px; margin:20 0; float:right; color:#fff; cursor:default; user-select: none;">
     <?
     echo $language[$_SESSION['locale'].'_notification_clear'];
     ?>

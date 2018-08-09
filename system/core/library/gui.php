@@ -88,31 +88,35 @@ $(".ui-dialog").css('z-index','9999');
 <?
 }
 
-function newnotification($name, $title, $text,$time=0,$customDate=0){
-  if($time==0){$time=10000;}
-  $name=$name.md5(date('dmyhis'));
+function newnotification($name, $title, $text, $time = 0, $customDate = 0){
+  if($time == 0){
+    $time = 10000;
+  }
+  $_target = md5($name);
+  $name = $name.md5(date('dmyhis'));
   if($customDate == 0){
     $date = date('H:i, d.m');
   }else{
     $date = $customDate;
   }
   ?>
-  <div id="notification_<?echo $name?>" class="topbartheme notificationclass" onmouseover="$('#closenot_<?echo $name?>').css('opacity','1');" onmouseout="$('#closenot_<?echo $name?>').css('opacity','0');" style="right:0; width:290px; font-size:14px; margin:10px 10px 20px 10px; height:auto; max-height:300px; text-align:left; transition:all 0.2s ease; overflow:auto; ">
-  <div id="closenot_<?echo $name?>" onclick="$('#notification_<?echo $name?>').remove(); SaveNotification();" class="topbartheme" style="position:relative; opacity:0; left:95%; width:8px; background-color:transparent; cursor:pointer; transition:all 0.2s ease; margin:5px 0px 0px -10px;">x</div>
+  <div id="notification_<? echo $name ?>" class="<? echo $_target ?> topbartheme notificationclass" onmouseover="$('#closenot_<?echo $name?>').css('opacity','1');" onmouseout="$('#closenot_<? echo $name ?>').css('opacity','0');" style="right:0; width:290px; font-size:14px; margin:10px 10px 20px 10px; height:auto; max-height:300px; text-align:left; transition:all 0.2s ease; overflow:auto; ">
+  <div id="closenot_<? echo $name ?>" onclick="$('#notification_<?echo $name?>').remove(); SaveNotification();" class="topbartheme" style="position:relative; opacity:0; left:95%; width:8px; background-color:transparent; cursor:pointer; transition:all 0.2s ease; margin:5px 0px 0px -10px;">x</div>
   <span style="font-size:15px; padding: 10px;"><?echo '<b>'.$title.'</b> <span style="font-size:14px;">'.$date.'</span>'?></span><br><br>
-  <div style="background-color: #d6d6d6;color: #000;padding: 10px; word-wrap: break-word;"><?echo $text;?></div>
+  <div style="background-color: #d6d6d6; color: #000; padding: 10px; word-wrap: break-word;"><? echo $text ?></div>
 
-    <div id="script_<?echo $name?>">
+    <div id="script_<? echo $name ?>">
     <script>
+
     SaveNotification();
     $(".notificationclass").css({'opacity':'0','display':'none'});
     $("#notification-container").css('display','block');
-    $("#notification_<?echo $name?>").prependTo("#notification-container");
-    setTimeout(function() {$("#notification_<?echo $name?>").css('opacity','0.97'); $("#notification_<?echo $name?>").css('display','block'),1000});
-    <?if($time!='infinite'){?>
-      setTimeout(function() {$("#notification_<?echo $name?>").css('opacity','0'); $("#notification_<?echo $name?>").css('display','none');},<?echo $time;?>);
-      <?}?>
-      $("#script_<?echo $name?>").remove();
+    $("#notification_<? echo $name ?>").prependTo("#notification-container");
+    setTimeout(function() {$("#notification_<? echo $name ?>").css('opacity','0.97'); $("#notification_<? echo $name ?>").css('display','block'),1000});
+    <? if($time!='infinite'){ ?>
+      setTimeout(function() {$("#notification_<? echo $name ?>").css('opacity','0'); $("#notification_<? echo $name ?>").css('display','none');},<? echo $time ?>);
+      <? } ?>
+      $("#script_<? echo $name ?>").remove();
     </script>
     </div>
     </div>
