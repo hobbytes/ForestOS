@@ -12,7 +12,7 @@ $AppContainer = new AppContainer;
 /* App Info */
 $AppContainer->AppNameInfo = 'Explorer';
 $AppContainer->SecondNameInfo = 'Проводник';
-$AppContainer->VersionInfo = '1.0.6';
+$AppContainer->VersionInfo = '1.0.7';
 $AppContainer->AuthorInfo = 'Forest Media';
 
 /* Library List */
@@ -51,6 +51,7 @@ $isMobile	=	$_GET['mobile'];
 $Folder	=	$_GET['destination'];
 $erasestatus	=	$_GET['erasestatus'];
 $zipfile = $_GET['zipfile'];
+$zipFileUnpack = $_GET['zipfileunpack'];
 
 //load lang
 $cl = $_SESSION['locale'];
@@ -107,20 +108,28 @@ if(!empty($deleteforever)){
 	}
 }
 
-//Логика
-/*-Упаковка объектов-*/
+/*-add to archive-*/
 if(!empty($zipfile)){
-include '../../core/library/zip.php';
-if(is_dir($zipfile)){
-	$zip = new zip;
-	$zip->toZip($zipfile,dirname($zipfile).'/'.basename($zipfile).'.zip');
-}else{
-	$zip = new ZipArchive;
-	$info = pathinfo($zipfile);
-	$zip->open(dirname($zipfile).'/'.basename($zipfile,'.'.$info['extension']).'.zip', ZIPARCHIVE::CREATE);
-	$zip->addFile($zipfile,basename($zipfile));
-	$zip->close();
+	require '../../core/library/zip.php';
+	if(is_dir($zipfile)){
+		$zip = new zip;
+		$zip->toZip($zipfile, dirname($zipfile).'/'.basename($zipfile).'.zip');
+	}else{
+		$zip = new ZipArchive;
+		$info = pathinfo($zipfile);
+		$zip->open(dirname($zipfile).'/'.basename($zipfile,'.'.$info['extension']).'.zip', ZIPARCHIVE::CREATE);
+		$zip->addFile($zipfile, basename($zipfile));
+		$zip->close();
+	}
 }
+
+/*-extract archive-*/
+if(!empty($zipFileUnpack)){
+	$zip = new ZipArchive;
+	if($zip->open($zipFileUnpack) == TRUE){
+		$zip->extractTo(dirname($zipFileUnpack));
+		$zip->close();
+	}
 }
 
 /*- Link Create -*/
@@ -279,6 +288,7 @@ $pathmain = str_replace($_SERVER['DOCUMENT_ROOT'], '', $pathmain);
 	<li><div <?echo 'class="loadthis" onClick="newload'.$AppID.'('."'delf'".',this.id)" ';?>><?echo $explorer_lang['menu_delete_label']?></div></li>
 	<li><div <? echo 'id="'.$dir.'/" onClick="loadshow'.$AppID.'(this)"';?>><?echo $explorer_lang['menu_loadfile_label']?></div></li>
 	<li><div <? echo 'class="loadthis" onClick="newload'.$AppID.'('."'zipfile'".',this.id)"';?>><?echo $explorer_lang['menu_zip_label']?></div></li>
+	<li><div <? echo 'class="loadthis" onClick="newload'.$AppID.'('."'zipfileunpack'".',this.id)"';?>><?echo $explorer_lang['menu_zip_unpack']?></div></li>
 	<li><div <? echo 'id="'.$dir.'/" class="loadthis" onClick="getproperty'.$AppID.'(this);"';?>><?echo $explorer_lang['menu_property_label']?></div></li>
 </ul>
 </div>

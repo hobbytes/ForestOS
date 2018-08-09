@@ -11,6 +11,7 @@ menu_delete_label = Delete
 menu_loadfile_label = Upload file
 menu_property_label = Properties
 menu_zip_label = Add to archive
+menu_zip_unpack = Unpack the archive
 selectButton = Select
 cancelButton = Cancel
 
