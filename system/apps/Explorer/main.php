@@ -265,7 +265,7 @@ $pathmain = str_replace($_SERVER['DOCUMENT_ROOT'], '', $pathmain);
 	<span><?echo $explorer_lang['menu_file_label']?></span>
 	<div id="filemenu<?echo $AppID?>" style="display:none; cursor:default; position:absolute; z-index:1; background:#fff; width:auto; top:31px; left:4px;">
 <ul id="mmenu<?echo $AppID?>" >
-	<li><div <?echo 'id="'.$dir.'/" class="loadthis" onClick="load'.$AppID.'(this);" ';?> ><?echo $explorer_lang['menu_open_label']?></div></li>
+	<li><div <?echo 'id="'.$dir.'/" class="loadthis'.$AppID.'" onClick="load'.$AppID.'(this);" ';?> ><?echo $explorer_lang['menu_open_label']?></div></li>
 	<li>
 		<div <?echo 'id="'.$dir.'/" class="loadas" ';?> ><?echo $explorer_lang['menu_openas_label']?></div>
 		<ul style="background:#fff;">
@@ -280,16 +280,16 @@ $pathmain = str_replace($_SERVER['DOCUMENT_ROOT'], '', $pathmain);
 			?>
 		</ul>
 	</li>
-	<li><div <?echo 'class="loadthis" onClick="mkfileshow'.$AppID.'();" ';?> ><?echo $explorer_lang['menu_newfile_label']?></div></li>
-	<li><div <? echo 'id="'.$dir.'/" class="loadthis" onClick="getproperty'.$AppID.'(this);"';?>><?echo $explorer_lang['menu_rename_label']?></div></li>
+	<li><div <?echo 'class="loadthis'.$AppID.'" onClick="mkfileshow'.$AppID.'();" ';?> ><?echo $explorer_lang['menu_newfile_label']?></div></li>
+	<li><div <? echo 'id="'.$dir.'/" class="loadthis'.$AppID.'" onClick="getproperty'.$AppID.'(this);"';?>><?echo $explorer_lang['menu_rename_label']?></div></li>
 	<li><div <?echo 'onClick="mkdirshow'.$AppID.'();" ';?> ><?echo $explorer_lang['menu_md_label']?></div></li>
 	<li><div <?echo 'id="'.$dir.'/" class="mklink" onClick="link'.$AppID.'(this);" ';?> ><?echo $explorer_lang['menu_ml_label']?></div></li>
-	<li><div <?echo 'class="loadthis" onClick="newload'.$AppID.'('."'del'".',this.id)" ';?>><?echo $explorer_lang['menu_trash_label']?></div></li>
-	<li><div <?echo 'class="loadthis" onClick="newload'.$AppID.'('."'delf'".',this.id)" ';?>><?echo $explorer_lang['menu_delete_label']?></div></li>
+	<li><div <?echo 'class="loadthis'.$AppID.'" onClick="newload'.$AppID.'('."'del'".',this.id)" ';?>><?echo $explorer_lang['menu_trash_label']?></div></li>
+	<li><div <?echo 'class="loadthis'.$AppID.'" onClick="newload'.$AppID.'('."'delf'".',this.id)" ';?>><?echo $explorer_lang['menu_delete_label']?></div></li>
 	<li><div <? echo 'id="'.$dir.'/" onClick="loadshow'.$AppID.'(this)"';?>><?echo $explorer_lang['menu_loadfile_label']?></div></li>
-	<li><div <? echo 'class="loadthis" onClick="newload'.$AppID.'('."'zipfile'".',this.id)"';?>><?echo $explorer_lang['menu_zip_label']?></div></li>
-	<li><div <? echo 'class="loadthis" onClick="newload'.$AppID.'('."'zipfileunpack'".',this.id)"';?>><?echo $explorer_lang['menu_zip_unpack']?></div></li>
-	<li><div <? echo 'id="'.$dir.'/" class="loadthis" onClick="getproperty'.$AppID.'(this);"';?>><?echo $explorer_lang['menu_property_label']?></div></li>
+	<li><div <? echo 'class="loadthis'.$AppID.'" onClick="newload'.$AppID.'('."'zipfile'".',this.id)"';?>><?echo $explorer_lang['menu_zip_label']?></div></li>
+	<li><div <? echo 'class="loadthis'.$AppID.'" onClick="newload'.$AppID.'('."'zipfileunpack'".',this.id)"';?>><?echo $explorer_lang['menu_zip_unpack']?></div></li>
+	<li><div <? echo 'id="'.$dir.'/" class="loadthis'.$AppID.'" onClick="getproperty'.$AppID.'(this);"';?>><?echo $explorer_lang['menu_property_label']?></div></li>
 </ul>
 </div>
 </div>
@@ -298,9 +298,9 @@ $pathmain = str_replace($_SERVER['DOCUMENT_ROOT'], '', $pathmain);
 	<span><?echo $explorer_lang['menu_edit_label']?></span>
 	<div id="editmenu_<?echo $AppID?>" style="display:none; cursor:default; position:absolute; z-index:1; background:#fff; width:auto; top:31px; left:68px;">
 <ul id="editmenu<?echo $AppID?>" >
-	<li><div <?echo 'id="" class="loadthis" onClick="copy'.$AppID.'(this.id);" ';?> ><?echo $explorer_lang['menu_copy_label']?></div></li>
-	<li class="pastebutton"><div <?echo 'id="" class="loadthis" onClick="paste'.$AppID.'(this.id);" ';?> ><?echo $explorer_lang['menu_paste_label']?></div></li>
-	<li><div <?echo 'id="" class="loadthis" onClick="cut'.$AppID.'(this.id);" ';?> ><?echo $explorer_lang['menu_cut_label']?></div></li>
+	<li><div <?echo 'id="" class="loadthis'.$AppID.'" onClick="copy'.$AppID.'(this.id);" ';?> ><?echo $explorer_lang['menu_copy_label']?></div></li>
+	<li class="pastebutton"><div <?echo 'id="" class="loadthis'.$AppID.'" onClick="paste'.$AppID.'(this.id);" ';?> ><?echo $explorer_lang['menu_paste_label']?></div></li>
+	<li><div <?echo 'id="" class="loadthis'.$AppID.'" onClick="cut'.$AppID.'(this.id);" ';?> ><?echo $explorer_lang['menu_cut_label']?></div></li>
 </ul>
 </div>
 </div>
@@ -319,7 +319,7 @@ $pathmain = str_replace($_SERVER['DOCUMENT_ROOT'], '', $pathmain);
 
 <div style="margin-top:7px; border-top:1px solid #d4d4d4; padding-top:7px;">
 <div class="ui-forest-blink" style="padding:4px; background:#4d94ef; margin:0px 10px; border-radius:10px; color:#2b5182; float:left; width:20px;" id="<?echo $back?>" onclick="load<?echo $AppID?>(this)">
-	&#9668
+	&#9668;
 </div>
 <input style="-webkit-appearance:none; border:1px solid #ccc; width:80%; font-size:17px; margin: 0 5px 10px;" type="search" value="<?echo $prefix.$pathmain?>"></input>
 </div>
@@ -445,7 +445,7 @@ while (false !== ($entry = $d->read())) {
 		$typeObject = 'file';
 	}
 
-	$objectArray[$typeObject] [] = urlencode('<div id="'.convert(realpath($entry)).'" class="'.md5($name).' select ui-button ui-widget ui-corner-all explorer-object" '.$selectAction.' on'.$action.'="'.$load.'"  style="cursor:default; height:128px;	margin:5px;	text-align:center;	width:128px;	position:relative;	display:block;	text-overflow:ellipsis;	overflow:hidden;	float:left; transition:all 0.05s ease-out;" title="'.$name.'"><div style="cursor:default; width:80px; height:80px; background-image: url('.$type.'); background-size:cover; -webkit-user-select:none; user-select:none; padding:5px; background-color:'.$color.'; margin:auto;">
+	$objectArray[$typeObject] [] = urlencode('<div id="'.convert(realpath($entry)).'" class="'.md5($name).'-'.$AppID.' select'.$AppID.' ui-button ui-widget ui-corner-all explorer-object" '.$selectAction.' on'.$action.'="'.$load.'"  style="cursor:default; height:128px;	margin:5px;	text-align:center;	width:128px;	position:relative;	display:block;	text-overflow:ellipsis;	overflow:hidden;	float:left; transition:all 0.05s ease-out;" title="'.$name.'"><div style="cursor:default; width:80px; height:80px; background-image: url('.$type.'); background-size:cover; -webkit-user-select:none; user-select:none; padding:5px; background-color:'.$color.'; margin:auto;">
 	<div style="margin-top:22px; color:#d05858; font-size:17px; font-weight:900;">
 	'.$extension.'
 		</div>
@@ -511,9 +511,11 @@ $AppContainer->EndContainer();
 		'main',
 		array(
 			'mobile' => $isMobile,
-			'dir' => '"+object.id+"',
+			'dir' => '"+object+"',
 			'select' => $_GET['select']
-		)
+		),
+		'if(typeof object === \'string\' || object instanceof String){object = object;}else{object = object.id;}',
+		0
 	);
 
 	// make link
@@ -627,14 +629,18 @@ function getproperty<?echo $AppID?>(obj){
 	makeprocess('<?echo $Folder?>property.php', obj.id, 'object', '<?echo $explorer_lang['menu_property_label']?>');
 };
 
+var enterfolder;
+var backfolder = "<?echo $back?>";
+
 function select<?echo $AppID?>(folder,folder2,folder3,folder4){
-	$(".select").css('background-color','transparent');
-	$('.'+folder).css('background-color','#d4d4d4');
-	$(".loadthis").attr("id",folder2);
+	$(".select<?echo $AppID?>").css('background-color','transparent');
+	$('.'+folder+'-<?echo $AppID?>').css('background-color','#d4d4d4');
+	$(".loadthis<?echo $AppID?>").attr("id",folder2);
 	$(".loadas").attr("id",folder2);
 	$(".mklink").attr("id",folder2);
 	$(".mklink").attr("ico",folder3);
 	$(".mklink").attr("link",folder4);
+	enterfolder = folder2;
 };
 
 function mkdirshow<?echo $AppID?>(){
@@ -704,6 +710,41 @@ $(function(){
 function reloadApp<?echo $AppID?>(){
 	reload<?echo $AppID?>();
 }
+
+if($("#app<?echo $AppID?>").hasClass('windowactive')){
+
+	$("#app<?echo $AppID?>").bind('keyup', function(e){
+		var keycode = (e.keyCode ? e.keyCode : e.which);
+
+		//check if enter pressed
+		if(enterfolder){
+			if(keycode == '13'){
+				load<?echo $AppID?>(enterfolder);
+				keycode = null;
+				enterfolder = null;
+				e = null;
+			}
+		}
+
+		//check if back pressed
+		if(backfolder){
+			if(keycode == '8'){
+				load<?echo $AppID?>(backfolder);
+				keycode = null;
+				backfolder = null;
+				e = null;
+			}
+	}
+
+	});
+}else{
+	keycode = null;
+	enterfolder = null;
+	backfolder = null;
+	e = null;
+}
+
+
 
 checkbutton();
 </script>

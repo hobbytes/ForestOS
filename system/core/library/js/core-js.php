@@ -60,6 +60,28 @@ function ProcessLogic(id, name, destination, destination_, maxwidthm, folder, is
    }
   });
 
+  //mouse enter event
+  $("#app" + id).mouseenter(function(){
+    if(typeof window["mouseEnterApp" + id] == 'function'){
+      window["mouseEnterApp" + id]();
+    }
+  });
+
+  //mouse leave event
+  $("#app" + id).mouseleave(function(){
+    if(typeof window["mouseLeaveApp" + id] == 'function'){
+      window["mouseLeaveApp" + id]();
+    }
+  });
+
+  //mouse over event
+  $("#app" + id).mouseover(function(){
+    if(typeof window["mouseOverApp" + id] == 'function'){
+      window["mouseOverApp" + id]();
+    }
+  });
+
+
   $("#app" + id).resizable({
     containment:"body",
     minHeight:$(window).height()*0.14,
