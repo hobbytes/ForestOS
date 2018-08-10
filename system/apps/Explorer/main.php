@@ -418,7 +418,7 @@ while (false !== ($entry = $d->read())) {
 	}
 
 	if ($entry != '.' && $entry != '..' && !in_array($entry, $warfile) && realpath($entry).'/'.$wardir != $_SERVER['DOCUMENT_ROOT']){
-		$select	=	'select'.$AppID.'(\''.md5($name).'-'.$AppID.'\',\''.convert(realpath($entry)).'\',\''.$type.'\',\''.$name.'\');';
+		$select	=	'select'.$AppID.'(\''.md5($name).'\',\''.convert(realpath($entry)).'\',\''.$type.'\',\''.$name.'\');';
 		$load = 'load'.$AppID.'(this);';
 		$n_color	=	'#000';
 		if(eregi('system/users/',realpath($entry)) || eregi('system/core',realpath($entry))){
@@ -445,7 +445,7 @@ while (false !== ($entry = $d->read())) {
 		$typeObject = 'file';
 	}
 
-	$objectArray[$typeObject] [] = urlencode('<div id="'.convert(realpath($entry)).'" class="'.md5($name).'-'.$AppID.' select'.$AppID.' ui-button ui-widget ui-corner-all explorer-object" '.$selectAction.' on'.$action.'="'.$load.'"  style="cursor:default; height:128px;	margin:5px;	text-align:center;	width:128px;	position:relative;	display:block;	text-overflow:ellipsis;	overflow:hidden;	float:left; transition:all 0.05s ease-out;" title="'.$name.'"><div style="cursor:default; width:80px; height:80px; background-image: url('.$type.'); background-size:cover; -webkit-user-select:none; user-select:none; padding:5px; background-color:'.$color.'; margin:auto;">
+	$objectArray[$typeObject] [] = urlencode('<div id="'.convert(realpath($entry)).'" class="'.md5($name).'-'.$AppID.' select-'.$AppID.' ui-button ui-widget ui-corner-all explorer-object" '.$selectAction.' on'.$action.'="'.$load.'"  style="cursor:default; height:128px;	margin:5px;	text-align:center;	width:128px;	position:relative;	display:block;	text-overflow:ellipsis;	overflow:hidden;	float:left; transition:all 0.05s ease-out;" title="'.$name.'"><div style="cursor:default; width:80px; height:80px; background-image: url('.$type.'); background-size:cover; -webkit-user-select:none; user-select:none; padding:5px; background-color:'.$color.'; margin:auto;">
 	<div style="margin-top:22px; color:#d05858; font-size:17px; font-weight:900;">
 	'.$extension.'
 		</div>
@@ -514,7 +514,7 @@ $AppContainer->EndContainer();
 			'dir' => '"+object+"',
 			'select' => $_GET['select']
 		),
-		'if(typeof object === \'string\' || object instanceof String){object = object;}else{object = object.id;}',
+		'if(typeof object === \'string\' || object instanceof String){object = object;}else{object = object.id;} $("#app'.$AppID.'").unbind("keydown")',
 		0
 	);
 
@@ -629,29 +629,44 @@ function getproperty<?echo $AppID?>(obj){
 	makeprocess('<?echo $Folder?>property.php', obj.id, 'object', '<?echo $explorer_lang['menu_property_label']?>');
 };
 
+
 var enterfolder;
 var backfolder = "<?echo $back?>";
 let rightfolder = null;
+let leftfolder = null;
 
-let keycode = null;
-let e = null;
+var keycode = null;
+var e = null;
 
 function select<?echo $AppID?>(folder, folder2, folder3, folder4){
-	$(".select<?echo $AppID?>").css('background-color','transparent');
-	$('.'+folder).css('background-color','#d4d4d4');
+	$(".select-<?echo $AppID?>").css('background-color','transparent');
+	$('.'+folder+'-<?echo $AppID?>').css('background-color','#d4d4d4');
 	$(".loadthis<?echo $AppID?>").attr("id",folder2);
 	$(".loadas").attr("id",folder2);
 	$(".mklink").attr("id",folder2);
 	$(".mklink").attr("ico",folder3);
 	$(".mklink").attr("link",folder4);
 	enterfolder = folder2;
-	rightfolder = $('.'+folder).next();
-	if(rightfolder.attr('class')){
-		rightfolder = rightfolder.attr('class').split(' ')[0];
-	}else{
-		rightfolder = $('.select<?echo $AppID?>').attr('class').split(' ')[0];
+
+	if($('.'+folder+'-<?echo $AppID?>')){
+
+		//get right folder class
+		rightfolder = $('.'+folder+'-<?echo $AppID?>').next('.select-<?echo $AppID?>');
+		if(rightfolder.attr('class')){
+			rightfolder = rightfolder.attr('class').split(' ')[0];
+		}else{
+			rightfolder = $('.select-<?echo $AppID?>').attr('class').split(' ')[0];
+		}
+
+		//get left folder class
+		leftfolder = $('.'+folder+'-<?echo $AppID?>').prev('.select-<?echo $AppID?>');
+		if(leftfolder.attr('class')){
+			leftfolder = leftfolder.attr('class').split(' ')[0];
+		}else{
+			leftfolder = $('.select-<?echo $AppID?>').last().attr('class').split(' ')[0];
+		}
+
 	}
-	console.log(rightfolder);
 };
 
 function mkdirshow<?echo $AppID?>(){
@@ -722,7 +737,7 @@ function reloadApp<?echo $AppID?>(){
 	reload<?echo $AppID?>();
 }
 
-	$("#app<?echo $AppID?>").bind('keyup', function(e){
+	$("#app<?echo $AppID ?>").bind('keydown', function(e){
 		if($("#app<?echo $AppID?>").hasClass('windowactive')){
 			var keycode = (e.keyCode ? e.keyCode : e.which);
 
@@ -750,29 +765,47 @@ function reloadApp<?echo $AppID?>(){
 		if(keycode == '39'){
 			if(rightfolder){
 				if($("."+rightfolder).trigger('click')){
-					keycode = null;
-					e = null;
+					let keycode = null;
+					let e = null;
 				}
 			}else{
-				rightfolder = $('.select<?echo $AppID?>').attr('class').split(' ')[0];
-				if($("."+rightfolder).trigger('click')){
-					keycode = null;
-					e = null;
+				if($('.select-<?echo $AppID?>').attr('class')){
+					rightfolder = $('.select-<?echo $AppID?>').attr('class').split(' ')[0]
+					if($("."+rightfolder).trigger('click')){
+						let keycode = null;
+						let e = null;
+					}
+				}
+			}
+		}
+
+		//check if left pressed
+		if(keycode == '37'){
+			if(leftfolder){
+				if($("."+leftfolder).trigger('click')){
+					let keycode = null;
+					let e = null;
+				}
+			}else{
+				if($('.select-<?echo $AppID?>').attr('class')){
+					leftfolder = $('.select-<?echo $AppID?>').attr('class').split(' ')[0]
+					if($("."+leftfolder).trigger('click')){
+						let keycode = null;
+						let e = null;
+					}
 				}
 			}
 		}
 
 	}else{
-		keycode = null;
+		let keycode = null;
 		enterfolder = null;
 		backfolder = null;
 		rightfolder = null;
-		e = null;
+		leftfolder = null;
+		let e = null;
 	}
-
 	});
-
-
 
 checkbutton();
 </script>

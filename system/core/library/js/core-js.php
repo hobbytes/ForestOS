@@ -412,6 +412,12 @@ function UpdateWindow(id, name, mode = 1){
         });
         }
       });
+
+      window.addEventListener("load", function(){
+        setTimeout(function(){
+          window.scrollTo(0,1);
+        }, 0);
+      });
     });
     $( ".ico" ).draggable({containment:"body", snap:".ico, #topbar"});
     $( ".window" ).mouseup(function(){

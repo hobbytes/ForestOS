@@ -95,6 +95,15 @@
       <link rel="mask-icon" href="system/core/design/images/favicons/safari-pinned-tab.svg" color="#3e495e">
       <meta name="theme-color" content="#ffffff">
       <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+      <meta name="apple-mobile-web-app-title" content="Forest OS">
+      <meta name="apple-mobile-web-app-capable" content="yes">
+      <meta name="mobile-web-app-capable" content="yes">
+      <meta name="author" content="Vyacheslav Gorodilov">
+      <meta name="designer" content="Vyacheslav Gorodilov">
+      <meta name="reply-to" content="contact@hobbytes.com">
+      <meta name="pagename" content="Forest OS">
+      <meta name="description" content="Forest OS - web shell">
+      <meta name="copyright" content="Hobbytes">
       <link rel="stylesheet" type="text/css" href="<? echo $hashfile->filehash('system/core/design/main.css')?>">
       <link rel="stylesheet" href="<? echo $hashfile->filehash('system/core/design/jquery-ui.css')?>">
       <script src="<? echo $hashfile->filehash('system/core/library/js/jquery-1.12.4.js')?>"></script>
