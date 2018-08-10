@@ -418,7 +418,7 @@ while (false !== ($entry = $d->read())) {
 	}
 
 	if ($entry != '.' && $entry != '..' && !in_array($entry, $warfile) && realpath($entry).'/'.$wardir != $_SERVER['DOCUMENT_ROOT']){
-		$select	=	'select'.$AppID.'(\''.md5($name).'\',\''.convert(realpath($entry)).'\',\''.$type.'\',\''.$name.'\');';
+		$select	=	'select'.$AppID.'(\''.md5($name).'-'.$AppID.'\',\''.convert(realpath($entry)).'\',\''.$type.'\',\''.$name.'\');';
 		$load = 'load'.$AppID.'(this);';
 		$n_color	=	'#000';
 		if(eregi('system/users/',realpath($entry)) || eregi('system/core',realpath($entry))){
@@ -631,16 +631,27 @@ function getproperty<?echo $AppID?>(obj){
 
 var enterfolder;
 var backfolder = "<?echo $back?>";
+let rightfolder = null;
 
-function select<?echo $AppID?>(folder,folder2,folder3,folder4){
+let keycode = null;
+let e = null;
+
+function select<?echo $AppID?>(folder, folder2, folder3, folder4){
 	$(".select<?echo $AppID?>").css('background-color','transparent');
-	$('.'+folder+'-<?echo $AppID?>').css('background-color','#d4d4d4');
+	$('.'+folder).css('background-color','#d4d4d4');
 	$(".loadthis<?echo $AppID?>").attr("id",folder2);
 	$(".loadas").attr("id",folder2);
 	$(".mklink").attr("id",folder2);
 	$(".mklink").attr("ico",folder3);
 	$(".mklink").attr("link",folder4);
 	enterfolder = folder2;
+	rightfolder = $('.'+folder).next();
+	if(rightfolder.attr('class')){
+		rightfolder = rightfolder.attr('class').split(' ')[0];
+	}else{
+		rightfolder = $('.select<?echo $AppID?>').attr('class').split(' ')[0];
+	}
+	console.log(rightfolder);
 };
 
 function mkdirshow<?echo $AppID?>(){
@@ -711,38 +722,55 @@ function reloadApp<?echo $AppID?>(){
 	reload<?echo $AppID?>();
 }
 
-if($("#app<?echo $AppID?>").hasClass('windowactive')){
-
 	$("#app<?echo $AppID?>").bind('keyup', function(e){
-		var keycode = (e.keyCode ? e.keyCode : e.which);
+		if($("#app<?echo $AppID?>").hasClass('windowactive')){
+			var keycode = (e.keyCode ? e.keyCode : e.which);
 
-		//check if enter pressed
-		if(enterfolder){
-			if(keycode == '13'){
-				load<?echo $AppID?>(enterfolder);
-				keycode = null;
-				enterfolder = null;
-				e = null;
+			//check if enter pressed
+			if(enterfolder){
+				if(keycode == '13'){
+					load<?echo $AppID?>(enterfolder);
+					keycode = null;
+					enterfolder = null;
+					e = null;
+				}
+			}
+
+			//check if back pressed
+			if(backfolder){
+				if(keycode == '8'){
+					load<?echo $AppID?>(backfolder);
+					keycode = null;
+					backfolder = null;
+					e = null;
+				}
+		}
+
+		//check if right pressed
+		if(keycode == '39'){
+			if(rightfolder){
+				if($("."+rightfolder).trigger('click')){
+					keycode = null;
+					e = null;
+				}
+			}else{
+				rightfolder = $('.select<?echo $AppID?>').attr('class').split(' ')[0];
+				if($("."+rightfolder).trigger('click')){
+					keycode = null;
+					e = null;
+				}
 			}
 		}
 
-		//check if back pressed
-		if(backfolder){
-			if(keycode == '8'){
-				load<?echo $AppID?>(backfolder);
-				keycode = null;
-				backfolder = null;
-				e = null;
-			}
+	}else{
+		keycode = null;
+		enterfolder = null;
+		backfolder = null;
+		rightfolder = null;
+		e = null;
 	}
 
 	});
-}else{
-	keycode = null;
-	enterfolder = null;
-	backfolder = null;
-	e = null;
-}
 
 
 
