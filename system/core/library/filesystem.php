@@ -43,16 +43,25 @@ function size_check($path){
 
       function rmdir_recursive($dir,$trashfolder) {
         $d_root = $_SERVER['DOCUMENT_ROOT'];
-        if($dir != $d_root.'/system' && $dir != $d_root.'/system/users'  && $dir != $d_root.'/system/core' && $dir != $d_root.'/system/apps'  && !preg_match('/os.php/',$dir) && !preg_match('/login.php/',$dir) && !preg_match('/makeprocess/',$dir)){
+        if($dir != $d_root.'/' && $dir != $d_root && $dir != '../../..//' && $dir != $d_root.'/system' && $dir != $d_root.'/system/users'  && $dir != $d_root.'/system/core' && $dir != $d_root.'/system/apps'  && !preg_match('/os.php/',$dir) && !preg_match('/login.php/',$dir) && !preg_match('/makeprocess/',$dir)){
           if(empty($trashfolder)){
                     $trashfolder=$d_root.'/system/users/'.$_SESSION["loginuser"].'/trash/';
           }
           if(!is_dir($trashfolder)){mkdir($trashfolder);}
           if (is_file($dir)){
-          if(copy($dir,$trashfolder.basename($dir))){unlink($dir); echo '  файл: <b>'.basename($dir).'</b> перемещен в корзину';}
+          if(copy($dir,$trashfolder.basename($dir))){
+            unlink($dir);
+            echo '  файл: <b>'.basename($dir).'</b> перемещен в корзину';
+          }
           }else{
             $folder=basename($dir);
-            if(is_dir($trashfolder)){$trashfolder=$trashfolder.$folder.rand(0,1000);}else{$trashfolder=$trashfolder.$folder;}rename($dir,$trashfolder); echo '  папка: <b>'.$folder.'</b> перемещена в корзину';
+            if(is_dir($trashfolder)){
+              $trashfolder = $trashfolder.$folder.rand(0,1000);
+            }else{
+              $trashfolder = $trashfolder.$folder;
+            }
+            rename($dir,$trashfolder);
+            echo '  папка: <b>'.$folder.'</b> перемещена в корзину';
           }
         }else{
           echo 'error!';
@@ -61,7 +70,7 @@ function size_check($path){
 
     public static function deleteDir($dirPath) {
       $d_root = $_SERVER['DOCUMENT_ROOT'];
-      if($dirPath != $d_root.'/system' && $dirPath != $d_root.'/system/users'  && $dirPath != $d_root.'/system/core' && $dirPath != $d_root.'/system/apps'){
+      if($dirPath != $d_root.'/' && $dirPath != $d_root && $dirPath != '../../..//' && $dirPath != $d_root.'/system' && $dirPath != $d_root.'/system/users'  && $dirPath != $d_root.'/system/core' && $dirPath != $d_root.'/system/apps'){
         if (! is_dir($dirPath)) {
             throw new InvalidArgumentException("$dirPath must be a directory");
         }
