@@ -50,7 +50,7 @@ class AuthClassUser {
             $_SESSION["loginuser"] = $login;
 
             if(!empty($keyaccess)){
-              
+
               $bds = new readbd;
               global $getdata;
 

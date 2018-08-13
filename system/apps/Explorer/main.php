@@ -265,7 +265,7 @@ $pathmain = str_replace($_SERVER['DOCUMENT_ROOT'], '', $pathmain);
 	<span><?echo $explorer_lang['menu_file_label']?></span>
 	<div id="filemenu<?echo $AppID?>" style="display:none; cursor:default; position:absolute; z-index:1; background:#fff; width:auto; top:31px; left:4px;">
 <ul id="mmenu<?echo $AppID?>" >
-	<li><div <?echo 'id="'.$dir.'/" class="loadthis'.$AppID.'" onClick="load'.$AppID.'(this);" ';?> ><?echo $explorer_lang['menu_open_label']?></div></li>
+	<li><div <?echo 'id="'.$dir.'/" class="loadthis'.$AppID.'" onClick="load'.$AppID.'(this);" ';?> ><?echo $explorer_lang['menu_open_label']?> <span style="font-size: 10px; color:#a2a2a2;">Ctrl+Alt+O</span> </div></li>
 	<li>
 		<div <?echo 'id="'.$dir.'/" class="loadas" ';?> ><?echo $explorer_lang['menu_openas_label']?></div>
 		<ul style="background:#fff;">
@@ -280,16 +280,16 @@ $pathmain = str_replace($_SERVER['DOCUMENT_ROOT'], '', $pathmain);
 			?>
 		</ul>
 	</li>
-	<li><div <?echo 'class="loadthis'.$AppID.'" onClick="mkfileshow'.$AppID.'();" ';?> ><?echo $explorer_lang['menu_newfile_label']?></div></li>
+	<li><div <?echo 'class="loadthis'.$AppID.'" onClick="mkfileshow'.$AppID.'();" ';?> ><?echo $explorer_lang['menu_newfile_label']?>  <span style="font-size: 10px; color:#a2a2a2;">Ctrl+Alt+N</span>  </div></li>
 	<li><div <? echo 'id="'.$dir.'/" class="loadthis'.$AppID.'" onClick="getproperty'.$AppID.'(this);"';?>><?echo $explorer_lang['menu_rename_label']?></div></li>
-	<li><div <?echo 'onClick="mkdirshow'.$AppID.'();" ';?> ><?echo $explorer_lang['menu_md_label']?></div></li>
+	<li><div <?echo 'onClick="mkdirshow'.$AppID.'();" ';?> ><?echo $explorer_lang['menu_md_label']?>  <span style="font-size: 10px; color:#a2a2a2;">Ctrl+Alt+F</span>  </div></li>
 	<li><div <?echo 'id="'.$dir.'/" class="mklink" onClick="link'.$AppID.'(this);" ';?> ><?echo $explorer_lang['menu_ml_label']?></div></li>
-	<li><div <?echo 'class="loadthis'.$AppID.'" onClick="newload'.$AppID.'('."'del'".',this.id)" ';?>><?echo $explorer_lang['menu_trash_label']?></div></li>
-	<li><div <?echo 'class="loadthis'.$AppID.'" onClick="newload'.$AppID.'('."'delf'".',this.id)" ';?>><?echo $explorer_lang['menu_delete_label']?></div></li>
+	<li><div <?echo 'class="loadthis'.$AppID.'" onClick="newload'.$AppID.'('."'del'".',this.id)" ';?>><?echo $explorer_lang['menu_trash_label']?> <span style="font-size: 10px; color:#a2a2a2;">Del</span> </div></li>
+	<li><div <?echo 'class="loadthis'.$AppID.'" onClick="newload'.$AppID.'('."'delf'".',this.id)" ';?>><?echo $explorer_lang['menu_delete_label']?> <span style="font-size: 10px; color:#a2a2a2;">Ctrl+Del</span> </div></li>
 	<li><div <? echo 'id="'.$dir.'/" onClick="loadshow'.$AppID.'(this)"';?>><?echo $explorer_lang['menu_loadfile_label']?></div></li>
 	<li><div <? echo 'class="loadthis'.$AppID.'" onClick="newload'.$AppID.'('."'zipfile'".',this.id)"';?>><?echo $explorer_lang['menu_zip_label']?></div></li>
 	<li><div <? echo 'class="loadthis'.$AppID.'" onClick="newload'.$AppID.'('."'zipfileunpack'".',this.id)"';?>><?echo $explorer_lang['menu_zip_unpack']?></div></li>
-	<li><div <? echo 'id="'.$dir.'/" class="loadthis'.$AppID.'" onClick="getproperty'.$AppID.'(this);"';?>><?echo $explorer_lang['menu_property_label']?></div></li>
+	<li><div <? echo 'id="'.$dir.'/" class="loadthis'.$AppID.'" onClick="getproperty'.$AppID.'(this);"';?>><?echo $explorer_lang['menu_property_label']?>  <span style="font-size: 10px; color:#a2a2a2;">Ctrl+Alt+P</span>  </div></li>
 </ul>
 </div>
 </div>
@@ -298,9 +298,9 @@ $pathmain = str_replace($_SERVER['DOCUMENT_ROOT'], '', $pathmain);
 	<span><?echo $explorer_lang['menu_edit_label']?></span>
 	<div id="editmenu_<?echo $AppID?>" style="display:none; cursor:default; position:absolute; z-index:1; background:#fff; width:auto; top:31px; left:68px;">
 <ul id="editmenu<?echo $AppID?>" >
-	<li><div <?echo 'id="" class="loadthis'.$AppID.'" onClick="copy'.$AppID.'(this.id);" ';?> ><?echo $explorer_lang['menu_copy_label']?></div></li>
-	<li class="pastebutton"><div <?echo 'id="" class="loadthis'.$AppID.'" onClick="paste'.$AppID.'(this.id);" ';?> ><?echo $explorer_lang['menu_paste_label']?></div></li>
-	<li><div <?echo 'id="" class="loadthis'.$AppID.'" onClick="cut'.$AppID.'(this.id);" ';?> ><?echo $explorer_lang['menu_cut_label']?></div></li>
+	<li><div <?echo 'id="" class="loadthis'.$AppID.'" onClick="copy'.$AppID.'(this.id);" ';?> ><?echo $explorer_lang['menu_copy_label']?> <span style="font-size: 10px; color:#a2a2a2;">Ctrl+C</span> </div></li>
+	<li class="pastebutton"><div <?echo 'id="" class="loadthis'.$AppID.'" onClick="paste'.$AppID.'(this.id);" ';?> ><?echo $explorer_lang['menu_paste_label']?> <span style="font-size: 10px; color:#a2a2a2;">Ctrl+V</span> </div></li>
+	<li><div <?echo 'id="" class="loadthis'.$AppID.'" onClick="cut'.$AppID.'(this.id);" ';?> ><?echo $explorer_lang['menu_cut_label']?> <span style="font-size: 10px; color:#a2a2a2;">Ctrl+X</span> </div></li>
 </ul>
 </div>
 </div>
@@ -692,8 +692,10 @@ function checkbutton(){
 }
 
 function copy<?echo $AppID?>(file){
-	localStorage.setItem('copy', file);
-	checkbutton();
+	if($(".loadthis<?echo $AppID?>").attr("id")){
+		localStorage.setItem('copy', file);
+		checkbutton();
+	}
 };
 
 function paste<?echo $AppID?>(file){
@@ -736,6 +738,21 @@ $(function(){
 function reloadApp<?echo $AppID?>(){
 	reload<?echo $AppID?>();
 }
+
+
+
+var map = {
+	'17': false,
+	'18': false,
+	'46': false,
+	'67': false,
+	'70': false,
+	'78': false,
+	'79': false,
+	'80': false,
+	'86': false,
+	'88': false,
+};
 
 	$("#app<?echo $AppID ?>").bind('keydown', function(e){
 		if($("#app<?echo $AppID?>").hasClass('windowactive')){
@@ -797,6 +814,62 @@ function reloadApp<?echo $AppID?>(){
 			}
 		}
 
+		if(e.keyCode in map){
+			map[e.keyCode] = true;
+			folder_subject = $(".loadthis<?echo $AppID?>").attr("id");
+
+			//copy keycode
+			if(map['17'] && map['67']){
+				copy<?echo $AppID?>(folder_subject);
+			}
+
+			//paste keycode
+			if(map['17'] && map['86']){
+				paste<?echo $AppID?>(folder_subject);
+			}
+
+			//cut keycode
+			if(map['17'] && map['88']){
+				cut<?echo $AppID?>(folder_subject);
+			}
+
+			//delete keycode
+			if(map['46']){
+				newload<?echo $AppID?>('del', folder_subject);
+			}
+
+			//delete forever keycode
+			if(map['17'] && map['46']){
+				newload<?echo $AppID?>('delf', folder_subject);
+			}
+
+			//newfile keycode
+			if(map['17'] && map['18'] && map['78']){
+				mkfileshow<?echo $AppID?>();
+			}
+
+			//new file keycode
+			if(map['17'] && map['18'] && map['78']){
+				mkfileshow<?echo $AppID?>();
+			}
+
+			//new folder keycode
+			if(map['17'] && map['18'] && map['70']){
+				mkdirshow<?echo $AppID?>();
+			}
+
+			//open keycode
+			if(map['17'] && map['18'] && map['79']){
+				load<?echo $AppID?>(folder_subject);
+			}
+
+			//show property keycode
+			if(map['17'] && map['18'] && map['80']){
+				getproperty<?echo $AppID?>(folder_subject);
+			}
+
+		}
+
 	}else{
 		let keycode = null;
 		enterfolder = null;
@@ -805,7 +878,11 @@ function reloadApp<?echo $AppID?>(){
 		leftfolder = null;
 		let e = null;
 	}
-	});
+}).keyup(function(e){
+	if(e.keyCode in map){
+		map[e.keyCode] = false;
+	}
+});
 
 checkbutton();
 </script>

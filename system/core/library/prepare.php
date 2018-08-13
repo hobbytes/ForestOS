@@ -180,23 +180,23 @@
       $key  = $link['key'];
       $linkicon = $link['icon'];
       $getExt = pathinfo($param);
-      $extension = '';
-      $appicon=str_replace(array('.','php','main'),'',$ref).'app.png';
+      $extension = NULL;
+      $appicon = str_replace(array('.','php','main'),'',$ref).'app.png';
       if (!is_file($appicon)){
         $appicon='system/core/design/images/app.png';
       }
       if(!empty($getExt['extension'])){
-        if(!preg_match("/\.(jpg|jpeg|png|gif|bmp)$/i",$param)){ // print extenstion if !image
+        if(!preg_match("/\.(jpg|jpeg|png|gif|bmp)$/i", $param)){ // print extenstion if !image
           $extension = '<div style="position:absolute; top:60px; left:0; right:0; cursor:default; color:#d05858; font-size:14px; font-weight:900;">'.$getExt['extension'].'</div>';
         }
       }
       if(!file_exists($appicon)){
-        $appicon='';
+        $appicon = NULL;
       }
-      if($linkicon==''){
-        $linkicon=$hashfile->filehash($appicon);
+      if(empty($linkicon)){
+        $linkicon = $hashfile->filehash($appicon);
       }else{
-        $linkicon=$hashfile->filehash('./'.$link['icon']);
+        $linkicon = $hashfile->filehash('./'.$link['icon']);
       }
       $classtrash = '';
       if(preg_match("/$login\/trash/",$param)){
@@ -244,7 +244,7 @@
       </script>
       </div>
       <?
-      $linkname=str_replace("_"," ",$linkname);
+      $linkname = str_replace("_"," ",$linkname);
         if(!preg_match('/.php/',$ref)){
           $destination  = $ref.$file.'.php';
         }else{
@@ -294,12 +294,16 @@ function hibernation(){
     }
 
     if(!empty($content) && $_SESSION["safemode"]!='true'){
-      $_SESSION['appid']  = $content['last_app_id']-1;
-  		$bd->readglobalfunction(password,users,login,$login);
-      $key = $getdata;
+      $_SESSION['appid']  = $content['last_app_id'];
+      $key = $bd->readglobal2("password", "forestusers", "login", $login, true);
       echo $security->__decode($content['state'], $key);
       file_put_contents('system/users/'.$login.'/settings/state.hdf','');
       $object->newnotification("Hibernation",$language[$_SESSION['locale'].'_hibernation_name'],$language[$_SESSION['locale'].'_hibernation_notification']."  <b>".$content['time_stamp']."</b>");
+      ?>
+      <script>
+      var id = <? echo $content['last_app_id']; ?>;
+      </script>
+      <?
     }else{
       file_put_contents('system/users/'.$login.'/settings/state.hdf','');
     }

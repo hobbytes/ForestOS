@@ -165,6 +165,7 @@ body {
 	opacity: 0.8;
 	box-shadow: 0px 0px 10px 0px rgba(37,37,37,0.68);
 	transition: all 0.2s ease;
+	padding: 3px;
 }
 
 .selector-hidden{
@@ -358,11 +359,13 @@ body {
 	text-transform: uppercase;
 	font-weight: 700;
 	transition: all 0.2s ease;
+	width: max-content;
+	margin: 0 auto;
 }
 
 #labelos:hover{
-	color: #8bc34a;
-	text-shadow: 0px 0px 1px #afffb2;
+	color: #f45c43;
+	text-shadow: 0px 0px 1px #651111;
 }
 
 ::-webkit-scrollbar {

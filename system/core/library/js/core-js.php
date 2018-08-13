@@ -225,6 +225,8 @@ function ProcessLogic(id, name, destination, destination_, maxwidthm, folder, is
       UpdateWindow(id, name);
     });
     $("#process" + id ).appendTo("#proceses");
+
+    $("#app" + id).focus();
 };
 
 <?

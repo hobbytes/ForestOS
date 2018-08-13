@@ -10,8 +10,7 @@ if(isset($_SESSION['loginuser'])){
   global $getdata;
   $security = new security;
   $bd = new readbd;
-  $bd->readglobal2("password","forestusers","login",$_SESSION["loginuser"]);
-  $key = $getdata;
+  $key = $bd->readglobal2("password", "forestusers", "login", $_SESSION["loginuser"], true);
   $content = $_POST['content'];
   $id = $_POST['appid'];
   $content = $security->__encode($content, $key);
