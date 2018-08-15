@@ -445,14 +445,16 @@ while (false !== ($entry = $d->read())) {
 		$typeObject = 'file';
 	}
 
-	$objectArray[$typeObject] [] = urlencode('<div id="'.convert(realpath($entry)).'" class="'.md5($name).'-'.$AppID.' select-'.$AppID.' ui-button ui-widget ui-corner-all explorer-object" '.$selectAction.' on'.$action.'="'.$load.'"  style="cursor:default; height:128px;	margin:5px;	text-align:center;	width:128px;	position:relative;	display:block;	text-overflow:ellipsis;	overflow:hidden;	float:left; transition:all 0.05s ease-out;" title="'.$name.'"><div style="cursor:default; width:80px; height:80px; background-image: url('.$type.'); background-size:cover; -webkit-user-select:none; user-select:none; padding:5px; background-color:'.$color.'; margin:auto;">
-	<div style="margin-top:22px; color:#d05858; font-size:17px; font-weight:900;">
-	'.$extension.'
+	$objectArray[$typeObject] [] = urlencode(
+		'<div id="'.convert(realpath($entry)).'" class="'.md5($name).'-'.$AppID.' select-'.$AppID.' '.$typeObject.'-'.$AppID.' ui-button ui-widget ui-corner-all explorer-object" '.$selectAction.' on'.$action.'="'.$load.'"  style="cursor:default; height:128px;	margin:5px;	text-align:center;	width:128px;	position:relative;	display:block;	text-overflow:ellipsis;	overflow:hidden;	float:left; transition:all 0.05s ease-out;" title="'.$name.'">
+		<div style="cursor:default; width:80px; height:80px; background-image: url('.$type.'); background-size:cover; -webkit-user-select:none; user-select:none; padding:5px; background-color:'.$color.'; margin:auto;">
+		<div style="margin-top:22px; color:#d05858; font-size:17px; font-weight:900;">
+		'.$extension.'
 		</div>
-	</div>
-	<div style="text-overflow: ellipsis;overflow: hidden;font-size: 15px;">
+		</div>
+		<div style="text-overflow: ellipsis;overflow: hidden;font-size: 15px;">
 		<span style="color:'.$n_color.'; white-space:nowrap;">
-			'.$name.'
+		'.$name.'
 		</span>
 		<div style="font-size:10px; padding:5px; color:#688ad8;">
 		'.$datecreate.'
@@ -485,6 +487,8 @@ foreach($objectArray as $type => $object){
 
 unset($objectArray);
 ?>
+</div>
+<div style="position: static; width: 100%; height: 80%;" id="<? echo convert(realpath($entry)) ?>" class="<? echo "dir-$AppID" ?>">
 </div>
 <div id="upload<?echo $AppID?>" style="z-index:1; position:fixed; display:none; top:25%; left:25%; background-color:#ededed; border:1px solid #797979; padding:20px; border-radius:6px; box-shadow:1px 1px 5px #000;">
 </div>
@@ -625,6 +629,7 @@ $AppContainer->EndContainer();
 	);
 ?>
 
+//show select object property
 function getproperty<?echo $AppID?>(object){
 	if(typeof object === 'string' || object instanceof String){
 		object = object;
@@ -703,7 +708,15 @@ function copy<?echo $AppID?>(file){
 	}
 };
 
-function paste<?echo $AppID?>(file){
+function paste<?echo $AppID?>(file, dir = null){
+	let _dir;
+
+	if(dir){
+		_dir = dir + '/';
+	}else{
+		_dir = "<?echo convert(realpath($entry)).'/'?>";
+	}
+
 	var getFile = localStorage.getItem('copy');
 	var action = '';
 	if(getFile != null){
@@ -719,11 +732,12 @@ function paste<?echo $AppID?>(file){
 		url: "system/core/functions/filesystem",
 		data: {
 			 f:getFile,
-			 n:"<?echo convert(realpath($entry)).'/'?>",
+			 n:_dir,
 			 a:action
 		}
 	}).done(function(o) {
 		reload<?echo $AppID?>();
+		_dir = null;
 });
 	checkbutton();
 };
@@ -734,6 +748,25 @@ function cut<?echo $AppID?>(file){
 	checkbutton();
 };
 
+//make every object draggable
+$(".explorer-object").draggable({
+	opacity: 0.7,
+	helper: "clone",
+	zIndex: "10000",
+	appendTo: "#proceses"
+});
+
+//make every dir droppable
+$(".dir-<?echo $AppID?>").droppable({
+	accept: ".explorer-object",
+	drop: function(event, ui){
+		localStorage.removeItem('copy');
+		localStorage.setItem('cut', ui.draggable.attr('id'));
+		paste<?echo $AppID?>(ui.draggable.attr('id'), $(this).attr('id'));
+		ui.draggable.remove();
+	}
+});
+
 $(function(){
 	$("#editmenu<?echo $AppID?>").menu();
 	$("#mmenu<?echo $AppID?>").menu();
@@ -743,8 +776,6 @@ $(function(){
 function reloadApp<?echo $AppID?>(){
 	reload<?echo $AppID?>();
 }
-
-
 
 var map<?echo $AppID?> = {
 	'16': false,
