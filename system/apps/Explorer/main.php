@@ -211,7 +211,7 @@ if(!is_dir($dir)){
 
 		$_dest = str_replace($_SERVER['DOCUMENT_ROOT'], '', $dest);
 
-		$info = 'http://'.$_SERVER['HTTP_HOST'].file_get_contents($_dest.'?getinfo=true&h='.md5(date('dmyhis')));
+		$info = file_get_contents('http://'.$_SERVER['HTTP_HOST'].'/'.$_dest.'?getinfo=true&h='.md5(date('dmyhis')));
 
 	  $arrayInfo = json_decode($info);
 	  if($_SESSION['locale'] == 'en'){
