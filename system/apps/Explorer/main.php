@@ -284,7 +284,7 @@ $pathmain = str_replace($_SERVER['DOCUMENT_ROOT'], '', $pathmain);
 	<li><div <? echo 'id="'.$dir.'/" class="loadthis'.$AppID.'" onClick="getproperty'.$AppID.'(this);"';?>><?echo $explorer_lang['menu_rename_label']?></div></li>
 	<li><div <?echo 'onClick="mkdirshow'.$AppID.'();" ';?> ><?echo $explorer_lang['menu_md_label']?>  <span style="font-size: 10px; color:#a2a2a2;">Shift+F</span>  </div></li>
 	<li><div <?echo 'id="'.$dir.'/" class="mklink" onClick="link'.$AppID.'(this);" ';?> ><?echo $explorer_lang['menu_ml_label']?></div></li>
-	<li><div <?echo 'class="loadthis'.$AppID.'" onClick="newload'.$AppID.'('."'del'".',this.id)" ';?>><?echo $explorer_lang['menu_trash_label']?> <span style="font-size: 10px; color:#a2a2a2;">Del</span> </div></li>
+	<li><div <?echo 'class="loadthis'.$AppID.'" onClick="newload'.$AppID.'('."'del'".',this.id)" ';?>><?echo $explorer_lang['menu_trash_label']?> <span style="font-size: 10px; color:#a2a2a2;">Ctrl+Del</span> </div></li>
 	<li><div <?echo 'class="loadthis'.$AppID.'" onClick="newload'.$AppID.'('."'delf'".',this.id)" ';?>><?echo $explorer_lang['menu_delete_label']?> <span style="font-size: 10px; color:#a2a2a2;">Shift+Del</span> </div></li>
 	<li><div <? echo 'id="'.$dir.'/" onClick="loadshow'.$AppID.'(this)"';?>><?echo $explorer_lang['menu_loadfile_label']?></div></li>
 	<li><div <? echo 'class="loadthis'.$AppID.'" onClick="newload'.$AppID.'('."'zipfile'".',this.id)"';?>><?echo $explorer_lang['menu_zip_label']?></div></li>
@@ -318,7 +318,7 @@ $pathmain = str_replace($_SERVER['DOCUMENT_ROOT'], '', $pathmain);
 </div>
 
 <div style="margin-top:7px; border-top:1px solid #d4d4d4; padding-top:7px;">
-<div class="ui-forest-blink" style="padding:4px; background:#4d94ef; margin:0px 10px; border-radius:10px; color:#2b5182; float:left; width:20px;" id="<?echo $back?>" onclick="load<?echo $AppID?>(this)">
+<div class="ui-forest-blink <? echo "dir-$AppID" ?>" style="padding:4px; background:#4d94ef; margin:0px 10px; border-radius:10px; color:#2b5182; float:left; width:20px;" id="<?echo $back?>" onclick="load<?echo $AppID?>(this)">
 	&#9668;
 </div>
 <input style="-webkit-appearance:none; border:1px solid #ccc; width:80%; font-size:17px; margin: 0 5px 10px;" type="search" value="<?echo $prefix.$pathmain?>"></input>
@@ -446,7 +446,7 @@ while (false !== ($entry = $d->read())) {
 	}
 
 	$objectArray[$typeObject] [] = urlencode(
-		'<div id="'.convert(realpath($entry)).'" class="'.md5($name).'-'.$AppID.' select-'.$AppID.' '.$typeObject.'-'.$AppID.' ui-button ui-widget ui-corner-all explorer-object" '.$selectAction.' on'.$action.'="'.$load.'"  style="cursor:default; height:128px;	margin:5px;	text-align:center;	width:128px;	position:relative;	display:block;	text-overflow:ellipsis;	overflow:hidden;	float:left; transition:all 0.05s ease-out;" title="'.$name.'">
+		'<div id="'.convert(realpath($entry)).'" class="'.md5($name).'-'.$AppID.' select-'.$AppID.' '.$typeObject.'-'.$AppID.' ui-button ui-widget ui-corner-all explorer-object" '.$selectAction.' on'.$action.'="'.$load.'" appid="'.$AppID.'"  style="cursor:default; height:128px;	margin:5px;	text-align:center;	width:128px;	position:relative;	display:block;	text-overflow:ellipsis;	overflow:hidden;	float:left; transition:all 0.05s ease-out;" title="'.$name.'">
 		<div style="cursor:default; width:80px; height:80px; background-image: url('.$type.'); background-size:cover; -webkit-user-select:none; user-select:none; padding:5px; background-color:'.$color.'; margin:auto;">
 		<div style="margin-top:22px; color:#d05858; font-size:17px; font-weight:900;">
 		'.$extension.'
@@ -488,7 +488,7 @@ foreach($objectArray as $type => $object){
 unset($objectArray);
 ?>
 </div>
-<div style="position: static; width: 100%; height: 80%;" id="<? echo convert(realpath($entry)) ?>" class="<? echo "dir-$AppID" ?>">
+<div id="<? echo convert(realpath($entry)) ?>" class="<? echo "dir-$AppID" ?> " restrict<? echo $AppID ?>="<? echo "e-restrict-$AppID" ?>" style="position: static; width: 100%; height: 80%;">
 </div>
 <div id="upload<?echo $AppID?>" style="z-index:1; position:fixed; display:none; top:25%; left:25%; background-color:#ededed; border:1px solid #797979; padding:20px; border-radius:6px; box-shadow:1px 1px 5px #000;">
 </div>
@@ -680,11 +680,13 @@ function select<?echo $AppID?>(folder, folder2, folder3, folder4){
 };
 
 function mkdirshow<?echo $AppID?>(){
-	$("#mkdirdiv<?echo $AppID?>").css('display','block')
+	$("#mkdirdiv<?echo $AppID?>").css('display','block');
+	$("#mkdirvalue<?echo $AppID?>").focus();
 };
 
 function mkfileshow<?echo $AppID?>(){
-	$("#mkfilediv<?echo $AppID?>").css('display','block')
+	$("#mkfilediv<?echo $AppID?>").css('display','block');
+	$("#mkfilevalue<?echo $AppID?>").focus();
 };
 
 function checkbutton(){
@@ -760,10 +762,13 @@ $(".explorer-object").draggable({
 $(".dir-<?echo $AppID?>").droppable({
 	accept: ".explorer-object",
 	drop: function(event, ui){
-		localStorage.removeItem('copy');
-		localStorage.setItem('cut', ui.draggable.attr('id'));
-		paste<?echo $AppID?>(ui.draggable.attr('id'), $(this).attr('id'));
-		ui.draggable.remove();
+		let appid_ = ui.draggable.attr('appid');
+		if($(this).attr('restrict<? echo $AppID ?>') != "e-restrict-"+appid_){
+			localStorage.removeItem('copy');
+			localStorage.setItem('cut', ui.draggable.attr('id'));
+			paste<?echo $AppID?>(ui.draggable.attr('id'), $(this).attr('id'));
+			ui.draggable.remove();
+		}
 	}
 });
 
@@ -872,7 +877,7 @@ var map<?echo $AppID?> = {
 				}
 
 				//delete keycode
-				if(map<?echo $AppID?>['46']){
+				if(map<?echo $AppID?>['17'] && map<?echo $AppID?>['46']){
 					newload<?echo $AppID?>('del', folder_subject);
 				}
 
