@@ -31,7 +31,13 @@ function checkwindows(){
 
 function makeprocess(dest,  param,  key,  name){
   $('.ui-body').append("<div id=\"process"+(id=id+1)+"\" class='process' style='display:none;'></div>");
-  $("#process"+id+"" ).load("makeprocess.php?id=<?echo md5(date('d.m.y.h.i.s'));?>"+id+"&d="+dest+"/&i="+id+"&p="+param+"&k="+key+"&n="+name);
+  $("#process"+id+"" ).load("makeprocess.php?id=<?echo md5(date('d.m.y.h.i.s'));?>"+id+"&d="+dest+"/&i="+id+"&p="+param+"&k="+key+"&n="+name, null,
+    function (responseText, textStatus, XMLHttpRequest, req){
+      if(textStatus == "error"){
+        $("#" + id).html('<div style="height: 100%; text-align: center; padding:10px; background:#f36d64; color:#731a13; font-size:20px; font-weight:900;">Application start error <br> Status: <b>' + XMLHttpRequest.status +'</b> <br> Status text: <b>' + XMLHttpRequest.statusText + '</b></div>');
+      }
+    }
+  );
   $("#process"+id+"").show('fade', 250);
   checkwindows();
 };
@@ -108,7 +114,12 @@ function ProcessLogic(id, name, destination, destination_, maxwidthm, folder, is
   });
 
   if(!$("#process" + id).hasClass('hibernatethis')){
-    $("#" + id).load(""+destination+"?id=<?echo rand(0,10000)?>&appid="+id+"&appname="+name+"&destination="+folder+"/&mobile="+isMobile+"&"+key+"="+param);
+    $("#" + id).load(""+destination+"?id=<?echo rand(0,10000)?>&appid="+id+"&appname="+name+"&destination="+folder+"/&mobile="+isMobile+"&"+key+"="+param, null,
+      function (responseText, textStatus, XMLHttpRequest, req){
+        if(textStatus == "error"){
+          $("#" + id).html('<div style="height: 100%; text-align: center; padding:10px; background:#f36d64; color:#731a13; font-size:20px; font-weight:900;">Application start error <br> Status: <b>' + XMLHttpRequest.status +'</b> <br> Status text: <b>' + XMLHttpRequest.statusText + '</b></div>');
+        }
+      });
   }
 
   $(function() {
@@ -168,7 +179,12 @@ function ProcessLogic(id, name, destination, destination_, maxwidthm, folder, is
     if(typeof window["reloadApp" + id] == 'function'){
       window["reloadApp" + id]();
     }else{
-      $("#" + id).load(""+destination_+"?id=<?echo rand(0,10000)?>&appid="+id+"&appname="+name+"&destination="+folder+"/&mobile="+isMobile+"&"+key+"="+param);
+      $("#" + id).load(""+destination_+"?id=<?echo rand(0,10000)?>&appid="+id+"&appname="+name+"&destination="+folder+"/&mobile="+isMobile+"&"+key+"="+param, null,
+        function (responseText, textStatus, XMLHttpRequest, req){
+          if(textStatus == "error"){
+            $("#" + id).html('<div style="height: 100%; text-align: center; padding:10px; background:#f36d64; color:#731a13; font-size:20px; font-weight:900;">Application start error <br> Status: <b>' + XMLHttpRequest.status +'</b> <br> Status text: <b>' + XMLHttpRequest.statusText + '</b></div>');
+          }
+        });
     }
 
     let oldbytes = $("#app" + id).attr("applength-" + id);

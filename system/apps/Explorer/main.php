@@ -397,8 +397,8 @@ while (false !== ($entry = $d->read())) {
 			}
 			$extension	=	"";
 		}else{
-			$extension	=	stristr($name, '.');
-			$extension	=	mb_strtolower(str_replace('.','',$extension));
+			$path_parts = pathinfo($name);
+			$extension	=	$path_parts['extension'];
 			$type	=	$Folder.'assets/fileico.png?h='.$hashImage;
 			if($extension	==	'png'  || $extension	==	'jpg' || $extension	==	'jpeg' || $extension	==	'bmp' || $extension	==	'gif'){
 				$color = 'transparent';
@@ -406,6 +406,18 @@ while (false !== ($entry = $d->read())) {
 				$type	=	$pathmain.'/'.$hashfileprefix;
 				$extension	=	"";
 			}
+
+			if($extension	==	'webapp'){
+				$color = 'transparent';
+				$json = json_decode(file_get_contents('http://'.$_SERVER['SERVER_NAME'].$pathmain.'/'.$entry), true);
+				$hashfileprefix	= $faction->filehash($_SERVER['DOCUMENT_ROOT'].$pathmain.'/'.array_shift($json['icons']),'false');
+				$type	=	str_replace($_SERVER['DOCUMENT_ROOT'], '', $hashfileprefix);
+				if(empty($type)){
+					$type = 'system/core/design/images/app.png'; 
+				}
+				$extension	=	"";
+			}
+
 		}
 		$fo->format(filesize(realpath($entry)));
 		$datecreate = $explorer_lang['date'].': '.date('d.m.y H:i:s', filectime(realpath($entry))).'<br> '.$explorer_lang['size'].': '.$format;
@@ -493,7 +505,7 @@ unset($objectArray);
 <div id="upload<?echo $AppID?>" style="z-index:1; position:fixed; display:none; top:25%; left:25%; background-color:#ededed; border:1px solid #797979; padding:20px; border-radius:6px; box-shadow:1px 1px 5px #000;">
 </div>
 
-<div style="padding:0 10px; background-color:#f2f2f2; width:97%; top:97%; word-wrap:break-word; font-size:10px; float:right; position:absolute; text-align:right;">
+<div style="padding:0 10px; background-color: rgba(0, 0, 0, 0); width:97%; top:97%; word-wrap:break-word; font-size:10px; float:right; position:absolute; text-align:right;">
 <?
 $fo->size_check(dirname(dirname(dirname(__DIR__))));
 $fo->format($size);
