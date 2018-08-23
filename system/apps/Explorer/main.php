@@ -413,7 +413,7 @@ while (false !== ($entry = $d->read())) {
 				$hashfileprefix	= $faction->filehash($_SERVER['DOCUMENT_ROOT'].$pathmain.'/'.array_shift($json['icons']),'false');
 				$type	=	str_replace($_SERVER['DOCUMENT_ROOT'], '', $hashfileprefix);
 				if(empty($type)){
-					$type = 'system/core/design/images/app.png'; 
+					$type = 'system/core/design/images/app.png';
 				}
 				$extension	=	"";
 			}
@@ -694,11 +694,13 @@ function select<?echo $AppID?>(folder, folder2, folder3, folder4){
 function mkdirshow<?echo $AppID?>(){
 	$("#mkdirdiv<?echo $AppID?>").css('display','block');
 	$("#mkdirvalue<?echo $AppID?>").focus();
+	$("#app<?echo $AppID?>").unbind("keydown");
 };
 
 function mkfileshow<?echo $AppID?>(){
 	$("#mkfilediv<?echo $AppID?>").css('display','block');
 	$("#mkfilevalue<?echo $AppID?>").focus();
+	$("#app<?echo $AppID?>").unbind("keydown");
 };
 
 function checkbutton(){
