@@ -407,7 +407,7 @@ while (false !== ($entry = $d->read())) {
 				$extension	=	"";
 			}
 
-			if($extension	==	'webapp'){
+			if(preg_match('%manifest%', $entry)){
 				$color = 'transparent';
 				$json = json_decode(file_get_contents('http://'.$_SERVER['SERVER_NAME'].$pathmain.'/'.$entry), true);
 				$hashfileprefix	= $faction->filehash($_SERVER['DOCUMENT_ROOT'].$pathmain.'/'.array_shift($json['icons']),'false');
