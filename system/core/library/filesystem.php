@@ -128,6 +128,11 @@ function size_check($path){
           $content="[link]\ndestination=$appdest\nfile=$appfile\nkey=$key\nparam=$param\nname=$appname\nlinkname=$linkname\nicon=$icon";
           file_put_contents($linkdestination,$content);
           unset($linkdestination,$content);
+          ?>
+          <script>
+            UpdateDesktop();
+          </script>
+          <?
       }
     }
   }

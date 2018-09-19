@@ -48,6 +48,7 @@ $prepare->beacon();
 $prepare->desktop("linkdiv");
 $_SESSION['appid'] = -1;
 ?>
+</div>
 <div id="notifications" class="notificationhide" style="display:block; position:absolute; right: 0; height: 100%; padding: 10px; transition:all 0.2s ease; z-index:2;">
 <div id="notificationTopLabel" style="width:310px; color:#fff; font-size:20pt; text-align:center; user-select: none; cursor: default; display:none; padding: 10 0; background: rgba(160,160,160,0.9);">
   <div id="fulltime" style="font-size:20pt;">
@@ -67,7 +68,6 @@ $_SESSION['appid'] = -1;
   </div>
 </div>
 <div id="notification-container">
-</div>
 </div>
 </div>
 </div>

@@ -48,6 +48,12 @@ if(!empty($app_link)){
 if(!empty($app_delete) && !in_array($app_delete, $warn_apps)){
   $fileaction->deleteDir('../'.$app_delete);
   $gui->newnotification($AppName, $language[$_SESSION['locale'].'_name'], $language[$_SESSION['locale'].'_not_1'].': <b>'.$app_delete.'</b> '.$language[$_SESSION['locale'].'_not_2']);
+  //update desktop
+  ?>
+  <script>
+    UpdateDesktop();
+  </script>
+  <?
 }
 
 foreach (glob($_SERVER['DOCUMENT_ROOT']."/system/apps/*/main.php") as $filenames)

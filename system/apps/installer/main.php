@@ -73,6 +73,14 @@ if(isset($appinstall)){
     fwrite($myfile,$content);
 		fclose($myfile);
 
+    //update desktop
+    ?>
+    <script>
+      UpdateDesktop();
+    </script>
+    <?
+
+
     $ini_array = parse_ini_file('../../core/appinstall.foc', true);
     if (array_key_exists($appinstall, $ini_array))
     {

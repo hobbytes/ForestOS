@@ -5,14 +5,14 @@
     function language()
     {
       global $language;
-      $language  = parse_ini_file('system/core/os.lang');
+      $language  = parse_ini_file($_SERVER['DOCUMENT_ROOT'].'/system/core/os.lang');
     }
 
 /*---------load language---------*/
 
     function showversion()
     {
-      $osinfo = parse_ini_file('system/core/osinfo.foc', false);
+      $osinfo = parse_ini_file($_SERVER['DOCUMENT_ROOT'].'/system/core/osinfo.foc', false);
       $os_version = $osinfo['codename'].' '.$osinfo['subversion']."\n";
       ?>
 <!--
@@ -34,7 +34,7 @@
         session_start();
       }
 
-      $dir = 'system/users/'.$_SESSION["loginuser"].'/settings/';
+      $dir = $_SERVER['DOCUMENT_ROOT'].'/system/users/'.$_SESSION["loginuser"].'/settings/';
 
       //  # get superuser
       $bd = new readbd;
@@ -65,7 +65,7 @@
       // # check lang
       $_SESSION['locale'] = file_get_contents($dir.'language.foc');
       if(empty($_SESSION['locale'])){
-        $_SESSION['locale'] = file_get_contents('system/users/'.$_SESSION['superuser'].'/settings/language.foc');
+        $_SESSION['locale'] = file_get_contents($_SERVER['DOCUMENT_ROOT'].'/system/users/'.$_SESSION['superuser'].'/settings/language.foc');
         if(empty($_SESSION['locale'])){
           file_put_contents($dir.'language.foc','en');
           $_SESSION['locale'] = 'en';
@@ -115,7 +115,7 @@
       // # check timezone
       $_SESSION['timezone'] = file_get_contents($dir.'timezone.foc');
       if(empty($_SESSION['timezone'])){
-        $_SESSION['timezone'] = file_get_contents('system/users/'.$_SESSION['superuser'].'/settings/timezone.foc');
+        $_SESSION['timezone'] = file_get_contents($_SERVER['DOCUMENT_ROOT'].'/system/users/'.$_SESSION['superuser'].'/settings/timezone.foc');
         if(empty($_SESSION['timezone'])){
         file_put_contents($dir.'timezone.foc','Europe/Moscow');
         $_SESSION['timezone'] = 'Europe/Moscow';
@@ -165,34 +165,48 @@
     }
 
 /*---------load desktop---------*/
-    function desktop($delclassname)
+    function desktop($delclassname, $user = NULL)
     {
-    global $name,$login,$hashfile,$click,$top,$left,$maxwidth;
-    $id=0;
-    foreach (glob("system/users/$login/desktop/*.link") as $filenames)
+    global $name, $login, $hashfile, $click, $top, $left, $maxwidth;
+    $id = 0;
+
+    if(!empty($user)){
+      $login = $user;
+      chdir($_SERVER['DOCUMENT_ROOT']);
+    }
+
+    foreach (glob($_SERVER['DOCUMENT_ROOT']."/system/users/$login/desktop/*.link") as $filenames)
     {
-      $link=parse_ini_file($filenames);
+      $link = parse_ini_file($filenames);
       $ref  = $link['destination'];
       $name = $link['name'];
       $linkname = $link['linkname'];
       $file = $link['file'];
       $param  = $link['param'];
       $key  = $link['key'];
-      $linkicon = $link['icon'];
+      $linkicon = NULL;
+      if(!empty($link['icon'])){
+        $linkicon = $_SERVER['DOCUMENT_ROOT'].'/'.$link['icon'];
+      }
       $getExt = pathinfo($param);
       $extension = NULL;
-      $appicon = str_replace(array('.','php','main'),'',$ref).'app.png';
+      $appicon = str_replace(array('.', 'php', 'main', $_SERVER['DOCUMENT_ROOT']),'',$ref).'app.png';
+
       if (!is_file($appicon)){
-        $appicon='system/core/design/images/app.png';
+        $appicon = './system/core/design/images/app.png';
       }
+
       if(!empty($getExt['extension'])){
         if(!preg_match("/\.(jpg|jpeg|png|gif|bmp|webapp)$/i", $param) && $linkname != 'manifest.json'){ // print extenstion if !image
           $extension = '<div style="position:absolute; top:60px; left:0; right:0; cursor:default; color:#d05858; font-size:14px; font-weight:900;">'.$getExt['extension'].'</div>';
         }
       }
+
+
       if(!file_exists($appicon)){
         $appicon = NULL;
       }
+
       if(empty($linkicon)){
         $linkicon = $hashfile->filehash($appicon);
       }else{
@@ -219,6 +233,7 @@
       <div id="linklog<?echo $id;?>" class="<?echo $delclassname;?>">
       <script>
       $( function() {
+        $( ".ico" ).draggable({containment:"body", snap:".ico, #topbar"});
         $( "#<?echo 'icon'.$id.'';?>" ).click(function(){
         releaselink();
         var border_color = $('.action-buttons').css('background-color');
@@ -269,8 +284,27 @@
                       </div>
                       </div>';
                       $id++;
-          }
-    }
+                    }
+                    ?>
+                    <script>
+                    $(".trashdrop").droppable({
+                      accept: ".ico",
+                      drop: function(event, ui){
+                        var del_file = ui.draggable.attr('d');
+                        $.ajax({
+                          type: "POST",
+                          url: "system/core/functions/trash",
+                          data: {
+                             file_delete: del_file
+                          }
+                        }).done(function(o) {
+                          $(".link"+ui.draggable.attr('i')).remove();
+                      });
+                      }
+                    });
+                    </script>
+                    <?
+                  }
 
 /*---------welcomescreen load---------*/
 function welcomescreen(){
@@ -602,6 +636,12 @@ function NotificationClear(){
   $("#notification-container").html('');
   SaveNotification();
   $("#notificationsbtn").css({'border':'2px solid #fff','background-color':'rgba(0,0,0,0)'});
+}
+
+//Update desktop
+function UpdateDesktop(){
+  $(".desktop").remove();
+  $("#desktops").load("<? echo $_SERVER['DOCUMENT_ROOT'] ?>/system/core/functions/UpdateDesktop.php");
 }
 
 </script>

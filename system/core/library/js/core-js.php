@@ -412,24 +412,9 @@ function UpdateWindow(id, name, mode = 1){
       //stop check if window is not active
       window.addEventListener('blur', StopCheckNotification);
 
-      $(".welcomescreen").hide('fade',500);
+      $(".welcomescreen").hide('fade', 500);
       $("#topbar").show('fade', 1500);
-      $("#topbar").css('display','block')
-      $(".trashdrop").droppable({
-        accept: ".ico",
-        drop: function(event, ui){
-          var del_file = ui.draggable.attr('d');
-          $.ajax({
-            type: "POST",
-            url: "system/core/functions/trash",
-            data: {
-               file_delete: del_file
-            }
-          }).done(function(o) {
-            $(".link"+ui.draggable.attr('i')).remove();
-        });
-        }
-      });
+      $("#topbar").css('display', 'block');
 
       window.addEventListener("load", function(){
         setTimeout(function(){
@@ -437,7 +422,6 @@ function UpdateWindow(id, name, mode = 1){
         }, 0);
       });
     });
-    $( ".ico" ).draggable({containment:"body", snap:".ico, #topbar"});
     $( ".window" ).mouseup(function(){
       $(".window").removeClass("windowactive")
     });
