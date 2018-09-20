@@ -5,8 +5,8 @@ if(!isset($_SESSION)){
 }
 
 if(isset($_SESSION['loginuser'])){
-  include 'system/core/library/etc.php';
-  include 'system/core/library/filesystem.php';
+  require_once 'system/core/library/etc.php';
+  require_once 'system/core/library/filesystem.php';
   $infob = new info;
   $fileaction = new fileaction;
   //определяем мобильное устройство
@@ -32,7 +32,7 @@ if(isset($_SESSION['loginuser'])){
   $n = $_GET['n'];// name of process
 
   function makeprocess($destination,  $idprocess, $param, $key, $name){
-    global $mobile, $top, $left, $maxwidth, $autohide, $maxwidthm, $fileaction;
+    global $mobile, $top, $left, $maxwidth, $autohide, $maxwidthm, $fileaction, $infob;
     $folder = dirname($destination);
     $folder = stristr($folder, 'system/');
     $destination = stristr($destination, 'system/');
@@ -96,16 +96,8 @@ if(isset($_SESSION['loginuser'])){
       </script>
       </div>
       <?
-      // get status, terrible code...
-      require 'system/core/library/bd.php';
-      $bd = new readbd;
-      $fuid = $bd->readglobal2("fuid", "forestusers", "login", $_SESSION["loginuser"], true);
-      $password = $bd->readglobal2("password", "forestusers", "login", $_SESSION["loginuser"], true);
-      $token = md5($fuid.$_SERVER['DOCUMENT_ROOT'].$password);
-      $check = file_get_contents('http://forest.hobbytes.com/media/os/ubase/lastseen.php?token='.$token.'&user='.$_SESSION["loginuser"]);
-      if($check == 'true'){
-        header("Location: os.php");
-      }
+      // get status
+      $infob->beacon();
   }
   makeprocess($d, $i, $p, $k, $n);
 }else{

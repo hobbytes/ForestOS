@@ -40,7 +40,7 @@ $prepare->themeload();
 $prepare->DisplaySettings();
 $prepare->welcomescreen();
 $prepare->topbar();
-$prepare->beacon();
+$infob->beacon();
 ?>
 <div id="desktops">
 <div id="desktop-1" class="desktop">
