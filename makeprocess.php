@@ -9,6 +9,7 @@ if(isset($_SESSION['loginuser'])){
   require_once 'system/core/library/filesystem.php';
   $infob = new info;
   $fileaction = new fileaction;
+
   //определяем мобильное устройство
   $infob->ismobile();
   if($mobile == 'true'){
@@ -30,8 +31,9 @@ if(isset($_SESSION['loginuser'])){
   $p = $_GET['p'];// name of property
   $k = $_GET['k'];// key property
   $n = $_GET['n'];// name of process
+  $d_ = $_GET['data'];// get data array
 
-  function makeprocess($destination,  $idprocess, $param, $key, $name){
+  function makeprocess($destination,  $idprocess, $param, $key, $name, $data = null){
     global $mobile, $top, $left, $maxwidth, $autohide, $maxwidthm, $fileaction, $infob;
     $folder = dirname($destination);
     $folder = stristr($folder, 'system/');
@@ -91,7 +93,8 @@ if(isset($_SESSION['loginuser'])){
         "<?echo $mobile?>",
         "<?echo $key?>",
         "<?echo $param?>",
-        "<?echo $autohide?>"
+        "<?echo $autohide?>",
+        '<?echo $data?>'
       );
       </script>
       </div>
@@ -99,7 +102,8 @@ if(isset($_SESSION['loginuser'])){
       // get status
       $infob->beacon();
   }
-  makeprocess($d, $i, $p, $k, $n);
+
+  makeprocess($d, $i, $p, $k, $n, $d_);
 }else{
   header('Location: login.php');
   die();
