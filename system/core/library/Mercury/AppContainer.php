@@ -199,5 +199,25 @@ class  AppContainer {
 
   }
 
+/* Event request function */
+  public function ExecuteFunctionRequest(){
+
+    echo '/* function ExecuteFunctionRequest'.$this->appID.' */';
+    echo 'function ExecuteFunctionRequest'.$this->appID.'( ObjectName, FunctionName, FunctionArgument = null ){';
+      echo 'if(!$("#RequestBox'.$this->appID.'").length){ FunctionArgument = "\'"+FunctionArgument+"\'"; $("#'.$this->appName.$this->appID.'").append("<div id=\"RequestBox'.$this->appID.'\" class=\"forest-ui-request-box\"><div class=\"forest-ui-request-box-description\">"+$(ObjectName).attr(\'description\')+"<div>"+$(ObjectName).attr(\'messageBody\')+"</div></div><div class=\"forest-ui-request-box-button-container\"><div class=\"forest-ui-request-box-button forest-ui-request-box-button-ok\" onClick=\"eval("+FunctionName+\'(\'+FunctionArgument+\')\'+"); hidebox'.$this->appID.'(); \">"+$(ObjectName).attr(\'okButton\')+"</div><div class=\"forest-ui-request-box-button forest-ui-request-box-button-cancel\" onClick=\"hidebox'.$this->appID.'()\">"+$(ObjectName).attr(\'cancelButton\')+"</div></div> <script> function hidebox'.$this->appID.'(){$(\'#RequestBox'.$this->appID.'\').slideUp(\'fast\', function(){$(\'#RequestBox'.$this->appID.'\').remove()}); } <\/script> </div>");}';
+      echo '
+      function ShowCloseRequset'.$this->appID.'(){
+        if($("#RequestBox'.$this->appID.'").is( ":hidden" )){
+          $("#RequestBox'.$this->appID.'").slideDown("fast");
+        }else{
+          $("#RequestBox'.$this->appID.'").slideUp("fast", function(){
+            $("#RequestBox'.$this->appID.'").remove();
+          });
+        }
+      }';
+    echo 'ShowCloseRequset'.$this->appID.'();}';
+
+   }
+
 }
 ?>

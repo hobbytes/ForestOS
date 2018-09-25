@@ -46,7 +46,6 @@ function ProcessLogic(id, name, destination, destination_, maxwidthm, folder, is
 
   if(data){
     data = JSON.parse(data);
-    console.log(data);
   }
 
   let snapState = null;

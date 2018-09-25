@@ -400,3 +400,65 @@ body {
 ::-webkit-scrollbar-corner {
   background: transparent;
 }
+
+.forest-ui-request-box {
+	width:325px;
+	height: auto;
+	background: #eeeeee;
+	position: absolute;
+	margin: 0 auto;
+	left: 0px;
+	right: 0px;
+	top: 36px;
+	border-radius: 0px 0px 5px 5px;
+	border: 1px solid rgba(182, 185, 187, 0.5);
+	box-shadow: 0 2px 8px 0 rgba(50, 50, 50, .08);
+	display: none;
+	padding: 10px;
+}
+
+.forest-ui-request-box-button {
+	width: fit-content;
+	padding: 5px 10px;
+	cursor: pointer;
+	font-size: 13px;
+	border-radius: 5px;
+	margin: 10px;
+	float: left;
+	transition: all 0.2s ease;
+}
+
+.forest-ui-request-box-button-ok{
+	background: #46a0fc;
+	color: #fff;
+	border: 1px solid #1a538e;
+}
+
+.forest-ui-request-box-button-cancel{
+	background: #fff;
+	color: #2d2d2d;
+	border: 1px solid #bbbbbb;
+}
+
+.forest-ui-request-box-button:hover {
+	filter: brightness(1.1);
+}
+
+.forest-ui-request-box-button-container{
+	margin: 0 auto;
+	display: table;
+}
+
+.forest-ui-request-box-description{
+	padding: 13px 40px 0px 40px;
+	text-align: left;
+	width: 100%;
+	word-wrap: break-word;
+	color: #191919;
+	max-width: 275px;
+	font-weight: 600;
+}
+
+.forest-ui-request-box-description div{
+	font-weight: 300;
+}
