@@ -66,7 +66,7 @@ if(is_file($_SERVER['DOCUMENT_ROOT'].$pathmain)){
 }
 ?>
 <div style="padding:10px; max-width:400px; word-break:break-word;">
-  <div style="margin:5px auto; text-transform:uppercase; color:#295eb1; font-size:24px; font-weight:900;">
+  <div style="margin:5px auto; text-transform:uppercase; color:#f44336; font-size:24px; font-weight:900;">
     <?
     echo $name;
     ?>
@@ -101,10 +101,11 @@ if(is_file($_SERVER['DOCUMENT_ROOT'].$pathmain)){
       echo '<input id="renameInput'.$appid.'" style="font-size:15px;" type="text" value="'.$object.'"><span id="renameFile'.$appid.'" class="ui-forest-blink" style="background-color:#4986de; color:#fff; padding:3px; border:1px solid #15545d; margin:0 10; border-radius:5px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">'.$prop_lang[$cl.'_prop_rename_label'].'</span>';
     ?>
   </div>
-  <div style="margin:10px auto; border-bottom:2px solid #c5bbbb; padding:5px 0;">
+  <div style="margin:10px auto; border-bottom:2px solid #c5bbbb; padding:5px 0; min-height:100px;">
     <?
-      echo '<b>'.$prop_lang[$cl.'_prop_link_label'].':</b> <a class="ui-forest-blink" style="background-color:#de4949; color:#fff; padding:3px; border:1px solid #5d1515; border-radius:5px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" href="'.$pathmain.'" target="_blank">'.$name.' &#x1f517;</a>';
+      echo '<div style="float: left; padding: 5px 0;"><b>'.$prop_lang[$cl.'_prop_link_label'].':</b> <a class="ui-forest-blink" style="background-color:#de4949; color:#fff; padding:3px; border:1px solid #5d1515; border-radius:5px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" href="'.$pathmain.'" target="_blank">'.$name.' &#x1f517;</a></div>';
     ?>
+    <div style="text-align: center;"><img src="http://chart.apis.google.com/chart?cht=qr&chs=100x100&chl=<? echo 'http://'.$_SERVER['SERVER_NAME'].$pathmain ?>"></div>
   </div>
 </div>
 <?
