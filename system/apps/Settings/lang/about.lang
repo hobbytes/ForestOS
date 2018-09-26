@@ -7,6 +7,7 @@ ru_user_label = Пользователь
 ru_username_label = Имя учетной записи
 ru_capacity_label = Диск
 ru_capacityused_label  = Занято
+ru_gpu_label = Графический процессор
 
 en_settings_label = Settings
 en_version_label  = Version
@@ -16,3 +17,4 @@ en_user_label = User
 en_username_label = User name
 en_capacity_label = Capacity
 en_capacityused_label  = Used
+en_gpu_label = GPU

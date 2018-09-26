@@ -19,7 +19,7 @@ class  AppContainer {
   /* Container Info */
   public $appName; // app container name @string
   public $appID; // app container ID @integer
-  public $backgroundColor = '#f2f2f2'; // custom background-color
+  public $backgroundColor = '#f7f7f7'; // custom background-color
   public $fontColor = '#000'; // custom font color
   public $height = '550px'; // app container height @string
   public $width = '800px'; // app container width @string

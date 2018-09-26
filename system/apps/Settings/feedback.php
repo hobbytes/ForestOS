@@ -41,6 +41,8 @@ echo "<div>".$language[$_SESSION['locale'].'_inputmessage_label'].":</div>";
 echo '<div><textarea id="'.$AppID.'feedback_message" style="width:95%; max-width:95%;" rows="10" cols="80" >'.$text.'</textarea></div><br>';
 echo '<div id="send'.$AppID.'" onClick="send_message'.$AppID.'();" class="ui-forest-button ui-forest-center ui-forest-accept">'.$language[$_SESSION['locale'].'_button_send'].'</div></div>';
 
+echo '<div style="text-align:right; margin:22px;"><b>e-mail:</b><div>contact@hobbytes.com</div></div>';
+
 $AppContainer->EndContainer();
 ?>
 <script>

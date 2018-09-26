@@ -84,6 +84,13 @@
         $left = '25%';
         $maxwidth = '90%';
       }
+
+      $themeload = parse_ini_file("system/users/".$_SESSION["loginuser"]."/settings/etc/theme.fth");
+      $themecolor = str_replace(';', '', $themeload['topbarbackcolor']);
+      if(preg_match('%rgb%', $themeload['topbarbackcolor'])){
+        $rgbtohex = explode(",", str_replace(array('rgba', 'rgb', '(', ')',' '), '', $themeload['topbarbackcolor']), 3);
+        $themecolor = sprintf("#%02x%02x%02x", $rgbtohex[0], $rgbtohex[1], $rgbtohex[2]);
+      }
       ?>
       <html>
       <head>
@@ -93,7 +100,8 @@
       <link rel="icon" type="image/png" href="system/core/design/images/favicons/favicon-16x16.png" sizes="16x16">
       <link rel="manifest" href="system/core/design/images/favicons/manifest.json">
       <link rel="mask-icon" href="system/core/design/images/favicons/safari-pinned-tab.svg" color="#3e495e">
-      <meta name="theme-color" content="#ffffff">
+      <meta name="theme-color" content="<? echo $themecolor ?>">
+      <meta name="application-name" content="Forest OS">
       <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
       <meta name="apple-mobile-web-app-title" content="Forest OS">
       <meta name="apple-mobile-web-app-capable" content="yes">
@@ -104,6 +112,7 @@
       <meta name="pagename" content="Forest OS">
       <meta name="description" content="Forest OS - web shell">
       <meta name="copyright" content="Hobbytes">
+      <meta name="analytics-s-page-tracking-data" content="Forest OS">
       <link rel="stylesheet" type="text/css" href="<? echo $hashfile->filehash('system/core/design/main.css')?>">
       <link rel="stylesheet" href="<? echo $hashfile->filehash('system/core/design/jquery-ui.css')?>">
       <script src="<? echo $hashfile->filehash('system/core/library/js/jquery-1.12.4.js')?>"></script>
@@ -112,6 +121,8 @@
       <script src="<? echo $hashfile->filehash('system/core/library/js/jquery.mousewheel.min.js')?>"></script>
       </head>
       <?
+      unset($themeload);
+
       // # check timezone
       $_SESSION['timezone'] = file_get_contents($dir.'timezone.foc');
       if(empty($_SESSION['timezone'])){
