@@ -43,33 +43,34 @@ $prepare->topbar();
 $infob->beacon();
 ?>
 <div id="desktops">
+  <div id="notifications" class="notificationhide" style="display:block; position:absolute; right: 0; height: 100%; padding: 10px; transition:all 0.2s ease; z-index:2;">
+  <div id="notificationTopLabel" style="width:310px; color:#fff; font-size:20pt; text-align:center; user-select: none; cursor: default; display:none; padding: 10 0; background: rgba(160,160,160,0.9);">
+    <div id="fulltime" style="font-size:20pt;">
+    </div>
+    <div class="date_" style="font-size:10pt;">
+      <?php echo date('d.m.Y')?>
+    </div>
+    <div style="font-weight:600; padding: 10 0; text-transform: uppercase; font-size: 18pt;">
+      <?
+      echo $language[$_SESSION['locale'].'_notification_label'];
+      ?>
+    </div>
+    <div id="clearNotifications" class="not-btn ui-forest-blink" onclick="NotificationClear();" style="font-size: 10pt; background: rgba(244,67,54,0.61); width:fit-content; padding:7px; margin:20 0; float:right; color:#fff; cursor:default; user-select: none;">
+      <?
+      echo $language[$_SESSION['locale'].'_notification_clear'];
+      ?>
+    </div>
+  </div>
+  <div id="notification-container">
+  </div>
+  </div>
 <div id="desktop-1" class="desktop" desktopid="1">
 <?
 $prepare->desktop("linkdiv");
 $_SESSION['appid'] = -1;
 ?>
 </div>
-<div id="notifications" class="notificationhide" style="display:block; position:absolute; right: 0; height: 100%; padding: 10px; transition:all 0.2s ease; z-index:2;">
-<div id="notificationTopLabel" style="width:310px; color:#fff; font-size:20pt; text-align:center; user-select: none; cursor: default; display:none; padding: 10 0; background: rgba(160,160,160,0.9);">
-  <div id="fulltime" style="font-size:20pt;">
-  </div>
-  <div class="date_" style="font-size:10pt;">
-    <?php echo date('d.m.Y')?>
-  </div>
-  <div style="font-weight:600; padding: 10 0; text-transform: uppercase; font-size: 18pt;">
-    <?
-    echo $language[$_SESSION['locale'].'_notification_label'];
-    ?>
-  </div>
-  <div id="clearNotifications" class="not-btn ui-forest-blink" onclick="NotificationClear();" style="font-size: 10pt; background: rgba(244,67,54,0.61); width:fit-content; padding:7px; margin:20 0; float:right; color:#fff; cursor:default; user-select: none;">
-    <?
-    echo $language[$_SESSION['locale'].'_notification_clear'];
-    ?>
-  </div>
-</div>
-<div id="notification-container">
-</div>
-</div>
+
 </div>
 <div class="selectors-container">
   <div id="selector-1" desktop="1" class="selector ui-forest-blink"></div>

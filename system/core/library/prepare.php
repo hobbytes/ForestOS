@@ -240,8 +240,8 @@
         $type = '';
       }
       ?>
-      <div class="link<?echo $id;?> link" <?echo $type?>>
-      <div id="linklog<?echo $id;?>" class="<?echo $delclassname;?>">
+      <div class="link<?echo $id?> link" link="<?echo $id?>" <?echo $type?>>
+      <div id="linklog<?echo $id?>" class="<?echo $delclassname;?>">
       <script>
       $( function() {
         $( ".ico" ).draggable({containment:"body", snap:".ico, #topbar"});

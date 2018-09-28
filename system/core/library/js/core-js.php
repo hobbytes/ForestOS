@@ -445,48 +445,50 @@ function UpdateWindow(id, name, mode = 1){
       //cof = 30;
     }
 
+    if(!index_ || index_ == 0){
+      index_ = 1;
+    }
+
     if(height - ($(".desktop").last().find(".link").last().find('.ico').offset().top + cof) < 300){
       index_ = $(".desktop").length + 1;
     }
 
     $(".desktop").each(function(){
       $(this).find('.link').each(function(){
-        //console.log($(this).find('.linktheme').text() + ':' + (height - linkTop));
         linkTop = $(this).find('.ico').offset().top + cof;
         if((height - linkTop) < 300){
           newDesktop = 'desktop-'+index_;
-          if(!$('#'+newDesktop).length){
+          if(!$.trim($("#"+newDesktop).html()).length){
             $('#desktops').append('<div id="'+newDesktop+'" class="desktop" desktopid="'+index_+'" style="display:block; position: absolute; left: -9999; width: 100vw;"></div>');
             $('.selectors-container').append('<div id="selector-'+index_+'" desktop="'+index_+'" class="ui-forest-blink selector selector-hidden"></div>');
           }
-          $(this).appendTo($('#'+newDesktop));
+          $(this).appendTo($('#'+ newDesktop));
         }else{
           if($(this).parent().attr('desktopid') > 1){
-            desktopid_ = $(".desktop").last().attr('desktopid') - 1;
+            desktopid_ = $(".desktop").last().prev().attr('desktopid');
 
-            if($("#desktop-" + desktopid_).is(':empty')){
-              console.log('need:'+desktopid_);
-              for (i = $(".desktop").last().attr('desktopid'); $("#desktop-" + i).length !== 0; i=i-1){
-                console.log('find:'+i);
-                //desktopid_ = i;
-              }
+            if(!desktopid_ || desktopid_ == 0){
+              desktopid_ = 1;
             }
 
             if(height - ($("#desktop-" + desktopid_).find(".link").last().find('.ico').position().top + cof) > 410){
-                d_ = $(this).parent().attr('desktopid') - 1;
+                d_ = $(".desktop").last().prev().attr('desktopid');
                 $(this).appendTo($('#'+'desktop-' + d_));
             }
           }
         }
       });
+
     });
 
-
     $(".selector").each(function(){
-      if(!$.trim($("#desktop-"+$(this).attr("desktop")).html()).length){
-        $(this).remove();
+      if($("#desktop-"+$(this).attr("desktop")).is(':empty')){
         $("#desktop-"+$(this).attr("desktop")).remove();
-        index_ = index_ - 1;
+        $(this).remove();
+        index_ = $(".desktop").last().prev().attr('desktopid');
+        if(!index_ || index_ == 0){
+          index_ = 1;
+        }
 
         $('.desktop').css({'display':'block', 'position': 'absolute', 'left': '-9999', 'width': '100vw'});
         $('.selector').addClass('selector-hidden');
@@ -522,12 +524,28 @@ function UpdateWindow(id, name, mode = 1){
   }
 
   $(document).ready(function(){
-    SetTable();
-    SetSelectors();
+    if($(window).width() > 0){
+      SetTable();
+      SetSelectors();
+    }
   });
 
-
+  var resizeid;
   $( window ).resize( function() {
-    SetTable();
-    SetSelectors();
+    if($(window).width() > 0){
+      SetTable();
+      SetSelectors();
+      clearTimeout(resizeid);
+      resizeid = setTimeout(doneResizing, 250);
+    }
   });
+
+  function doneResizing(){
+    $(".desktop").each(function(){
+      if($(this).css('left') != '0px' || $(this).last().attr('desktopid') == 1){
+        $("#" + $(this).attr('id')).find('.link').sort(function (a,b){
+          return $(a).attr('link') - $(b).attr('link');
+        }).appendTo("#" + $(this).attr('id'));
+      }
+    });
+  }
