@@ -463,9 +463,8 @@ function UpdateWindow(id, name, mode = 1){
             $('.selectors-container').append('<div id="selector-'+index_+'" desktop="'+index_+'" class="ui-forest-blink selector selector-hidden"></div>');
             //$(".link[type=trash]").clone(true, true).appendTo($('#' + newDesktop));
           }
-          if($(this).attr('type') != 'trash'){
+          //if($(this).attr('type') != 'trash'){}
             $(this).appendTo($('#'+ newDesktop));
-          }
         }else{
 
           if($(this).parent().attr('desktopid') > 1){
