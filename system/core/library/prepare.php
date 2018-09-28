@@ -640,7 +640,10 @@ function NotificationClear(){
 //Update desktop
 function UpdateDesktop(){
   $(".desktop").remove();
-  $("#desktops").load("<? echo $_SERVER['DOCUMENT_ROOT'] ?>/system/core/functions/UpdateDesktop.php");
+  $("#desktops").load("<? echo $_SERVER['DOCUMENT_ROOT'] ?>/system/core/functions/UpdateDesktop.php", function(){
+    SetTable();
+    SetSelectors();
+  });
 }
 
 </script>

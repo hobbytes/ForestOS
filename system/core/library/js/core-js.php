@@ -433,16 +433,15 @@ function UpdateWindow(id, name, mode = 1){
 
 
   var index_ = 1;
-  var s_index_ = 0;
 
   function SetTable(){
     var height = $(window).height();
     var linkTop;
     var newDesktop;
 
-    var cof = 30;
+    var cof = 0;
     if($('#topbar').css('display') != 'block'){
-      //cof = 30;
+      cof = 30;
     }
 
     if(!index_ || index_ == 0){
@@ -453,6 +452,7 @@ function UpdateWindow(id, name, mode = 1){
       index_ = $(".desktop").length + 1;
     }
 
+    /* Calculate */
     $(".desktop").each(function(){
       $(this).find('.link').each(function(){
         linkTop = $(this).find('.ico').offset().top + cof;
@@ -461,9 +461,13 @@ function UpdateWindow(id, name, mode = 1){
           if(!$.trim($("#"+newDesktop).html()).length){
             $('#desktops').append('<div id="'+newDesktop+'" class="desktop" desktopid="'+index_+'" style="display:block; position: absolute; left: -9999; width: 100vw;"></div>');
             $('.selectors-container').append('<div id="selector-'+index_+'" desktop="'+index_+'" class="ui-forest-blink selector selector-hidden"></div>');
+            //$(".link[type=trash]").clone(true, true).appendTo($('#' + newDesktop));
           }
-          $(this).appendTo($('#'+ newDesktop));
+          if($(this).attr('type') != 'trash'){
+            $(this).appendTo($('#'+ newDesktop));
+          }
         }else{
+
           if($(this).parent().attr('desktopid') > 1){
             desktopid_ = $(".desktop").last().prev().attr('desktopid');
 
@@ -476,11 +480,13 @@ function UpdateWindow(id, name, mode = 1){
                 $(this).appendTo($('#'+'desktop-' + d_));
             }
           }
+
         }
       });
 
     });
 
+    /* Delete desktop if empty */
     $(".selector").each(function(){
       if($("#desktop-"+$(this).attr("desktop")).is(':empty')){
         $("#desktop-"+$(this).attr("desktop")).remove();
@@ -497,22 +503,16 @@ function UpdateWindow(id, name, mode = 1){
       }
     });
 
-
+    /* Hide selectors if selectors < 1 */
     if($('.selector').length <= 1){
       $('.selectors-container').css('opacity','0');
     }else{
       $('.selectors-container').css('opacity','1');
     }
 
-    if (s_index_ < index_){
-      s_index_++;
-      //SetTable();
-      //console.log(s_index_ +':'+ index_);
-    }
-
   }
 
-  /*Destop selectors*/
+  /* Destop selectors */
   function SetSelectors() {
     $( ".selector" ).on( "click", function() {
       getDesktop = $(this).attr('desktop');
@@ -540,6 +540,7 @@ function UpdateWindow(id, name, mode = 1){
     }
   });
 
+  /* Sort link */
   function doneResizing(){
     $(".desktop").each(function(){
       if($(this).css('left') != '0px' || $(this).last().attr('desktopid') == 1){

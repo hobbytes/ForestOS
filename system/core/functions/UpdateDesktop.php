@@ -23,7 +23,7 @@ $hashfile = new fileaction;
 
 global $hashfile, $infob;
 
-echo '<div id="desktop-1" class="desktop">';
+echo '<div id="desktop-1" class="desktop" desktopid="1">';
 $infob->ismobile();
 
 if($mobile == 'true'){
