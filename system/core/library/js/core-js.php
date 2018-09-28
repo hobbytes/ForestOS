@@ -434,40 +434,72 @@ function UpdateWindow(id, name, mode = 1){
 
   var index_ = 1;
   var s_index_ = 0;
+
   function SetTable(){
     var height = $(window).height();
-    //console.log(height);
     var linkTop;
+    var newDesktop;
 
-    var cof = 0;
+    var cof = 30;
     if($('#topbar').css('display') != 'block'){
-      cof = 30;
+      //cof = 30;
     }
 
-    if(height - ($(".link").last().find('.ico').position().top + cof) < 300){
+    if(height - ($(".desktop").last().find(".link").last().find('.ico').offset().top + cof) < 300){
       index_ = $(".desktop").length + 1;
     }
 
-    $(".link").each(function(){
-        linkTop = $(this).find('.ico').position().top + cof;
-        //console.log($(this).find('.linktheme').text() + ':' + linkTop);
+    $(".desktop").each(function(){
+      $(this).find('.link').each(function(){
+        //console.log($(this).find('.linktheme').text() + ':' + (height - linkTop));
+        linkTop = $(this).find('.ico').offset().top + cof;
         if((height - linkTop) < 300){
-          var newDesktop = 'desktop-'+index_;
+          newDesktop = 'desktop-'+index_;
           if(!$('#'+newDesktop).length){
-            $('#desktops').append('<div id="'+newDesktop+'" class="desktop" style="display:none;"></div>');
-            //$(".link[type='trash']").clone().prependTo($('#'+newDesktop));
+            $('#desktops').append('<div id="'+newDesktop+'" class="desktop" desktopid="'+index_+'" style="display:block; position: absolute; left: -9999; width: 100vw;"></div>');
             $('.selectors-container').append('<div id="selector-'+index_+'" desktop="'+index_+'" class="ui-forest-blink selector selector-hidden"></div>');
-            $(this).prependTo($('#'+newDesktop));
-          }else if($(this).attr('type') != 'trash'){
-            $(this).prependTo($('#'+newDesktop));
+          }
+          $(this).appendTo($('#'+newDesktop));
+        }else{
+          if($(this).parent().attr('desktopid') > 1){
+            desktopid_ = $(".desktop").last().attr('desktopid') - 1;
+
+            if($("#desktop-" + desktopid_).is(':empty')){
+              console.log('need:'+desktopid_);
+              for (i = $(".desktop").last().attr('desktopid'); $("#desktop-" + i).length !== 0; i=i-1){
+                console.log('find:'+i);
+                //desktopid_ = i;
+              }
+            }
+
+            if(height - ($("#desktop-" + desktopid_).find(".link").last().find('.ico').position().top + cof) > 410){
+                d_ = $(this).parent().attr('desktopid') - 1;
+                $(this).appendTo($('#'+'desktop-' + d_));
+            }
           }
         }
+      });
     });
 
+
+    $(".selector").each(function(){
+      if(!$.trim($("#desktop-"+$(this).attr("desktop")).html()).length){
+        $(this).remove();
+        $("#desktop-"+$(this).attr("desktop")).remove();
+        index_ = index_ - 1;
+
+        $('.desktop').css({'display':'block', 'position': 'absolute', 'left': '-9999', 'width': '100vw'});
+        $('.selector').addClass('selector-hidden');
+        $('#selector-' + index_).removeClass('selector-hidden');
+        $('#desktop-' + index_).css({'display':'block', 'position': 'unset', 'left': '0', 'width': '100vw'});
+      }
+    });
+
+
     if($('.selector').length <= 1){
-      $('.selectors-container').css('display','none');
+      $('.selectors-container').css('opacity','0');
     }else{
-      $('.selectors-container').css('display','block');
+      $('.selectors-container').css('opacity','1');
     }
 
     if (s_index_ < index_){
@@ -482,10 +514,10 @@ function UpdateWindow(id, name, mode = 1){
   function SetSelectors() {
     $( ".selector" ).on( "click", function() {
       getDesktop = $(this).attr('desktop');
-      $('.desktop').css('display','none');
+      $('.desktop').css({'display':'block', 'position': 'absolute', 'left': '-9999', 'width': '100vw'});
       $('.selector').addClass('selector-hidden');
       $('#selector-'+getDesktop).removeClass('selector-hidden');
-      $('#desktop-'+getDesktop).css('display','block');
+      $('#desktop-'+getDesktop).css({'display':'block', 'position': 'unset', 'left': '0', 'width': '100vw'});
     });
   }
 

@@ -43,7 +43,7 @@ $prepare->topbar();
 $infob->beacon();
 ?>
 <div id="desktops">
-<div id="desktop-1" class="desktop">
+<div id="desktop-1" class="desktop" desktopid="1">
 <?
 $prepare->desktop("linkdiv");
 $_SESSION['appid'] = -1;
