@@ -23,7 +23,7 @@ $AppContainer->StartContainer();
 ?>
 
 <div style="width:100%; text-align:left; padding-bottom:10px; font-size:30px; border-bottom:#d8d8d8 solid 2px; text-overflow:ellipsis; overflow:hidden;">
-<span onClick="back<?echo $AppID;?>();" class="ui-forest" style="background-color:#d8d8d8; color:#000; border-radius:30%; cursor:pointer; font-size:25px; margin-left:5px;"> &#9668 </span><?echo $language_security[$_SESSION['locale'].'_settings_security']?></div>
+<span onClick="back<?echo $AppID;?>();" class="ui-forest" style="background-color:#d8d8d8; color:#000; border-radius:30%; cursor:pointer; font-size:25px; margin-left:5px;"> &#9668; </span><?echo $language_security[$_SESSION['locale'].'_settings_security']?></div>
 
 <?php
 
@@ -166,7 +166,7 @@ if(!empty($oldpassword) && !empty($newpassword) && !empty($checkpassword)){
         if(!empty($key)){
           echo '<div style="margin: 10 0; padding: 7px; min-width:70px; font-weight: 900; width: max-content; border: 2px dashed #8c7f3b; background: #e6d26a;">
            '.$key.'
-           <div style="float:right; color:#e66a6a;" onClick="DeleteKey'.$AppID.'(\''.$temp.'\')" class="ui-forest-blink">x</div>
+           <div style="float:right; color:#e66a6a;" messageTitle="'.$language_security[$_SESSION['locale'].'_deltekey_mt'].'" messageBody="'.$language_security[$_SESSION['locale'].'_deltekey_mb'].'" okButton="'.$language_security[$_SESSION['locale'].'_ok_btn'].'" cancelButton="'.$language_security[$_SESSION['locale'].'_cancel_btn'].'" onClick="ExecuteFunctionRequest'.$AppID.'(this, \'DeleteKey'.$AppID.'\', \''.$temp.'\')" class="ui-forest-blink">x</div>
           </div>';
         }
       }
@@ -174,8 +174,10 @@ if(!empty($oldpassword) && !empty($newpassword) && !empty($checkpassword)){
 
     unset($get_keys, $key, $TempKeyArray);
 
-    echo '<div id="EraseKey'.$AppID.'" onClick="EraseKey'.$AppID.'();" class="ui-forest-button ui-forest-cancel" style="margin:10 0;">
-      '.$language_security[$_SESSION['locale'].'_tempkeyerase_button'].'
+    echo
+    '<div id="EraseKey'.$AppID.'"
+     messageTitle="'.$language_security[$_SESSION['locale'].'_erasekey_mt'].'" messageBody="'.$language_security[$_SESSION['locale'].'_erasekey_mb'].'" okButton="'.$language_security[$_SESSION['locale'].'_ok_btn'].'" cancelButton="'.$language_security[$_SESSION['locale'].'_cancel_btn'].'" onClick="ExecuteFunctionRequest'.$AppID.'(this, \'EraseKey'.$AppID.'\')" class="ui-forest-button ui-forest-cancel" style="margin:10 0;">
+    '.$language_security[$_SESSION['locale'].'_tempkeyerase_button'].'
     </div>';
 
   echo '</div><hr>';
@@ -185,7 +187,9 @@ $text = $getstat;
 echo '<div style="text-align:left; margin-top:10px;"><b style="font-size:20px;">'.$language_security[$_SESSION['locale'].'_journal_label'].'</b>';
 echo '<div><textarea style="width:95%; max-width:95%;" rows="10" cols="80" >'.$text.'</textarea></div></div>';
 if($_SESSION['loginuser'] == $_SESSION['superuser']){
-  echo '<div onClick="eraselog'.$AppID.'();" style="margin:10px 0;" class="ui-forest-button ui-forest-cancel">'.$language_security[$_SESSION['locale'].'_button_journal'].'</div><hr>';
+  echo '<div
+  messageTitle="'.$language_security[$_SESSION['locale'].'_eraselog_mt'].'" messageBody="'.$language_security[$_SESSION['locale'].'_eraselog_mb'].'" okButton="'.$language_security[$_SESSION['locale'].'_ok_btn'].'" cancelButton="'.$language_security[$_SESSION['locale'].'_cancel_btn'].'" onClick="ExecuteFunctionRequest'.$AppID.'(this, \'eraselog'.$AppID.'\')" style="margin:10px 0;"
+  class="ui-forest-button ui-forest-cancel">'.$language_security[$_SESSION['locale'].'_button_journal'].'</div><hr>';
 }
 
 unset($settingsbd);
@@ -196,6 +200,10 @@ $AppContainer->EndContainer();
 <script>
 
 <?php
+
+//Execute Function Request
+$AppContainer->ExecuteFunctionRequest();
+
 // back button
 $AppContainer->Event(
   "back",

@@ -23,7 +23,7 @@ $AppContainer->StartContainer();
 ?>
 
 <div style="width:100%; text-align:left; padding-bottom:10px; font-size:30px; text-overflow:ellipsis; overflow:hidden;">
-<span onClick="back<?echo $AppID?>();" class="ui-forest" style="background-color:#d8d8d8; color:#000; border-radius:30%; cursor:pointer; font-size:25px; margin-left:5px;"> &#9668 </span><?echo $language_screen[$_SESSION['locale'].'_settings_screen']?></div>
+<span onClick="back<?echo $AppID?>();" class="ui-forest" style="background-color:#d8d8d8; color:#000; border-radius:30%; cursor:pointer; font-size:25px; margin-left:5px;"> &#9668; </span><?echo $language_screen[$_SESSION['locale'].'_settings_screen']?></div>
 
 <?php
 
