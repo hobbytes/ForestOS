@@ -12,7 +12,7 @@ require '../../core/library/Mercury/AppContainer.php';
 $AppContainer = new AppContainer;
 $AppContainer->AppNameInfo = 'Settings';
 $AppContainer->SecondNameInfo = 'Параметры';
-$AppContainer->VersionInfo = '1.1';
+$AppContainer->VersionInfo = '1.2';
 $AppContainer->AuthorInfo = 'Forest Media';
 $AppContainer->appName = $AppName;
 $AppContainer->appID = $AppID;

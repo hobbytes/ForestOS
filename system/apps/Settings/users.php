@@ -20,7 +20,7 @@ $AppContainer->StartContainer();
 ?>
 
 <div style="width:100%; text-align:left; padding-bottom:10px; font-size:30px; border-bottom:#d8d8d8 solid 2px; text-overflow:ellipsis; overflow:hidden;">
-<span onClick="back<?echo $AppID;?>();" class="ui-forest" style="background-color:#d8d8d8; color:#000; border-radius:30%; cursor:pointer; font-size:25px; margin-left:5px;"> &#9668 </span><?echo $language_users[$_SESSION['locale'].'_settings_users']?></div>
+<span onClick="back<?echo $AppID;?>();" class="ui-forest" style="background-color:#d8d8d8; color:#000; border-radius:30%; cursor:pointer; font-size:25px; margin-left:5px;"> &#9668; </span><?echo $language_users[$_SESSION['locale'].'_settings_users']?></div>
 <?php
 
 global $security;
@@ -56,12 +56,12 @@ if($_SESSION['loginuser'] == $_SESSION['superuser']){
       {
         $getdata  = $row['login'];
         $pubname = str_replace('_', ' ', $getdata);
-        echo '<div id="'.$getdata.'" onClick="seluser'.$AppID.'(this);" class="userselect" style="background:#2e2f31; cursor:pointer; border-radius:40px;40px;40px;40px; width:80px; height:50px; font-size:20px; text-align:center; padding-top:30px; color:#fff; float:left; overflow:hidden; text-overflow:ellipsis; display:block; position:relative; margin-left:10px;" title="'.$pubname.'">'.$pubname.'</div>';
+        echo '<div id="'.$getdata.'" onClick="seluser'.$AppID.'(this);" class="userselect ui-forest-blink" style="background:#2e2f31; cursor:pointer; border-radius:40px; width:80px; height:50px; font-size:20px; text-align:center; padding-top:30px; color:#fff; float:left; overflow:hidden; text-overflow:ellipsis; display:block; position:relative; margin-left:10px;" title="'.$pubname.'">'.$pubname.'</div>';
       }
-      echo '<div id="newuser" onClick="seluser'.$AppID.'(this);" class="userselect" style="background:#5ece5d; cursor:pointer; border:3px dashed #298c23; border-radius:40px;40px;40px;40px; width:74px; height:44px; font-size:18px; text-align:center; padding-top:30px; color:#fff; float:left; overflow:hidden; text-overflow:ellipsis; display:block; position:relative; margin-left:10px;">+</div>';
+      echo '<div id="newuser" onClick="seluser'.$AppID.'(this);" class="userselect ui-forest-blink" style="background:#5ece5d; cursor:pointer; border:3px dashed #298c23; border-radius:40px; width:74px; height:44px; font-size:18px; text-align:center; padding-top:30px; color:#fff; float:left; overflow:hidden; text-overflow:ellipsis; display:block; position:relative; margin-left:10px;">+</div>';
 }else{
   $pubname = str_replace('_', ' ', $_SESSION['loginuser']);
-  echo '<div id="'.$_SESSION['loginuser'].'" onClick="seluser'.$AppID.'(this);" class="userselect" style="background:#2e2f31; cursor:pointer; border-radius:40px;40px;40px;40px; width:80px; height:50px; font-size:20px; text-align:center; padding-top:30px; color:#fff; float:left; overflow:hidden; text-overflow:ellipsis; display:block; position:relative; margin-left:10px;" title="'.$pubname.'">'.$pubname.'</div>';
+  echo '<div id="'.$_SESSION['loginuser'].'" onClick="seluser'.$AppID.'(this);" class="userselect ui-forest-blink" style="background:#2e2f31; cursor:pointer; border-radius:40px; width:80px; height:50px; font-size:20px; text-align:center; padding-top:30px; color:#fff; float:left; overflow:hidden; text-overflow:ellipsis; display:block; position:relative; margin-left:10px;" title="'.$pubname.'">'.$pubname.'</div>';
 }
 
 if($adduserlogin!='' && $adduserpassword!='' && $_SESSION['loginuser'] == $_SESSION['superuser'])
@@ -97,7 +97,7 @@ if($adduserlogin!='' && $adduserpassword!='' && $_SESSION['loginuser'] == $_SESS
       $userhash = md5($fuid.$dr.$adduserpassword);
       $content="[link]\n\rdestination=system/apps/Explorer/\n\rfile=main\n\rkey=dir\n\rparam=$dr/system/users/$adduserlogin/trash\n\rname=Explorer\n\rlinkname=Корзина\n\ricon=system/apps/Explorer/assets/trashicon.png";
       $os_info = parse_ini_file('../../core/osinfo.foc');
-      file_put_contents('../../users/'.$adduserlogin.'/desktop/trash.link',$content);
+      file_put_contents('../../users/'.$adduserlogin.'/desktop/trash.link', $content);
       file_get_contents('http://forest.hobbytes.com/media/os/ubase/adduser.php?fuid='.$fuid.'&followlink='.$_SERVER['SERVER_NAME'].'&userhash='.$userhash.'&login='.$adduserlogin.'&version='.str_replace(' ','_',$os_info['codename'].$os_info['subversion']));
     }
     catch (PDOException $e){
@@ -115,21 +115,20 @@ if($adduserlogin!='' && $adduserpassword!='' && $_SESSION['loginuser'] == $_SESS
 /*-----check users----*/
 if($selectuser!=''){
   if($selectuser!='newuser'){
-  $settingsbd->readglobal2("fuid","forestusers","login",$selectuser);
-  $fuid=$getdata;
+  $fuid = $settingsbd->readglobal2("fuid", "forestusers", "login", $selectuser, true);
   $pubusername = str_replace('_',' ',$selectuser);
   echo '<div style="text-align:left; margin-top:100px; "><b style="font-size:35px; text-transform:uppercase;">'.$pubusername.'</b>';
   echo '<div><br> FUID: '.$fuid.'</div></div><br>';
   if($_SESSION['loginuser'] == $_SESSION['superuser'] && $_SESSION['loginuser'] != $selectuser){
-    $settingsbd->readglobal2("status","forestusers","login",$selectuser);
+    $settingsbd->readglobal2("status", "forestusers", "login", $selectuser);
     if($getdata == 'superuser'){
-      echo '<div id="'.$selectuser.'" onClick="removerule'.$AppID.'(this);" class="ui-forest-button ui-forest-cancel">'.$language_users[$_SESSION['locale'].'_button_removerule'].'</div><br>';
+      echo '<div id="'.$selectuser.'" messageTitle="'.$language_users[$_SESSION['locale'].'_button_removerule'].'?" messageBody="'.$language_users[$_SESSION['locale'].'_remove_mb'].'" okButton="'.$language_users[$_SESSION['locale'].'_ok_btn'].'" cancelButton="'.$language_users[$_SESSION['locale'].'_cancel_btn'].'" onClick="ExecuteFunctionRequest'.$AppID.'(this, \'removerule'.$AppID.'\', \''.$selectuser.'\')" class="ui-forest-button ui-forest-cancel">'.$language_users[$_SESSION['locale'].'_button_removerule'].'</div><br>';
     }else{
-      echo '<div id="'.$selectuser.'" onClick="addrule'.$AppID.'(this);" class="ui-forest-button ui-forest-accept">'.$language_users[$_SESSION['locale'].'_button_addrule'].'</div><br>';
+      echo '<div id="'.$selectuser.'" messageTitle="'.$language_users[$_SESSION['locale'].'_button_addrule'].'?" messageBody="'.$language_users[$_SESSION['locale'].'_add_mb'].'" okButton="'.$language_users[$_SESSION['locale'].'_ok_btn'].'" cancelButton="'.$language_users[$_SESSION['locale'].'_cancel_btn'].'" onClick="ExecuteFunctionRequest'.$AppID.'(this, \'addrule'.$AppID.'\', \''.$selectuser.'\')" class="ui-forest-button ui-forest-accept">'.$language_users[$_SESSION['locale'].'_button_addrule'].'</div><br>';
     }
   }
   if($_SESSION['loginuser'] != $selectuser){
-    echo '<div id="'.$selectuser.'" onClick="deleteuser'.$AppID.'(this);" class="ui-forest-button ui-forest-cancel">'.$language_users[$_SESSION['locale'].'_button_deleteuser'].'</div>';
+    echo '<div id="'.$selectuser.'" messageTitle="'.$language_users[$_SESSION['locale'].'_button_deleteuser'].'?" messageBody="'.$language_users[$_SESSION['locale'].'_delete_mb'].'" okButton="'.$language_users[$_SESSION['locale'].'_ok_btn'].'" cancelButton="'.$language_users[$_SESSION['locale'].'_cancel_btn'].'" onClick="ExecuteFunctionRequest'.$AppID.'(this, \'deleteuser'.$AppID.'\', \''.$selectuser.'\')" class="ui-forest-button ui-forest-cancel">'.$language_users[$_SESSION['locale'].'_button_deleteuser'].'</div>';
   }
 }
 else
@@ -180,6 +179,10 @@ $AppContainer->EndContainer();
 ?>
 <script>
 <?php
+
+//Execute Function Request
+$AppContainer->ExecuteFunctionRequest();
+
 // back button
 $AppContainer->Event(
   "back",
@@ -199,14 +202,14 @@ $AppContainer->Event(
   )
 );
 
-// Select user
+// Delete user
 $AppContainer->Event(
   "deleteuser",
   'object',
   $Folder,
   'users',
   array(
-    'deleteuser' => '"+object.id+"',
+    'deleteuser' => '"+object+"',
     'fuid' => $fuid
   )
 );
@@ -218,9 +221,9 @@ $AppContainer->Event(
   $Folder,
   'users',
   array(
-    'addrule' => '"+object.id+"',
+    'addrule' => '"+object+"',
     'fuid' => $fuid,
-    'selectuser' => '"+object.id+"'
+    'selectuser' => '"+object+"'
   )
 );
 
@@ -231,9 +234,9 @@ $AppContainer->Event(
   $Folder,
   'users',
   array(
-    'removerule' => '"+object.id+"',
+    'removerule' => '"+object+"',
     'fuid' => $fuid,
-    'selectuser' => '"+object.id+"'
+    'selectuser' => '"+object+"'
   )
 );
 ?>
