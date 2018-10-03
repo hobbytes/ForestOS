@@ -26,7 +26,7 @@ $fo = new filecalc;
 $fileaction = new fileaction;
 ?>
 <div style="text-align:left; padding-bottom:10px; font-size:30px; border-bottom:#d8d8d8 solid 2px; text-overflow:ellipsis; overflow:hidden;">
-<span onClick="back<?echo $AppID;?>();" class="ui-forest" style="background-color:#d8d8d8; color:#000; border-radius:30%; cursor:pointer; font-size:25px; margin-left:5px;"> &#9668 </span><?echo $language[$_SESSION['locale'].'_name']?></div>
+<span onClick="back<?echo $AppID;?>();" class="ui-forest" style="background-color:#d8d8d8; color:#000; border-radius:30%; cursor:pointer; font-size:25px; margin-left:5px;"> &#9668; </span><?echo $language[$_SESSION['locale'].'_name']?></div>
 <?
 $warn_apps = array('Apps_House',  'installer',  'Explorer', 'update', 'Settings');
 
@@ -70,7 +70,7 @@ foreach (glob($_SERVER['DOCUMENT_ROOT']."/system/apps/*/main.php") as $filenames
   $app_name = str_replace('_', ' ', $_app_name);
 
   if(!in_array($_app_name, $warn_apps)){
-    $delete_button = '<div app-delete="'.$_app_name.'" class="ui-forest-cancel ui-forest-button ui-forest-center app-delete'.$AppID.'">'.$language[$_SESSION['locale'].'_delete_button'].'</div>';
+    $delete_button = '<div class="ui-forest-cancel ui-forest-button ui-forest-center app-delete'.$AppID.'" messageTitle="'.$language[$_SESSION['locale'].'_mt_delete'].'" messageBody="'.$language[$_SESSION['locale'].'_mb_delete'].'" okButton="'.$language[$_SESSION['locale'].'_btn_ok'].'" cancelButton="'.$language[$_SESSION['locale'].'_btn_cancel'].'" onClick="ExecuteFunctionRequest'.$AppID.'(this, \'DeleteApp'.$AppID.'\', \''.$_app_name.'\')">'.$language[$_SESSION['locale'].'_delete_button'].'</div>';
   }else{
     $delete_button = '';
   }
@@ -121,6 +121,10 @@ $AppContainer->EndContainer();
 ?>
 <script>
 <?php
+
+//Execute Function Request
+$AppContainer->ExecuteFunctionRequest();
+
 // back button
 $AppContainer->Event(
   "back",
@@ -130,10 +134,9 @@ $AppContainer->Event(
 );
 ?>
 
-$(".app-delete<?echo $AppID?>").click(function(){
-var app_delete = $(this).attr('app-delete');
-$("#<?echo $AppID;?>").load("<?echo $Folder?>appmanager.php?app_delete="+app_delete+"&id=<?echo rand(0,10000).'&destination='.$Folder.'&appname='.$AppName.'&appid='.$AppID?>")
-});
+function DeleteApp<?echo $AppID?>(app_delete){
+$("#<?echo $AppID?>").load("<?echo $Folder?>appmanager.php?app_delete="+app_delete+"&id=<?echo rand(0,10000).'&destination='.$Folder.'&appname='.$AppName.'&appid='.$AppID?>")
+};
 
 $(".app-link<?echo $AppID?>").click(function(){
 var app_link = $(this).attr('app-link');
