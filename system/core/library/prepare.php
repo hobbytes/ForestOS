@@ -365,12 +365,14 @@ function topbar(){
   $explorer_name = $language[$_SESSION['locale'].'_explorer_menu'];
   ?>
   <div id="topbar" class="ui-widget-content topbartheme" style="display:none; z-index:9999; height:auto; padding-top:5px;">
-    <span id="hideall" class="topbaractbtn ui-forest-blink" style="cursor:default; display:none; background-color:#37a22e; color:#fff; width:12px; float:right; text-align:center; width:20px; margin-right: 8px; font-family:monospace; padding:3px 0; border-radius:0px 4px 4px 0px;">
-      -
-    </span>
-    <span id="closeall" class="topbaractbtn ui-forest-blink" style="cursor:default; display:none; background-color:#ed2020; color:#fff; float:right; text-align:center; width:20px; font-family:monospace; padding:3px 0; border-radius:4px 0px 0px 4px;" onclick="$('.process').remove(); $('.topbaractbtn').css('display','none');">
-      x
-    </span>
+    <div id="fastbuttons" style="display:none; float: right;">
+      <span id="hideall" class="topbaractbtn ui-forest-blink" style="cursor:default; background-color:#37a22e; color:#fff; width:12px; float:right; text-align:center; width:20px; margin-right: 8px; font-family:monospace; padding:3px 0; border-radius:0px 4px 4px 0px;">
+        -
+      </span>
+      <span id="closeall" class="topbaractbtn ui-forest-blink" style="cursor:default; background-color:#ed2020; color:#fff; float:right; text-align:center; width:20px; font-family:monospace; padding:3px 0; border-radius:4px 0px 0px 4px;" onclick="$('.process').remove(); $('.topbaractbtn').css('display','none');">
+        x
+      </span>
+    </div>
     <div class="date " style="float:right; font-size:15px; padding-right:10px; user-select: none; cursor: default;">
       <?php echo $object->getDayRus().' '.date('d').',';?>
       <span id="time"></span>
@@ -382,27 +384,23 @@ function topbar(){
       =
     </div>
   </div>
-  <div id="aboutmenu" class="ui-widget-content menutheme" onmouseover="$('#aboutmenu').css('display','block')" onmouseout="$('#aboutmenu').css('display','none')" style="z-index:9999; user-select:none; display:none; text-align:justify; min-width:200px; max-width:300px; position:absolute; text-overflow:hidden; overflow:ellipsis; padding:14px 0 0 0;">
-  <span style="text-transform:uppercase; cursor:pointer;  padding:5px;" onclick="makeprocess('system/apps/Settings/users.php','<?echo $login;?>','selectuser','<?echo $settings_name?>'); hide_menu();">
+  <div id="aboutmenu" class="ui-widget-content menutheme" onmouseover="$('#aboutmenu').css('display','block')" onmouseout="$('#aboutmenu').css('display','none')" style="z-index:9999; user-select:none; display:none; text-align:justify; min-width:250px; max-width:350px; position:absolute; text-overflow:hidden; overflow:ellipsis;">
+  <div class="ui-forest-menu-labels" style="text-transform:uppercase;" onclick="makeprocess('system/apps/Settings/users.php','<?echo $login;?>','selectuser','<?echo $settings_name?>'); hide_menu();">
     <?echo str_replace('_',' ',$login);?>
-  </span>
-  <hr class="menulines">
-  <span style="cursor:pointer; padding:5px;" onclick="makeprocess('system/apps/Explorer/main.php','','','<?echo $explorer_name?>'); hide_menu();">
+  </div>
+  <div class="ui-forest-menu-labels" onclick="makeprocess('system/apps/Explorer/main.php','','','<?echo $explorer_name?>'); hide_menu();">
     <?echo $explorer_name?>
-  </span>
-  <hr class="menulines">
-  <span style="cursor:pointer; padding:5px;" onclick="makeprocess('system/apps/Settings/main.php','','','<?echo $settings_name?>'); hide_menu();">
+  </div>
+  <div class="ui-forest-menu-labels" onclick="makeprocess('system/apps/Settings/main.php','','','<?echo $settings_name?>'); hide_menu();">
     <?echo $settings_name?>
-  </span>
-  <hr class="menulines">
-  <span style="cursor:pointer; padding:5px;" onclick="makeprocess('system/apps/Apps_House/main.php','','','<?echo $store_name?>'); hide_menu();">
+  </div>
+  <div class="ui-forest-menu-labels" onclick="makeprocess('system/apps/Apps_House/main.php','','','<?echo $store_name?>'); hide_menu();">
     <?echo $store_name?>
-  </span>
-  <hr class="menulines">
-  <span style="cursor:pointer; padding:5px;" onclick="makeprocess('system/apps/Settings/about.php','','','<?echo str_replace(' ','_',$about_name)?>'); hide_menu();">
+  </div>
+  <div class="ui-forest-menu-labels" onclick="makeprocess('system/apps/Settings/about.php','','','<?echo str_replace(' ','_',$about_name)?>'); hide_menu();">
     <?echo $about_name?>
-  </span>
-    <div class="action-buttons" style="text-align:center; margin-top:14px; padding:20px 0px 14px; filter:hue-rotate(8deg);">
+  </div>
+    <div class="action-buttons" style="text-align:center; padding:20px 0px 14px; filter:hue-rotate(8deg);">
     <span style="font-size:26px; cursor:default; width:26px;">
     <b class="ui-forest action_button" name="<?echo $language[$_SESSION['locale'].'_restart'];?>" onclick="SaveNotification(); return location.href = 'os.php'">R</b>
     <b class="ui-forest action_button" name="<?echo $language[$_SESSION['locale'].'_memoryrestart'];?>" onclick="SaveNotification(); hibernation('false')">S</b>
@@ -467,13 +465,21 @@ function topbar(){
       }
       .windowborder
       {
-        border: 3px solid <?echo $themeload['draggablebackcolor'];?>;
+        <?
+        if($mobile == 'true'){
+          echo 'border: 3px solid '.$themeload['draggablebackcolor'].';';
+          echo 'border-top: 0;';
+        }
+        ?>
         border-radius: 6px 6px 8px 8px;
-        border-top: 0;
       }
       .action-buttons{
         background: <?echo $themeload['draggablebackcolor'];?>;
         color: <?echo $themeload['draggablefontcolor'];?>;
+      }
+
+      .ui-forest-menu-labels:hover{
+      	background: <?echo $themeload['draggablebackcolor']?>;
       }
 
       <?

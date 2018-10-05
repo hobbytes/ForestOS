@@ -65,7 +65,7 @@ if(isset($_SESSION['loginuser'])){
           '.str_replace('_',  ' ',  $name).'
         </div>
         <div class="appwindowbutton-container" style="margin:0 10px;">
-          <div class="close'.$idprocess.' appwindowbutton ui-forest-blink" onClick=" $(\'#app'.$idprocess.'\').css('.$style_.'); checkwindows();" style="background-color:#ed2020; cursor: default;">
+          <div class="close'.$idprocess.' appwindowbutton ui-forest-blink" onClick=" $(\'#app'.$idprocess.'\').css('.$style_.');" style="background-color:#ed2020; cursor: default;">
           x
           </div>
           <div class="hidewindow'.$idprocess.' appwindowbutton ui-forest-blink" onClick="" style="background-color:#37a22e; cursor: default;">

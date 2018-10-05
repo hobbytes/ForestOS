@@ -276,6 +276,17 @@ body {
 	background: #fff;
 }
 
+.ui-forest-menu-labels{
+	cursor:pointer;
+	padding:15px;
+	transition: all 0.1s ease;
+}
+
+.ui-forest-menu-labels:hover{
+	color: #FFF;
+	filter: hue-rotate(20deg);
+}
+
 .action_button{
 	border:2px solid;
 	cursor:pointer;

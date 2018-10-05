@@ -1,18 +1,27 @@
 [Info]
-Name="Black Mamba"
+
+Name='Black Mamba'
 
 [topbar]
-topbarbackcolor="rgba(25, 25, 25, 0.8);"
-topbarfontcolor="#bdbdbd;"
+
+topbarbackcolor='rgba(64, 63, 63, 0.5);'
+
+topbarfontcolor='rgb(240, 240, 240);'
 
 [menu]
-menubackcolor="#252424;"
-menufontcolor="#dcdcdc;"
+
+menubackcolor='rgba(48, 48, 48, 0.9);'
+
+menufontcolor='rgb(240, 240, 240);'
 
 [window]
-draggablebackcolor="#252424;"
-draggablefontcolor="#dadada;"
+
+draggablebackcolor='rgb(64, 63, 63);'
+
+draggablefontcolor='rgb(218, 218, 218);'
 
 [background]
-backgroundcolor="#0f161d;"
-backgroundfontcolor="#f5f5f5;"
+
+backgroundcolor='rgb(15, 22, 29);'
+
+backgroundfontcolor='rgb(245, 245, 245);'

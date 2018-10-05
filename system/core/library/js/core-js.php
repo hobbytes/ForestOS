@@ -19,14 +19,13 @@ function  hibernation(logout){
 }
 
 function checkwindows(){
-  closestyle  = "";
   var prc = $(".process").length;
   if (prc > 1){
-    closestyle  = "inline";
+    $("#fastbuttons").show("fast");
   }else{
-    closestyle  = "none";
+    $("#fastbuttons").hide("fast");
   }
-  $(".topbaractbtn").css('display',''+window.closestyle+'');
+
 }
 
 function makeprocess(dest,  param,  key,  name, data=null){
@@ -143,6 +142,7 @@ function ProcessLogic(id, name, destination, destination_, maxwidthm, folder, is
     }
 
     $("#process" + id).remove();
+    checkwindows();
 
   });
 
