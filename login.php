@@ -20,12 +20,16 @@ if(isset($_POST['logins'])){
   $status2 = $_POST['logins'];
 }
 
+$keyaccess = NULL;
+
 if (!empty($status2))
 {
-  $keyaccess = $_POST['keyaccess'];
-  $loginin = strtolower(addslashes(strip_tags(htmlspecialchars($_POST['loginin']))));
-  $loginin = str_replace(' ', '_', $loginin);
-  $passwordin = $security->crypt_s(addslashes(strip_tags(htmlspecialchars($_POST['passwordin']))),$loginin);
+  if(isset($_POST['keyaccess'])){
+    $keyaccess = $_POST['keyaccess'];
+    $loginin = strtolower(addslashes(strip_tags(htmlspecialchars($_POST['loginin']))));
+    $loginin = str_replace(' ', '_', $loginin);
+    $passwordin = $security->crypt_s(addslashes(strip_tags(htmlspecialchars($_POST['passwordin']))),$loginin);
+  }
 }
 
 if(!isset($_SESSION)){
@@ -41,7 +45,7 @@ if(!isset($_SESSION['BlockDate'])){// prepare counter for capthca
 }
 
 $auth = new AuthClassUser();
-$auth->construct('login',$loginin, $keyaccess);
+$auth->construct('login', $loginin, $keyaccess);
 
 if (isset($loginin) && isset($passwordin)) {
   $_SESSION['safemode'] = $_POST['safemode'];
