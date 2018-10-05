@@ -51,7 +51,6 @@ function size_check($path){
           if (is_file($dir)){
           if(copy($dir,$trashfolder.basename($dir))){
             unlink($dir);
-            echo '  файл: <b>'.basename($dir).'</b> перемещен в корзину';
           }
           }else{
             $folder=basename($dir);

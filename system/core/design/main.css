@@ -415,6 +415,7 @@ body {
 	box-shadow: 0 2px 8px 0 rgba(50, 50, 50, .08);
 	display: none;
 	padding: 10px;
+	z-index: 1;
 }
 
 .forest-ui-request-box-button {

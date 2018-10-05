@@ -44,3 +44,13 @@ trash_label  = Очистить корзину
 size = размер
 date = Дата
 use_label = Занято
+
+[delete_function]
+mt_delete = 'Удалить объект'
+mb_delete = 'Вы действительно хотите удалить этот объект?'
+btn_delete_ok = Удалить
+
+[trash_function]
+mt_trash = 'Отправить в корзину'
+mb_trash = 'Вы действительно хотите отправить этот объект в корзину?'
+btn_trash_ok = Отправить

@@ -12,7 +12,7 @@ $AppContainer = new AppContainer;
 /* App Info */
 $AppContainer->AppNameInfo = 'Explorer';
 $AppContainer->SecondNameInfo = 'Проводник';
-$AppContainer->VersionInfo = '1.0.7';
+$AppContainer->VersionInfo = '1.0.8';
 $AppContainer->AuthorInfo = 'Forest Media';
 
 /* Library List */
@@ -284,8 +284,8 @@ $pathmain = str_replace($_SERVER['DOCUMENT_ROOT'], '', $pathmain);
 	<li><div <? echo 'id="'.$dir.'/" class="loadthis'.$AppID.'" onClick="getproperty'.$AppID.'(this);"';?>><?echo $explorer_lang['menu_rename_label']?></div></li>
 	<li><div <?echo 'onClick="mkdirshow'.$AppID.'();" ';?> ><?echo $explorer_lang['menu_md_label']?>  <span style="font-size: 10px; color:#a2a2a2;">Shift+F</span>  </div></li>
 	<li><div <?echo 'id="'.$dir.'/" class="mklink" onClick="link'.$AppID.'(this);" ';?> ><?echo $explorer_lang['menu_ml_label']?></div></li>
-	<li><div <?echo 'class="loadthis'.$AppID.'" onClick="newload'.$AppID.'('."'del'".',this.id)" ';?>><?echo $explorer_lang['menu_trash_label']?> <span style="font-size: 10px; color:#a2a2a2;">Ctrl+Del</span> </div></li>
-	<li><div <?echo 'class="loadthis'.$AppID.'" onClick="newload'.$AppID.'('."'delf'".',this.id)" ';?>><?echo $explorer_lang['menu_delete_label']?> <span style="font-size: 10px; color:#a2a2a2;">Shift+Del</span> </div></li>
+	<li><div <?echo 'class="loadthis'.$AppID.' trashtrigger'.$AppID.'" messageTitle="'.$explorer_lang['mt_trash'].'" messageBody="'.$explorer_lang['mb_trash'].'" okButton="'.$explorer_lang['btn_trash_ok'].'" cancelButton="'.$explorer_lang['mfile_cancelbtn'].'" onClick="ExecuteFunctionRequest'.$AppID.'(this, \'newload'.$AppID.'\', array = [\'del\', this.id])" >'.$explorer_lang['menu_trash_label']; ?> <span style="font-size: 10px; color:#a2a2a2;">Ctrl+Del</span> </div></li>
+	<li><div <?echo 'class="loadthis'.$AppID.' deletetrigger'.$AppID.'" messageTitle="'.$explorer_lang['mt_delete'].'" messageBody="'.$explorer_lang['mb_delete'].'" okButton="'.$explorer_lang['btn_delete_ok'].'" cancelButton="'.$explorer_lang['mfile_cancelbtn'].'" onClick="ExecuteFunctionRequest'.$AppID.'(this, \'newload'.$AppID.'\', array = [\'delf\', this.id])" >'.$explorer_lang['menu_delete_label']; ?> <span style="font-size: 10px; color:#a2a2a2;">Shift+Del</span> </div></li>
 	<li><div <? echo 'id="'.$dir.'/" onClick="loadshow'.$AppID.'(this)"';?>><?echo $explorer_lang['menu_loadfile_label']?></div></li>
 	<li><div <? echo 'class="loadthis'.$AppID.'" onClick="newload'.$AppID.'('."'zipfile'".',this.id)"';?>><?echo $explorer_lang['menu_zip_label']?></div></li>
 	<li><div <? echo 'class="loadthis'.$AppID.'" onClick="newload'.$AppID.'('."'zipfileunpack'".',this.id)"';?>><?echo $explorer_lang['menu_zip_unpack']?></div></li>
@@ -518,6 +518,9 @@ $AppContainer->EndContainer();
 <script>
 
 <?
+
+	//Execute Function Request
+	$AppContainer->ExecuteFunctionRequest();
 
 	// load dir
 	$AppContainer->Event(
@@ -892,12 +895,12 @@ var map<?echo $AppID?> = {
 
 				//delete keycode
 				if(map<?echo $AppID?>['17'] && map<?echo $AppID?>['46']){
-					newload<?echo $AppID?>('del', folder_subject);
+					$( ".trashtrigger<?echo $AppID?>" ).trigger( "click" );
 				}
 
 				//delete forever keycode
 				if(map<?echo $AppID?>['16'] && map<?echo $AppID?>['46']){
-					newload<?echo $AppID?>('delf', folder_subject);
+					$( ".deletetrigger<?echo $AppID?>" ).trigger( "click" );
 				}
 
 

@@ -44,3 +44,13 @@ trash_label  = Empty trash
 size = size
 date = Date
 use_label = Used
+
+[delete_function]
+mt_delete = 'Delete object'
+mb_delete = 'Do you really want to delete this object?'
+btn_delete_ok = Delete
+
+[trash_function]
+mt_trash = 'Send to trash'
+mb_trash = 'Do you really want to send this object to the trash?'
+btn_trash_ok = Send

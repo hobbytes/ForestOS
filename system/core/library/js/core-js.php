@@ -30,8 +30,8 @@ function checkwindows(){
 }
 
 function makeprocess(dest,  param,  key,  name, data=null){
-  $('.ui-body').append("<div id=\"process"+(id=id+1)+"\" class='process' style='display:none;'></div>");
-  $("#process"+id+"" ).load("makeprocess.php?id=<?echo md5(date('d.m.y.h.i.s'));?>"+id+"&d="+dest+"/&i="+id+"&p="+param+"&k="+key+"&n="+name+"&data="+data, null,
+  $( '.ui-body' ).append("<div id=\"process"+(id=id+1)+"\" class='process' style='display:none;'></div>");
+  $( "#process"+id ).load("makeprocess.php?id=<?echo md5(date('d.m.y.h.i.s'));?>"+id+"&d="+dest+"/&i="+id+"&p="+param+"&k="+key+"&n="+name+"&data="+data, null,
     function (responseText, textStatus, XMLHttpRequest, req){
       if(textStatus == "error"){
         $("#" + id).html('<div style="height: 100%; text-align: center; padding:10px; background:#f36d64; color:#731a13; font-size:20px; font-weight:900;">Application start error <br> Status: <b>' + XMLHttpRequest.status +'</b> <br> Status text: <b>' + XMLHttpRequest.statusText + '</b></div>');

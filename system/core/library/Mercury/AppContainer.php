@@ -2,8 +2,9 @@
 /**
  * Mercury library for Forest OS
  * ==============================
+ * Version: 1.0
  * Author: Vyacheslav Gorodilov
- */
+**/
 
 class  AppContainer {
 
@@ -13,7 +14,7 @@ class  AppContainer {
   public $VersionInfo = '1.0'; // app version @string
   public $AuthorInfo = 'Author'; // app version @string
 
-  /* Library List */
+  /* Library Array */
   public $LibraryArray = array(); // get libraries @array
 
   /* Container Info */
@@ -28,6 +29,7 @@ class  AppContainer {
   public $securityMode = true; // use security fucntion @boolean
   public $showError = false; // error display @boolean
   public $showStatistics = false; // statistics display @boolean
+
 
 /* start container */
   public function StartContainer(){
@@ -204,6 +206,9 @@ class  AppContainer {
 
     echo '/* function ExecuteFunctionRequest'.$this->appID.' */';
     echo 'function ExecuteFunctionRequest'.$this->appID.'( ObjectName, FunctionName, FunctionArgument = null ){';
+      echo 'if(Array.isArray(FunctionArgument)){';
+        echo 'FunctionArgument = FunctionArgument.toString().replace(",","\',\'");';
+      echo '}';
       echo 'if(!$("#RequestBox'.$this->appID.'").length){ FunctionArgument = "\'"+FunctionArgument+"\'"; $("#'.$this->appName.$this->appID.'").append("<div id=\"RequestBox'.$this->appID.'\" class=\"forest-ui-request-box\"><div class=\"forest-ui-request-box-description\">"+$(ObjectName).attr(\'messageTitle\')+"<div>"+$(ObjectName).attr(\'messageBody\')+"</div></div><div class=\"forest-ui-request-box-button-container\"><div class=\"forest-ui-request-box-button forest-ui-request-box-button-ok\" onClick=\"eval("+FunctionName+\'(\'+FunctionArgument+\')\'+"); hidebox'.$this->appID.'(); \">"+$(ObjectName).attr(\'okButton\')+"</div><div class=\"forest-ui-request-box-button forest-ui-request-box-button-cancel\" onClick=\"hidebox'.$this->appID.'()\">"+$(ObjectName).attr(\'cancelButton\')+"</div></div> <script> function hidebox'.$this->appID.'(){$(\'#RequestBox'.$this->appID.'\').slideUp(\'fast\', function(){$(\'#RequestBox'.$this->appID.'\').remove()}); } <\/script> </div>");}';
       echo '
       function ShowCloseRequset'.$this->appID.'(){
