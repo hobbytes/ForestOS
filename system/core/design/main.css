@@ -283,7 +283,6 @@ body {
 }
 
 .ui-forest-menu-labels:hover{
-	color: #FFF;
 	filter: hue-rotate(20deg);
 }
 

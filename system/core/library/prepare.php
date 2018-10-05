@@ -435,33 +435,33 @@ function topbar(){
       ?>
       .dragwindow
       {
-        background: <?echo $themeload['draggablebackcolor'];?>;
-        color: <?echo $themeload['draggablefontcolor'];?>;
+        background: <?echo $themeload['draggablebackcolor']?>;
+        color: <?echo $themeload['draggablefontcolor']?>;
       }
       .topbartheme
       {
-        background: <?echo $themeload['topbarbackcolor'];?>;
-        color: <?echo $themeload['topbarfontcolor'];?>;
+        background: <?echo $themeload['topbarbackcolor']?>;
+        color: <?echo $themeload['topbarfontcolor']?>;
       }
       .menutheme
       {
-        background: <?echo $themeload['menubackcolor'];?>;
-        color: <?echo $themeload['menufontcolor'];?>;
+        background: <?echo $themeload['menubackcolor']?>;
+        color: <?echo $themeload['menufontcolor']?>;
       }
       .menulines{
         height: 2px;
         border:none;
-        background: <?echo $themeload['topbarbackcolor'];?>;
-        color: <?echo $themeload['topbarbackcolor'];?>;
+        background: <?echo $themeload['topbarbackcolor']?>;
+        color: <?echo $themeload['topbarbackcolor']?>;
         filter:contrast(0.9);
       }
       .backgroundtheme
       {
-        background: <?echo $themeload['backgroundcolor'];?>;
+        background: <?echo $themeload['backgroundcolor']?>;
       }
       .linktheme
       {
-        color: <?echo $themeload['backgroundfontcolor'];?>;
+        color: <?echo $themeload['backgroundfontcolor']?>;
       }
       .windowborder
       {
@@ -474,8 +474,8 @@ function topbar(){
         border-radius: 6px 6px 8px 8px;
       }
       .action-buttons{
-        background: <?echo $themeload['draggablebackcolor'];?>;
-        color: <?echo $themeload['draggablefontcolor'];?>;
+        background: <?echo $themeload['draggablebackcolor']?>;
+        color: <?echo $themeload['draggablefontcolor']?>;
       }
 
       .ui-forest-menu-labels:hover{
@@ -494,6 +494,10 @@ function topbar(){
         	border-radius: 4px;
         }
         ';
+      }
+
+      if(!isset($themeload['customCSS'])){
+        echo $themeload['customCSS'];
       }
 
     }

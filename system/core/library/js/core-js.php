@@ -362,7 +362,7 @@ function UpdateWindow(id, name, mode = 1){
         session_start();
       }
       ?>
-      var notificationColor = $(".action-buttons").css('background-color');
+      var notificationColor = $(".action-buttons").css('background');
       //notification loader
 
       $.get("<?echo $folder.'functions/NotificationLoader'?>", function(data){
@@ -371,7 +371,7 @@ function UpdateWindow(id, name, mode = 1){
           var ntf = $(".notificationclass").length;
           if(ntf > 0){
             $("#notification-container").css('display','none');
-            $("#notificationsbtn").css({'border':'2px solid '+notificationColor,'background-color':notificationColor});
+            $("#notificationsbtn").css({'border':'2px solid ' + $(".topbartheme").css('background-color'), 'background':notificationColor});
           }else{
           $("#notificationsbtn").css({'border':'2px solid #fff','background-color':'rgba(0,0,0,0)'});
           }

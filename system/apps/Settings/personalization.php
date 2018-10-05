@@ -202,7 +202,7 @@ while (false !== ($entry2=$d2->read())) {
     }
         echo(
           '<div id="'.$name2.'" class="ui-button ui-widget ui-corner-all ui-forest-blink" onClick="loadtheme'.$AppID.'(this);" style="-webkit-user-select:none; cursor:pointer; '.$select_style.' user-select:none; padding:5px; background-color:'.$themeloadset['backgroundcolor'].'; margin:5px; color:'.$themeloadset['backgroundfontcolor'].'; width:80px; height:80px; word-wrap:break-word; text-overflow:ellipsis; overflow:hidden; text-transform:uppercase; ">
-          <div style="height:15%; background-color:'.$themeloadset['topbarbackcolor'].';"></div><div style="height:15%; background-color:'.$themeloadset['draggablebackcolor'].'; margin-bottom: 5px;"></div>'.$themeloadset['Name'].'<br>'.$select_text.'</div>
+          <div style="height:15%; background:'.$themeloadset['topbarbackcolor'].';"></div><div style="height:15%; background:'.$themeloadset['draggablebackcolor'].'; margin-bottom: 5px;"></div>'.$themeloadset['Name'].'<br>'.$select_text.'</div>
           ');
         $select_style  = '';
         $select_text  = '';

@@ -16,7 +16,7 @@ menufontcolor='rgb(240, 240, 240);'
 
 [window]
 
-draggablebackcolor='rgb(64, 63, 63);'
+draggablebackcolor='linear-gradient(to bottom, #424244 0%,#343434 100%);'
 
 draggablefontcolor='rgb(218, 218, 218);'
 
