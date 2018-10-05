@@ -309,12 +309,12 @@ body {
 }
 
 .windowfullscreen{
-	 width:99%;
+	 width:100%;
 	 margin:0 auto;
 	 display:block;
-	 top:21px;
-	 left:0;
 	 height:96%;
+	 border-radius: 0 !important;
+	 border-radius: none !important;
 }
 
 .blurwindowpassive{

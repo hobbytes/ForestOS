@@ -128,8 +128,8 @@ class  AppContainer {
         let pagebytes = $("#'.$this->appName.$this->appID.'").html().length;
         let readyTime = (performance.now() - timerStart).toPrecision(3);
         $("#statistics-'.$this->appID.'").append("Load time: "+ readyTime + " ms.<br>");
-        $("#statistics-'.$this->appID.'").append("Size: "+ (pagebytes / 1024).toPrecision(3) + " kb.<br>");
-        $("#statistics-'.$this->appID.'").append("App traffic: "+ ($("#app'.$this->appID.'").attr("applength-'.$this->appID.'") / 1024).toPrecision(3) + " kb.");
+        $("#statistics-'.$this->appID.'").append("Size: "+ bytesToSize(pagebytes) +".<br>");
+        $("#statistics-'.$this->appID.'").append("App traffic: "+ bytesToSize($("#app'.$this->appID.'").attr("applength-'.$this->appID.'")));
         ';
       }
 

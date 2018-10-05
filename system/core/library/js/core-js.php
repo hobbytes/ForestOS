@@ -90,12 +90,11 @@ function ProcessLogic(id, name, destination, destination_, maxwidthm, folder, is
     }
   });
 
-
   $("#app" + id).resizable({
     containment:"body",
     minHeight:$(window).height()*0.14,
     minWidth:$(window).width()*0.15,
-    maxWidth:$(window).width()*maxwidthm,
+    maxWidth:$(window).width(),
     maxHeight:$(window).height()*0.96,
     autoHide:autohide,
     alsoResize:"#"+name+id
@@ -160,7 +159,7 @@ function ProcessLogic(id, name, destination, destination_, maxwidthm, folder, is
             window["showApp" + id]();
           }
 
-          $("#app" + id).resizable({disabled:false,containment:"body",minHeight:$(window).height()*0.15,minWidth:$(window).width()*0.15,maxWidth:$(window).width()*maxwidthm,maxHeight:$(window).height()*0.95,autoHide:autohide,alsoResize:"#"+name+id});
+          $("#app" + id).resizable({disabled:false,containment:"body",minHeight:$(window).height()*0.15,minWidth:$(window).width()*0.15,maxWidth:$(window).width(),maxHeight:$(window).height()*0.95,autoHide:autohide,alsoResize:"#"+name+id});
         }else{
 
           if(typeof window["hideApp" + id] == 'function'){
@@ -206,6 +205,8 @@ function ProcessLogic(id, name, destination, destination_, maxwidthm, folder, is
       $("#app" + id).attr("wh", $("#"+name+id).css("height"));
     }
     $("#app" + id ).addClass("windowactive");
+
+    UpdateWindow(id, name);
   });
 
   $("#drag" + id ).on( "dblclick", function() {
@@ -217,7 +218,7 @@ function ProcessLogic(id, name, destination, destination_, maxwidthm, folder, is
         $("#app" + id).attr("wl", $("#app" + id).css("left"));
         $("#app" + id).css("width","");
         $("#app" + id).css("height","");
-        $("#app" + id ).css({top:"31px",left:"2px"});
+        $("#app" + id ).css({top:"31px",left:"0px"});
 
         if(typeof window["windowFullScreenApp" + id] == 'function'){
           window["windowFullScreenApp" + id]();
@@ -241,12 +242,11 @@ function ProcessLogic(id, name, destination, destination_, maxwidthm, folder, is
     }
     });
 
-    $("#app" + id).resize(function(){
-      UpdateWindow(id, name);
-    });
+
     $("#process" + id ).appendTo("#proceses");
 
     $("#app" + id).focus();
+
 };
 
 <?

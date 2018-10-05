@@ -22,8 +22,8 @@ if(isset($_SESSION['loginuser'])){
     $autohide = 'true';
     $top = '1'.rand(4,9).'%';
     $left = '1'.rand(4,9).'%';
-    $maxwidth = '99%';
-    $maxwidthm = '0.95';
+    $maxwidth = '100%';
+    $maxwidthm = '1';
   }
 
   $d = $_GET['d'];//  destination
