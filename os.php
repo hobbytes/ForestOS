@@ -30,7 +30,7 @@ $prepare->start();
 $prepare->wall();
 
 ?>
-<body class="ui-body backgroundtheme" style="position:fixed; width:100%; height:100%; z-index:-2000; overflow-x:hidden; overflow-y:hidden; transition: all 0.5s ease; text-rendering: optimizeLegibility;">
+<body style="position:fixed; width:100%; height:100%; z-index:-2000; overflow-x:hidden; overflow-y:hidden; transition: all 0.5s ease; text-rendering: optimizeLegibility;" class="ui-body backgroundtheme" >
   <div id="background-container">
     <img id="background-wall" src="<?echo $mainwall?>" style="position: absolute; z-index: -99999; width:100%; height:100%; object-fit:cover; user-select:none;" draggable="false">
   </div>

@@ -138,38 +138,40 @@
 
 /*---------load wall---------*/
     function wall(){
-      global $auth,$mainwall,$hashfile,$prepare;
+      global $auth, $mainwall, $hashfile, $prepare;
+      $emptyImage = 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';
       if ($auth->isAuth())
     {
       $file_ = 'system/users/'.$_SESSION["loginuser"].'/settings/etc/wall.jpg';
       if (file_exists($file_)){
         $mainwall = $hashfile->filehash($file_);
       }else{
-        $mainwall = 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';
+        $mainwall = $emptyImage;
       }
     }else{
-      $file='system/core/design/images/webwall.jpg';
-      if (file_exists($file))
-      {
-          $filedate=date('dmyHis',filemtime($file));
-          $datess=date_create_from_format('dmyHis',$filedate);
-          $datess2=date_format($datess,"dmyHis");
-          $timelate= date_timestamp_get(date_modify($datess,'+2 days'));
-          $timenow = time();
-          if ($timenow>$timelate)
+      $file = 'system/core/design/images/webwall.jpg';
+      $file_off = 'system/core/design/images/webwallOFF.foc';
+
+      if(file_exists($file_off)){
+        if(file_exists($file))
           {
-            $prepare->changewall($file);
-            $mainwall=$hashfile->filehash($file);
-          }
-          else
-          {
-            $mainwall=$hashfile->filehash($file);
-          }
-      }
-      else
-      {
-        $prepare->changewall($file);
-        $mainwall=$hashfile->filehash($file);
+            $filedate = date('dmyHis',filemtime($file));
+            $datess = date_create_from_format('dmyHis',$filedate);
+            $datess2 = date_format($datess,"dmyHis");
+            $timelate = date_timestamp_get(date_modify($datess,'+2 days'));
+            $timenow = time();
+            if ($timenow>$timelate){
+              $prepare->changewall($file);
+              $mainwall = $hashfile->filehash($file);
+            }else{
+              $mainwall = $hashfile->filehash($file);
+            }
+        }else{
+          $prepare->changewall($file);
+          $mainwall = $hashfile->filehash($file);
+        }
+      }else{
+        $mainwall = $emptyImage;
       }
 
     }
@@ -247,7 +249,7 @@
         $( ".ico" ).draggable({containment:"body", snap:".ico, #topbar"});
         $( "#<?echo 'icon'.$id.'';?>" ).click(function(){
         releaselink();
-        var border_color = $('.action-buttons').css('background-color');
+        var border_color = $('.topbartheme').css('background-color');
         $("#link_content<?echo $id?>").css({
           'height' : 'auto',
           'white-space' : 'pre-line',
@@ -640,13 +642,6 @@ function SaveNotification(){
   });
 }
 
-//Clear Notification Function
-function NotificationClear(){
-  $("#notification-container").html('');
-  SaveNotification();
-  $("#notificationsbtn").css({'border':'2px solid #fff','background-color':'rgba(0,0,0,0)'});
-}
-
 //Update desktop
 function UpdateDesktop(){
   $(".desktop").remove();
@@ -654,18 +649,6 @@ function UpdateDesktop(){
     SetTable();
     SetSelectors();
   });
-}
-
-// bytes to size
-function bytesToSize(bytes, decimals) {
-  if(bytes == 0){
-    return "0 Bytes";
-  }
-  var k = 1024,
-      dm = decimals <= 0 ? 0 : decimals || 2,
-      sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"],
-      i = Math.floor(Math.log(bytes) / Math.log(k));
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 }
 
 </script>

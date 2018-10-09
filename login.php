@@ -139,6 +139,8 @@ $("#labelos").click(function(){
 }
 });
 
+$('.ui-body').css('background','linear-gradient(to top, #171717, #3a3a3a)')
+
 function showTime()
 {
   offset = "<?echo $offset?>"

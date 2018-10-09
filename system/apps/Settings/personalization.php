@@ -37,6 +37,27 @@ if(isset($_GET['activetab'])){
   $activeTab = $_GET['activetab'];
 }
 
+
+$_folder_wall = $_SERVER['DOCUMENT_ROOT'].'/system/core/design/images/';
+
+if(isset($_GET['wbmode'])){
+  $_wbmode = $_GET['wbmode'];
+  if($_wbmode == '2'){
+    file_put_contents($_folder_wall.'webwallOFF.foc','');
+    unlink($_folder_wall.'webwall.jpg');
+    $wbmode = '2';
+  }else{
+    unlink($_folder_wall.'webwallOFF.foc');
+    $wbmode = '1';
+  }
+}else{
+  $wbmode = '1';
+  if(is_file($_folder_wall.'webwallOFF.foc')){
+    $wbmode = '2';
+  }
+}
+
+
 if(!empty($wall)){
   $wall_link = '../../../system/users/'.$_SESSION["loginuser"].'/settings/etc/wall.jpg';
   if($wall=='none'){
@@ -213,6 +234,14 @@ while (false !== ($entry2=$d2->read())) {
 </div>
 
 <div id="wallsettingtab<?echo $AppID?>">
+
+  <div style="padding: 10px 0; border-bottom:1px solid #ccc;">
+    <div style="font-size:20px; padding: 10px 0; font-weight:600; font-variant: all-small-caps;"><?echo $language_screen[$_SESSION['locale'].'_webwall_label']?></div>
+    <label for="WallMode2-<?echo $AppID?>"><?echo $language_screen[$_SESSION['locale'].'_on_label']?></label>
+    <input class="radiogroup<?echo $AppID?>" type="radio" name="wbradio-<?echo $AppID?>" id="WallMode2-<?echo $AppID?>" mode="2">
+    <label for="WallMode1-<?echo $AppID?>"><?echo $language_screen[$_SESSION['locale'].'_off_label']?></label>
+    <input class="radiogroup<?echo $AppID?>" type="radio" name="wbradio-<?echo $AppID?>" id="WallMode1-<?echo $AppID?>" mode="1">
+  </div>
   <?
   $dir = '../../core/design/walls/';
   $d = dir($dir);
@@ -239,6 +268,22 @@ $AppContainer->EndContainer();
 ?>
 <script>
 
+<?
+
+// WebWall Mode
+$AppContainer->Event(
+	"WebWallMode",
+	'object',
+	$Folder,
+	'personalization',
+	array(
+		'wbmode' => '"+object+"',
+    'activetab' => '2'
+	)
+);
+
+?>
+
 $("#tabssettings<?echo $AppID?>").tabs();
 
 //set active tab
@@ -247,6 +292,16 @@ $("#tabssettings<?echo $AppID?>").tabs();
       active: <?echo $activeTab?>
     });
   });
+
+  ControlModeWall = "<?echo $wbmode?>";
+  $("#WallMode"+ControlModeWall+"-<?echo $value.$AppID?>").prop("checked",true);
+
+  $("input:radio[name='wbradio-<?echo $AppID?>']").change(
+    function(){
+    WebWallMode = $(this).attr('mode');
+    WebWallMode<?echo $AppID?>(WebWallMode);
+  }
+  );
 
   ControlMode = "<?echo $getWindow['ControlMode'];?>";
   if(!ControlMode){

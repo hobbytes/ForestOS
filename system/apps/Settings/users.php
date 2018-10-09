@@ -92,7 +92,7 @@ if($adduserlogin!='' && $adduserpassword!='' && $_SESSION['loginuser'] == $_SESS
         copy($wall[0],'../../users/'.$adduserlogin.'/settings/etc/wall.jpg');
       }
       file_put_contents('../../users/'.$adduserlogin.'/settings/language.foc',  $_SESSION['locale']);
-      copy('../../core/design/themes/original.fth','../../users/'.$adduserlogin.'/settings/etc/theme.fth');
+      copy('../../core/design/themes/Original.fth','../../users/'.$adduserlogin.'/settings/etc/theme.fth');
       $dr = $_SERVER['DOCUMENT_ROOT'];
       $userhash = md5($fuid.$dr.$adduserpassword);
       $content="[link]\n\rdestination=system/apps/Explorer/\n\rfile=main\n\rkey=dir\n\rparam=$dr/system/users/$adduserlogin/trash\n\rname=Explorer\n\rlinkname=Корзина\n\ricon=system/apps/Explorer/assets/trashicon.png";
