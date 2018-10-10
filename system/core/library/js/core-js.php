@@ -550,7 +550,6 @@ function UpdateWindow(id, name, mode = 1){
     });
   }
 
-<<<<<<< HEAD
   //Clear Notification Function
   function NotificationClear(){
     $("#notification-container").html('');
@@ -559,8 +558,6 @@ function UpdateWindow(id, name, mode = 1){
   }
 
   // bytes to size
-=======
->>>>>>> fee71463de5a2f51e0c0ec8ed24c1cb8e276e6a3
   function bytesToSize(bytes, decimals) {
     if(bytes == 0){
       return "0 Bytes";
