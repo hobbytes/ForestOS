@@ -1,6 +1,6 @@
 <?
 
-include '../../core/library/etc/security.php';
+require $_SERVER['DOCUMENT_ROOT'].'/system/core/library/etc/security.php';
 $security	=	new security;
 
 $security->appprepare();

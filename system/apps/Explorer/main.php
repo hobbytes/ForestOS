@@ -32,6 +32,24 @@ $faction = new fileaction;
 $dialogexplorer = new gui;
 $hashImage = md5($AppContainer->VersionInfo);
 
+//callback data
+
+$ExplorerMode = NULL;
+$callback = NULL;
+
+if(isset($_GET['explorermode'])){
+	$ExplorerMode = $_GET['explorermode'];
+}
+
+if(isset($_POST['callback'])){
+	$callback = $_POST['callback'];
+}
+
+if(isset($_GET['callback'])){
+	$callback = $_GET['callback'];
+}
+
+//convert
 function convert($string){
 	$string = preg_replace('#%u([0-9A-F]{4})#se','iconv("UTF-16BE","UTF-8",pack("H4","$1"))',$string);
 	return $string;
@@ -314,6 +332,11 @@ $pathmain = str_replace($_SERVER['DOCUMENT_ROOT'], '', $pathmain);
 			echo '<div id="selectbutton-'.$AppID.'" onclick="selectButtonActive'.$AppID.'(false)" style="margin-top:2px;" class="ui-forest-button ui-forest-cancel">'.$explorer_lang['cancelButton'].'</div>';
 		}
 	}
+
+	//Selector Mode
+	if($ExplorerMode == 'selector' && isset($callback)){
+		echo '<div id="selectbuttoncallback-'.$AppID.'" onclick="selectButtonCallback'.$AppID.'(\''.$callback.'\')" style="margin-top: 2px; display: none;" class="ui-forest-button ui-forest-accept">'.$explorer_lang['selectButtonFile'].'</div>';
+	}
 	?>
 </div>
 
@@ -531,7 +554,9 @@ $AppContainer->EndContainer();
 		array(
 			'mobile' => $isMobile,
 			'dir' => '"+object+"',
-			'select' => $_GET['select']
+			'select' => $_GET['select'],
+			'explorermode' => $ExplorerMode,
+			'callback' => $callback
 		),
 		'if(typeof object === \'string\' || object instanceof String){object = object;}else{object = object.id;} $("#app'.$AppID.'").unbind("keydown")',
 		0
@@ -548,7 +573,9 @@ $AppContainer->EndContainer();
 			'ico' => '"+object.getAttribute(\'ico\')+"',
 			'linkname' => '"+object.getAttribute(\'link\')+"',
 			'dir' => realpath($entry),
-			'select' => $_GET['select']
+			'select' => $_GET['select'],
+			'explorermode' => $ExplorerMode,
+			'callback' => $callback
 		)
 	);
 
@@ -560,7 +587,9 @@ $AppContainer->EndContainer();
 		'uploadwindow',
 		array(
 			'where' => '"+object.id+"',
-			'select' => $_GET['select']
+			'select' => $_GET['select'],
+			'explorermode' => $ExplorerMode,
+			'callback' => $callback
 		),
 		'$("#upload'.$AppID.'").css(\'display\', \'block\');',
 		1,
@@ -576,7 +605,9 @@ $AppContainer->EndContainer();
 		array(
 			'erasestatus' => 'true',
 			'dir' => realpath($entry),
-			'select' => $_GET['select']
+			'select' => $_GET['select'],
+			'explorermode' => $ExplorerMode,
+			'callback' => $callback
 		)
 	);
 
@@ -589,7 +620,9 @@ $AppContainer->EndContainer();
 		array(
 			'makedir' => '"+escape($("#mkdirvalue'.$AppID.'").val())+"',
 			'dir' => realpath($entry),
-			'select' => $_GET['select']
+			'select' => $_GET['select'],
+			'explorermode' => $ExplorerMode,
+			'callback' => $callback
 		)
 	);
 
@@ -602,7 +635,9 @@ $AppContainer->EndContainer();
 		array(
 			'makefile' => '"+escape($("#mkfilevalue'.$AppID.'").val())+"',
 			'dir' => realpath($entry),
-			'select' => $_GET['select']
+			'select' => $_GET['select'],
+			'explorermode' => $ExplorerMode,
+			'callback' => $callback
 		)
 	);
 
@@ -615,7 +650,9 @@ $AppContainer->EndContainer();
 		array(
 			'"+key+"' => '"+value+"',
 			'dir' => realpath($entry),
-			'select' => $_GET['select']
+			'select' => $_GET['select'],
+			'explorermode' => $ExplorerMode,
+			'callback' => $callback
 		)
 	);
 
@@ -627,7 +664,9 @@ $AppContainer->EndContainer();
 		'main',
 		array(
 			'dir' => realpath($entry),
-			'select' => $_GET['select']
+			'select' => $_GET['select'],
+			'explorermode' => $ExplorerMode,
+			'callback' => $callback
 		)
 	);
 
@@ -639,10 +678,21 @@ $AppContainer->EndContainer();
 		'main',
 		array(
 			'dir' => realpath($entry),
-			'select' => '"+state+"'
+			'select' => '"+state+"',
+			'explorermode' => $ExplorerMode,
+			'callback' => $callback
 		)
 	);
 ?>
+
+//send callback
+function selectButtonCallback<?echo $AppID?>(name){
+	var get_file_callback = $(".loadthis<?echo $AppID?>").attr("id");
+	var get_name_callback = $(".mklink").attr("link");
+	$( "div["+name+"]" ).attr(name, get_file_callback);
+	$( "div["+name+"]" ).text(get_name_callback);
+	$("#process<?echo $AppID?>").remove();
+}
 
 //show select object property
 function getproperty<?echo $AppID?>(object){
@@ -666,6 +716,7 @@ var e = null;
 function select<?echo $AppID?>(folder, folder2, folder3, folder4){
 	$(".select-<?echo $AppID?>").css('background-color','transparent');
 	$('.'+folder+'-<?echo $AppID?>').css('background-color','#d4d4d4');
+	$("#selectbuttoncallback-<?echo $AppID?>").css('display','block');
 	$(".loadthis<?echo $AppID?>").attr("id",folder2);
 	$(".loadas").attr("id",folder2);
 	$(".mklink").attr("id",folder2);

@@ -13,6 +13,7 @@ menu_property_label = Свойства
 menu_zip_label = Добавить в архив
 menu_zip_unpack = Распаковать архив
 selectButton = Выбрать
+selectButtonFile = Выбрать файл
 cancelButton = Отменить
 
 menu_edit_label = Изменить

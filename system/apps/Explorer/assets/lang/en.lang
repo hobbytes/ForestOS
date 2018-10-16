@@ -13,6 +13,7 @@ menu_property_label = Properties
 menu_zip_label = Add to archive
 menu_zip_unpack = Unpack the archive
 selectButton = Select
+selectButtonFile = Select file
 cancelButton = Cancel
 
 menu_edit_label = Edit
