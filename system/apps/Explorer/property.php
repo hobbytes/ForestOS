@@ -21,8 +21,8 @@ $folder=$_GET['destination'];
 $prop_lang  = parse_ini_file('assets/lang/etc.lang');
 $cl = $_SESSION['locale'];
 /*--------Логика--------*/
-$get_object = preg_replace('#%u([0-9A-F]{4})#se','iconv("UTF-16BE","UTF-8",pack("H4","$1"))',$_GET['object']);
 
+$get_object = iconv( "UTF8", "UTF8//TRANSLIT", $_GET['object'] );
 /*rename object*/
 if(isset($_GET['rename']) && !preg_match('/os.php/',$get_object) && !preg_match('/login.php/',$get_object) && !preg_match('/makeprocess.php/',$get_object) && !preg_match('/system/core/',$get_object)){
   if($_SESSION['superuser'] != $_SESSION['loginuser'] && !preg_match('system/users/'.$_SESSION['loginuser'],$get_object) || $_SESSION['superuser'] != $_SESSION['loginuser'] && !preg_match('system/core',$get_object)){
@@ -54,8 +54,13 @@ if(is_file($get_object)){
   }
 }
 
+
+$locale = $cl.'_'.mb_strtoupper($cl).'.utf8';
+setlocale(LC_ALL, $locale);
+
 $name_parts = pathinfo($get_object);
-$name = str_replace('.'.$name_parts['extension'],'',$name_parts['basename']);
+
+$name = str_replace('.'.$name_parts['extension'], '', $name_parts['basename']);
 $pathmain = str_replace($_SERVER['DOCUMENT_ROOT'],'',$get_object);
 
 /*file or folder?*/

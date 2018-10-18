@@ -8,8 +8,16 @@ $security->appprepare();
 //Загружаем файл локализации
 $upload_lang  = parse_ini_file('assets/lang/etc.lang');
 $cl = $_SESSION['locale'];
+if(isset($_GET['where'])){
+  $where = str_replace(' ', '_', strip_tags($_GET['where']));
+}else{
+  $where = $_SERVER['DOCUMENT_ROOT'].'/system/users/'.$_SESSION['loginuser'].'/documents/downloads/';
+  if(!is_dir($where)){
+    mkdir($where);
+  }
+}
 
-$where = str_replace(' ', '_', strip_tags($_GET['where']));
+
 $appname = $_GET['appname'];
 $AppID = $_GET['appid'];
 $folder = $_GET['destination'];
@@ -22,8 +30,8 @@ if(isset($_GET['uploadfiles'])){
     $uploaddir = $where;
     if( ! is_dir( $uploaddir ) ) mkdir( $uploaddir, 0777 );
     foreach( $_FILES as $file ){
-        if( move_uploaded_file( $file['tmp_name'], $uploaddir . basename($file['name']) ) ){
-            $files[] = realpath( $uploaddir . $file['name'] );
+        if( move_uploaded_file( $file['tmp_name'], $uploaddir . str_replace( " ", "_", iconv( "UTF8", "UTF8//TRANSLIT", $file['name'] ) ) ) ){
+            $files[] = realpath( $uploaddir . str_replace(" ", "_", $file['name']) );
         }
         else{
             $error = true;

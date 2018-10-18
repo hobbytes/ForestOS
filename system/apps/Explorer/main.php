@@ -379,8 +379,17 @@ $countState = true;
 $objectArray = array();
 
 while (false !== ($entry = $d->read())) {
+	$entry = iconv( "UTF8", "UTF8//TRANSLIT", $entry );
+
+	// rename if contain whitespace
+	if( preg_match( '/\s+/', $entry ) ){
+		$rename_whitespace = $d->path.'/'.$entry;
+		rename( $rename_whitespace, str_replace( ' ', '_', $rename_whitespace ) );
+		$entry = str_replace( ' ', '_', $entry );
+	}
+
 	$path	=	$d->path;
-	$name	=	convert($entry);
+	$name	=	convert( $entry );
 	if ($entry	!=	'..'){
 		$color	=	'transparent';
 		$extension	=	'';
