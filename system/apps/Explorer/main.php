@@ -128,7 +128,7 @@ if(!empty($deleteforever)){
 
 /*-add to archive-*/
 if(!empty($zipfile)){
-	require '../../core/library/zip.php';
+	require $_SERVER['DOCUMENT_ROOT'].'/system/core/library/zip.php';
 	if(is_dir($zipfile)){
 		$zip = new zip;
 		$zip->toZip($zipfile, dirname($zipfile).'/'.basename($zipfile).'.zip');
