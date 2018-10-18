@@ -10,6 +10,7 @@ en_btn_cancel = Cancel
 [property]
 ru_prop_type = Папка с файлами
 ru_prop_type_label = Тип
+ru_prop_zip_label = Содержимое архива
 ru_prop_destination_label = Расположение
 ru_prop_size_label = Размер
 ru_prop_date_label = Дата последнего изменения
@@ -23,6 +24,7 @@ ru_attr_2 = доступен для записи
 
 en_prop_type = Folder with files
 en_prop_type_label = Type
+en_prop_zip_label = Archive content
 en_prop_destination_label = Location
 en_prop_size_label = Size
 en_prop_date_label = Date of last change

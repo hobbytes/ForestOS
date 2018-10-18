@@ -3,7 +3,7 @@
 $appname  = $_GET['appname'];
 $appid  = $_GET['appid'];
 
-require '../../core/library/Mercury/AppContainer.php';
+require $_SERVER['DOCUMENT_ROOT'].'/system/core/library/Mercury/AppContainer.php';
 
 /* Make new container */
 $AppContainer = new AppContainer;
@@ -13,7 +13,7 @@ $AppContainer->height = '100%';
 $AppContainer->width = '100%';
 $AppContainer->StartContainer();
 
-include '../../core/library/filesystem.php';
+require $_SERVER['DOCUMENT_ROOT'].'/system/core/library/filesystem.php';
 $fo = new filecalc;
 $click=$_GET['mobile'];
 $folder=$_GET['destination'];
@@ -23,6 +23,7 @@ $cl = $_SESSION['locale'];
 /*--------Логика--------*/
 
 $get_object = iconv( "UTF8", "UTF8//TRANSLIT", $_GET['object'] );
+
 /*rename object*/
 if(isset($_GET['rename']) && !preg_match('/os.php/',$get_object) && !preg_match('/login.php/',$get_object) && !preg_match('/makeprocess.php/',$get_object) && !preg_match('/system/core/',$get_object)){
   if($_SESSION['superuser'] != $_SESSION['loginuser'] && !preg_match('system/users/'.$_SESSION['loginuser'],$get_object) || $_SESSION['superuser'] != $_SESSION['loginuser'] && !preg_match('system/core',$get_object)){
@@ -40,6 +41,7 @@ if(is_file($get_object)){
   $extension	=	str_replace('.','',$extension);
   $type = '*.'.$extension;
   $fo->format(filesize(realpath($get_object)));
+
 }else{
   $type = $prop_lang[$cl.'_prop_type'];
   try {
@@ -70,7 +72,7 @@ if(is_file($_SERVER['DOCUMENT_ROOT'].$pathmain)){
   $object = $name;
 }
 ?>
-<div style="padding:10px; max-width:400px; word-break:break-word;">
+<div style="padding:10px; width: 400px; word-break:break-word;">
   <div style="margin:5px auto; text-transform:uppercase; color:#f44336; font-size:24px; font-weight:900;">
     <?
     echo $name;
@@ -79,6 +81,17 @@ if(is_file($_SERVER['DOCUMENT_ROOT'].$pathmain)){
   <div style="margin:10px auto; border-bottom:2px solid #c5bbbb; padding:5px 0;">
     <?
     echo '<b>'.$prop_lang[$cl.'_prop_type_label'].':</b> '.$type;
+
+    if($extension == 'zip'){
+      require $_SERVER['DOCUMENT_ROOT'].'/system/core/library/zip.php';
+      $GetZip = new zip;
+      echo "<div style='max-height: 200px; overflow-y: auto; word-break: break-all; white-space: pre-line; padding: 5px; background: #e8e8e8; border: 1px solid #ccc; margin: 5px;'><b>".$prop_lang[$cl.'_prop_zip_label'].":</b>\n\n";
+      foreach( $GetZip->getContent($get_object) as $content ){
+        echo "- $content\n";
+      }
+      echo "</div>";
+    }
+
     ?>
   </div>
   <div style="margin:10px auto; border-bottom:2px solid #c5bbbb; padding:5px 0;">
@@ -98,7 +111,9 @@ if(is_file($_SERVER['DOCUMENT_ROOT'].$pathmain)){
   </div>
   <div style="margin:10px auto; border-bottom:2px solid #c5bbbb; padding:5px 0;">
     <?
-    echo "<b>".$prop_lang[$cl.'_prop_attr_label'].":</b><br>-".(is_readable($get_object) ? "" : $prop_lang[$cl.'_attr_false']).$prop_lang[$cl.'_attr_1']."<br>-".(is_writable($get_object) ? "" : $prop_lang[$cl.'_attr_false']).$prop_lang[$cl.'_attr_2'];
+    echo "<b>".$prop_lang[$cl.'_prop_attr_label'].":</b>";
+    echo "<br>(<i>".substr(sprintf('%o', fileperms($get_object)), -4).'</i>)';
+    echo "<br>-".(is_readable($get_object) ? "" : $prop_lang[$cl.'_attr_false']).$prop_lang[$cl.'_attr_1']."<br>-".(is_writable($get_object) ? "" : $prop_lang[$cl.'_attr_false']).$prop_lang[$cl.'_attr_2'];
     ?>
   </div>
   <div style="margin:10px auto; border-bottom:2px solid #c5bbbb; padding:5px 0; text-align:center;">

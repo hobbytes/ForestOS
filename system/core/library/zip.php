@@ -1,5 +1,6 @@
 <?
 class zip{
+
   function toZip($source, $destination, $include_dir = true)
   {
 
@@ -65,5 +66,24 @@ class zip{
 
     return $zip->close();
 }
+
+function getContent($source){
+
+  $zip = new ZipArchive();
+  $filesArray = array();
+
+  $zip->open($source);
+
+  for( $i = 0; $i < $zip->numFiles; $i++ ){
+    $files = $zip->statIndex( $i );
+    $filesArray[] = $files['name'];
+  }
+
+  $zip->close();
+
+  return $filesArray;
+
+}
+
 }
 ?>
