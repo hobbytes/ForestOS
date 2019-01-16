@@ -83,6 +83,7 @@ class  AppContainer {
     // find libraries
     if(!empty($this->LibraryArray)){
       $array = $this->LibraryArray;
+      $LostLibs = array(); // array for lost libs
       foreach ($array as $key) {
         $key = $key.'.php'; // library file
         $FirstFindPlace = $_SERVER['DOCUMENT_ROOT'].'/system/core/library/'.$key; // First find place
@@ -96,7 +97,19 @@ class  AppContainer {
         }
         elseif(is_file($ThirdFindPlace)){ // if find then require this!
           require $ThirdFindPlace;
+        }else{
+          $LostLibs[] = $key;  // collect lost libs
         }
+      }
+
+      if(!empty($LostLibs)){  // show all lost libs and die...
+        echo '<div style="background: #fff; color: #000; padding: 10px;">';
+        echo "Warning!<br><br>";
+        foreach ($LostLibs as $object) {
+          echo "This library was not found: <b>$object</b><br>";
+        }
+        echo '</div>';
+        die();
       }
     }
 

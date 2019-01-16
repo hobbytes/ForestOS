@@ -1,8 +1,9 @@
 <?
-/*Application Store*/
+/* Application Store */
 
 $AppName = $_GET['appname'];
 $AppID = $_GET['appid'];
+$Folder = $_GET['destination'];
 
 require $_SERVER['DOCUMENT_ROOT'].'/system/core/library/Mercury/AppContainer.php';
 
@@ -12,16 +13,17 @@ $AppContainer = new AppContainer;
 /* App Info */
 $AppContainer->AppNameInfo = 'Apps House';
 $AppContainer->SecondNameInfo = 'Магазин';
-$AppContainer->VersionInfo = '1.0.1';
+$AppContainer->VersionInfo = '1.1';
 $AppContainer->AuthorInfo = 'Forest Media';
 
 /* Library List */
-$AppContainer->LibraryArray = Array('filesystem','bd');
+$AppContainer->LibraryArray = Array('filesystem', 'bd', 'http');
 
 /* Container Info */
 $AppContainer->appName = $AppName;
 $AppContainer->appID = $AppID;
 $AppContainer->height = '530px';
+$AppContainer->backgroundColor = '#e8e8e8';
 $AppContainer->customStyle = 'padding-top:0px; max-width:100%;';
 $AppContainer->StartContainer();
 
@@ -31,263 +33,192 @@ if(isset($_GET['activetab'])){
   $activeTab = $_GET['activetab'];
 }
 
-$click = $_GET['mobile'];
+$FileCalc = new filecalc;
+$FileAction = new fileaction;
+$BD = new readbd;
+$HttpRequest = new http;
 
-if(isset($_GET['appdownload'])){
-	$appdownload = $_GET['appdownload'];
-}
+$server_url = "http://forest.hobbytes.com/media/os/AppsHouse/";
 
-if(isset($_GET['type'])){
-	$type = $_GET['type'];
-}
+$FUID = $BD->readglobal2("fuid", "forestusers", "login", $_SESSION["loginuser"], true);
+$PWD = $BD->readglobal2("password", "forestusers", "login", $_SESSION["loginuser"], true);
+$DROOT = $_SERVER['DOCUMENT_ROOT'];
+$token = md5($FUID.$DROOT.$PWD);
 
-$Folder = $_GET['destination'];
-$fo = new filecalc;
-$fileaction = new fileaction;
+$GetApps = $HttpRequest->makeNewRequest($server_url.'GetApp.php', 'Forest OS', $data = array('login' => $_SESSION["loginuser"], 'token' => "$token"));
+$MaxRating = $HttpRequest->makeNewRequest($server_url.'MaxRating.php', 'Forest OS', $data = array('login' => $_SESSION["loginuser"], 'token' => "$token"));
 
-//Загружаем файл локализации
-$apphouse_lang  = parse_ini_file('app.lang');
-$cl = $_SESSION['locale'];
-
-if(!empty($appdownload)){
-  if($type == "app_h"){
-		$_SESSION['appversion'] = $_GET['v'];
-		?>
-		<script>
-			makeprocess('system/apps/installer/main.php','<?echo $appdownload;?>','appdownload','Installer');
-		</script>
-		<?
-	}else{
-		$link='walls/'.$appdownload; $l='.jpg';
-	}
- 	$ch=curl_init('http://forest.hobbytes.com/media/os/'.$link.$l);
-  if(!is_dir('./temp/')){
-		mkdir('./temp/');
-	}
-  $temphash=md5(date('d.m.y.h.i.s').$appdownload);
-  $fp=fopen('./temp/'.$appdownload.$temphash.$l,'wb');
-  curl_setopt($ch, CURLOPT_FILE,$fp);
-  curl_setopt($ch, CURLOPT_HEADER,0);
-  curl_exec($ch);
-  curl_close($ch);
-  fclose($fp);
-  if($type=="wall_h"){
-		if(copy('./temp/'.$appdownload.$temphash.$l,'../../core/design/walls/'.$appdownload.$l)){
-			$wall_link = '../../../system/users/'.$_SESSION["loginuser"].'/settings/etc/wall.jpg';
-			if(copy('../../../system/core/design/walls/'.$appdownload.$l, $wall_link)){
-				$wall_link = $fileaction->filehash($wall_link);
-?>
-<script>
-function wallchange(){
-	$("#background-wall").attr("src", "<?echo $wall_link?>");
-};
-wallchange();
-</script>
-  <?
-echo $apphouse_lang[$cl.'_wall_msg'];
-}
-}else{
-	echo $apphouse_lang[$cl.'_wall_error'];
-}
-}
-  unlink('./temp/'.$appdownload.$temphash.$l);
-}
-
-$url = 'http://forest.hobbytes.com/media/os/app.php';
-$file = file_get_contents($url);
-$array = json_decode($file,TRUE);
-
-$urlw = 'http://forest.hobbytes.com/media/os/wall.php';
-$filew = file_get_contents($urlw);
-$arrayw = json_decode($filew,TRUE);
-
-$urlu = 'http://forest.hobbytes.com/media/os/update.php';
-$fileu = file_get_contents($urlu);
-$arrayu = json_decode($fileu,TRUE);
+$GetApps = json_decode($GetApps, TRUE);
 
 ?>
-<div id="tabs<?echo $AppID?>">
+
+<div id="Tabs<?echo $AppID?>">
   <ul>
-    <li><a href="#apptab<?echo $AppID?>"><?echo $apphouse_lang[$cl.'_tab_apps']?></a></li>
-    <li><a href="#walltab<?echo $AppID?>"><?echo $apphouse_lang[$cl.'_tab_walls']?></a></li>
-    <li><a href="#updatetab<?echo $AppID?>"><?echo $apphouse_lang[$cl.'_tab_updates']?></a></li>
+    <li><a href="#Apps<?echo $AppID?>">Приложения</a></li>
+    <li><a href="#Control<?echo $AppID?>">Личный кабинет</a></li>
+    <li><a href="#Updates<?echo $AppID?>">Обновления</a></li>
   </ul>
-
-
-  <div id="apptab<?echo $AppID?>">
-<?
-$appcounter = 0;
-if(!empty($array)){
-	foreach ($array as $key)
-	{
-		$appcounter = $appcounter+1;
-		$fo->format($key['size']*1024);
-		if (is_file('../'.$key['file'].'/main.php')){
-  		$btncolor='3c83e8';
-  		$btntext=$apphouse_lang[$cl.'_card_button_2'];
-  		$btnaction='onClick="run(this);"';
-		}else{
-  		$btncolor='54c45c';
-  		$btntext=$apphouse_lang[$cl.'_card_button_1'];
-  		$btnaction='onClick="downloadapp'.$AppID.'(this,\''.$key['version'].'\');"';
-		}
-	if($cl  ==  'en' || $cl != 'ru'){
-  	$name=str_replace('_',' ',$key['file']);
-	}else{
-  	$name = $key['name'];
-	}
-	echo '
-	<span class="ui-button ui-widget ui-corner-all" style="height:auto; width:200px; position:relative; text-align:center;  margin:5px;">
-	<span onClick="fullhouse'.$AppID.'('.$appcounter.');" >
-	<div style="background-image: url(http://forest.hobbytes.com/media/os/apps/'.$key['file'].'/app.png); background-size:cover; margin:auto; height:64px; width:64px;">
-	</div>
-	<div style="text-align:center;">'.$name.'<br>
-	<span style="font-size:10px;">'.$apphouse_lang[$cl.'_card_version'].': '.$key['version'].'<br>'.$apphouse_lang[$cl.'_card_size'].': '.$format.'</span>
-	</div>
-	</span><br>
-	<div id="'.$key['file'].'" class="ui-forest-blink" t="app_h" '.$btnaction.' style="background-color:#'.$btncolor.'; color:#fff; font-size:13px; padding:5px; border-radius:5px;">'.$btntext.'</div></span>
-	<div class="apphouseinfohide" id="'.$AppID.'apphouseinfo'.$appcounter.'">
-	<div style="background-image: url(http://forest.hobbytes.com/media/os/apps/'.$key['file'].'/app.png); background-size:cover; margin-bottom:10px; height:80px; width:80px;"></div>
-	<span style="font-size:15px; font-weight:900; color:#363636; text-transform: uppercase;" >'.$name.'</span><br>
-	<span style="font-size:13px; color:#464646;">'.$name.' by '.$key['designer'].', version: '.$key['version'].'</span>
-	<br><br>
-	<span style="font-size:13px; color:#464646; font-weight:600;">'.$apphouse_lang[$cl.'_card_description'].'</span><br><span style="font-size:13px; color:#464646;">'.$key['description'].'</span>
-	</div>';
-	}
-}else{
-	echo $apphouse_lang[$cl.'_card_error'];
-}
-?>
 </div>
 
-<div id="walltab<?echo $AppID?>">
-  <?
-  if(!empty($arrayw)){
-  foreach ($arrayw as $key)
-  {
-  	$name = $key['file'];
-  	echo '<span class="ui-button ui-widget ui-corner-all" style="height:100px; width:100px; background-image: url(http://forest.hobbytes.com/media/os/walls/thumb/litle_'.$key['file'].'.jpg); background-size:cover; margin:auto; position:relative; text-align:center;  margin:5px;"><div style="text-align:center; margin-top:75%;"><div id="'.$key['file'].'" t="wall_h" class="ui-forest-blink" onClick="downloadapp'.$AppID.'(this);" style="background-color:#a54343; color:#fff; font-size:13px; padding:5px; 	border-radius:5px;">'.$apphouse_lang[$cl.'_wall_button'].'</div></div></span>';
-	}
-}else{
-	echo $apphouse_lang[$cl.'_wall_error_2'];
+<style>
+.AppTile{
+  display: grid;
+  grid-template-columns: 37% 63%;
+  padding: 10px;
+  margin: 10px;
+  width: 220px;
+  height: 100px;
+  float: left;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  cursor: default;
+  user-select: none;
+  background: #f3f3f3;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
 }
-?>
-</div>
 
-<div id="updatetab<?echo $AppID?>">
-  <?
-  $upd_array = parse_ini_file('../../core/osinfo.foc', false);
-  $appcounter = 0;
-  if(!empty($arrayu)){
-  foreach ($arrayu as $key)
-  {
-    if($upd_array['subversion']!=$key['subversion']){
-      	$fo->format($key['size']*1024);
-      	echo '
-      	<span class="ui-button ui-widget ui-corner-all" style="height:auto; width:90%; position:relative; text-align:left;  margin:5px;"> <span>
-      	<p style="text-align:left; background-image: url(http://forest.hobbytes.com/media/os/updates/uplogo.png); background-size:cover; height:80px; width:80px;"></p>
-      	<div style="text-align:left;">'.$apphouse_lang[$cl.'_upd_label'].'<br><br/>
-      	<span style="font-size:17px;"><b>Forest OS</b> '.$key['codename'].'</span><br>
-      	<span style="font-size:12px; font-weight:900; " >'.$apphouse_lang[$cl.'_upd_revision'].': <span style="color:#363636; text-transform: uppercase;">'.$key['file'].'</span></span><br>
-      	<span style="font-size:12px; ">'.$apphouse_lang[$cl.'_card_version'].': '.$key['version'].'<br>'.$apphouse_lang[$cl.'_upd_subversion'].': '.$key['subversion'].'<br>'.$apphouse_lang[$cl.'_card_size'].': '.$format.'</span></div></span>
-      	<br><b>'.$apphouse_lang[$cl.'_card_description'].':</b><br><span style="font-size:15px; color:#464646; white-space:pre-wrap;">'.$key['description'].'</span>
-      	<div id="'.$key['file'].'" class="ui-forest-blink" t="app_h" onClick="update'.$AppID.'()" style="background-color:#962439; color:#fff; width:30%; margin: 10px auto 10px auto; font-size:13px; padding:5px; border-radius:5px; text-align:center;">'.$apphouse_lang[$cl.'_upd_button'].'</div></span>
-      	';
+.AppTile-icon{
+  background-size:cover;
+  height:64px;
+  width:64px;
+}
+
+.AppTile-name{
+  word-break: break-word;
+  color: #353535;
+}
+
+.AppTile-info span{
+  font-size: 10px;
+  color: #353535;
+}
+
+.AppTile-rating-container{
+  text-align: left;
+}
+
+.AppTile-rating{
+  background: #ffc107;
+  width: 5px;
+  height: 5px;
+  margin: 0 2px;
+  border-radius: 100%;
+  display: inline-block;
+}
+
+.AppTile-rating-null{
+  background: #9e9e9e;
+}
+
+.AppTile-full{
+  display: none;
+  min-width: 50%;
+  max-width: 70%;
+  height: 300px;
+  background: #eee;
+  position: absolute;
+  margin: 0 auto;
+  left: 0;
+  right: 0;
+  top: 170px;
+  border: 1px solid rgba(182, 185, 187, 0.5);
+  box-shadow: 0 2px 8px 0 rgba(50,50,50, .08);
+  padding: 10px;
+  z-index: 1;
+}
+
+.AppTile-close {
+  background: #ccc;
+  font-size: 20px;
+  width: 20px;
+  text-align: center;
+  float: right;
+  color: #5f5f5f;
+  cursor: default;
+}
+
+</style>
+
+<div id="Apps<?echo $AppID?>" style="margin: 0 auto;">
+  <div style="padding: 10px;">
+    <?
+
+    function getRating($rating, $MaxRating){
+      $r = ($rating / $MaxRating) * 5;
+      $r_int = intval($r);
+      $r_null = 5 - $r_int;
+      $dots = NULL;
+
+      for ($i = 0; $i < $r_int; $i++){
+        $dots .= '<div class="AppTile-rating" ></div>';
       }
+
+      for ($i = 0; $i < $r_null; $i++){
+        $dots .= '<div class="AppTile-rating AppTile-rating-null" ></div>';
+      }
+
+      return $dots;
     }
 
-}
+    foreach ($GetApps as $key) {
 
-  if(!empty($array)){
-  foreach ($array as $key)
-  {
-	$checkApp = '../'.$key['file'].'/main.php';
-    if (is_file($checkApp))
-    {
-			$info = file_get_contents('http://'.$_SERVER['HTTP_HOST'].'/system/apps/'.$key['file'].'/main.php?getinfo=true&h='.md5(date('dmyhis')));
-			$arrayInfo = json_decode($info);
-	    $curversion	=	$arrayInfo->{'version'};;
-			if(empty($curversion)){
-				$curversion = '1.0';
-			}
-      $newversion = $key['version'];
-      if($newversion>$curversion){
-        	$appcounter = $appcounter+1;
-        	$fo->format($key['size']*1024);
-        	if($cl  ==  'en' || $cl != 'ru'){
-          	$name=str_replace('_',' ',$key['file']);
-        	}else{
-          	$name = $key['name'];
-        	}
-        	echo '
-        	<span class="ui-button ui-widget ui-corner-all" style="height:auto; width:200px; position:relative; text-align:center;  margin:5px;"> <span onClick="fullhouseupd'.$AppID.'('.$appcounter.');" ><div style="background-image: url(http://forest.hobbytes.com/media/os/apps/'.$key['file'].'/app.png); background-size:cover; margin:auto; height:64px; width:64px;"></div><div style="text-align:center;">'.$name.'<br>
-        	<span style="font-size:10px;">'.$apphouse_lang[$cl.'_card_version'].': '.$key['version'].'<br>'.$apphouse_lang[$cl.'_card_size'].': '.$format.'</span></div></span><br><div id="'.$key['file'].'" class="ui-forest-blink" t="app_h" onClick="downloadapp'.$AppID.'(this,\''.$newversion.'\');" style="background-color:#245896; color:#fff; font-size:13px; padding:5px; border-radius:5px;">'.$apphouse_lang[$cl.'_upd_button'].'</div></span>
-        	<div class="apphouseinfohide" id="'.$AppID.'apphouseinfoupd'.$appcounter.'"><div style="background-image: url(http://forest.hobbytes.com/media/os/apps/'.$key['file'].'/app.png); background-size:cover; margin-bottom:10px; height:80px; width:80px;"></div>
-          <span style="font-size:15px; font-weight:900; color:#363636; text-transform: uppercase;" >'.$name.'</span><br><span style="font-size:13px; color:#464646;">'.$name.' by '.$key['designer'].', version: '.$key['version'].'</span>
-          <br><br><span style="font-size:13px; color:#464646; font-weight:600;">'.$apphouse_lang[$cl.'_card_description'].':</span><br><span style="font-size:13px; color:#464646; white-space:pre-wrap;">'.$key['description'].'</span>
-          </div>
-					';
-				}
-			}
-		}
-	}
-?>
+      if($_SESSION["locale"]  ==  'en'){
+      	$AppName = $key['name'];
+    	}else{
+      	$AppName = $key['second_name'];
+    	}
+
+      $AppHash = md5($AppName.$key['author'].$key['add_date']);
+
+      $rating = 'Рейтинг: '.getRating($key['rating'], $MaxRating).' ('.$key['rating'].')';
+
+      echo '<div class="AppTile" onClick="showInfo'.$AppID.'(\''.$AppHash.'\')">';
+      echo '<div class="AppTile-icon" style="background-image: url(http://forestos.hobbytes.com/system/core/design/images/app.png); ">';
+    	echo '</div>';
+      echo '<div class="AppTile-info">';
+      echo '<div class="AppTile-name">';
+      echo $AppName;
+      echo '</div>';
+      echo '<span>';
+      echo 'Автор: '.$key['author'].'<br>';
+      echo 'Версия: '.$key['version'].'<br>';
+      echo '<div class="AppTile-rating-container">'.$rating.'</div>';
+      echo 'Размер: null '.'<br>';
+      echo '</span>';
+      echo '</div>';
+      echo '</div>';
+      echo '<div class="AppTile-full" id="'.$AppHash.'">';
+      echo '<div class="AppTile-close ui-forest-blink" onClick="closeInfo'.$AppID.'(\''.$AppHash.'\')"> x ';
+      echo '</div>';
+      echo $key['description'];
+      echo '</div>';
+    }
+    ?>
+  </div>
 </div>
 
-</div>
 <?
 $AppContainer->EndContainer()
 ?>
-<script>
-<?php
-// download app
-$AppContainer->Event(
-	"downloadapp",
-	'app, version',
-	$Folder,
-	'main',
-	array(
-		'appdownload' => '"+app.id+"',
-		'v' => '"+version+"',
-		'type' => '"+$("#"+app.id).attr("t")+"',
-		'activetab' => '"+activetab+"'
-	),
-  '
-	let type = $("#"+app.id).attr("t");
-	let activetab = 0;
-	if(type == \'wall_h\'){
-		activetab = 1;
-	}
-	',
-  0
-);
-?>
-function fullhouse<?echo $AppID?>(el2){
-	$(".apphouseinfohide").css('display','none');
-	$("#<?echo $AppID?>apphouseinfo"+el2).show('clip',200);
-	$("#<?echo $AppID?>apphouseinfo"+el2).css('display','block')
-};
-function fullhouseupd<?echo $AppID?>(el4){
-	$(".apphouseinfohide").css('display','none');
-	$("#<?echo $AppID?>apphouseinfoupd"+el4).show('clip',200);
-	$("#<?echo $AppID?>apphouseinfoupd"+el4).css('display','block')
-};
-function run(app){
-  makeprocess('system/apps/'+app.id+'/main.php','','',app.id);
-}
 
+<script>
 $(function(){
-  $("#tabs<?echo $AppID?>").tabs();
+  $("#Tabs<?echo $AppID?>").tabs();
 });
 
 //set active tab
 $(function(){
-  $("#tabs<?echo $AppID?>").tabs({
+  $("#Tabs<?echo $AppID?>").tabs({
     active: <?echo $activeTab?>
   });
 });
 
-function update<?echo $AppID?>(){
-  makeprocess('system/apps/update/main.php','','','Update');
+function showInfo<?echo $AppID?>(object){
+  $(".AppTile-full").css('display', 'none');
+  $("#"+object).show("fade", 100);
+}
+
+function closeInfo<?echo $AppID?>(object){
+  $("#"+object).css('display', 'none');
 }
 </script>
