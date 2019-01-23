@@ -14,6 +14,10 @@
     {
       $osinfo = parse_ini_file($_SERVER['DOCUMENT_ROOT'].'/system/core/osinfo.foc', false);
       $os_version = $osinfo['codename'].' '.$osinfo['subversion']."\n";
+      if(!isset($_SESSION)){
+        session_start();
+      }
+      $_SESSION['os_version'] = $osinfo['subversion'];
       ?>
 <!--
    ____                 __    ____  ____
