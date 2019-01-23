@@ -61,7 +61,7 @@ $GetApps = json_decode($GetApps, TRUE);
 </div>
 
 <style>
-.AppTile{
+.AppTile {
   display: grid;
   grid-template-columns: 37% 63%;
   padding: 10px;
@@ -77,27 +77,27 @@ $GetApps = json_decode($GetApps, TRUE);
   box-shadow: 0 1px 2px rgba(0,0,0,0.1);
 }
 
-.AppTile-icon{
+.AppTile-icon {
   background-size:cover;
   height:64px;
   width:64px;
 }
 
-.AppTile-name{
+.AppTile-name {
   word-break: break-word;
   color: #353535;
 }
 
-.AppTile-info span{
+.AppTile-info span {
   font-size: 10px;
   color: #353535;
 }
 
-.AppTile-rating-container{
+.AppTile-rating-container {
   text-align: left;
 }
 
-.AppTile-rating{
+.AppTile-rating {
   background: #ffc107;
   width: 5px;
   height: 5px;
@@ -106,11 +106,11 @@ $GetApps = json_decode($GetApps, TRUE);
   display: inline-block;
 }
 
-.AppTile-rating-null{
+.AppTile-rating-null {
   background: #9e9e9e;
 }
 
-.AppTile-full{
+.AppTile-full {
   display: none;
   min-width: 50%;
   max-width: 70%;
@@ -125,6 +125,12 @@ $GetApps = json_decode($GetApps, TRUE);
   box-shadow: 0 2px 8px 0 rgba(50,50,50, .08);
   padding: 10px;
   z-index: 1;
+}
+
+.AppTile-full .AppTitle-name {
+  color: #000;
+  padding: 10px 0px;
+  border-bottom: 1px solid #ccc;
 }
 
 .AppTile-close {
@@ -189,6 +195,11 @@ $GetApps = json_decode($GetApps, TRUE);
       echo '</div>';
       echo '<div class="AppTile-full" id="'.$AppHash.'">';
       echo '<div class="AppTile-close ui-forest-blink" onClick="closeInfo'.$AppID.'(\''.$AppHash.'\')"> x ';
+      echo '</div>';
+      echo '<div class="AppTile-icon" style="background-image: url(http://forestos.hobbytes.com/system/core/design/images/app.png); ">';
+    	echo '</div>';
+      echo '<div class="AppTile-name">';
+      echo $AppName;
       echo '</div>';
       echo $key['description'];
       echo '</div>';
