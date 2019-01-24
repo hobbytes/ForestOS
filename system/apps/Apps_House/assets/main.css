@@ -87,6 +87,8 @@
   word-break: break-word;
   overflow-y: auto;
   height: 150px;
+  white-space: pre-wrap;
+  margin-top: 10px;
 }
 
 .AppTile-button{

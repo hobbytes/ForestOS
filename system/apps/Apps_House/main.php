@@ -47,9 +47,12 @@ $DROOT = $_SERVER['DOCUMENT_ROOT'];
 $token = md5($FUID.$DROOT.$PWD);
 
 $GetApps = $HttpRequest->makeNewRequest($server_url.'GetApp.php', 'Forest OS', $data = array('login' => $_SESSION["loginuser"], 'token' => "$token"));
+$GetApps = json_decode($GetApps, TRUE);
+
 $MaxRating = $HttpRequest->makeNewRequest($server_url.'MaxRating.php', 'Forest OS', $data = array('login' => $_SESSION["loginuser"], 'token' => "$token"));
 
-$GetApps = json_decode($GetApps, TRUE);
+$GetUsersApp = $HttpRequest->makeNewRequest($server_url.'GetApp.php', 'Forest OS', $data = array('login' => $_SESSION["loginuser"], 'token' => "$token", 'search_field' => 'EditMode'));
+$GetUsersApp = json_decode($GetUsersApp, TRUE);
 ?>
 
 <link rel="stylesheet" type="text/css" href="<? echo $Folder.$FileAction->filehash("assets/main.css") ?>">
@@ -199,11 +202,60 @@ $GetApps = json_decode($GetApps, TRUE);
 </div>
 
 <div id="Control<? echo $AppID ?>" style="margin: 0 auto;">
-  <div style="padding: 10px;">
+  <div style="padding: 10px; border-bottom: 2px dashed #ccc;">
     <?
     echo '
     <div style="text-align:left; margin-bottom: 10px">
-    <b style="font-size:20px;">Публикация приложения</b>
+    <b style="font-size:20px;">Ваши приложения</b>
+    </div>
+    ';
+
+    echo '<select id="SelectApp'.$AppID.'" style="width:70%; font-size:15px; padding:10px; -webkit-appearance:none; border: 1px solid #ccc;">';
+
+    foreach ($GetUsersApp as $key => $value) {
+      echo '<option value="'.$value['hash'].'">'.str_replace('_', ' ', $value['name']).'</option>';
+    }
+
+    echo '</select>';
+
+    echo '<div id="SelectEditApp'.$AppID.'" onClick="SelectEditApp'.$AppID.'();" class="ui-forest-button ui-forest-accept" style="margin:10 0;"> Выбрать </div>';
+    ?>
+  </div>
+  <div style="padding: 10px; border-bottom: 2px dashed #ccc;">
+    <?
+
+    $AppEditMode = false;
+    if(isset($_GET['select_edit_app'])){
+      $AppEditMode = true;
+    }
+
+    if($AppEditMode){
+      $AppTabCaption = 'Обновить \ Изменить приложение';
+    }else{
+      $AppTabCaption = 'Публикация приложения';
+    }
+
+    if($AppEditMode){
+      $GetUserApp = $HttpRequest->makeNewRequest($server_url.'GetApp.php', 'Forest OS', $data = array('login' => $_SESSION["loginuser"], 'token' => "$token", 'search_field' => 'hash', 'search' => $_GET['select_edit_app']));
+      $GetUserApp = json_decode($GetUserApp, TRUE);
+
+      foreach ($GetUserApp as $key) {
+        $u_name = str_replace('_', ' ', $key['name']);
+        $u_sname = str_replace('_', ' ', $key['second_name']);
+        $u_version = $key['version'];
+        $u_osversion = $key['os_version'];
+        $u_description = $description = preg_replace('#%u([0-9A-F]{4})#se','iconv("UTF-16BE","UTF-8",pack("H4","$1"))', $key['description']);
+      }
+
+    }else{
+      $u_name = ''; $u_sname = ''; $u_version = '1.0'; $u_osversion = $_SESSION['os_version']; $u_description = '';
+    }
+
+
+
+    echo '
+    <div style="text-align:left; margin-bottom: 10px">
+    <b style="font-size:20px;">'.$AppTabCaption.'</b>
     </div>
     ';
 
@@ -213,12 +265,19 @@ $GetApps = json_decode($GetApps, TRUE);
       $second_name = strip_tags(str_replace(' ', '_', $_GET['second_name']));
       $version = strip_tags($_GET['version']);
       $os_version = strip_tags($_GET['os_version']);
-      $description = $_GET['description'];
+      $description = strip_tags($_GET['description']);
       $file_url = strip_tags($_GET['file_url']);
       $icon_url = strip_tags($_GET['icon_url']);
       $hash = md5($name.$_SESSION["loginuser"].$token);
+
+      if($_GET['update'] != 'true'){
+        $ServerFile = 'AddApp.php';
+      }else{
+        $ServerFile = 'UpdateApp.php';
+      }
+
       $GetStatusUpload = $HttpRequest->makeNewRequest(
-        $server_url.'AddApp.php',
+        $server_url.$ServerFile,
         'Forest OS',
         $data = array(
           'author' => $_SESSION["loginuser"],
@@ -239,29 +298,35 @@ $GetApps = json_decode($GetApps, TRUE);
     }
 
     echo '<div>Имя приложения(латиница):</div>';
-    $gui->inputslabel('', 'text', 'name'.$AppID, '','40', 'Имя приложения');
+    $gui->inputslabel('', 'text', 'name'.$AppID, $u_name,'70', 'Имя приложения');
 
     echo '<div>Имя приложения(кириллица):</div>';
-    $gui->inputslabel('', 'text', 'second_name'.$AppID, '','40', 'Имя приложения');
+    $gui->inputslabel('', 'text', 'second_name'.$AppID, $u_sname,'70', 'Имя приложения');
 
     echo '<div>Версия:</div>';
-    $gui->inputslabel('', 'text', 'version'.$AppID, '1.0','40', 'Версия');
+    $gui->inputslabel('', 'text', 'version'.$AppID, $u_version,'70', 'Версия');
 
     echo '<div>Версия ОС:</div>';
-    $gui->inputslabel('', 'text', 'os_version'.$AppID, $_SESSION['os_version'],'40', 'Версия ОС');
+    $gui->inputslabel('', 'text', 'os_version'.$AppID, $u_osversion,'70', 'Версия ОС');
 
     echo '<div>Описание:</div>';
     ?>
-    <textarea rows="10" id="description<? echo $AppID ?>" placeholder="Введите описание приложения" style="width: 40%; padding: 10px; margin: 10px 0; border: 1px solid #ccc;" name="description"></textarea>
+    <textarea rows="10" id="description<? echo $AppID ?>" placeholder="Введите описание приложения" style="width: 70%; padding: 10px; margin: 10px 0; border: 1px solid #ccc;" name="description"><? echo $u_description ?></textarea>
     <?
 
     echo '<div>Приложение (zip):</div>';
-    $gui->inputslabel('', 'url', 'file_url'.$AppID, '','40', 'Приложение (zip)');
+    $gui->inputslabel('', 'url', 'file_url'.$AppID, '','70', 'URL');
 
     echo '<div>Иконка (png):</div>';
-    $gui->inputslabel('', 'url', 'icon_url'.$AppID, '','40', 'Иконка (png)');
+    $gui->inputslabel('', 'url', 'icon_url'.$AppID, '','70', 'URL');
 
-    echo '<div id="PublishApp'.$AppID.'" onClick="PublishNewApp'.$AppID.'();" class="ui-forest-button ui-forest-accept" style="margin:10 0;"> Загрузить </div>';
+    if(!$AppEditMode){
+      echo '<div id="PublishApp'.$AppID.'" onClick="PublishNewApp'.$AppID.'();" class="ui-forest-button ui-forest-accept" style="margin:10 0;"> Загрузить </div>';
+    }else{
+      echo '<div id="UpdateApp'.$AppID.'" onClick="UpdateApp'.$AppID.'();" class="ui-forest-button ui-forest-accept" style="margin:10 0;"> Обновить </div>';
+      echo '<div id="DeleteApp'.$AppID.'" onClick="DeleteApp'.$AppID.'();" class="ui-forest-button ui-forest-cancel" style="margin:10 0;"> Удалить </div>';
+    }
+
     ?>
   </div>
 </div>
@@ -299,6 +364,37 @@ $AppContainer->Event(
     'description' => '"+escape($("#description'.$AppID.'").val())+"',
     'file_url' => '"+escape($("#file_url'.$AppID.'").val())+"',
     'icon_url' => '"+escape($("#icon_url'.$AppID.'").val())+"',
+    'activetab' => '"+$("#Tabs'.$AppID.'").tabs(\'option\',\'active\')+"'
+	)
+);
+
+// Update App!
+$AppContainer->Event(
+	"UpdateApp",
+  NULL,
+	$Folder,
+	'main',
+	array(
+    'name' => '"+escape($("#name'.$AppID.'").val())+"',
+    'second_name' => '"+escape($("#second_name'.$AppID.'").val())+"',
+    'version' => '"+escape($("#version'.$AppID.'").val())+"',
+    'os_version' => '"+escape($("#os_version'.$AppID.'").val())+"',
+    'description' => '"+escape($("#description'.$AppID.'").val())+"',
+    'file_url' => '"+escape($("#file_url'.$AppID.'").val())+"',
+    'icon_url' => '"+escape($("#icon_url'.$AppID.'").val())+"',
+    'update' => 'true',
+    'activetab' => '"+$("#Tabs'.$AppID.'").tabs(\'option\',\'active\')+"'
+	)
+);
+
+// Select App
+$AppContainer->Event(
+	"SelectEditApp",
+  NULL,
+	$Folder,
+	'main',
+	array(
+    'select_edit_app' => '"+escape($("#SelectApp'.$AppID.'").val())+"',
     'activetab' => '"+$("#Tabs'.$AppID.'").tabs(\'option\',\'active\')+"'
 	)
 );
