@@ -82,23 +82,18 @@ class  AppContainer {
 
     // find libraries
     if(!empty($this->LibraryArray)){
+      $LibRoot = $_SERVER['DOCUMENT_ROOT'].'/system/core/library';
+       // library file
+      $InstalledLibs = array();
       $array = $this->LibraryArray;
       $LostLibs = array(); // array for lost libs
       foreach ($array as $key) {
-        $key = $key.'.php'; // library file
-        $FirstFindPlace = $_SERVER['DOCUMENT_ROOT'].'/system/core/library/'.$key; // First find place
-        $SecondFindPlace = $_SERVER['DOCUMENT_ROOT'].'/system/core/library/etc/'.$key; // Second find place
-        $ThirdFindPlace = $_SERVER['DOCUMENT_ROOT'].'/system/core/library/Mercury/'.$key; // Third find place
-        if(is_file($FirstFindPlace)){ // if find then require this!
-          require $FirstFindPlace;
-        }
-        elseif(is_file($SecondFindPlace)){ // if find then require this!
-          require $SecondFindPlace;
-        }
-        elseif(is_file($ThirdFindPlace)){ // if find then require this!
-          require $ThirdFindPlace;
-        }else{
-          $LostLibs[] = $key;  // collect lost libs
+        foreach (glob($LibRoot . "{/*/,/}" . $key . ".php", GLOB_BRACE) as $filename) {
+          if(is_file($filename)){
+            require $filename;
+          }else{
+            $LostLibs[] = $key;  // collect lost libs
+          }
         }
       }
 
