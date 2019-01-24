@@ -7,7 +7,7 @@ $security->appprepare();
 $login = $_POST['login'];
 $body = $_POST['body'];
 if(isset($login) && isset($body)){
-  $bd->readglobal2("password","forestusers","login",$login);
+  $bd->readglobal2("password", "forestusers", "login", $login);
   $key  = $getdata;
   $body = $security->__encode($body, $key);
   $dir  = $_SERVER['DOCUMENT_ROOT'].'/system/users/'.$login.'/settings/notifications/';
@@ -15,7 +15,7 @@ if(isset($login) && isset($body)){
     mkdir($dir);
   }
   $file = 'MainNotificationFile.hdf';
-  file_put_contents($dir.$file,$body);
+  file_put_contents($dir.$file, $body);
   echo "true";
 }else{
   exit("false");

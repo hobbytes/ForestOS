@@ -630,22 +630,6 @@ function DisplaySettings(){
 ?>
 
 <script>
-//Save Notification Function
-function SaveNotification(){
-  var content = $("#notification-container").html();
-  $.ajax({
-    type: "POST",
-    url: "<?echo $folder.'functions/NotificationSaver'?>",
-    data: {
-       login:"<?echo $_SESSION['loginuser']?>",
-       body:content
-    },
-    success: function(datas){
-      //console.log(datas);
-    }
-  });
-}
-
 //Update desktop
 function UpdateDesktop(){
   $(".desktop").remove();
@@ -654,5 +638,4 @@ function UpdateDesktop(){
     SetSelectors();
   });
 }
-
 </script>

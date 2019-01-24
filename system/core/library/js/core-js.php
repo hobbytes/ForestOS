@@ -568,3 +568,19 @@ function UpdateWindow(id, name, mode = 1){
         i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
   }
+
+  //Save Notification Function
+  function SaveNotification(){
+    var content = $("#notification-container").html();
+    $.ajax({
+      type: "POST",
+      url: "<?echo $folder.'functions/NotificationSaver'?>",
+      data: {
+         login:"<?echo $_SESSION['loginuser']?>",
+         body:content
+      },
+      success: function(datas){
+        //console.log(datas);
+      }
+    });
+  }

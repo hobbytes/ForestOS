@@ -97,7 +97,7 @@ $GetApps = json_decode($GetApps, TRUE);
         }else{
           $pubname = $_GET['install_app_second_name'];
         }
-        
+
         $pubname = str_replace('_', ' ', $pubname);
 
         $LinkFile = $_SERVER['DOCUMENT_ROOT'].'/system/users/'.$_SESSION['loginuser'].'/desktop/'.$_GET['install_app_name'].'_'.uniqid().'.link';

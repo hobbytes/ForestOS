@@ -5,7 +5,6 @@ require $_SERVER['DOCUMENT_ROOT'].'/system/core/library/etc/security.php';
 $security	=	new security;
 $security->appprepare();
 
-
 ini_set('display_errors','On');
 error_reporting(E_ALL);
 
