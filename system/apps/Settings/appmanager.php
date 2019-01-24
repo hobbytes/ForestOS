@@ -15,7 +15,7 @@ require $_SERVER['DOCUMENT_ROOT'].'/system/core/library/Mercury/AppContainer.php
 $AppContainer = new AppContainer;
 $AppContainer->appName = $AppName;
 $AppContainer->appID = $AppID;
-$AppContainer->LibraryArray = array('filesystem', 'gui');
+$AppContainer->LibraryArray = array('filesystem', 'gui', 'http', 'bd');
 $AppContainer->StartContainer();
 
 $app_install = $_SERVER['DOCUMENT_ROOT'].'/system/core/appinstall.foc';
@@ -24,6 +24,8 @@ $app_install = $_SERVER['DOCUMENT_ROOT'].'/system/core/appinstall.foc';
 $gui = new gui;
 $fo = new filecalc;
 $fileaction = new fileaction;
+$HttpRequest = new http;
+$BD = new readbd;
 ?>
 <div style="text-align:left; padding-bottom:10px; font-size:30px; border-bottom:#d8d8d8 solid 2px; text-overflow:ellipsis; overflow:hidden;">
 <span onClick="back<?echo $AppID;?>();" class="ui-forest" style="background-color:#d8d8d8; color:#000; border-radius:30%; cursor:pointer; font-size:25px; margin-left:5px;"> &#9668; </span><?echo $language[$_SESSION['locale'].'_name']?></div>
@@ -46,6 +48,16 @@ if(!empty($app_link)){
 }
 
 if(!empty($app_delete) && !in_array($app_delete, $warn_apps)){
+  if(is_file("../$app_delete/app.hash")){
+    $GetHash = file_get_contents("../$app_delete/app.hash");
+    if(!empty($GetHash)){
+      $FUID = $BD->readglobal2("fuid", "forestusers", "login", $_SESSION["loginuser"], true);
+      $PWD = $BD->readglobal2("password", "forestusers", "login", $_SESSION["loginuser"], true);
+      $DROOT = $_SERVER['DOCUMENT_ROOT'];
+      $token = md5($FUID.$DROOT.$PWD);
+      $HttpRequest->makeNewRequest("http://forest.hobbytes.com/media/os/AppsHouse/StatApp.php", 'Forest OS', $data = array('login' => $_SESSION["loginuser"], 'token' => "$token", 'hash' => $GetHash, 'action' => 'delete'));
+    }
+  }
   $fileaction->deleteDir('../'.$app_delete);
   $gui->newnotification($AppName, $language[$_SESSION['locale'].'_name'], $language[$_SESSION['locale'].'_not_1'].': <b>'.$app_delete.'</b> '.$language[$_SESSION['locale'].'_not_2']);
   //update desktop

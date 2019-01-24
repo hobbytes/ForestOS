@@ -91,6 +91,7 @@ $GetApps = json_decode($GetApps, TRUE);
         $zip->extractTo('../');
         $zip->close();
         unlink($TempFile);
+        file_put_contents('../'.$_GET['install_app_name'].'/app.hash', $_GET['install_app_hash']);
 
         if($_SESSION['locale'] == 'en'){
           $pubname = $_GET['install_app_name'];
@@ -103,6 +104,7 @@ $GetApps = json_decode($GetApps, TRUE);
         $LinkFile = $_SERVER['DOCUMENT_ROOT'].'/system/users/'.$_SESSION['loginuser'].'/desktop/'.$_GET['install_app_name'].'_'.uniqid().'.link';
         $FileAction->makelink($LinkFile, $_SERVER['DOCUMENT_ROOT'].'/system/apps/'.$_GET['install_app_name'].'/', 'main', '', $app_link, $pubname, $pubname, 'system/apps/'.$_GET['install_app_name'].'/app.png');
         $gui->newnotification($AppName, 'Установка приложения', 'Приложение <b>'.$pubname.'</b> установлено');
+        $HttpRequest->makeNewRequest($server_url.'StatApp.php', 'Forest OS', $data = array('login' => $_SESSION["loginuser"], 'token' => "$token", 'hash' => $_GET['install_app_hash'], 'action' => 'install'));
       }
 
     }
