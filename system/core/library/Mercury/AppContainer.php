@@ -83,8 +83,6 @@ class  AppContainer {
     // find libraries
     if(!empty($this->LibraryArray)){
       $LibRoot = $_SERVER['DOCUMENT_ROOT'].'/system/core/library';
-       // library file
-      $InstalledLibs = array();
       $array = $this->LibraryArray;
       $LostLibs = array(); // array for lost libs
       foreach ($array as $key) {
