@@ -41,7 +41,7 @@ function size_check($path){
 
     class fileaction{
 
-      function rmdir_recursive($dir,$trashfolder) {
+      function rmdir_recursive($dir, $trashfolder) {
         $d_root = $_SERVER['DOCUMENT_ROOT'];
         if($dir != $d_root.'/' && $dir != $d_root && $dir != '../../..//' && $dir != $d_root.'/system' && $dir != $d_root.'/system/users'  && $dir != $d_root.'/system/core' && $dir != $d_root.'/system/apps'  && !preg_match('/os.php/',$dir) && !preg_match('/login.php/',$dir) && !preg_match('/makeprocess/',$dir)){
           if(empty($trashfolder)){
@@ -122,7 +122,7 @@ function size_check($path){
         closedir($dir);
       }
     }
-    function makelink($linkdestination,$appdest,$appfile,$key,$param,$appname,$linkname,$icon){
+    function makelink($linkdestination, $appdest, $appfile, $key, $param, $appname, $linkname, $icon){
       if($linkname != "null"){
           $content="[link]\ndestination=$appdest\nfile=$appfile\nkey=$key\nparam=$param\nname=$appname\nlinkname=$linkname\nicon=$icon";
           file_put_contents($linkdestination,$content);

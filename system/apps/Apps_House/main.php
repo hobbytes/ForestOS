@@ -50,120 +50,9 @@ $GetApps = $HttpRequest->makeNewRequest($server_url.'GetApp.php', 'Forest OS', $
 $MaxRating = $HttpRequest->makeNewRequest($server_url.'MaxRating.php', 'Forest OS', $data = array('login' => $_SESSION["loginuser"], 'token' => "$token"));
 
 $GetApps = json_decode($GetApps, TRUE);
-
 ?>
 
-<style>
-.AppTile {
-  display: grid;
-  grid-template-columns: 37% 63%;
-  padding: 10px;
-  margin: 10px;
-  width: 220px;
-  height: 100px;
-  float: left;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  cursor: default;
-  user-select: none;
-  background: #f3f3f3;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-}
-
-.AppTile-icon {
-  background-size:cover;
-  height:64px;
-  width:64px;
-}
-
-.AppTile-name {
-  word-break: break-word;
-  color: #353535;
-}
-
-.AppTile-info span {
-  font-size: 10px;
-  color: #353535;
-}
-
-.AppTile-rating-container {
-  text-align: left;
-}
-
-.AppTile-rating {
-  background: #ffc107;
-  width: 5px;
-  height: 5px;
-  margin: 0 2px;
-  border-radius: 100%;
-  display: inline-block;
-}
-
-.AppTile-rating-null {
-  background: #9e9e9e;
-}
-
-.AppTile-full {
-  display: none;
-  min-width: 50%;
-  max-width: 70%;
-  height: 300px;
-  background: #eee;
-  position: absolute;
-  margin: 0 auto;
-  left: 0;
-  right: 0;
-  top: 170px;
-  border: 1px solid rgba(182, 185, 187, 0.5);
-  box-shadow: 0 2px 8px 0 rgba(50,50,50, .08);
-  padding: 10px;
-  z-index: 1;
-}
-
-.AppTile-full .AppTile-name {
-  color: #000;
-  padding: 10px 0px;
-  border-bottom: 1px solid #ccc;
-  font-weight: 600;
-}
-
-.AppTile-close {
-  background: #ccc;
-  font-size: 20px;
-  width: 20px;
-  text-align: center;
-  float: right;
-  color: #5f5f5f;
-  cursor: default;
-}
-
-.AppTile-description {
-  padding: 10px;
-  color: #4a4a4a;
-  word-break: break-word;
-  overflow-y: auto;
-  height: 150px;
-}
-
-.AppTile-button{
-  float: right;
-  padding: 2px 5px;
-  margin: 0 5px;
-  font-weight: normal;
-  color: #fff;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.A-button-install {
-  background: #2196F3;
-}
-
-.A-button-install:hover {
-  background: #38a7ff;
-}
-
-</style>
+<link rel="stylesheet" type="text/css" href="<? echo $Folder.$FileAction->filehash("assets/main.css") ?>">
 
 <div id="Tabs<?echo $AppID?>">
   <ul>
@@ -176,6 +65,58 @@ $GetApps = json_decode($GetApps, TRUE);
   <div style="padding: 10px;">
     <?
 
+    /* install app */
+
+    if(isset($_GET['install_app_hash'])){
+      $AppDestination = "http://forest.hobbytes.com/media/os/AppsHouse/Apps/".$_GET['install_app_hash']."/app.zip";
+
+      if(!is_dir('./temp/')){
+        mkdir('./temp/');
+      }
+
+      $curlCh = curl_init();
+      curl_setopt($curlCh, CURLOPT_URL, $AppDestination);
+      curl_setopt($curlCh, CURLOPT_RETURNTRANSFER, 1);
+      curl_setopt($curlCh, CURLOPT_SSLVERSION,3);
+      $curlData = curl_exec($curlCh);
+      curl_close($curlCh);
+
+      $TempFile = './temp/'.$_GET['install_app_hash'].'.zip';
+      $file = fopen($TempFile, "w+");
+      fputs($file, $curlData);
+      fclose($file);
+
+      $zip = new ZipArchive;
+      if($zip->open($TempFile) === TRUE){
+        $zip->extractTo('../');
+        $zip->close();
+        unlink($TempFile);
+
+        if($_SESSION['locale'] == 'en'){
+          $pubname = $_GET['install_app_name'];
+        }else{
+          $pubname = $_GET['install_app_second_name'];
+        }
+        
+        $pubname = str_replace('_', ' ', $pubname);
+
+        $LinkFile = $_SERVER['DOCUMENT_ROOT'].'/system/users/'.$_SESSION['loginuser'].'/desktop/'.$_GET['install_app_name'].'_'.uniqid().'.link';
+        $FileAction->makelink($LinkFile, $_SERVER['DOCUMENT_ROOT'].'/system/apps/'.$_GET['install_app_name'].'/', 'main', '', $app_link, $pubname, $pubname, 'system/apps/'.$_GET['install_app_name'].'/app.png');
+        $gui->newnotification($AppName, 'Установка приложения', 'Приложение <b>'.$pubname.'</b> установлено');
+      }
+
+    }
+
+    /* create array with installed apps */
+
+    $InstalledApps = array();
+
+    foreach (glob("../*/main.php") as $filename) {
+      $filename = str_replace(array('..','/','main.php'), '', $filename);
+      $InstalledApps[] = $filename;
+    }
+
+    /* rating function */
     function getRating($rating, $MaxRating){
       $r = ($rating / $MaxRating) * 5;
       $r_int = intval($r);
@@ -193,6 +134,8 @@ $GetApps = json_decode($GetApps, TRUE);
       return $dots;
     }
 
+    /* show available apps */
+
     foreach ($GetApps as $key) {
 
       if($_SESSION["locale"]  ==  'en'){
@@ -201,13 +144,22 @@ $GetApps = json_decode($GetApps, TRUE);
       	$AppName = str_replace('_', ' ', $key['second_name']);
     	}
 
-      $AppHash = md5($AppName.$key['author'].$key['add_date']);
+      $AppHash = $key['hash'];
 
       $rating = 'Рейтинг: '.getRating($key['rating'], $MaxRating).' ('.$key['rating'].')';
       $AppIcon = $server_url.'Apps/'.$key['hash'].'/app.png';
       $FileCalc->format($key['size']*1024);
       $size = $format;
       $description = preg_replace('#%u([0-9A-F]{4})#se','iconv("UTF-16BE","UTF-8",pack("H4","$1"))', $key['description']);
+
+
+      if (in_array($key['name'], $InstalledApps)) {
+        $ButtonClass = "A-button-open";
+        $ButtonCaption = "Открыть";
+      }else{
+        $ButtonClass = "A-button-install";
+        $ButtonCaption = "Установить";
+      }
 
       echo '<div class="AppTile" onClick="showInfo'.$AppID.'(\''.$AppHash.'\')">';
       echo '<div class="AppTile-icon" style="background-image: url('.$AppIcon.'); ">';
@@ -231,8 +183,8 @@ $GetApps = json_decode($GetApps, TRUE);
     	echo '</div>';
       echo '<div class="AppTile-name">';
       echo $AppName . '<span style="color: #9a9494; font-weight: 300; font-size: 14px;"> by '. $key['author'] . ', version: '.$key['version'].'</span>';
-      echo '<div class="AppTile-button A-button-install">';
-      echo 'Установить';
+      echo '<div app="'.$key['name'].'" app_second="'.$key['second_name'].'" hash="'.$AppHash.'" class="AppTile-button '.$ButtonClass.'">';
+      echo $ButtonCaption;
       echo '</div>';
       echo '</div>';
       echo '<div class="AppTile-description">';
@@ -349,7 +301,30 @@ $AppContainer->Event(
 	)
 );
 
+// Install App!
+$AppContainer->Event(
+	"InstallApp",
+  "AppHash, AppName, SecondName",
+	$Folder,
+	"main",
+	array(
+    'install_app_hash' => '"+AppHash+"',
+    'install_app_name' => '"+AppName+"',
+    'install_app_second_name' => '"+SecondName+"'
+	)
+);
+
 ?>
+
+$('.A-button-open').click(function(){
+  makeprocess('system/apps/'+$(this).attr('app')+'/main.php', '', '', $(this).attr('app'));
+  closeInfo<?echo $AppID?>($(this).attr('hash'));
+});
+
+$('.A-button-install').click(function(){
+  InstallApp<?echo $AppID?>($(this).attr('hash'), $(this).attr('app'), $(this).attr('app_second'));
+  closeInfo<?echo $AppID?>($(this).attr('hash'));
+});
 
 $(function(){
   $("#Tabs<?echo $AppID?>").tabs();

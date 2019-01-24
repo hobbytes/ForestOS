@@ -28,7 +28,7 @@ $fileaction = new fileaction;
 <div style="text-align:left; padding-bottom:10px; font-size:30px; border-bottom:#d8d8d8 solid 2px; text-overflow:ellipsis; overflow:hidden;">
 <span onClick="back<?echo $AppID;?>();" class="ui-forest" style="background-color:#d8d8d8; color:#000; border-radius:30%; cursor:pointer; font-size:25px; margin-left:5px;"> &#9668; </span><?echo $language[$_SESSION['locale'].'_name']?></div>
 <?
-$warn_apps = array('Apps_House',  'installer',  'Explorer', 'update', 'Settings');
+$warn_apps = array('Apps_House', 'Explorer', 'update', 'Settings');
 
 $app_delete = $_GET['app_delete'];
 $app_link = $_GET['app_link'];
