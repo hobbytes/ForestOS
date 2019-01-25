@@ -46,13 +46,6 @@ $PWD = $BD->readglobal2("password", "forestusers", "login", $_SESSION["loginuser
 $DROOT = $_SERVER['DOCUMENT_ROOT'];
 $token = md5($FUID.$DROOT.$PWD);
 
-$GetApps = $HttpRequest->makeNewRequest($server_url.'GetApp.php', 'Forest OS', $data = array('login' => $_SESSION["loginuser"], 'token' => "$token"));
-$GetApps = json_decode($GetApps, TRUE);
-
-$MaxRating = $HttpRequest->makeNewRequest($server_url.'MaxRating.php', 'Forest OS', $data = array('login' => $_SESSION["loginuser"], 'token' => "$token"));
-
-$GetUsersApp = $HttpRequest->makeNewRequest($server_url.'GetApp.php', 'Forest OS', $data = array('login' => $_SESSION["loginuser"], 'token' => "$token", 'search_field' => 'EditMode'));
-$GetUsersApp = json_decode($GetUsersApp, TRUE);
 ?>
 
 <link rel="stylesheet" type="text/css" href="<? echo $Folder.$FileAction->filehash("assets/main.css") ?>">
@@ -65,7 +58,8 @@ $GetUsersApp = json_decode($GetUsersApp, TRUE);
   </ul>
 
 <div id="Apps<? echo $AppID ?>" style="margin: 0 auto; overflow: auto;">
-  <div style="padding: 10px;">
+  <div id="TabTitle">Приложения</div>
+  <div>
     <?
 
     /* install app */
@@ -75,6 +69,11 @@ $GetUsersApp = json_decode($GetUsersApp, TRUE);
 
       if(!is_dir('./temp/')){
         mkdir('./temp/');
+      }
+
+      $updateMode = false;
+      if($_GET['install_app_update_mode'] == 'true'){
+        $updateMode = true;
       }
 
       $curlCh = curl_init();
@@ -104,13 +103,30 @@ $GetUsersApp = json_decode($GetUsersApp, TRUE);
 
         $pubname = str_replace('_', ' ', $pubname);
 
-        $LinkFile = $_SERVER['DOCUMENT_ROOT'].'/system/users/'.$_SESSION['loginuser'].'/desktop/'.$_GET['install_app_name'].'_'.uniqid().'.link';
-        $FileAction->makelink($LinkFile, $_SERVER['DOCUMENT_ROOT'].'/system/apps/'.$_GET['install_app_name'].'/', 'main', '', $app_link, $pubname, $pubname, 'system/apps/'.$_GET['install_app_name'].'/app.png');
-        $gui->newnotification($AppName, 'Установка приложения', 'Приложение <b>'.$pubname.'</b> установлено');
-        $HttpRequest->makeNewRequest($server_url.'StatApp.php', 'Forest OS', $data = array('login' => $_SESSION["loginuser"], 'token' => "$token", 'hash' => $_GET['install_app_hash'], 'action' => 'install'));
+        if(!$updateMode){
+          $LinkFile = $_SERVER['DOCUMENT_ROOT'].'/system/users/'.$_SESSION['loginuser'].'/desktop/'.$_GET['install_app_name'].'_'.uniqid().'.link';
+          $FileAction->makelink($LinkFile, $_SERVER['DOCUMENT_ROOT'].'/system/apps/'.$_GET['install_app_name'].'/', 'main', '', $app_link, $pubname, $pubname, 'system/apps/'.$_GET['install_app_name'].'/app.png');
+          $HttpRequest->makeNewRequest($server_url.'StatApp.php', 'Forest OS', $data = array('login' => $_SESSION["loginuser"], 'token' => "$token", 'hash' => $_GET['install_app_hash'], 'action' => 'install'));
+
+          $InstallCaption_1 = 'Установка';
+          $InstallCaption_2 = 'установлено';
+        }else{
+          $InstallCaption_1 = 'Обновление';
+          $InstallCaption_2 = 'обновлено';
+        }
+
+        $gui->newnotification($AppName, $InstallCaption_1.' приложения', 'Приложение <b>'.$pubname.'</b> '.$InstallCaption_2);
+
       }
 
     }
+
+    /* make few requets */
+
+    $GetApps = $HttpRequest->makeNewRequest($server_url.'GetApp.php', 'Forest OS', $data = array('login' => $_SESSION["loginuser"], 'token' => "$token"));
+    $GetApps = json_decode($GetApps, TRUE);
+
+    $MaxRating = $HttpRequest->makeNewRequest($server_url.'MaxRating.php', 'Forest OS', $data = array('login' => $_SESSION["loginuser"], 'token' => "$token"));
 
     /* create array with installed apps */
 
@@ -187,11 +203,13 @@ $GetUsersApp = json_decode($GetUsersApp, TRUE);
       echo '<div class="AppTile-icon" style="background-image: url('.$AppIcon.'); ">';
     	echo '</div>';
       echo '<div class="AppTile-name">';
-      echo $AppName . '<span style="color: #9a9494; font-weight: 300; font-size: 14px;"> by '. $key['author'] . ', version: '.$key['version'].'</span>';
-      echo '<div app="'.$key['name'].'" app_second="'.$key['second_name'].'" hash="'.$AppHash.'" class="AppTile-button '.$ButtonClass.'">';
+      echo '<span class="AppTile-strong-name">'.$AppName.'</span><br>';
+      echo '<span style="font-size: 13px; color: #464646;">'.$AppName.' by '. $key['author'] . ', version: '.$key['version'].'</span>';
+      echo '<div update="false"  app="'.$key['name'].'" app_second="'.$key['second_name'].'" hash="'.$AppHash.'" class="AppTile-button '.$ButtonClass.'">';
       echo $ButtonCaption;
       echo '</div>';
       echo '</div>';
+      echo '<span style="font-size:13px; color:#464646; font-weight:600; padding-top: 5px;">Описание</span>';
       echo '<div class="AppTile-description">';
       echo $description;
       echo '</div>';
@@ -202,6 +220,7 @@ $GetUsersApp = json_decode($GetUsersApp, TRUE);
 </div>
 
 <div id="Control<? echo $AppID ?>" style="margin: 0 auto;">
+  <div id="TabTitle">Личный Кабинет</div>
   <div style="padding: 10px; border-bottom: 2px dashed #ccc;">
     <?
     echo '
@@ -210,15 +229,19 @@ $GetUsersApp = json_decode($GetUsersApp, TRUE);
     </div>
     ';
 
-    echo '<select id="SelectApp'.$AppID.'" style="width:70%; font-size:15px; padding:10px; -webkit-appearance:none; border: 1px solid #ccc;">';
+    $GetUsersApp = $HttpRequest->makeNewRequest($server_url.'GetApp.php', 'Forest OS', $data = array('login' => $_SESSION["loginuser"], 'token' => "$token", 'search_field' => 'EditMode'));
+    $GetUsersApp = json_decode($GetUsersApp, TRUE);
 
+    echo '<select id="SelectApp'.$AppID.'" style="width:70%; background: #fff; font-size:15px; padding:10px; -webkit-appearance:none; border: 1px solid #ccc;">';
+    $CountApps = 0;
     foreach ($GetUsersApp as $key => $value) {
       echo '<option value="'.$value['hash'].'">'.str_replace('_', ' ', $value['name']).'</option>';
+      $CountApps++;
     }
 
     echo '</select>';
-
     echo '<div id="SelectEditApp'.$AppID.'" onClick="SelectEditApp'.$AppID.'();" class="ui-forest-button ui-forest-accept" style="margin:10 0;"> Выбрать </div>';
+    echo '<div style="font-weight: 900;font-variant: all-petite-caps;font-size: 18px;">Всего: <b>'.$CountApps.'</b></div>';
     ?>
   </div>
   <div style="padding: 10px; border-bottom: 2px dashed #ccc;">
@@ -335,8 +358,61 @@ $GetUsersApp = json_decode($GetUsersApp, TRUE);
   </div>
 </div>
 
-<div id="Updates<? echo $AppID ?>" style="margin: 0 auto;">
-  <div style="padding: 10px;">
+<div id="Updates<? echo $AppID ?>" style="margin: 0 auto; overflow: auto;">
+  <div id="TabTitle">Обновления</div>
+  <div>
+    <?
+    $no_check_apps = array('Apps_House', 'Explorer', 'update', 'Settings');
+    foreach ($InstalledApps as $key){
+      if(!in_array($key, $no_check_apps)){
+        $info = file_get_contents('http://'.$_SERVER['HTTP_HOST'].'/system/apps/'.$key.'/main.php?getinfo=true&h='.md5(date('dmyhis')));
+  			$arrayInfo = json_decode($info);
+  	    $curversion	=	$arrayInfo->{'version'};;
+  			if(empty($curversion)){
+  				$curversion = '1.0';
+  			}
+
+        $newversion = $GetApps[$key]['version'];
+        $showEmpty = true;
+        if($newversion > $curversion){
+          $showEmpty = false;
+          $FileCalc->format($GetApps[$key]['size']*1024);
+          $size = $format;
+          $description = preg_replace('#%u([0-9A-F]{4})#se','iconv("UTF-16BE","UTF-8",pack("H4","$1"))', $GetApps[$key]['description']);
+
+          $AppIcon = $server_url.'Apps/'.$GetApps[$key]['hash'].'/app.png';
+          echo '<div style="border-bottom: 1px solid #ccc;">';
+          echo '<div class="AppTile">';
+          echo '<div class="AppTile-icon" style="background-image: url('.$AppIcon.'); ">';
+        	echo '</div>';
+          echo '<div class="AppTile-info">';
+          echo '<div class="AppTile-name">';
+          echo str_replace('_', ' ', $GetApps[$key]['name']);
+          echo '</div>';
+          echo '<span>';
+          echo 'Автор: '.$GetApps[$key]['author'].'<br>';
+          echo 'Версия: '.$GetApps[$key]['version'].'<br>';
+          echo 'Размер: '.$size.'<br>';
+          echo '</span>';
+          echo '<div style="padding: 25px 60px;">';
+          echo '<div update="true" app="'.$GetApps[$key]['name'].'" app_second="'.$GetApps[$key]['second_name'].'" hash="'.$GetApps[$key]['hash'].'" class="AppTile-button A-button-install">';
+          echo 'Обновить';
+          echo '</div>';
+          echo '</div>';
+          echo '</div>';
+          echo '</div>';
+          echo '<div class="AppTile-description">';
+          echo $description;
+          echo '</div>';
+          echo '</div>';
+        }
+        unset($newversion, $curversion);
+      }
+    }
+    if($showEmpty){
+      echo '<div style="padding: 10px; font-size: 17px; text-align: center; color: #3c3c3c;">Обновления отсутствуют</div>';
+    }
+    ?>
   </div>
 </div>
 
@@ -418,13 +494,15 @@ $AppContainer->Event(
 // Install App!
 $AppContainer->Event(
 	"InstallApp",
-  "AppHash, AppName, SecondName",
+  "AppHash, AppName, SecondName, UpdateMode",
 	$Folder,
 	"main",
 	array(
     'install_app_hash' => '"+AppHash+"',
     'install_app_name' => '"+AppName+"',
-    'install_app_second_name' => '"+SecondName+"'
+    'install_app_second_name' => '"+SecondName+"',
+    'install_app_update_mode' => '"+UpdateMode+"',
+    'activetab' => '"+$("#Tabs'.$AppID.'").tabs(\'option\',\'active\')+"'
 	)
 );
 
@@ -436,7 +514,7 @@ $('.A-button-open').click(function(){
 });
 
 $('.A-button-install').click(function(){
-  InstallApp<?echo $AppID?>($(this).attr('hash'), $(this).attr('app'), $(this).attr('app_second'));
+  InstallApp<?echo $AppID?>($(this).attr('hash'), $(this).attr('app'), $(this).attr('app_second'), $(this).attr('update'));
   closeInfo<?echo $AppID?>($(this).attr('hash'));
 });
 

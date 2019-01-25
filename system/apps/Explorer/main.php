@@ -255,7 +255,7 @@ if(!is_dir($dir)){
 
 $d = dir($dir);
 chdir($d->path);
-$warfile = array(".htaccess");
+$warfile = array(".htaccess", "app.hash");
 $pathmain = $d->path;
 
 $prefix = 'os';

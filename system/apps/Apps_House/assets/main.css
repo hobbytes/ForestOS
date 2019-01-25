@@ -1,3 +1,9 @@
+#TabTitle {
+  font-size: 30px;
+  font-weight: 900;
+  font-variant-caps: all-petite-caps;
+}
+
 .AppTile {
   display: grid;
   grid-template-columns: 37% 63%;
@@ -23,6 +29,13 @@
 .AppTile-name {
   word-break: break-word;
   color: #353535;
+}
+
+.AppTile-strong-name{
+  font-size: 15px;
+  font-weight: 900;
+  color: #363636;
+  text-transform: uppercase;
 }
 
 .AppTile-info span {
@@ -65,10 +78,8 @@
 }
 
 .AppTile-full .AppTile-name {
-  color: #000;
   padding: 10px 0px;
   border-bottom: 1px solid #ccc;
-  font-weight: 600;
 }
 
 .AppTile-close {
@@ -86,7 +97,7 @@
   color: #4a4a4a;
   word-break: break-word;
   overflow-y: auto;
-  height: 150px;
+  height: 135px;
   white-space: pre-wrap;
   margin-top: 10px;
 }
