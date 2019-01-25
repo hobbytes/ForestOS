@@ -251,13 +251,17 @@ $GetUsersApp = json_decode($GetUsersApp, TRUE);
       $u_name = ''; $u_sname = ''; $u_version = '1.0'; $u_osversion = $_SESSION['os_version']; $u_description = '';
     }
 
-
-
     echo '
     <div style="text-align:left; margin-bottom: 10px">
     <b style="font-size:20px;">'.$AppTabCaption.'</b>
     </div>
     ';
+
+    if(isset($_GET['delete_app'])){
+      $DeleteUserApp = $HttpRequest->makeNewRequest($server_url.'DeleteApp.php', 'Forest OS', $data = array('author' => $_SESSION["loginuser"], 'token' => "$token", 'hash' => $_GET['delete_app']));
+      $DeleteUserApp = json_decode($DeleteUserApp, TRUE);
+      //print_r($DeleteUserApp);
+    }
 
     if(isset($_GET['name'])){
 
@@ -324,7 +328,7 @@ $GetUsersApp = json_decode($GetUsersApp, TRUE);
       echo '<div id="PublishApp'.$AppID.'" onClick="PublishNewApp'.$AppID.'();" class="ui-forest-button ui-forest-accept" style="margin:10 0;"> Загрузить </div>';
     }else{
       echo '<div id="UpdateApp'.$AppID.'" onClick="UpdateApp'.$AppID.'();" class="ui-forest-button ui-forest-accept" style="margin:10 0;"> Обновить </div>';
-      echo '<div id="DeleteApp'.$AppID.'" onClick="DeleteApp'.$AppID.'();" class="ui-forest-button ui-forest-cancel" style="margin:10 0;"> Удалить </div>';
+      echo '<div id="DeleteApp'.$AppID.'" messageTitle="Удалить это приложение?" messageBody="Внимание! Это приложение будет удалено" okButton="Удалить" cancelButton="Отмена" onClick="ExecuteFunctionRequest'.$AppID.'(this, \'DeleteApp'.$AppID.'\')" class="ui-forest-button ui-forest-cancel" style="margin:10 0;"> Удалить </div>';
     }
 
     ?>
@@ -395,6 +399,18 @@ $AppContainer->Event(
 	'main',
 	array(
     'select_edit_app' => '"+escape($("#SelectApp'.$AppID.'").val())+"',
+    'activetab' => '"+$("#Tabs'.$AppID.'").tabs(\'option\',\'active\')+"'
+	)
+);
+
+// Delete App
+$AppContainer->Event(
+	"DeleteApp",
+  NULL,
+	$Folder,
+	'main',
+	array(
+    'delete_app' => $_GET['select_edit_app'],
     'activetab' => '"+$("#Tabs'.$AppID.'").tabs(\'option\',\'active\')+"'
 	)
 );

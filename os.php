@@ -42,7 +42,11 @@ $prepare->welcomescreen();
 $prepare->topbar();
 $infob->beacon();
 ?>
-
+<div id="proceses">
+  <?
+  $prepare->hibernation();
+  ?>
+</div>
 <div id="notifications" class="notificationhide" style="display:block; position:absolute; right: 0; height: 100%; padding: 10px; transition:all 0.2s ease; z-index:2;">
   <div id="notificationTopLabel" style="width:310px; color:#fff; font-size:20pt; text-align:center; user-select: none; cursor: default; display:none; padding: 10 0; background: rgba(160,160,160,0.9);">
     <div id="fulltime" style="font-size:20pt;">
@@ -79,11 +83,6 @@ var id = <?echo $_SESSION['appid'] = $_SESSION['appid'] + 1?>;
 require 'system/core/library/js/core-js.php';
 ?>
 </script>
-<div id="proceses">
-  <?
-  $prepare->hibernation();
-  ?>
-</div>
 </body>
 </html>
 <?
