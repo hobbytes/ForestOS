@@ -432,7 +432,7 @@ while (false !== ($entry = $d->read())) {
 			$path_parts = pathinfo($name);
 			$extension	=	$path_parts['extension'];
 			$type	=	$Folder.'assets/fileico.png?h='.$hashImage;
-			if($extension	==	'png'  || $extension	==	'jpg' || $extension	==	'jpeg' || $extension	==	'bmp' || $extension	==	'gif'){
+			if($extension	==	'png'  || $extension	==	'jpg' || $extension	==	'jpeg' || $extension	==	'svg' || $extension	==	'bmp' || $extension	==	'gif'){
 				$color = 'transparent';
 				$hashfileprefix	= $faction->filehash($entry,'false');
 				$type	=	$pathmain.'/'.$hashfileprefix;

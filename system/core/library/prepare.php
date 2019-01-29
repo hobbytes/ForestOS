@@ -214,7 +214,7 @@
       }
 
       if(!empty($getExt['extension'])){
-        if(!preg_match("/\.(jpg|jpeg|png|gif|bmp|webapp)$/i", $param) && $linkname != 'manifest.json'){ // print extenstion if !image
+        if(!preg_match("/\.(jpg|jpeg|png|gif|svg|bmp|webapp)$/i", $param) && $linkname != 'manifest.json'){ // print extenstion if !image
           $extension = '<div style="position:absolute; top:60px; left:0; right:0; cursor:default; color:#d05858; font-size:14px; font-weight:900;">'.$getExt['extension'].'</div>';
         }
       }
