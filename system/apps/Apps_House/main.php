@@ -362,18 +362,24 @@ $token = md5($FUID.$DROOT.$PWD);
   <div id="TabTitle">Обновления</div>
   <div>
     <?
+    $CheckUpdateJSON = file_get_contents($server_url.'/AppList.json?h='.md5(date('dmyhis')));
+    $CheckUpdateJSON = json_decode($CheckUpdateJSON, TRUE);
+
     $no_check_apps = array('Apps_House', 'Explorer', 'update', 'Settings');
+    $showEmpty = true;
+
     foreach ($InstalledApps as $key){
       if(!in_array($key, $no_check_apps)){
         $info = file_get_contents('http://'.$_SERVER['HTTP_HOST'].'/system/apps/'.$key.'/main.php?getinfo=true&h='.md5(date('dmyhis')));
   			$arrayInfo = json_decode($info);
-  	    $curversion	=	$arrayInfo->{'version'};;
+  	    $curversion	=	$arrayInfo->{'version'};
+
   			if(empty($curversion)){
   				$curversion = '1.0';
   			}
 
-        $newversion = $GetApps[$key]['version'];
-        $showEmpty = true;
+        $newversion = $CheckUpdateJSON[$key];
+
         if($newversion > $curversion){
           $showEmpty = false;
           $FileCalc->format($GetApps[$key]['size']*1024);
