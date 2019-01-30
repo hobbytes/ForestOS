@@ -385,14 +385,14 @@ $token = md5($FUID.$DROOT.$PWD);
         $OSDescription = 'Описание отсутствует';
       }
 
-      echo '<div style="color: #363636; border-radius: 5px; padding: 10px; border: 1px solid #ccc; background: #fff; margin: 10px;">';
-      echo '<div id="TabTitle" style="font-size: 23px; font-weight: 600; color: #fc4346;"> Обновление системы </div>';
+      echo '<div style="color: #ebece6; border-radius: 5px; padding: 20px; border: 1px solid #ccc; background: #2c2d3c; margin: 10px;">';
+      echo '<div id="TabTitle" style="font-size: 23px; font-weight: 600; color: #53e579;"> Обновление системы </div>';
       echo '<p style="text-align:left; background-image: url(http://forest.hobbytes.com/media/os/updates/uplogo.png); background-size:cover; height:80px; width:80px;"></p>';
       echo '<span style="font-size:17px;"><b>Forest OS</b> '.$OSUpdateURL['0']['codename'].'</span><br>';
-      echo '<span style="font-size:12px; font-weight:900; " >сборка: <span style="color:#363636; text-transform: uppercase;">'.$OSUpdateURL['0']['file'].'</span></span><br>';
+      echo '<span style="font-size:12px; font-weight:900; " >сборка: <span style="color:#ebece6; text-transform: uppercase;">'.$OSUpdateURL['0']['file'].'</span></span><br>';
       echo '<span style="font-size:12px; ">версия: '.$OSUpdateURL['0']['version'].'<br>версия сборки: '.$OSUpdateURL['0']['subversion'].'<br>размер: '.$format.'</span></span>';
-      echo '<br><br><b>Описание:</b><br><div style="font-size:15px; color:#464646; white-space:pre-wrap; padding: 4px 0px;">'.$OSDescription.'</div>';
-      echo '<div id="'.$OSUpdateURL['0']['file'].'" class="ui-forest-blink" t="app_h" onClick="update'.$AppID.'()" style="background-color:#962439; color:#fff; width:30%; margin: 10px auto 10px auto; font-size:15px; padding:10px; border-radius:5px; text-align:center;">Обновить</div>';
+      echo '<br><br><b>Описание:</b><br><div style="font-size:15px; color:#ebece6; white-space:pre-wrap; padding: 4px 0px;">'.$OSDescription.'</div>';
+      echo '<div id="'.$OSUpdateURL['0']['file'].'" class="ui-forest-blink" t="app_h" onClick="update'.$AppID.'()" style="background-color:#962439; color:#fff; width:30%; margin: 70px auto 10px auto; font-size:15px; padding:10px; border-radius:5px; text-align:center;">Обновить</div>';
       echo '</div>';
       echo '<div style="border-bottom: 1px solid #ccc; padding: 10px; margin-bottom: 36px;"></div>';
     }
