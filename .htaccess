@@ -7,6 +7,7 @@ Options All +ExecCGI -Indexes -Includes +FollowSymLinks
     ExpiresDefault "access plus 1 month"
     ExpiresByType image/jpeg "access plus 10 days"
     ExpiresByType image/png "access plus 10 days"
+    php_flag session.cookie_httponly On
 </IfModule>
 <IfModule mod_rewrite.c>
 RewriteEngine on
