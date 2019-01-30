@@ -2,6 +2,7 @@
   font-size: 30px;
   font-weight: 900;
   font-variant-caps: all-petite-caps;
+  user-select: none;
 }
 
 .AppTile {

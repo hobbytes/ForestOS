@@ -279,6 +279,8 @@
         });
         $( "#<?echo 'icon'.$id.'';?>" ).dblclick(function(){$("#<?echo 'app'.$id.'';?>").show('drop',500)})
         } );
+
+        $('.notificationclass').appendTo("#notification-container");
       </script>
       </div>
       <?
@@ -350,7 +352,7 @@ function hibernation(){
       session_start();
     }
 
-    if(!empty($content) && $_SESSION["safemode"]!='true'){
+    if(!empty($content) && $_SESSION["safemode"] != "true"){
       $_SESSION['appid']  = $content['last_app_id'];
       $key = $bd->readglobal2("password", "forestusers", "login", $login, true);
       echo $security->__decode($content['state'], $key);
@@ -358,14 +360,14 @@ function hibernation(){
       $object->newnotification("Hibernation",$language[$_SESSION['locale'].'_hibernation_name'],$language[$_SESSION['locale'].'_hibernation_notification']."  <b>".$content['time_stamp']."</b>");
       ?>
       <script>
-      var id = <? echo $content['last_app_id']; ?>;
+      var id = <? echo $content['last_app_id'] ?>;
       </script>
       <?
     }else{
       file_put_contents('system/users/'.$login.'/settings/state.hdf','');
     }
   }
-  unset($content,$security,$key,$getdata);
+  unset($content, $security, $key, $getdata);
 }
 
 /*---------topbar load---------*/
@@ -398,7 +400,7 @@ function topbar(){
   </div>
   <div id="aboutmenu" class="ui-widget-content menutheme" onmouseover="$('#aboutmenu').css('display','block')" onmouseout="$('#aboutmenu').css('display','none')" style="z-index:9999; user-select:none; display:none; text-align:justify; min-width:250px; max-width:350px; position:absolute; text-overflow:hidden; overflow:ellipsis;">
   <div class="ui-forest-menu-labels" style="text-transform:uppercase;" onclick="makeprocess('system/apps/Settings/users.php','<?echo $login;?>','selectuser','<?echo $settings_name?>'); hide_menu();">
-    <?echo str_replace('_',' ',$login);?>
+    <? echo str_replace('_',' ',$login) ?>
   </div>
   <div class="ui-forest-menu-labels" onclick="makeprocess('system/apps/Explorer/main.php','','','<?echo $explorer_name?>'); hide_menu();">
     <?echo $explorer_name?>
