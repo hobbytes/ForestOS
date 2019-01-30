@@ -38,6 +38,12 @@
         session_start();
       }
 
+      if($_SESSION["is_authuser"] === true && $_SESSION["CookieIsMine"] != md5($_SESSION["loginuser"].$_SERVER['HTTP_USER_AGENT'].$_SERVER['REMOTE_ADDR'].$_SERVER['HTTP_X_FORWARDED_FOR'])){
+        $_SESSION = array();
+        session_destroy();
+        header("Location: ?exit=0");
+      }
+
       $dir = $_SERVER['DOCUMENT_ROOT'].'/system/users/'.$_SESSION["loginuser"].'/settings/';
 
       //  # get superuser

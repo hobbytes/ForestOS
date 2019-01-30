@@ -48,6 +48,7 @@ class AuthClassUser {
           if ($login == $this->_login && $password == $this->_password) {
             $_SESSION["is_authuser"] = true;
             $_SESSION["loginuser"] = $login;
+            $_SESSION["CookieIsMine"] = md5($login.$_SERVER['HTTP_USER_AGENT'].$_SERVER['REMOTE_ADDR'].$_SERVER['HTTP_X_FORWARDED_FOR']);
 
             if(!empty($keyaccess)){
 
