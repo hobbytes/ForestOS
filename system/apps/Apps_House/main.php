@@ -46,6 +46,8 @@ $PWD = $BD->readglobal2("password", "forestusers", "login", $_SESSION["loginuser
 $DROOT = $_SERVER['DOCUMENT_ROOT'];
 $token = md5($FUID.$DROOT.$PWD);
 
+$OSInfo = parse_ini_file('../../core/osinfo.foc', false);
+$CurrentVersionOS = $OSInfo['subversion'];
 ?>
 
 <link rel="stylesheet" type="text/css" href="<? echo $Folder.$FileAction->filehash("assets/main.css") ?>">
@@ -205,8 +207,14 @@ $token = md5($FUID.$DROOT.$PWD);
       echo '<div class="AppTile-name">';
       echo '<span class="AppTile-strong-name">'.$AppName.'</span><br>';
       echo '<span style="font-size: 13px; color: #464646;">'.$AppName.' by '. $key['author'] . ', version: '.$key['version'].'</span>';
-      echo '<div update="false"  app="'.$key['name'].'" app_second="'.$key['second_name'].'" hash="'.$AppHash.'" class="AppTile-button '.$ButtonClass.'">';
-      echo $ButtonCaption;
+
+      if($CurrentVersionOS < $key['os_version']){
+        echo '<div class="AppTile-button A-button-open">';
+        echo 'Необходима более новая версия ОС';
+      }else{
+        echo '<div update="false"  app="'.$key['name'].'" app_second="'.$key['second_name'].'" hash="'.$AppHash.'" class="AppTile-button '.$ButtonClass.'">';
+        echo $ButtonCaption;
+      }
       echo '</div>';
       echo '</div>';
       echo '<span style="font-size:13px; color:#464646; font-weight:600; padding-top: 5px;">Описание</span>';
@@ -370,10 +378,8 @@ $token = md5($FUID.$DROOT.$PWD);
 
     $OSUpdateURL = file_get_contents("http://forest.hobbytes.com/media/os/update.php");
     $OSUpdateURL = json_decode($OSUpdateURL, true);
-    $OSInfo = parse_ini_file('../../core/osinfo.foc', false);
 
     $CondidateVersionOS = $OSUpdateURL['0']['subversion'];
-    $CurrentVersionOS = $OSInfo['subversion'];
 
     if($CondidateVersionOS > $CurrentVersionOS){
       $FileCalc->format($OSUpdateURL['0']['size']*1024);
@@ -431,8 +437,15 @@ $token = md5($FUID.$DROOT.$PWD);
           echo 'Размер: '.$size.'<br>';
           echo '</span>';
           echo '<div style="padding: 25px 60px;">';
-          echo '<div update="true" app="'.$GetApps[$key]['name'].'" app_second="'.$GetApps[$key]['second_name'].'" hash="'.$GetApps[$key]['hash'].'" class="AppTile-button A-button-install">';
-          echo 'Обновить';
+
+          if($CurrentVersionOS < $GetApps[$key]['os_version']){
+            echo '<div class="AppTile-button A-button-open" style="width: max-content;">';
+            echo 'Обновите ОС';
+          }else{
+            echo '<div update="true" app="'.$GetApps[$key]['name'].'" app_second="'.$GetApps[$key]['second_name'].'" hash="'.$GetApps[$key]['hash'].'" class="AppTile-button A-button-install">';
+            echo 'Обновить';
+          }
+
           echo '</div>';
           echo '</div>';
           echo '</div>';
