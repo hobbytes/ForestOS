@@ -146,7 +146,18 @@ class  AppContainer {
     }
   }
 
-/* Event function */
+  /* Get any requets */
+  public function GetAnyRequest($request){
+    if(isset($_GET[$request])){
+  		return $_GET[$request];
+  	}
+
+  	if(isset($_POST[$request])){
+  		return $_POST[$request];
+  	}
+  }
+
+  /* Event function */
   public function Event($FunctionName, $Argument = NULL, $Folder, $File, $RequestData = array(), $CustomFunction = NULL, $CustomFunctionMode = 1, $CustomContainer = NULL){
 
     /**

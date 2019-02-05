@@ -170,11 +170,13 @@ $CurrentVersionOS = $OSInfo['subversion'];
       $AppHash = $key['hash'];
 
       $rating = 'Рейтинг: '.getRating($key['rating'], $MaxRating).' ('.$key['rating'].')';
-      $AppIcon = $server_url.'Apps/'.$key['hash'].'/app.png';
+
+      $TempIconHash = md5($AppHash.$key['version']);
+      $AppIcon = $server_url.'Apps/'.$key['hash'].'/app.png?h='.$TempIconHash;
+
       $FileCalc->format($key['size']*1024);
       $size = $format;
       $description = preg_replace('#%u([0-9A-F]{4})#se','iconv("UTF-16BE","UTF-8",pack("H4","$1"))', $key['description']);
-
 
       if (in_array($key['name'], $InstalledApps)) {
         $ButtonClass = "A-button-open";
@@ -422,7 +424,8 @@ $CurrentVersionOS = $OSInfo['subversion'];
           $size = $format;
           $description = preg_replace('#%u([0-9A-F]{4})#se','iconv("UTF-16BE","UTF-8",pack("H4","$1"))', $GetApps[$key]['description']);
 
-          $AppIcon = $server_url.'Apps/'.$GetApps[$key]['hash'].'/app.png';
+          $TempIconHash = md5($GetApps[$key]['hash'].$GetApps[$key]['version']);
+          $AppIcon = $server_url.'Apps/'.$GetApps[$key]['hash'].'/app.png?h='.$TempIconHash;
           echo '<div style="border-bottom: 1px solid #ccc;">';
           echo '<div class="AppTile">';
           echo '<div class="AppTile-icon" style="background-image: url('.$AppIcon.'); ">';

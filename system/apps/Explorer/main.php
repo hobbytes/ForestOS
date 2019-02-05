@@ -12,7 +12,7 @@ $AppContainer = new AppContainer;
 /* App Info */
 $AppContainer->AppNameInfo = 'Explorer';
 $AppContainer->SecondNameInfo = 'Проводник';
-$AppContainer->VersionInfo = '1.0.8';
+$AppContainer->VersionInfo = '1.0.9';
 $AppContainer->AuthorInfo = 'Forest Media';
 
 /* Library List */
@@ -37,16 +37,12 @@ $hashImage = md5($AppContainer->VersionInfo);
 $ExplorerMode = NULL;
 $callback = NULL;
 
-if(isset($_GET['explorermode'])){
-	$ExplorerMode = $_GET['explorermode'];
-}
+$ExplorerMode = $AppContainer->GetAnyRequest('explorermode');
+$callback = $AppContainer->GetAnyRequest('callback');
+$ShowOnly = $AppContainer->GetAnyRequest('warfiles');
 
-if(isset($_POST['callback'])){
-	$callback = $_POST['callback'];
-}
-
-if(isset($_GET['callback'])){
-	$callback = $_GET['callback'];
+if(!empty($ShowOnly)){
+	$ShowOnly = explode(',', $ShowOnly);
 }
 
 //convert
@@ -55,21 +51,24 @@ function convert($string){
 	return $string;
 }
 
-$dir = convert($_GET['defaultloader']);
+
+
+$dir = convert($AppContainer->GetAnyRequest('defaultloader'));
+
 if(empty($dir)){
-	$dir = convert($_GET['dir']);
+	$dir = convert($AppContainer->GetAnyRequest('dir'));
 }
 
-$del = $_GET['del'];
-$deleteforever = $_GET['delf'];
-$link	=	$_GET['linkdir'];
-$linkname	=	$_GET['linkname'];
-$ico	=	$_GET['ico'];
-$isMobile	=	$_GET['mobile'];
-$Folder	=	$_GET['destination'];
-$erasestatus	=	$_GET['erasestatus'];
-$zipfile = $_GET['zipfile'];
-$zipFileUnpack = $_GET['zipfileunpack'];
+$del = $AppContainer->GetAnyRequest('del');
+$deleteforever = $AppContainer->GetAnyRequest('delf');
+$link	=	$AppContainer->GetAnyRequest('linkdir');
+$linkname	=	$AppContainer->GetAnyRequest('linkname');
+$ico	=	$AppContainer->GetAnyRequest('ico');
+$isMobile	=	$AppContainer->GetAnyRequest('mobile');
+$Folder	=	$AppContainer->GetAnyRequest('destination');
+$erasestatus	=	$AppContainer->GetAnyRequest('erasestatus');
+$zipfile = $AppContainer->GetAnyRequest('zipfile');
+$zipFileUnpack = $AppContainer->GetAnyRequest('zipfileunpack');
 
 //load lang
 $cl = $_SESSION['locale'];
@@ -255,7 +254,9 @@ if(!is_dir($dir)){
 
 $d = dir($dir);
 chdir($d->path);
+
 $warfile = array(".htaccess", "app.hash");
+
 $pathmain = $d->path;
 
 $prefix = 'os';
@@ -337,6 +338,7 @@ $pathmain = str_replace($_SERVER['DOCUMENT_ROOT'], '', $pathmain);
 	if($ExplorerMode == 'selector' && isset($callback)){
 		echo '<div id="selectbuttoncallback-'.$AppID.'" onclick="selectButtonCallback'.$AppID.'(\''.$callback.'\')" style="margin-top: 2px; display: none;" class="ui-forest-button ui-forest-accept">'.$explorer_lang['selectButtonFile'].'</div>';
 	}
+
 	?>
 </div>
 
@@ -378,6 +380,16 @@ $pathmain = str_replace($_SERVER['DOCUMENT_ROOT'], '', $pathmain);
 $countState = true;
 $objectArray = array();
 
+function isInArray($array, $search)
+{
+	foreach ($array as $value) {
+			if ($value == $search) {
+				return true;
+			}
+	}
+	return false;
+}
+
 while (false !== ($entry = $d->read())) {
 	$entry = iconv( "UTF8", "UTF8//TRANSLIT", $entry );
 
@@ -388,9 +400,15 @@ while (false !== ($entry = $d->read())) {
 		$entry = str_replace( ' ', '_', $entry );
 	}
 
+	if(!empty($ShowOnly)){
+		if(is_file($entry) && !isInArray($ShowOnly, pathinfo($entry, PATHINFO_EXTENSION)) ){
+			$entry = '';
+		}
+	}
+
 	$path	=	$d->path;
 	$name	=	convert( $entry );
-	if ($entry	!=	'..'){
+	if ($entry	!=	'..' && !empty($entry)){
 		$color	=	'transparent';
 		$extension	=	'';
 		$type	=	$Folder.'assets/folderico.png?h='.$hashImage;
@@ -407,6 +425,7 @@ while (false !== ($entry = $d->read())) {
 
 		$datecreate = $explorer_lang['date'].': '.date('d.m.y H:i:s', filectime(realpath($entry))).$format;
 	}
+
 	if(preg_match('/'.$_SESSION["loginuser"].'\/trash/',$pathmain)){
 		?>
 		<div id="erasetrash<?echo $AppID?>" onClick="erasetrash<?echo $AppID?>();" class="ui-forest-button ui-forest-cancel" style="margin:5px; padding:64px 10px; float:left; display:none; height:14px;">
@@ -417,10 +436,13 @@ while (false !== ($entry = $d->read())) {
 		</script>
 		<?
 	}
-	if(is_file(realpath($entry))){
+
+	//if(in_array(pathinfo($entry, PATHINFO_EXTENSION), $getWarFiles)){
+
+	if(is_file(realpath($entry)) && !empty($entry)){
 		$object	=	$dialogexplorer;
 		$color = 'rgba(0,0,0,0)';
-		if($name	==	'main.php'){
+		if($name == 'main.php'){
 			if(file_exists('app.png')){
 				$hashfileprefix	= $faction->filehash('app.png','false');
 				$type	=	$pathmain.'/'.$hashfileprefix;
@@ -461,7 +483,7 @@ while (false !== ($entry = $d->read())) {
 		$wardir	= str_replace('public_html/','',$wardir);
 	}
 
-	if ($entry != '.' && $entry != '..' && !in_array($entry, $warfile) && realpath($entry).'/'.$wardir != $_SERVER['DOCUMENT_ROOT']){
+	if (!empty($entry) && $entry != '.' && $entry != '..' && !in_array($entry, $warfile) && realpath($entry).'/'.$wardir != $_SERVER['DOCUMENT_ROOT']){
 		$select	=	'select'.$AppID.'(\''.md5($name).'\',\''.convert(realpath($entry)).'\',\''.$type.'\',\''.$name.'\');';
 		$load = 'load'.$AppID.'(this);';
 		$n_color	=	'#000';
@@ -519,6 +541,7 @@ foreach($objectArray as $type => $object){
 		}
 	}
 }
+
 
 //show files
 foreach($objectArray as $type => $object){
