@@ -354,12 +354,9 @@ $CurrentVersionOS = $OSInfo['subversion'];
     <?
 
     echo '<div>Приложение (zip):</div>';
-    //$gui->inputslabel('', 'url', 'file_url'.$AppID, '','70', 'URL');
-
     $AppGUI->SelectFile($AppID, "file_url", "70%", "zip" , 'Файл приложения (zip)', 'Выбрать файл');
 
     echo '<div>Иконка (png):</div>';
-    //$gui->inputslabel('', 'url', 'icon_url'.$AppID, '','70', 'URL');
     $AppGUI->SelectFile($AppID, "icon_url", "70%", "png" , 'URL', 'Выбрать файл');
 
     if(!$AppEditMode){
