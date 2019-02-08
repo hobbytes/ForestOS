@@ -337,7 +337,7 @@ $pathmain = str_replace($_SERVER['DOCUMENT_ROOT'], '', $pathmain);
 
 	//Selector Mode
 	if($ExplorerMode == 'selector' && isset($callback)){
-		echo '<div id="selectbuttoncallback-'.$AppID.'" onclick="selectButtonCallback'.$AppID.'(\''.$callback.'\')" style="margin-top: 2px; display: none;" class="ui-forest-button ui-forest-accept">'.$explorer_lang['selectButtonFile'].'</div>';
+		echo '<div id="selectbuttoncallback-'.$AppID.'" onclick="selectButtonCallback'.$AppID.'(\''.$callback.'\')" style="margin: 2px 0px -2px 0; display: none;" class="ui-forest-button ui-forest-accept">'.$explorer_lang['selectButtonFile'].'</div>';
 	}
 
 	?>

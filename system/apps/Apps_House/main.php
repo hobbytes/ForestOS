@@ -356,17 +356,17 @@ $CurrentVersionOS = $OSInfo['subversion'];
     echo '<div>Приложение (zip):</div>';
     //$gui->inputslabel('', 'url', 'file_url'.$AppID, '','70', 'URL');
 
-    $AppGUI->SelectFile($AppID, "file_url", "70%", "zip" , 'Файл приложения (zip)');
+    $AppGUI->SelectFile($AppID, "file_url", "70%", "zip" , 'Файл приложения (zip)', 'Выбрать файл');
 
     echo '<div>Иконка (png):</div>';
     //$gui->inputslabel('', 'url', 'icon_url'.$AppID, '','70', 'URL');
-    $AppGUI->SelectFile($AppID, "icon_url", "70%", "png" , 'URL');
+    $AppGUI->SelectFile($AppID, "icon_url", "70%", "png" , 'URL', 'Выбрать файл');
 
     if(!$AppEditMode){
-      echo '<div id="PublishApp'.$AppID.'" onClick="PublishNewApp'.$AppID.'();" class="ui-forest-button ui-forest-accept" style="margin:10 0;"> Загрузить </div>';
+      echo '<div id="PublishApp'.$AppID.'" onClick="PublishNewApp'.$AppID.'();" class="ui-forest-button ui-forest-accept" style="margin:30 auto;"> Загрузить </div>';
     }else{
-      echo '<div id="UpdateApp'.$AppID.'" onClick="UpdateApp'.$AppID.'();" class="ui-forest-button ui-forest-accept" style="margin:10 0;"> Обновить </div>';
-      echo '<div id="DeleteApp'.$AppID.'" messageTitle="Удалить это приложение?" messageBody="Внимание! Это приложение будет удалено" okButton="Удалить" cancelButton="Отмена" onClick="ExecuteFunctionRequest'.$AppID.'(this, \'DeleteApp'.$AppID.'\')" class="ui-forest-button ui-forest-cancel" style="margin:10 0;"> Удалить </div>';
+      echo '<div id="UpdateApp'.$AppID.'" onClick="UpdateApp'.$AppID.'();" class="ui-forest-button ui-forest-accept" style="margin:30 auto;"> Обновить </div>';
+      echo '<div id="DeleteApp'.$AppID.'" messageTitle="Удалить это приложение?" messageBody="Внимание! Это приложение будет удалено" okButton="Удалить" cancelButton="Отмена" onClick="ExecuteFunctionRequest'.$AppID.'(this, \'DeleteApp'.$AppID.'\')" class="ui-forest-button ui-forest-cancel" style="margin:30 auto;"> Удалить </div>';
     }
 
     ?>
