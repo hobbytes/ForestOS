@@ -39,9 +39,10 @@ $callback = NULL;
 
 $ExplorerMode = $AppContainer->GetAnyRequest('explorermode');
 $callback = $AppContainer->GetAnyRequest('callback');
-$ShowOnly = $AppContainer->GetAnyRequest('warfiles');
+$ShowOnly = $AppContainer->GetAnyRequest('showonly');
 
 if(!empty($ShowOnly)){
+	$_ShowOnly = $ShowOnly;
 	$ShowOnly = explode(',', $ShowOnly);
 }
 
@@ -437,8 +438,6 @@ while (false !== ($entry = $d->read())) {
 		<?
 	}
 
-	//if(in_array(pathinfo($entry, PATHINFO_EXTENSION), $getWarFiles)){
-
 	if(is_file(realpath($entry)) && !empty($entry)){
 		$object	=	$dialogexplorer;
 		$color = 'rgba(0,0,0,0)';
@@ -588,7 +587,8 @@ $AppContainer->EndContainer();
 			'dir' => '"+object+"',
 			'select' => $_GET['select'],
 			'explorermode' => $ExplorerMode,
-			'callback' => $callback
+			'callback' => $callback,
+			'showonly' => $_ShowOnly
 		),
 		'if(typeof object === \'string\' || object instanceof String){object = object;}else{object = object.id;} $("#app'.$AppID.'").unbind("keydown")',
 		0
@@ -607,7 +607,8 @@ $AppContainer->EndContainer();
 			'dir' => realpath($entry),
 			'select' => $_GET['select'],
 			'explorermode' => $ExplorerMode,
-			'callback' => $callback
+			'callback' => $callback,
+			'showonly' => $_ShowOnly
 		)
 	);
 
@@ -621,7 +622,8 @@ $AppContainer->EndContainer();
 			'where' => '"+object.id+"',
 			'select' => $_GET['select'],
 			'explorermode' => $ExplorerMode,
-			'callback' => $callback
+			'callback' => $callback,
+			'showonly' => $_ShowOnly
 		),
 		'$("#upload'.$AppID.'").css(\'display\', \'block\');',
 		1,
@@ -639,7 +641,8 @@ $AppContainer->EndContainer();
 			'dir' => realpath($entry),
 			'select' => $_GET['select'],
 			'explorermode' => $ExplorerMode,
-			'callback' => $callback
+			'callback' => $callback,
+			'showonly' => $_ShowOnly
 		)
 	);
 
@@ -654,7 +657,8 @@ $AppContainer->EndContainer();
 			'dir' => realpath($entry),
 			'select' => $_GET['select'],
 			'explorermode' => $ExplorerMode,
-			'callback' => $callback
+			'callback' => $callback,
+			'showonly' => $_ShowOnly
 		)
 	);
 
@@ -669,7 +673,8 @@ $AppContainer->EndContainer();
 			'dir' => realpath($entry),
 			'select' => $_GET['select'],
 			'explorermode' => $ExplorerMode,
-			'callback' => $callback
+			'callback' => $callback,
+			'showonly' => $_ShowOnly
 		)
 	);
 
@@ -684,7 +689,8 @@ $AppContainer->EndContainer();
 			'dir' => realpath($entry),
 			'select' => $_GET['select'],
 			'explorermode' => $ExplorerMode,
-			'callback' => $callback
+			'callback' => $callback,
+			'showonly' => $_ShowOnly
 		)
 	);
 
@@ -698,7 +704,8 @@ $AppContainer->EndContainer();
 			'dir' => realpath($entry),
 			'select' => $_GET['select'],
 			'explorermode' => $ExplorerMode,
-			'callback' => $callback
+			'callback' => $callback,
+			'showonly' => $_ShowOnly
 		)
 	);
 
@@ -712,7 +719,8 @@ $AppContainer->EndContainer();
 			'dir' => realpath($entry),
 			'select' => '"+state+"',
 			'explorermode' => $ExplorerMode,
-			'callback' => $callback
+			'callback' => $callback,
+			'showonly' => $_ShowOnly
 		)
 	);
 ?>
@@ -721,8 +729,14 @@ $AppContainer->EndContainer();
 function selectButtonCallback<?echo $AppID?>(name){
 	var get_file_callback = $(".loadthis<?echo $AppID?>").attr("id");
 	var get_name_callback = $(".mklink").attr("link");
-	$( "div["+name+"]" ).attr(name, get_file_callback);
-	$( "div["+name+"]" ).text(get_name_callback);
+	if ($("div["+name+"]").length){
+		$( "div["+name+"]" ).attr(name, get_file_callback);
+		$( "div["+name+"]" ).text(get_name_callback);
+	}else if ($("input["+name+"]").length) {
+		$( "input["+name+"]" ).attr(name, get_file_callback);
+		$( "input["+name+"]" ).val(get_file_callback);
+	}
+
 	$("#process<?echo $AppID?>").remove();
 }
 

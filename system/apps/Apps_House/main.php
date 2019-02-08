@@ -17,7 +17,7 @@ $AppContainer->VersionInfo = '1.1';
 $AppContainer->AuthorInfo = 'Forest Media';
 
 /* Library List */
-$AppContainer->LibraryArray = Array('filesystem', 'bd', 'http', 'gui');
+$AppContainer->LibraryArray = Array('AppGUI', 'filesystem', 'bd', 'http', 'gui');
 
 /* Container Info */
 $AppContainer->appName = $AppName;
@@ -25,6 +25,7 @@ $AppContainer->appID = $AppID;
 $AppContainer->height = '530px';
 $AppContainer->backgroundColor = '#e8e8e8';
 $AppContainer->customStyle = 'padding-top:0px; max-width:100%;';
+//$AppContainer->showError = true;
 $AppContainer->StartContainer();
 
 /* get data */
@@ -33,6 +34,7 @@ if(isset($_GET['activetab'])){
   $activeTab = $_GET['activetab'];
 }
 
+$AppGUI = new AppGUI;
 $FileCalc = new filecalc;
 $FileAction = new fileaction;
 $BD = new readbd;
@@ -352,10 +354,13 @@ $CurrentVersionOS = $OSInfo['subversion'];
     <?
 
     echo '<div>Приложение (zip):</div>';
-    $gui->inputslabel('', 'url', 'file_url'.$AppID, '','70', 'URL');
+    //$gui->inputslabel('', 'url', 'file_url'.$AppID, '','70', 'URL');
+
+    $AppGUI->SelectFile($AppID, "file_url", "70%", "zip" , 'Файл приложения (zip)');
 
     echo '<div>Иконка (png):</div>';
-    $gui->inputslabel('', 'url', 'icon_url'.$AppID, '','70', 'URL');
+    //$gui->inputslabel('', 'url', 'icon_url'.$AppID, '','70', 'URL');
+    $AppGUI->SelectFile($AppID, "icon_url", "70%", "png" , 'URL');
 
     if(!$AppEditMode){
       echo '<div id="PublishApp'.$AppID.'" onClick="PublishNewApp'.$AppID.'();" class="ui-forest-button ui-forest-accept" style="margin:10 0;"> Загрузить </div>';
@@ -481,6 +486,9 @@ $AppContainer->EndContainer()
 
 //Execute Function Request
 $AppContainer->ExecuteFunctionRequest();
+
+// Select file Callback
+$AppGUI->CallbackSelectFile($AppID);
 
 // Publish App!
 $AppContainer->Event(

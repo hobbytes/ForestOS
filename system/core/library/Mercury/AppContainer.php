@@ -2,7 +2,7 @@
 /**
  * Mercury library for Forest OS
  * ==============================
- * Version: 1.0
+ * Version: 1.1
  * Author: Vyacheslav Gorodilov
 **/
 
