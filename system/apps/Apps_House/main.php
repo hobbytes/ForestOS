@@ -333,7 +333,16 @@ $CurrentVersionOS = $OSInfo['subversion'];
       );
 
       $GetStatusUpload = json_decode($GetStatusUpload, TRUE);
-      print_r($GetStatusUpload);
+      if(!empty($GetStatusUpload)){
+        echo '<div style="padding: 10px;background: #e0645b;color: #6d2620;font-weight: 900;margin: 10px 0;border: 3px dashed;">';
+        echo 'Error:<br>';
+        echo '<ul>';
+        foreach ($GetStatusUpload as $key => $value) {
+          echo '<li>'.$value.'</li>';
+        }
+        echo '</ul>';
+        echo '</div>';
+      }
     }
 
     echo '<div>Имя приложения(латиница):</div>';

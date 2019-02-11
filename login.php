@@ -135,6 +135,10 @@ $( function() {
     }
   });
 });
+
+
+
+
 $("#labelos").click(function(){
   if($("#safemode").is( ":hidden" )){
   $("#safemode").slideDown("fast");
