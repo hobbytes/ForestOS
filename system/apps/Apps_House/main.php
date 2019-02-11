@@ -127,7 +127,10 @@ $CurrentVersionOS = $OSInfo['subversion'];
 
     /* make few requets */
 
-    $GetApps = $HttpRequest->makeNewRequest($server_url.'GetApp.php', 'Forest OS', $data = array('login' => $_SESSION["loginuser"], 'token' => "$token"));
+    $ScrollTo = $AppContainer->GetAnyRequest('ScrollTo', 0);
+    $GetPage = $AppContainer->GetAnyRequest('Page', 12);
+
+    $GetApps = $HttpRequest->makeNewRequest($server_url.'GetApp.php', 'Forest OS', $data = array('login' => $_SESSION["loginuser"], 'token' => "$token", 'page' => $GetPage));
     $GetApps = json_decode($GetApps, TRUE);
 
     $MaxRating = $HttpRequest->makeNewRequest($server_url.'MaxRating.php', 'Forest OS', $data = array('login' => $_SESSION["loginuser"], 'token' => "$token"));
@@ -161,17 +164,18 @@ $CurrentVersionOS = $OSInfo['subversion'];
 
     /* show available apps */
 
-    foreach ($GetApps as $key) {
+    foreach ($GetApps['Apps'] as $key) {
 
       if($_SESSION["locale"]  ==  'en'){
-      	$AppName = str_replace('_', ' ', $key['name']);
+      	$AppName_ = str_replace('_', ' ', $key['name']);
     	}else{
-      	$AppName = str_replace('_', ' ', $key['second_name']);
+      	$AppName_ = str_replace('_', ' ', $key['second_name']);
     	}
-
       $AppHash = $key['hash'];
 
-      $rating = 'Рейтинг: '.getRating($key['rating'], $MaxRating).' ('.$key['rating'].')';
+      //print_r($key);
+
+      $rating = 'Рейтинг: '.getRating($key['Apps']['rating'], $MaxRating).' ('.$key['rating'].')';
 
       $TempIconHash = md5($AppHash.$key['version']);
       $AppIcon = $server_url.'Apps/'.$key['hash'].'/app.png?h='.$TempIconHash;
@@ -193,7 +197,7 @@ $CurrentVersionOS = $OSInfo['subversion'];
     	echo '</div>';
       echo '<div class="AppTile-info">';
       echo '<div class="AppTile-name">';
-      echo $AppName;
+      echo $AppName_;
       echo '</div>';
       echo '<span>';
       echo 'Автор: '.$key['author'].'<br>';
@@ -209,8 +213,8 @@ $CurrentVersionOS = $OSInfo['subversion'];
       echo '<div class="AppTile-icon" style="background-image: url('.$AppIcon.'); ">';
     	echo '</div>';
       echo '<div class="AppTile-name">';
-      echo '<span class="AppTile-strong-name">'.$AppName.'</span><br>';
-      echo '<span style="font-size: 13px; color: #464646;">'.$AppName.' by '. $key['author'] . ', version: '.$key['version'].'</span>';
+      echo '<span class="AppTile-strong-name">'.$AppName_.'</span><br>';
+      echo '<span style="font-size: 13px; color: #464646;">'.$AppName_.' by '. $key['author'] . ', version: '.$key['version'].'</span>';
 
       if($CurrentVersionOS < $key['os_version']){
         echo '<div class="AppTile-button A-button-open">';
@@ -229,6 +233,18 @@ $CurrentVersionOS = $OSInfo['subversion'];
     }
     ?>
   </div>
+
+  <div style="font-size: 20px; width: 100%; text-align: center; float: none; display: inline-block; font-weight: 900;">
+  <?
+
+  $MoreApps = $GetPage + 5;
+  if($GetApps['Page']['All'] > $GetPage){
+    echo '<span style="padding: 0px 5px; cursor: default; background: #03A9F4; color: #fff; border-radius: 10px;" class="ui-forest-blink" onClick="LoadPage'.$AppID.'('.$MoreApps.');">Еще</span>';
+  }
+
+  ?>
+  </div>
+
 </div>
 
 <div id="Control<? echo $AppID ?>" style="margin: 0 auto;">
@@ -274,7 +290,7 @@ $CurrentVersionOS = $OSInfo['subversion'];
       $GetUserApp = $HttpRequest->makeNewRequest($server_url.'GetApp.php', 'Forest OS', $data = array('login' => $_SESSION["loginuser"], 'token' => "$token", 'search_field' => 'hash', 'search' => $_GET['select_edit_app']));
       $GetUserApp = json_decode($GetUserApp, TRUE);
 
-      foreach ($GetUserApp as $key) {
+      foreach ($GetUserApp['Apps'] as $key) {
         $u_name = str_replace('_', ' ', $key['name']);
         $u_sname = str_replace('_', ' ', $key['second_name']);
         $u_version = $key['version'];
@@ -306,7 +322,9 @@ $CurrentVersionOS = $OSInfo['subversion'];
       $os_version = strip_tags($_GET['os_version']);
       $description = strip_tags($_GET['description']);
       $file_url = strip_tags($_GET['file_url']);
+      $file_url = str_replace($_SERVER['DOCUMENT_ROOT'], 'http://'.$_SERVER['SERVER_NAME'], $file_url);
       $icon_url = strip_tags($_GET['icon_url']);
+      $icon_url = str_replace($_SERVER['DOCUMENT_ROOT'], 'http://'.$_SERVER['SERVER_NAME'], $icon_url);
       $hash = md5($name.$_SESSION["loginuser"].$token);
 
       if($_GET['update'] != 'true'){
@@ -366,7 +384,7 @@ $CurrentVersionOS = $OSInfo['subversion'];
     $AppGUI->SelectFile($AppID, "file_url", "70%", "zip" , 'Файл приложения (zip)', 'Выбрать файл');
 
     echo '<div>Иконка (png):</div>';
-    $AppGUI->SelectFile($AppID, "icon_url", "70%", "png" , 'URL', 'Выбрать файл');
+    $AppGUI->SelectFile($AppID, "icon_url", "70%", "png" , 'Файл иконки (png)', 'Выбрать файл');
 
     if(!$AppEditMode){
       echo '<div id="PublishApp'.$AppID.'" onClick="PublishNewApp'.$AppID.'();" class="ui-forest-button ui-forest-accept" style="margin:30 auto;"> Загрузить </div>';
@@ -428,35 +446,33 @@ $CurrentVersionOS = $OSInfo['subversion'];
   			}
 
         $newversion = $CheckUpdateJSON[$key];
-
-        if($newversion > $curversion){
+        if($newversion > $curversion && !empty($GetApps['Apps'][$key]['hash'])){
           $showEmpty = false;
-          $FileCalc->format($GetApps[$key]['size']*1024);
+          $FileCalc->format($GetApps['Apps'][$key]['size']*1024);
           $size = $format;
-          $description = preg_replace('#%u([0-9A-F]{4})#se','iconv("UTF-16BE","UTF-8",pack("H4","$1"))', $GetApps[$key]['description']);
-
-          $TempIconHash = md5($GetApps[$key]['hash'].$GetApps[$key]['version']);
-          $AppIcon = $server_url.'Apps/'.$GetApps[$key]['hash'].'/app.png?h='.$TempIconHash;
+          $description = preg_replace('#%u([0-9A-F]{4})#se','iconv("UTF-16BE","UTF-8",pack("H4","$1"))', $GetApps['Apps'][$key]['description']);
+          $TempIconHash = md5($GetApps['Apps'][$key]['hash'].$GetApps['Apps'][$key]['version']);
+          $AppIcon = $server_url.'Apps/'.$GetApps['Apps'][$key]['hash'].'/app.png?h='.$TempIconHash;
           echo '<div style="border-bottom: 1px solid #ccc;">';
           echo '<div class="AppTile">';
           echo '<div class="AppTile-icon" style="background-image: url('.$AppIcon.'); ">';
         	echo '</div>';
           echo '<div class="AppTile-info">';
           echo '<div class="AppTile-name">';
-          echo str_replace('_', ' ', $GetApps[$key]['name']);
+          echo str_replace('_', ' ', $GetApps['Apps'][$key]['name']);
           echo '</div>';
           echo '<span>';
-          echo 'Автор: '.$GetApps[$key]['author'].'<br>';
-          echo 'Версия: '.$GetApps[$key]['version'].'<br>';
+          echo 'Автор: '.$GetApps['Apps'][$key]['author'].'<br>';
+          echo 'Версия: '.$GetApps['Apps'][$key]['version'].'<br>';
           echo 'Размер: '.$size.'<br>';
           echo '</span>';
           echo '<div style="padding: 25px 60px;">';
 
-          if($CurrentVersionOS < $GetApps[$key]['os_version']){
+          if($CurrentVersionOS < $GetApps['Apps'][$key]['os_version']){
             echo '<div class="AppTile-button A-button-open" style="width: max-content;">';
             echo 'Обновите ОС';
           }else{
-            echo '<div update="true" app="'.$GetApps[$key]['name'].'" app_second="'.$GetApps[$key]['second_name'].'" hash="'.$GetApps[$key]['hash'].'" class="AppTile-button A-button-install">';
+            echo '<div update="true" app="'.$GetApps['Apps'][$key]['name'].'" app_second="'.$GetApps['Apps'][$key]['second_name'].'" hash="'.$GetApps['Apps'][$key]['hash'].'" class="AppTile-button A-button-install">';
             echo 'Обновить';
           }
 
@@ -514,6 +530,19 @@ $AppContainer->Event(
 	)
 );
 
+// LoadPage
+$AppContainer->Event(
+	"LoadPage",
+  'page',
+	$Folder,
+	'main',
+	array(
+    'Page' => '"+page+"',
+    'activetab' => '"+$("#Tabs'.$AppID.'").tabs(\'option\',\'active\')+"',
+    'ScrollTo' => '"+$("#'.$AppName.$AppID.'").scrollTop()+"'
+	)
+);
+
 // Update App!
 $AppContainer->Event(
 	"UpdateApp",
@@ -568,7 +597,8 @@ $AppContainer->Event(
     'install_app_name' => '"+AppName+"',
     'install_app_second_name' => '"+SecondName+"',
     'install_app_update_mode' => '"+UpdateMode+"',
-    'activetab' => '"+$("#Tabs'.$AppID.'").tabs(\'option\',\'active\')+"'
+    'activetab' => '"+$("#Tabs'.$AppID.'").tabs(\'option\',\'active\')+"',
+    'ScrollTo' => '"+$("#'.$AppName.$AppID.'").scrollTop()+"'
 	)
 );
 
@@ -607,4 +637,7 @@ function closeInfo<?echo $AppID?>(object){
 function update<?echo $AppID?>(){
   makeprocess('system/apps/update/main.php','','','Update');
 }
+
+//ScrollWindow
+$('#<?echo $AppName.$AppID?>').scrollTop(<?echo $ScrollTo?>);
 </script>

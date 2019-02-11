@@ -147,14 +147,22 @@ class  AppContainer {
   }
 
   /* Get any requets */
-  public function GetAnyRequest($request){
-    if(isset($_GET[$request])){
-  		return $_GET[$request];
-  	}
+  public function GetAnyRequest($request, $default = NULL){
 
-  	if(isset($_POST[$request])){
+    if(isset($_GET[$request])){
+
+  		return $_GET[$request];
+
+  	}elseif (isset($_POST[$request])){
+
   		return $_POST[$request];
-  	}
+
+  	}else{
+
+      return $default;
+
+    }
+
   }
 
   /* Event function */

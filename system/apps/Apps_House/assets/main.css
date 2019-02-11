@@ -62,12 +62,12 @@
 }
 
 .AppTile-full {
+  position: fixed;
   display: none;
   min-width: 50%;
   max-width: 70%;
   height: 300px;
   background: #eee;
-  position: absolute;
   margin: 0 auto;
   left: 0;
   right: 0;
