@@ -134,7 +134,6 @@ $CurrentVersionOS = $OSInfo['subversion'];
     $GetApps = json_decode($GetApps, TRUE);
 
     $MaxRating = $HttpRequest->makeNewRequest($server_url.'MaxRating.php', 'Forest OS', $data = array('login' => $_SESSION["loginuser"], 'token' => "$token"));
-
     /* create array with installed apps */
 
     $InstalledApps = array();
@@ -175,7 +174,7 @@ $CurrentVersionOS = $OSInfo['subversion'];
 
       //print_r($key);
 
-      $rating = 'Рейтинг: '.getRating($key['Apps']['rating'], $MaxRating).' ('.$key['rating'].')';
+      $rating = 'Рейтинг: '.getRating($key['rating'], $MaxRating).' ('.$key['rating'].')';
 
       $TempIconHash = md5($AppHash.$key['version']);
       $AppIcon = $server_url.'Apps/'.$key['hash'].'/app.png?h='.$TempIconHash;
@@ -401,8 +400,6 @@ $CurrentVersionOS = $OSInfo['subversion'];
   <div id="TabTitle">Обновления</div>
   <div>
     <?
-    $CheckUpdateJSON = file_get_contents($server_url.'/AppList.json?h='.md5(date('dmyhis')));
-    $CheckUpdateJSON = json_decode($CheckUpdateJSON, TRUE);
 
     $no_check_apps = array('Apps_House', 'Explorer', 'update', 'Settings');
     $showEmpty = true;
@@ -435,8 +432,22 @@ $CurrentVersionOS = $OSInfo['subversion'];
     }
 
 
+    $ComparisonApps = array();
     foreach ($InstalledApps as $key){
       if(!in_array($key, $no_check_apps)){
+        $hash = file_get_contents('http://'.$_SERVER['HTTP_HOST'].'/system/apps/'.$key.'/app.hash');
+
+        if(!empty($hash)){
+          $ComparisonApps[] = $hash;
+        }
+      }
+    }
+
+    $GetComApps = $HttpRequest->makeNewRequest($server_url.'Comparison.php', 'Forest OS', $data = array('login' => $_SESSION["loginuser"], 'token' => "$token", 'data' => json_encode($ComparisonApps)));
+    $GetComApps = json_decode($GetComApps, TRUE);
+
+    foreach ($InstalledApps as $key){
+      if(!in_array($key, $no_check_apps) && !empty($GetComApps[$key]['name'])){
         $info = file_get_contents('http://'.$_SERVER['HTTP_HOST'].'/system/apps/'.$key.'/main.php?getinfo=true&h='.md5(date('dmyhis')));
   			$arrayInfo = json_decode($info);
   	    $curversion	=	$arrayInfo->{'version'};
@@ -445,34 +456,36 @@ $CurrentVersionOS = $OSInfo['subversion'];
   				$curversion = '1.0';
   			}
 
-        $newversion = $CheckUpdateJSON[$key];
-        if($newversion > $curversion && !empty($GetApps['Apps'][$key]['hash'])){
+        $newversion = $GetComApps[$key]['version'];
+
+        if($newversion > $curversion && !empty($GetComApps[$key]['hash'])){
+
           $showEmpty = false;
-          $FileCalc->format($GetApps['Apps'][$key]['size']*1024);
+          $FileCalc->format($GetComApps[$key]['size']*1024);
           $size = $format;
-          $description = preg_replace('#%u([0-9A-F]{4})#se','iconv("UTF-16BE","UTF-8",pack("H4","$1"))', $GetApps['Apps'][$key]['description']);
-          $TempIconHash = md5($GetApps['Apps'][$key]['hash'].$GetApps['Apps'][$key]['version']);
-          $AppIcon = $server_url.'Apps/'.$GetApps['Apps'][$key]['hash'].'/app.png?h='.$TempIconHash;
+          $description = preg_replace('#%u([0-9A-F]{4})#se','iconv("UTF-16BE","UTF-8",pack("H4","$1"))', $GetComApps[$key]['description']);
+          $TempIconHash = md5($GetComApps[$key]['hash'].$GetComApps[$key]['version']);
+          $AppIcon = $server_url.'Apps/'.$GetComApps[$key]['hash'].'/app.png?h='.$TempIconHash;
           echo '<div style="border-bottom: 1px solid #ccc;">';
           echo '<div class="AppTile">';
           echo '<div class="AppTile-icon" style="background-image: url('.$AppIcon.'); ">';
         	echo '</div>';
           echo '<div class="AppTile-info">';
           echo '<div class="AppTile-name">';
-          echo str_replace('_', ' ', $GetApps['Apps'][$key]['name']);
+          echo str_replace('_', ' ', $GetComApps[$key]['name']);
           echo '</div>';
           echo '<span>';
-          echo 'Автор: '.$GetApps['Apps'][$key]['author'].'<br>';
-          echo 'Версия: '.$GetApps['Apps'][$key]['version'].'<br>';
+          echo 'Автор: '.$GetComApps[$key]['author'].'<br>';
+          echo 'Версия: '.$GetComApps[$key]['version'].'<br>';
           echo 'Размер: '.$size.'<br>';
           echo '</span>';
           echo '<div style="padding: 25px 60px;">';
 
-          if($CurrentVersionOS < $GetApps['Apps'][$key]['os_version']){
+          if($CurrentVersionOS < $GetComApps[$key]['os_version']){
             echo '<div class="AppTile-button A-button-open" style="width: max-content;">';
             echo 'Обновите ОС';
           }else{
-            echo '<div update="true" app="'.$GetApps['Apps'][$key]['name'].'" app_second="'.$GetApps['Apps'][$key]['second_name'].'" hash="'.$GetApps['Apps'][$key]['hash'].'" class="AppTile-button A-button-install">';
+            echo '<div update="true" app="'.$GetComApps[$key]['name'].'" app_second="'.$GetComApps[$key]['second_name'].'" hash="'.$GetComApps[$key]['hash'].'" class="AppTile-button A-button-install">';
             echo 'Обновить';
           }
 
@@ -488,6 +501,7 @@ $CurrentVersionOS = $OSInfo['subversion'];
         unset($newversion, $curversion);
       }
     }
+
     if($showEmpty){
       echo '<div style="padding: 10px; font-size: 17px; text-align: center; color: #3c3c3c;">Обновления отсутствуют</div>';
     }
