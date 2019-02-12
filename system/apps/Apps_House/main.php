@@ -425,6 +425,8 @@ if(!empty($AppSearch)){
   <div>
     <?
 
+    $UpdatesCount = 0;
+
     $no_check_apps = array('Apps_House', 'Explorer', 'update', 'Settings');
     $showEmpty = true;
 
@@ -434,6 +436,7 @@ if(!empty($AppSearch)){
     $CondidateVersionOS = $OSUpdateURL['0']['subversion'];
 
     if($CondidateVersionOS > $CurrentVersionOS){
+      $UpdatesCount++;
       $FileCalc->format($OSUpdateURL['0']['size']*1024);
       $showEmpty = false;
 
@@ -483,7 +486,7 @@ if(!empty($AppSearch)){
         $newversion = $GetComApps[$key]['version'];
 
         if($newversion > $curversion && !empty($GetComApps[$key]['hash'])){
-
+          $UpdatesCount++;
           $showEmpty = false;
           $FileCalc->format($GetComApps[$key]['size']*1024);
           $size = $format;
@@ -688,6 +691,15 @@ function closeInfo<?echo $AppID?>(object){
 function update<?echo $AppID?>(){
   makeprocess('system/apps/update/main.php','','','Update');
 }
+
+function CheckUpdateLabel<?echo $AppID?>(){
+   count = <? echo $UpdatesCount ?>;
+  if(count > 0){
+    $( "a[href='#Updates<?echo $AppID?>" ).html($( "a[href='#Updates<?echo $AppID?>" ).html() +" <span class='AppHouseUpdateCount'>+" + count + "</span>");
+  }
+}
+
+CheckUpdateLabel<?echo $AppID?>();
 
 //ScrollWindow
 $('#<?echo $AppName.$AppID?>').scrollTop(<?echo $ScrollTo?>);

@@ -98,6 +98,7 @@
   color: #4a4a4a;
   word-break: break-word;
   overflow-y: auto;
+  overflow-x: hidden;
   height: 135px;
   white-space: pre-wrap;
   margin-top: 10px;
@@ -127,4 +128,13 @@
 
 .A-button-open:hover {
   background: #8c8c8c;
+}
+
+.AppHouseUpdateCount{
+  padding: 5px 7px 5px 4px;
+  background: #03A9F4;
+  color: #fff;
+  border-radius: 13px;
+  font-size: 12px;
+  font-weight: 600;
 }
