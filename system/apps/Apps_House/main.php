@@ -50,6 +50,18 @@ $token = md5($FUID.$DROOT.$PWD);
 
 $OSInfo = parse_ini_file('../../core/osinfo.foc', false);
 $CurrentVersionOS = $OSInfo['subversion'];
+
+function UTFTransform($text){
+  return preg_replace('#%u([0-9A-F]{4})#se','iconv("UTF-16BE","UTF-8",pack("H4","$1"))', $text);
+}
+
+$AppSearch = $AppContainer->GetAnyRequest('AppSearch');
+
+if(!empty($AppSearch)){
+  $_AppSearch = UTFTransform($AppSearch);
+}
+
+
 ?>
 
 <link rel="stylesheet" type="text/css" href="<? echo $Folder.$FileAction->filehash("assets/main.css") ?>">
@@ -63,7 +75,13 @@ $CurrentVersionOS = $OSInfo['subversion'];
 
 <div id="Apps<? echo $AppID ?>" style="margin: 0 auto; overflow: auto;">
   <div id="TabTitle">Приложения</div>
-  <div>
+
+  <div style="text-align: center; border-bottom: 1px solid #d4d4d4;">
+    <input style="-webkit-appearance: none; padding: 5px; border: 1px solid #ccc; border-radius: 6px; width: 270px; margin-bottom: 20px;" id="AppSearch<? echo $AppID ?>" type="search" value="<? echo $_AppSearch ?>" placeholder="Поиск">
+    <div class="ui-forest-blink" onClick="AppSearch<? echo $AppID ?>()" style="display: inline-block; background: #2196F3; color: #fff; padding: 5px; border-radius: 6px; cursor: default;">Найти</div>
+  </div>
+
+  <div style="margin-top: 15px">
     <?
 
     /* install app */
@@ -110,7 +128,10 @@ $CurrentVersionOS = $OSInfo['subversion'];
         if(!$updateMode){
           $LinkFile = $_SERVER['DOCUMENT_ROOT'].'/system/users/'.$_SESSION['loginuser'].'/desktop/'.$_GET['install_app_name'].'_'.uniqid().'.link';
           $FileAction->makelink($LinkFile, $_SERVER['DOCUMENT_ROOT'].'/system/apps/'.$_GET['install_app_name'].'/', 'main', '', $app_link, $pubname, $pubname, 'system/apps/'.$_GET['install_app_name'].'/app.png');
-          $HttpRequest->makeNewRequest($server_url.'StatApp.php', 'Forest OS', $data = array('login' => $_SESSION["loginuser"], 'token' => "$token", 'hash' => $_GET['install_app_hash'], 'action' => 'install'));
+
+          if(is_file('../'.$_GET['install_app_name'].'/app.hash')){
+            $HttpRequest->makeNewRequest($server_url.'StatApp.php', 'Forest OS', $data = array('login' => $_SESSION["loginuser"], 'token' => "$token", 'hash' => $_GET['install_app_hash'], 'action' => 'install'));
+          }
 
           $InstallCaption_1 = 'Установка';
           $InstallCaption_2 = 'установлено';
@@ -122,7 +143,19 @@ $CurrentVersionOS = $OSInfo['subversion'];
         $gui->newnotification($AppName, $InstallCaption_1.' приложения', 'Приложение <b>'.$pubname.'</b> '.$InstallCaption_2);
 
       }
+    }
 
+    function showError($data){
+      if(!empty($data)){
+        echo '<div style="padding: 10px;background: #e0645b;color: #6d2620;font-weight: 900;margin: 10px 0;border: 3px dashed;">';
+        echo 'Error:<br>';
+        echo '<ul>';
+        foreach ($data as $key => $value) {
+          echo '<li>'.$value.'</li>';
+        }
+        echo '</ul>';
+        echo '</div>';
+      }
     }
 
     /* make few requets */
@@ -130,7 +163,7 @@ $CurrentVersionOS = $OSInfo['subversion'];
     $ScrollTo = $AppContainer->GetAnyRequest('ScrollTo', 0);
     $GetPage = $AppContainer->GetAnyRequest('Page', 12);
 
-    $GetApps = $HttpRequest->makeNewRequest($server_url.'GetApp.php', 'Forest OS', $data = array('login' => $_SESSION["loginuser"], 'token' => "$token", 'page' => $GetPage));
+    $GetApps = $HttpRequest->makeNewRequest($server_url.'GetApp.php', 'Forest OS', $data = array('login' => $_SESSION["loginuser"], 'token' => "$token", 'page' => $GetPage, 'search' => $AppSearch));
     $GetApps = json_decode($GetApps, TRUE);
 
     $MaxRating = $HttpRequest->makeNewRequest($server_url.'MaxRating.php', 'Forest OS', $data = array('login' => $_SESSION["loginuser"], 'token' => "$token"));
@@ -181,7 +214,7 @@ $CurrentVersionOS = $OSInfo['subversion'];
 
       $FileCalc->format($key['size']*1024);
       $size = $format;
-      $description = preg_replace('#%u([0-9A-F]{4})#se','iconv("UTF-16BE","UTF-8",pack("H4","$1"))', $key['description']);
+      $description = UTFTransform($key['description']);
 
       if (in_array($key['name'], $InstalledApps)) {
         $ButtonClass = "A-button-open";
@@ -294,7 +327,7 @@ $CurrentVersionOS = $OSInfo['subversion'];
         $u_sname = str_replace('_', ' ', $key['second_name']);
         $u_version = $key['version'];
         $u_osversion = $key['os_version'];
-        $u_description = $description = preg_replace('#%u([0-9A-F]{4})#se','iconv("UTF-16BE","UTF-8",pack("H4","$1"))', $key['description']);
+        $u_description = UTFTransform($key['description']);
       }
 
     }else{
@@ -310,7 +343,7 @@ $CurrentVersionOS = $OSInfo['subversion'];
     if(isset($_GET['delete_app'])){
       $DeleteUserApp = $HttpRequest->makeNewRequest($server_url.'DeleteApp.php', 'Forest OS', $data = array('author' => $_SESSION["loginuser"], 'token' => "$token", 'hash' => $_GET['delete_app']));
       $DeleteUserApp = json_decode($DeleteUserApp, TRUE);
-      //print_r($DeleteUserApp);
+      showError($DeleteUserApp);
     }
 
     if(isset($_GET['name'])){
@@ -350,16 +383,7 @@ $CurrentVersionOS = $OSInfo['subversion'];
       );
 
       $GetStatusUpload = json_decode($GetStatusUpload, TRUE);
-      if(!empty($GetStatusUpload)){
-        echo '<div style="padding: 10px;background: #e0645b;color: #6d2620;font-weight: 900;margin: 10px 0;border: 3px dashed;">';
-        echo 'Error:<br>';
-        echo '<ul>';
-        foreach ($GetStatusUpload as $key => $value) {
-          echo '<li>'.$value.'</li>';
-        }
-        echo '</ul>';
-        echo '</div>';
-      }
+      showError($GetStatusUpload);
     }
 
     echo '<div>Имя приложения(латиница):</div>';
@@ -463,9 +487,10 @@ $CurrentVersionOS = $OSInfo['subversion'];
           $showEmpty = false;
           $FileCalc->format($GetComApps[$key]['size']*1024);
           $size = $format;
-          $description = preg_replace('#%u([0-9A-F]{4})#se','iconv("UTF-16BE","UTF-8",pack("H4","$1"))', $GetComApps[$key]['description']);
+          $description = UTFTransform($GetComApps[$key]['description']);
           $TempIconHash = md5($GetComApps[$key]['hash'].$GetComApps[$key]['version']);
           $AppIcon = $server_url.'Apps/'.$GetComApps[$key]['hash'].'/app.png?h='.$TempIconHash;
+
           echo '<div style="border-bottom: 1px solid #ccc;">';
           echo '<div class="AppTile">';
           echo '<div class="AppTile-icon" style="background-image: url('.$AppIcon.'); ">';
@@ -557,6 +582,17 @@ $AppContainer->Event(
 	)
 );
 
+// App Search
+$AppContainer->Event(
+	"AppSearch",
+  NULL,
+	$Folder,
+	'main',
+	array(
+    'AppSearch' => '"+escape($("#AppSearch'.$AppID.'").val())+"'
+	)
+);
+
 // Update App!
 $AppContainer->Event(
 	"UpdateApp",
@@ -612,7 +648,8 @@ $AppContainer->Event(
     'install_app_second_name' => '"+SecondName+"',
     'install_app_update_mode' => '"+UpdateMode+"',
     'activetab' => '"+$("#Tabs'.$AppID.'").tabs(\'option\',\'active\')+"',
-    'ScrollTo' => '"+$("#'.$AppName.$AppID.'").scrollTop()+"'
+    'ScrollTo' => '"+$("#'.$AppName.$AppID.'").scrollTop()+"',
+    'AppSearch' => '"+escape($("#AppSearch'.$AppID.'").val())+"'
 	)
 );
 
