@@ -1,0 +1,60 @@
+[Tabs]
+app_tab = Приложения
+control_tab = Личный кабинет
+update_tab = Обновления
+
+[AppTab]
+autor_caption = Автор
+version_caption = Версия
+size_caption = Размер
+rating_caption = Рейтинг
+description_caption = Описание
+app_button_open = Открыть
+app_button_install = Установить
+os_need_update = 'Необходима более новая версия ОС'
+
+more_apps = Еще
+
+placeholder_search = Поиск
+button_search = Найти
+
+install_caption_1 = Установка
+install_caption_2 = установлено
+update_caption_1 = Обновление
+update_caption_2 = обновлено
+
+install_n_1 = приложения
+install_n_2 = Приложение
+
+[ControlTab]
+my_apps_caption = Ваши приложения
+select_app = Выбрать
+all_my_apps = Всего
+
+app_tab_mode_1 = 'Обновить \ Изменить приложение'
+app_tab_mode_2 = Публикация приложения
+
+pub_name = Имя приложения
+pub_lat = латиница
+pub_cyr = кириллица
+pub_os_ver = Версия ОС
+pub_desc_caption = Введите описание приложения
+pub_file_caption = Файл приложения
+pub_select_file = Выбрать файл
+pub_icon = Иконка
+pub_icon_caption = Файл иконки
+
+pub_load_app = Загрузить
+pub_update_app = Обновить
+pub_delete_app = Удалить
+delete_mesage_t = 'Удалить это приложение?'
+delete_mesage_b = 'Внимание! Это приложение будет удалено'
+delete_mesage_cancel = Отмена
+
+[UpdateTab]
+os_null_description = Описание отсутствует
+os_update_caption = Обновление системы
+os_revision = сборка
+os_sub_version = версия сборки
+need_update_button = Обновите ОС
+updates_null = Обновления отсутствуют

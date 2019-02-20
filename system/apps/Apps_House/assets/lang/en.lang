@@ -1,0 +1,60 @@
+[Tabs]
+app_tab = Applications
+control_tab = My account
+update_tab = Updates
+
+[AppTab]
+autor_caption = Author
+version_caption = Version
+size_caption = Size
+rating_caption = Rating
+description_caption = Description
+app_button_open = Open
+app_button_install = Install
+os_need_update = 'Requires a newer OS version'
+
+more_apps = More
+
+placeholder_search = Search
+button_search = Find
+
+install_caption_1 = Install
+install_caption_2 = installed
+update_caption_1 = Update
+update_caption_2 = updated
+
+install_n_1 = applications
+install_n_2 = Application
+
+[ControlTab]
+my_apps_caption = Your Applications
+select_app = Select
+all_my_apps = Total
+
+app_tab_mode_1 = 'Update \ Change Application'
+app_tab_mode_2 = Publish Application
+
+pub_name = Application Name
+pub_lat = latin
+pub_cyr = cyrillic
+pub_os_ver = OS version
+pub_desc_caption = Enter application description
+pub_file_caption = Application file
+pub_select_file = Select file
+pub_icon = Icon
+pub_icon_caption = File Icons
+
+pub_load_app = Download
+pub_update_app = Update
+pub_delete_app = Delete
+delete_mesage_t = 'Delete this application?'
+delete_mesage_b = 'Attention! This application will be removed'
+delete_mesage_cancel = Cancel
+
+[UpdateTab]
+os_null_description = 'No description'
+os_update_caption = 'System update'
+os_revision = 'build'
+os_sub_version = 'build version'
+need_update_button = 'Update OS'
+updates_null = 'No updates'
