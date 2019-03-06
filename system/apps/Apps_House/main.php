@@ -123,7 +123,7 @@ if(!empty($AppSearch)){
         if($_SESSION['locale'] == 'en'){
           $pubname = $_GET['install_app_name'];
         }else{
-          $pubname = $_GET['install_app_second_name'];
+          $pubname = UTFTransform($_GET['install_app_second_name']);
         }
 
         $pubname = str_replace('_', ' ', $pubname);
@@ -143,7 +143,7 @@ if(!empty($AppSearch)){
           $InstallCaption_2 = $language['update_caption_2'];
         }
 
-        $gui->newnotification($AppName, $InstallCaption_1.' '.$language['install_n_1'], $language['install_n_2'].' <b>'.$pubname.'</b> '.$InstallCaption_2);
+        $gui->newnotification(UTFTransform($AppName), $InstallCaption_1.' '.$language['install_n_1'], $language['install_n_2'].' <b>'.$pubname.'</b> '.$InstallCaption_2);
 
       }
     }
@@ -218,6 +218,7 @@ if(!empty($AppSearch)){
       $FileCalc->format($key['size']*1024);
       $size = $format;
       $description = UTFTransform($key['description']);
+      $AppName_ = UTFTransform($AppName_);
 
       if (in_array($key['name'], $InstalledApps)) {
         $ButtonClass = "A-button-open";
@@ -326,8 +327,8 @@ if(!empty($AppSearch)){
       $GetUserApp = json_decode($GetUserApp, TRUE);
 
       foreach ($GetUserApp['Apps'] as $key) {
-        $u_name = str_replace('_', ' ', $key['name']);
-        $u_sname = str_replace('_', ' ', $key['second_name']);
+        $u_name = UTFTransform(str_replace('_', ' ', $key['name']));
+        $u_sname = UTFTransform(str_replace('_', ' ', $key['second_name']));
         $u_version = $key['version'];
         $u_osversion = $key['os_version'];
         $u_description = UTFTransform($key['description']);
@@ -516,7 +517,7 @@ if(!empty($AppSearch)){
             echo '<div class="AppTile-button A-button-open" style="width: max-content;">';
             echo $language['need_update_button'];
           }else{
-            echo '<div update="true" app="'.$GetComApps[$key]['name'].'" app_second="'.$GetComApps[$key]['second_name'].'" hash="'.$GetComApps[$key]['hash'].'" class="AppTile-button A-button-install">';
+            echo '<div update="true" app="'.$GetComApps[$key]['name'].'" app_second="'.UTFTransform($GetComApps[$key]['second_name']).'" hash="'.$GetComApps[$key]['hash'].'" class="AppTile-button A-button-install">';
             echo $language['pub_update_app'];
           }
 
