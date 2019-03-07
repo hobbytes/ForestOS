@@ -51,10 +51,10 @@ if(isset($_GET['uploadfiles'])){
   }
 }
 ?>
-<div class="upload-container<?echo $AppID?>" style="text-align:center; background:#ededed; min-width:400px; height: 100%;">
+<div class="upload-container<?echo $AppID?>" style="text-align:center; background:#ededed; min-width:400px; height: 100%; padding: 10px 0; transition: all 0.2s ease; border: 4px dashed transparent;">
   <?echo $upload_lang[$cl.'_upload']?><br><br>
-<input type="file" multiple="multiple" accept="*">
-<div class="file-list<?echo $AppID?>" style="padding: 10px 0 0 0;">
+<input type="file" accept="*">
+<div class="file-list<?echo $AppID?>" style="padding: 10px 0 0 0; color: #2196F3; font-size: 20px;">
 
 </div>
 <div id="progressbar<?echo $AppID?>" style="display: none; width: 80%; margin: 10px auto; border: none; height: 10px; transition: all 0.2s ease"></div>
@@ -87,16 +87,22 @@ function hideload<?echo $AppID?>(){
 }
 
 $(document).ready(function() {
-  $('.upload-container<?echo $AppID?>').bind('dragover drop', function(event) {
+  $('.upload-container<?echo $AppID?>').bind('dragover dragleave drop', function(event) {
     event.stopPropagation();
     event.preventDefault();
     if (event.type == 'drop') {
       files_ = event.target.files || event.originalEvent.dataTransfer.files;
       $('.file-list<?echo $AppID?>').append(files_[0].name + "<br>");
       files.push(files_);
-      console.log(files);
-
+      $(".upload-container<? echo $AppID ?>").css('border', '4px dashed transparent');
     }
+
+    if(event.type == 'dragover'){
+      $(".upload-container<? echo $AppID ?>").css('border', '4px dashed #61b2f3');
+    }else if(event.type == 'dragleave'){
+      $(".upload-container<? echo $AppID ?>").css('border', '4px dashed transparent');
+    }
+
   });
 });
 
