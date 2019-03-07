@@ -94,13 +94,18 @@ $(document).ready(function() {
       files_ = event.target.files || event.originalEvent.dataTransfer.files;
       $('.file-list<?echo $AppID?>').append(files_[0].name + "<br>");
       files.push(files_);
-      $(".upload-container<? echo $AppID ?>").css('border', '4px dashed transparent');
     }
 
     if(event.type == 'dragover'){
-      $(".upload-container<? echo $AppID ?>").css('border', '4px dashed #61b2f3');
-    }else if(event.type == 'dragleave'){
-      $(".upload-container<? echo $AppID ?>").css('border', '4px dashed transparent');
+      $(".upload-container<? echo $AppID ?>").css({
+        'border' : '4px dashed #61b2f3',
+        'background' : '#dcecf9'
+      });
+    }else if(event.type == 'dragleave' || event.type != 'dragover'){
+      $(".upload-container<? echo $AppID ?>").css({
+        'border' : '4px dashed transparent',
+        'background' : '#ededed'
+      });
     }
 
   });
