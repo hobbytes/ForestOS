@@ -51,19 +51,23 @@ if(isset($_GET['uploadfiles'])){
   }
 }
 ?>
-<div style="text-align:center; background:#ededed; min-width:400px; height: 100%;">
+<div class="upload-container<?echo $AppID?>" style="text-align:center; background:#ededed; min-width:400px; height: 100%;">
   <?echo $upload_lang[$cl.'_upload']?><br><br>
 <input type="file" multiple="multiple" accept="*">
+<div class="file-list<?echo $AppID?>" style="padding: 10px 0 0 0;">
+
+</div>
 <div id="progressbar<?echo $AppID?>" style="display: none; width: 80%; margin: 10px auto; border: none; height: 10px; transition: all 0.2s ease"></div>
 <div class="submit button ui-forest-button ui-forest-accept ui-forest-center"><?echo $upload_lang[$cl.'_btn_load']?></div>
 <div onClick="hideload<?echo $AppID?>();" class="ui-forest-button ui-forest-cancel ui-forest-center"><?echo $upload_lang[$cl.'_btn_cancel']?></div>
 </div>
 <script>
 
-var files;
+var files = new Array;
 
 $('input[type=file]').change(function(){
-    files = this.files;
+    files.push(this.files);
+    $('.file-list<?echo $AppID?>').append(this.files[0].name + "<br>");
 });
 
 $("#progressbar<?echo $AppID?>").progressbar({
@@ -82,15 +86,32 @@ function hideload<?echo $AppID?>(){
   }
 }
 
+$(document).ready(function() {
+  $('.upload-container<?echo $AppID?>').bind('dragover drop', function(event) {
+    event.stopPropagation();
+    event.preventDefault();
+    if (event.type == 'drop') {
+      files_ = event.target.files || event.originalEvent.dataTransfer.files;
+      $('.file-list<?echo $AppID?>').append(files_[0].name + "<br>");
+      files.push(files_);
+      console.log(files);
+
+    }
+  });
+});
+
 $('.submit.button').click(function( event ){
   $("#progressbar<?echo $AppID?>").css('display', 'block');
     event.stopPropagation();
     event.preventDefault();
 
     var data = new FormData();
-    $.each( files, function( key, value ){
-        data.append( key, value );
-    });
+    for (var i = 0, f; f = files[i]; i++) {
+      $.each( f, function( key, value ){
+          data.append( i, value );
+      });
+    }
+
 
     $.ajax({
         xhr: function(){

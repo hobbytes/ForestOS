@@ -11,12 +11,14 @@ $getFile = $_POST['f'];
 $newPlace = $_POST['n'];
 $action = $_POST['a'];
 
-$fileaction->rcopy($getFile, $newPlace, 1);
-if($action == 'cut'){
-  if(is_dir($getFile)){
-    $fileaction->deleteDir($getFile);
-  }else{
-    unlink($getFile);
+if(!preg_match('/os.php/',$getFile) && !preg_match('/login.php/',$getFile) && !preg_match('/makeprocess.php/',$getFile)){
+  $fileaction->rcopy($getFile, $newPlace, 1);
+  if($action == 'cut'){
+    if(is_dir($getFile)){
+      $fileaction->deleteDir($getFile);
+    }else{
+      unlink($getFile);
+    }
   }
 }
 ?>
