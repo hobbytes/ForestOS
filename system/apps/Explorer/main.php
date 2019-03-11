@@ -583,6 +583,13 @@ function ShowCloseBox<?echo $AppID?>(boxid){
 	}
 }
 
+function ShowLoad<?echo $AppID?>(){
+	$("#upload<?echo $AppID?>").slideDown("fast");
+	$("#explorer-container<?echo $AppID?>").css('filter', 'grayscale(1)');
+	$("#app<?echo $AppID?>").unbind("keydown");
+}
+
+
 <?
 
 	//Execute Function Request
@@ -637,7 +644,7 @@ function ShowCloseBox<?echo $AppID?>(boxid){
 			'callback' => $callback,
 			'showonly' => $_ShowOnly
 		),
-		'ShowCloseBox'.$AppID.'("#upload'.$AppID.'");',
+		'ShowLoad'.$AppID.'();',
 		1,
 		"upload$AppID"
 	);
