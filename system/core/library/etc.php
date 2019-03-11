@@ -22,28 +22,28 @@ class info{
             return $browser.' '.$version;
     }
 
-    function writestat($alarmbody,$folder){
+    function writestat($alarmbody, $folder){
       require_once $_SERVER['DOCUMENT_ROOT'].'/system/core/library/bd.php';
       global $getdata, $getstat, $security;
-      //$maxFileSize = '10000'; //Max size for journal file
-      //$currentFileSize = filesize($folder); //current size of journal file
+      $maxFileSize = '10000'; //Max size for journal file => 10KB
+      $currentFileSize = filesize($folder); //current size of journal file
       $bd = new readbd;
-      $bd->readglobal2("password","forestusers","status",superuser);
-      $key  = $getdata;
-      $date = date("d.m.y,H:i:s");
+      $key = $bd->readglobal2("password", "forestusers", "status", superuser, true);
+      $date = date("d.m.y, H:i:s");
       $ip = $_SERVER["REMOTE_ADDR"];
       $browser  = $this->browser($_SERVER["HTTP_USER_AGENT"]);
       $text = $alarmbody.': ['.$date.'] browser:'.$browser.', ip:'.$ip;
       $this->readstat($folder);
-      /*if($currentFileSize > $maxFileSize){
-          $_getstat = preg_replace('/^.+\n/', '', nl2br($getstat));
-          $content  = "$_getstat\n$text";
-          $content = str_replace('<br />','',$content);
+      if($currentFileSize >= $maxFileSize){
+        $_getstat = preg_replace('/^.+\n/', '', nl2br($getstat));
+        $content  = "$_getstat\n$text";
+        $content = str_replace('<br />','',$content);
       }else{
-      */
-      $content  = "$getstat\n$text";
+        $content  = "$getstat\n$text";
+      }
+
       $text = $security->__encode($content, $key);
-      file_put_contents($folder,$text);
+      file_put_contents($folder, $text);
     }
 
     function readstat($folder){
@@ -75,7 +75,7 @@ class info{
         header('Location: os.php?action=logout');
         exit;
       }
-      
+
       $language  = parse_ini_file($_SERVER['DOCUMENT_ROOT'].'/system/core/os.lang');
       if(!empty($login)){
         $fuid = $bd->readglobal2("fuid", "forestusers", "login", $login, true);

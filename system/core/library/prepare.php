@@ -60,6 +60,7 @@
 
       if($_SESSION["safemode"]  ==  'true'){
         file_put_contents($_SERVER['DOCUMENT_ROOT'].'/system/users/'.$_SESSION['loginuser'].'/settings/notifications/MainNotificationFile.hdf','');
+        file_put_contents($_SERVER['DOCUMENT_ROOT'].'/system/users/'.$_SESSION['loginuser'].'/settings/autorun.foc','');
         $_SESSION["safemode"] = 'false';
       }
 
@@ -614,7 +615,6 @@ function DisplaySettings(){
       }
       $content  = file_get_contents('system/users/'.$login.'/settings/autorun.foc');
       if($content && $_SESSION["safemode"]!='true'){
-        echo $_SESSION["safemode"];
         $array  = explode(",",$content);
         foreach ($array as $value){
           ?>
