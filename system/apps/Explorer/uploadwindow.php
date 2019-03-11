@@ -51,7 +51,7 @@ if(isset($_GET['uploadfiles'])){
   }
 }
 ?>
-<div class="upload-container<?echo $AppID?>" style="text-align:center; background:#ededed; min-width:400px; height: 100%; padding: 10px 0; transition: all 0.2s ease; border: 4px dashed transparent;">
+<div class="upload-container<?echo $AppID?>" style="text-align:center;transition: all 0.2s ease;border: 4px dashed transparent;">
   <?echo $upload_lang[$cl.'_upload']?><br><br>
 <input type="file" accept="*">
 <div class="file-list<?echo $AppID?>" style="padding: 10px 0 0 0; color: #2196F3; font-size: 20px;">
@@ -80,9 +80,11 @@ function hideload<?echo $AppID?>(){
   event.stopPropagation();
   event.preventDefault();
   if(typeof reload<?echo $AppID?> !== 'undefined' && $.isFunction(reload<?echo $AppID?>)){
+    ShowCloseBox<?echo $AppID?>("#upload<?echo $AppID?>");
     reload<?echo $AppID?>();
   }else{
     $('#process<?echo $AppID?>').remove();
+    ShowCloseBox<?echo $AppID?>("#upload<?echo $AppID?>");
   }
 }
 

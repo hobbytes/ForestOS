@@ -304,8 +304,8 @@ $pathmain = str_replace($_SERVER['DOCUMENT_ROOT'], '', $pathmain);
 	<li><div <? echo 'id="'.$dir.'/" class="loadthis'.$AppID.'" onClick="getproperty'.$AppID.'(this);"';?>><?echo $explorer_lang['menu_rename_label']?></div></li>
 	<li><div <?echo 'onClick="mkdirshow'.$AppID.'();" ';?> ><?echo $explorer_lang['menu_md_label']?>  <span style="font-size: 10px; color:#a2a2a2;">Shift+F</span>  </div></li>
 	<li><div <?echo 'id="'.$dir.'/" class="mklink" onClick="link'.$AppID.'(this);" ';?> ><?echo $explorer_lang['menu_ml_label']?></div></li>
-	<li><div <?echo 'class="loadthis'.$AppID.' trashtrigger'.$AppID.'" messageTitle="'.$explorer_lang['mt_trash'].'" messageBody="'.$explorer_lang['mb_trash'].'" okButton="'.$explorer_lang['btn_trash_ok'].'" cancelButton="'.$explorer_lang['mfile_cancelbtn'].'" onClick="ExecuteFunctionRequest'.$AppID.'(this, \'newload'.$AppID.'\', array = [\'del\', this.id])" >'.$explorer_lang['menu_trash_label']; ?> <span style="font-size: 10px; color:#a2a2a2;">Ctrl+Del</span> </div></li>
-	<li><div <?echo 'class="loadthis'.$AppID.' deletetrigger'.$AppID.'" messageTitle="'.$explorer_lang['mt_delete'].'" messageBody="'.$explorer_lang['mb_delete'].'" okButton="'.$explorer_lang['btn_delete_ok'].'" cancelButton="'.$explorer_lang['mfile_cancelbtn'].'" onClick="ExecuteFunctionRequest'.$AppID.'(this, \'newload'.$AppID.'\', array = [\'delf\', this.id])" >'.$explorer_lang['menu_delete_label']; ?> <span style="font-size: 10px; color:#a2a2a2;">Shift+Del</span> </div></li>
+	<li><div <?echo 'class="loadthis'.$AppID.' trashtrigger'.$AppID.'" messageTitle="'.$explorer_lang['mt_trash'].'" messageBody="'.$explorer_lang['mb_trash'].'" okButton="'.$explorer_lang['btn_trash_ok'].'" cancelButton="'.$explorer_lang['mfile_cancelbtn'].'" onClick="ExecuteFunctionRequest'.$AppID.'(this, \'newload'.$AppID.'\', array = [\'del\', this.id], true)" >'.$explorer_lang['menu_trash_label']; ?> <span style="font-size: 10px; color:#a2a2a2;">Ctrl+Del</span> </div></li>
+	<li><div <?echo 'class="loadthis'.$AppID.' deletetrigger'.$AppID.'" messageTitle="'.$explorer_lang['mt_delete'].'" messageBody="'.$explorer_lang['mb_delete'].'" okButton="'.$explorer_lang['btn_delete_ok'].'" cancelButton="'.$explorer_lang['mfile_cancelbtn'].'" onClick="ExecuteFunctionRequest'.$AppID.'(this, \'newload'.$AppID.'\', array = [\'delf\', this.id], true)" >'.$explorer_lang['menu_delete_label']; ?> <span style="font-size: 10px; color:#a2a2a2;">Shift+Del</span> </div></li>
 	<li><div <? echo 'id="'.$dir.'/" class="load-class'.$AppID.'" onClick="loadshow'.$AppID.'(this)"';?>><?echo $explorer_lang['menu_loadfile_label']?></div></li>
 	<li><div <? echo 'class="loadthis'.$AppID.'" onClick="newload'.$AppID.'('."'zipfile'".',this.id)"';?>><?echo $explorer_lang['menu_zip_label']?></div></li>
 	<li><div <? echo 'class="loadthis'.$AppID.'" onClick="newload'.$AppID.'('."'zipfileunpack'".',this.id)"';?>><?echo $explorer_lang['menu_zip_unpack']?></div></li>
@@ -350,33 +350,33 @@ $pathmain = str_replace($_SERVER['DOCUMENT_ROOT'], '', $pathmain);
 <input style="-webkit-appearance:none; border:1px solid #ccc; width:80%; font-size:17px; margin: 0 5px 10px;" type="search" value="<?echo $prefix.$pathmain?>"></input>
 </div>
 </div>
-<div id="mkdirdiv<?echo $AppID?>" style="z-index:1; position:fixed; display:none; top:25%; left:25%; background-color:#ededed; border:1px solid #797979; padding:20px; border-radius:6px; box-shadow:1px 1px 5px #000; width:min-content; text-align:center;">
+<div id="mkdirdiv<?echo $AppID?>" class="forest-ui-request-box" style="d padding: 20px; text-align: center;">
 <label for="mkdirinput<?echo $AppID?>">
 	<?echo $explorer_lang['mdir_label']?>
-	<input id="mkdirvalue<?echo $AppID?>" style="font-size:20px; margin-bottom:10px;" name="mkdirinput<?echo $AppID?>" type="text" value="">
+	<input id="mkdirvalue<?echo $AppID?>" style="font-size:20px; margin:10px;" name="mkdirinput<?echo $AppID?>" type="text" value="">
 </label>
-<span onclick="$('#mkdirdiv<?echo $AppID?>').css('display','none');" style="width:70px;" class="ui-button ui-widget ui-corner-all">
+<span onclick="ShowCloseBox<?echo $AppID?>('#mkdirdiv<?echo $AppID?>');" style="width:70px;" class="ui-button ui-widget ui-corner-all">
 	<?echo $explorer_lang['mdir_cancelbtn']?>
 </span>
-<span style="width:70px;" onClick="mkdirbtn<?echo $AppID?>();" class="ui-button ui-widget ui-corner-all">
+<span style="width:70px;" onClick="ShowCloseBox<?echo $AppID?>('#mkdirdiv<?echo $AppID?>'); mkdirbtn<?echo $AppID?>();" class="ui-button ui-widget ui-corner-all">
 	<?echo $explorer_lang['mdir_okbtn']?>
 </span>
 </div>
 
-<div id="mkfilediv<?echo $AppID?>" style="z-index:1; position:fixed; display:none; top:25%; left:25%; background-color:#ededed; border:1px solid #797979; padding:20px; border-radius:6px; box-shadow:1px 1px 5px #000; width:min-content; text-align:center;">
+<div id="mkfilediv<?echo $AppID?>" class="forest-ui-request-box" style="padding: 20px;text-align: center;">
 <label for="mkfileinput<?echo $AppID?>">
 	<?echo $explorer_lang['mfile_label']?>
-	<input id="mkfilevalue<?echo $AppID?>" style="font-size:20px; margin-bottom:10px;" name="mkfileinput<?echo $AppID?>" type="text" value="">
+	<input id="mkfilevalue<?echo $AppID?>" style="font-size:20px; margin:10px;" name="mkfileinput<?echo $AppID?>" type="text" value="">
 </label>
-<span onclick="$('#mkfilediv<?echo $AppID?>').css('display','none');" style="width:70px;" class="ui-button ui-widget ui-corner-all">
+<span onclick="ShowCloseBox<?echo $AppID?>('#mkfilediv<?echo $AppID?>');" style="width:70px;" class="ui-button ui-widget ui-corner-all">
 	<?echo $explorer_lang['mfile_cancelbtn']?>
 </span>
-<span style="width:70px;" onClick="mkfilebtn<?echo $AppID?>();" class="ui-button ui-widget ui-corner-all">
+<span style="width:70px;" onClick="ShowCloseBox<?echo $AppID?>('#mkfilediv<?echo $AppID?>'); mkfilebtn<?echo $AppID?>();" class="ui-button ui-widget ui-corner-all">
 	<?echo $explorer_lang['mfile_okbtn']?>
 </span>
 </div>
 
-<div style="margin: 92px 0;">
+<div id="explorer-container<?echo $AppID?>" style="margin: 92px 0;">
 <?
 $countState = true;
 $objectArray = array();
@@ -556,7 +556,7 @@ unset($objectArray);
 </div>
 <div id="<? echo convert(realpath($entry)) ?>" class="<? echo "dir-$AppID" ?> " restrict<? echo $AppID ?>="<? echo "e-restrict-$AppID" ?>" style="position: static; width: 100%; height: 80%;">
 </div>
-<div id="upload<?echo $AppID?>" style="z-index:1; position:fixed; display:none; top:25%; left:25%; background-color:#ededed; border:1px solid #797979; padding:20px; border-radius:6px; box-shadow:1px 1px 5px #000;">
+<div id="upload<?echo $AppID?>" class="forest-ui-request-box" style="padding: 20px;">
 </div>
 
 <div style="padding:0 10px; background-color: rgba(0, 0, 0, 0); width:97%; top:97%; word-wrap:break-word; font-size:10px; float:right; position:absolute; text-align:right;">
@@ -570,6 +570,18 @@ echo $explorer_lang['use_label'].': '.$format;
 $AppContainer->EndContainer();
 ?>
 <script>
+
+function ShowCloseBox<?echo $AppID?>(boxid){
+	if($(boxid).is( ":hidden" )){
+		$(boxid).slideDown("fast");
+		$("#explorer-container<?echo $AppID?>").css('filter', 'grayscale(1)');
+		$("#app<?echo $AppID?>").unbind("keydown");
+	}else{
+		$(boxid).slideUp("fast");
+		$("#explorer-container<?echo $AppID?>").css('filter', 'grayscale(0)');
+		$("#app<?echo $AppID?>").bind("keydown");
+	}
+}
 
 <?
 
@@ -625,7 +637,7 @@ $AppContainer->EndContainer();
 			'callback' => $callback,
 			'showonly' => $_ShowOnly
 		),
-		'$("#upload'.$AppID.'").css(\'display\', \'block\');',
+		'ShowCloseBox'.$AppID.'("#upload'.$AppID.'");',
 		1,
 		"upload$AppID"
 	);
@@ -792,15 +804,15 @@ function select<?echo $AppID?>(folder, folder2, folder3, folder4){
 };
 
 function mkdirshow<?echo $AppID?>(){
-	$("#mkdirdiv<?echo $AppID?>").css('display','block');
+	ShowCloseBox<?echo $AppID?>("#mkdirdiv<?echo $AppID?>");
 	$("#mkdirvalue<?echo $AppID?>").focus();
-	$("#app<?echo $AppID?>").unbind("keydown");
+	$("#mkdirvalue<?echo $AppID?>").val('');
 };
 
 function mkfileshow<?echo $AppID?>(){
-	$("#mkfilediv<?echo $AppID?>").css('display','block');
+	ShowCloseBox<?echo $AppID?>('#mkfilediv<?echo $AppID?>');
 	$("#mkfilevalue<?echo $AppID?>").focus();
-	$("#app<?echo $AppID?>").unbind("keydown");
+	$("#mkfilevalue<?echo $AppID?>").val('');
 };
 
 function checkbutton(){

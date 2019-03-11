@@ -230,7 +230,7 @@ class  AppContainer {
   public function ExecuteFunctionRequest(){
 
     echo '/* function ExecuteFunctionRequest'.$this->appID.' */';
-    echo 'function ExecuteFunctionRequest'.$this->appID.'( ObjectName, FunctionName, FunctionArgument = null ){';
+    echo 'function ExecuteFunctionRequest'.$this->appID.'( ObjectName, FunctionName, FunctionArgument = null, BindKey = false ){';
       echo 'if(Array.isArray(FunctionArgument)){';
         echo 'FunctionArgument = FunctionArgument.toString().replace(",","\',\'");';
       echo '}';
@@ -239,9 +239,15 @@ class  AppContainer {
       function ShowCloseRequset'.$this->appID.'(){
         if($("#RequestBox'.$this->appID.'").is( ":hidden" )){
           $("#RequestBox'.$this->appID.'").slideDown("fast");
+          if(BindKey){
+            $("#app'.$this->appID.'").unbind("keydown");
+          }
         }else{
           $("#RequestBox'.$this->appID.'").slideUp("fast", function(){
             $("#RequestBox'.$this->appID.'").remove();
+            if(BindKey){
+              $("#app'.$this->appID.'").bind("keydown");
+            }
           });
         }
       }';
