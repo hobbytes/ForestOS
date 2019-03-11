@@ -36,6 +36,7 @@ class info{
       $this->readstat($folder);
       if($currentFileSize >= $maxFileSize){
         $_getstat = preg_replace('/^.+\n/', '', nl2br($getstat));
+        $_getstat = preg_replace('/^.+\n/', '', nl2br($_getstat));
         $content  = "$_getstat\n$text";
         $content = str_replace('<br />','',$content);
       }else{
