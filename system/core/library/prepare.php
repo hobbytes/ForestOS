@@ -257,8 +257,9 @@
       <script>
       $( function() {
         $( ".ico" ).draggable({containment:"body", snap:".ico, #topbar"});
-        $( "#<?echo 'icon'.$id.'';?>" ).click(function(){
+        $( "#<?echo 'icon'.$id ?>" ).click(function(){
         releaselink();
+        $( "#<?echo 'icons'.$id ?>" ).css('z-index', '-3');
         var border_color = $('.topbartheme').css('background-color');
         $("#link_content<?echo $id?>").css({
           'height' : 'auto',

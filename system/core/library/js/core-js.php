@@ -332,6 +332,7 @@ function releaselink(){
     'background-color' : 'transparent',
     'border' : ''
   });
+  $( ".ico" ).css('z-index', '-100');
 }
 
 function UpdateWindow(id, name, mode = 1){
