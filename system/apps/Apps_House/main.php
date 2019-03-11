@@ -246,7 +246,7 @@ if(!empty($AppSearch)){
       echo '<div class="AppTile-full" id="'.$AppHash.'">';
       echo '<div class="AppTile-close ui-forest-blink" onClick="closeInfo'.$AppID.'(\''.$AppHash.'\')"> x ';
       echo '</div>';
-      echo '<div class="AppTile-icon" style="background-image: url('.$AppIcon.'); ">';
+      echo '<div class="AppTile-icon" style="background-image: url('.$AppIcon.'); margin: unset;">';
     	echo '</div>';
       echo '<div class="AppTile-name">';
       echo '<span class="AppTile-strong-name">'.$AppName_.'</span><br>';
@@ -261,7 +261,7 @@ if(!empty($AppSearch)){
       }
       echo '</div>';
       echo '</div>';
-      echo '<span style="font-size:13px; color:#464646; font-weight:600; padding-top: 5px;">'.$language['description_caption'].'</span>';
+      echo '<div style="font-size:13px; color:#464646; font-weight:600; padding-top: 5px;">'.$language['description_caption'].'</div>';
       echo '<div class="AppTile-description">';
       echo $description;
       echo '</div>';
