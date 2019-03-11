@@ -252,16 +252,16 @@
         $type = '';
       }
       ?>
-      <div class="link<?echo $id?> link" link="<?echo $id?>" <?echo $type?>>
-      <div id="linklog<?echo $id?>" class="<?echo $delclassname;?>">
+      <div class="link<? echo $id ?> link" link="<? echo $id ?>" <? echo $type ?>>
+      <div id="linklog<? echo $id ?>" class="<? echo $delclassname ?>">
       <script>
       $( function() {
-        $( ".ico" ).draggable({containment:"body", snap:".ico, #topbar"});
+        $( ".ico" ).draggable({ containment:"body", snap:".ico, #topbar" });
         $( "#<?echo 'icon'.$id ?>" ).click(function(){
         releaselink();
         $( "#<?echo 'icons'.$id ?>" ).css('z-index', '-3');
         var border_color = $('.topbartheme').css('background-color');
-        $("#link_content<?echo $id?>").css({
+        $("#link_content<? echo $id ?>").css({
           'height' : 'auto',
           'white-space' : 'pre-line',
           'background-color' : 'rgba(177,207,228,0.3)',
@@ -272,13 +272,13 @@
         $( "#background-wall" ).click(function(){
           releaselink();
         });
-        $( "#<?echo 'icon'.$id.'';?>" ).mouseover(function(){
+        $( "#<?echo 'icon'.$id ?>" ).mouseover(function(){
           $(this).css('background-color'  , 'rgba(192,192,192,0.3)');
         });
-        $( "#<?echo 'icon'.$id.'';?>" ).mouseout(function(){
+        $( "#<?echo 'icon'.$id ?>" ).mouseout(function(){
           $(this).css('background-color'  , 'transparent');
         });
-        $( "#<?echo 'icon'.$id.'';?>" ).dblclick(function(){$("#<?echo 'app'.$id.'';?>").show('drop',500)})
+        $( "#<?echo 'icon'.$id ?>" ).dblclick(function(){$("#<?echo 'app'.$id ?>").show('drop',500)})
         } );
 
         $('.notificationclass').appendTo("#notification-container");
