@@ -42,7 +42,6 @@ class info{
       }else{
         $content  = "$getstat\n$text";
       }
-
       $text = $security->__encode($content, $key);
       file_put_contents($folder, $text);
     }

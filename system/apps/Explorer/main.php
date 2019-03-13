@@ -533,8 +533,15 @@ $countState = false;
 $dir->close;
 
 //show dir first
+$dir_sort = true;
 foreach($objectArray as $type => $object){
 	if($type == 'dir'){
+
+		if($dir_sort){
+			asort($object);
+			$dir_sort = false;
+		}
+
 		foreach($object as $dirObject){
 			echo urldecode($dirObject);
 		}
@@ -543,8 +550,15 @@ foreach($objectArray as $type => $object){
 
 
 //show files
+$file_sort = true;
 foreach($objectArray as $type => $object){
 	if($type == 'file'){
+
+		if($file_sort){
+			asort($object);
+			$file_sort = false;
+		}
+
 		foreach($object as $fileObject){
 			echo urldecode($fileObject);
 		}
