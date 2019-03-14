@@ -69,11 +69,11 @@ if(!empty($AppSearch)){
 
 <link rel="stylesheet" type="text/css" href="<? echo $Folder.$FileAction->filehash("assets/main.css") ?>">
 
-<div id="Tabs<?echo $AppID?>">
+<div id="Tabs<? echo $AppID ?>">
   <ul>
-    <li><a href="#Apps<?echo $AppID?>"><? echo $language['app_tab'] ?></a></li>
-    <li><a href="#Control<?echo $AppID?>"><? echo $language['control_tab'] ?></a></li>
-    <li><a href="#Updates<?echo $AppID?>"><? echo $language['update_tab'] ?></a></li>
+    <li><a href="#Apps<? echo $AppID ?>"><? echo $language['app_tab'] ?></a></li>
+    <li><a href="#Control<? echo $AppID ?>"><? echo $language['control_tab'] ?></a></li>
+    <li><a href="#Updates<? echo $AppID ?>"><? echo $language['update_tab'] ?></a></li>
   </ul>
 
 <div id="Apps<? echo $AppID ?>" style="margin: 0 auto; overflow: auto;">
@@ -499,7 +499,7 @@ if(!empty($AppSearch)){
           $AppIcon = $server_url.'Apps/'.$GetComApps[$key]['hash'].'/app.png?h='.$TempIconHash;
 
           echo '<div style="border-bottom: 1px solid #ccc;">';
-          echo '<div class="AppTile">';
+          echo '<div class="AppTile" style="height: 115px;">';
           echo '<div class="AppTile-icon" style="background-image: url('.$AppIcon.'); ">';
         	echo '</div>';
           echo '<div class="AppTile-info">';
