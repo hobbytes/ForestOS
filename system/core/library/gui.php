@@ -114,7 +114,11 @@ function newnotification($name, $title, $text, $time = 0, $customDate = 0){
     <? if($time!='infinite'){ ?>
       setTimeout(function() {$("#notification_<? echo $name ?>").css('opacity','0'); $("#notification_<? echo $name ?>").css('display','none');},<? echo $time ?>);
       <? } ?>
-      SaveNotification();
+      $( function() {
+        $(document).ready(function(){
+          SaveNotification();
+        });
+      });
       $("#script_<? echo $name ?>").remove();
     </script>
     </div>

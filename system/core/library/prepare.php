@@ -355,18 +355,20 @@ function hibernation(){
     }
 
     if(!empty($content) && $_SESSION["safemode"] != "true"){
+      $_SESSION['h_status'] = true;
       $_SESSION['appid']  = $content['last_app_id'];
       $key = $bd->readglobal2("password", "forestusers", "login", $login, true);
       echo $security->__decode($content['state'], $key);
-      file_put_contents('system/users/'.$login.'/settings/state.hdf','');
-      $object->newnotification("Hibernation",$language[$_SESSION['locale'].'_hibernation_name'],$language[$_SESSION['locale'].'_hibernation_notification']."  <b>".$content['time_stamp']."</b>");
+      file_put_contents('system/users/'.$login.'/settings/state.hdf', '');
+      $object->newnotification("Hibernation", $language[$_SESSION['locale'].'_hibernation_name'], $language[$_SESSION['locale'].'_hibernation_notification']."  <b>".$content['time_stamp']."</b>");
       ?>
       <script>
       var id = <? echo $content['last_app_id'] ?>;
       </script>
       <?
     }else{
-      file_put_contents('system/users/'.$login.'/settings/state.hdf','');
+      file_put_contents('system/users/'.$login.'/settings/state.hdf', '');
+      $_SESSION['h_status'] = false;
     }
   }
   unset($content, $security, $key, $getdata);

@@ -69,7 +69,11 @@ $infob->beacon();
   <div id="desktop-1" class="desktop" desktopid="1">
     <?
     $prepare->desktop("linkdiv");
-    $_SESSION['appid'] = -1;
+    if(!$_SESSION['h_status']){
+      $_SESSION['appid'] = -1;
+    }else{
+      $_SESSION['h_status'] = false;
+    }
     ?>
   </div>
 </div>
@@ -78,7 +82,7 @@ $infob->beacon();
   <div id="selector-1" desktop="1" class="selector ui-forest-blink"></div>
 </div>
 <script>
-var id = <?echo $_SESSION['appid'] = $_SESSION['appid'] + 1?>;
+var id = <? echo $_SESSION['appid'] = $_SESSION['appid'] + 1 ?>;
 <?
 require 'system/core/library/js/core-js.php';
 ?>

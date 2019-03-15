@@ -5,8 +5,8 @@ function  hibernation(logout){
     type: "POST",
     url: "system/core/library/etc/hibernation",
     data: {
-       content:savestate,
-       appid:id
+       content: savestate,
+       appid: id
     }
   }).done(function(o) {
     if(logout == 'true'){

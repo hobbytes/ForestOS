@@ -83,19 +83,23 @@ if(isset($_SESSION['loginuser'])){
     ?>
     <div id="logic<?echo $idprocess;?>">
       <script async>
-      ProcessLogic(
-        "<?echo $idprocess?>",
-        "<?echo $name?>",
-        "<?echo $destination?>",
-        "<?echo $destination_?>",
-        "<?echo $maxwidthm?>",
-        "<?echo $folder?>",
-        "<?echo $mobile?>",
-        "<?echo $key?>",
-        "<?echo $param?>",
-        "<?echo $autohide?>",
-        '<?echo $data?>'
-      );
+      $( function() {
+        $(document).ready(function(){
+          ProcessLogic(
+            "<?echo $idprocess?>",
+            "<?echo $name?>",
+            "<?echo $destination?>",
+            "<?echo $destination_?>",
+            "<?echo $maxwidthm?>",
+            "<?echo $folder?>",
+            "<?echo $mobile?>",
+            "<?echo $key?>",
+            "<?echo $param?>",
+            "<?echo $autohide?>",
+            '<?echo $data?>'
+          );
+        });
+      });
       </script>
       </div>
       <?

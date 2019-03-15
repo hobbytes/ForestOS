@@ -123,7 +123,8 @@ class  AppContainer {
 
     if($this->appName && $this->appID){
       echo '<script>';
-      echo 'UpdateWindow("'.$this->appID.'","'.$this->appName.'");';
+
+      echo '$( function() { $(document).ready(function(){ UpdateWindow("'.$this->appID.'","'.$this->appName.'"); }); });';
 
       //update app length
       echo '$("#app'.$this->appID.'").attr("applength-'.$this->appID.'", parseInt($("#app'.$this->appID.'").attr("applength-'.$this->appID.'")) + $("#'.$this->appName.$this->appID.'").html().length);';
