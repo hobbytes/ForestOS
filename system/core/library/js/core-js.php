@@ -209,26 +209,28 @@ function ProcessLogic(id, name, destination, destination_, maxwidthm, folder, is
     UpdateWindow(id, name);
   });
 
-  $("#drag" + id ).on( "dblclick", function() {
-    if(!$("#app" + id).hasClass("windowborderhide")){
-      if(!$("#app" + id).hasClass("windowfullscreen")){
-        $("#app" + id).attr("ww", $("#"+name+id).css("width"));
-        $("#app" + id).attr("wh", $("#"+name+id).css("height"));
-        $("#app" + id).attr("wt", $("#app" + id).css("top"));
-        $("#app" + id).attr("wl", $("#app" + id).css("left"));
-        $("#app" + id ).css({
+  $( "#drag" + id ).on( "dblclick", function() {
+    if(!$( "#app" + id ).hasClass("windowborderhide")){
+      if(!$( "#app" + id ).hasClass("windowfullscreen")){
+        $( "#app" + id ).attr("ww", $("#"+name+id).css("width"));
+        $( "#app" + id ).attr("wh", $("#"+name+id).css("height"));
+        $( "#app" + id ).attr("wt", $("#app" + id).css("top"));
+        $( "#app" + id ).attr("wl", $("#app" + id).css("left"));
+        $( "#app" + id ).css({
           "top" : "31px",
           "left" : "0px",
           "width" : "",
           "height" : "",
           "box-shadow": "unset"
         });
+        $( "#drag" + id ).css('border-radius', '0');
 
         if(typeof window["windowFullScreenApp" + id] == 'function'){
           window["windowFullScreenApp" + id]();
         }
       }else{
         $("#app" + id ).css('box-shadow', 'rgba(0, 0, 0, 0.5) 0px 0px 25px -4px');
+        $( "#drag" + id ).css('border-radius', '3px 3px 0 0');
       }
 
       if($("#app" + id).hasClass("windowfullscreen")){
