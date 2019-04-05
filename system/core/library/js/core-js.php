@@ -216,13 +216,19 @@ function ProcessLogic(id, name, destination, destination_, maxwidthm, folder, is
         $("#app" + id).attr("wh", $("#"+name+id).css("height"));
         $("#app" + id).attr("wt", $("#app" + id).css("top"));
         $("#app" + id).attr("wl", $("#app" + id).css("left"));
-        $("#app" + id).css("width","");
-        $("#app" + id).css("height","");
-        $("#app" + id ).css({top:"31px",left:"0px"});
+        $("#app" + id ).css({
+          "top" : "31px",
+          "left" : "0px",
+          "width" : "",
+          "height" : "",
+          "box-shadow": "unset"
+        });
 
         if(typeof window["windowFullScreenApp" + id] == 'function'){
           window["windowFullScreenApp" + id]();
         }
+      }else{
+        $("#app" + id ).css('box-shadow', 'rgba(0, 0, 0, 0.5) 0px 0px 25px -4px');
       }
 
       if($("#app" + id).hasClass("windowfullscreen")){

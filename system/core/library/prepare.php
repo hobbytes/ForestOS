@@ -387,7 +387,7 @@ function topbar(){
       <span id="hideall" class="topbaractbtn ui-forest-blink" style="cursor:default; background-color:#37a22e; color:#fff; width:12px; float:right; text-align:center; width:20px; margin-right: 8px; font-family:monospace; padding:3px 0; border-radius:0px 4px 4px 0px;">
         -
       </span>
-      <span id="closeall" class="topbaractbtn ui-forest-blink" style="cursor:default; background-color:#ed2020; color:#fff; float:right; text-align:center; width:20px; font-family:monospace; padding:3px 0; border-radius:4px 0px 0px 4px;" onclick="$('.process').remove(); $('.topbaractbtn').css('display','none');">
+      <span id="closeall" class="topbaractbtn ui-forest-blink" style="cursor:default; background-color:#ed2020; color:#fff; float:right; text-align:center; width:20px; font-family:monospace; padding:3px 0; border-radius:4px 0px 0px 4px;" onclick="$('.process').remove(); $('#fastbuttons').hide('fast');">
         x
       </span>
     </div>
