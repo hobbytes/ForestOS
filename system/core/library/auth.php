@@ -75,7 +75,7 @@ class AuthClassUser {
 
             return true;
           }
-          else {$_SESSION["is_authuser"] = false;
+          else { $_SESSION["is_authuser"] = false;
               return false;
           }
       }

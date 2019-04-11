@@ -110,7 +110,7 @@ if(!$_SESSION['BlockDate'] || date('d-m-y H:i:s') >= $_SESSION['BlockDate']){
 $gui->button($language[$_SESSION['locale'].'_login_button'], '#fff', '#f45c43', '30','logins');
 $gui->formend();
 
-$timezone = file_get_contents('system/users/'.$_SESSION['superuser'].'/settings/timezone.foc');
+$timezone = $_SESSION['timezone'];
 date_default_timezone_set("$timezone");
 $date = date("m/d/Y H:i:s");
 $_offset = new DateTime($date, new DateTimeZone("$timezone"));
