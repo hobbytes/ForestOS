@@ -8,6 +8,11 @@ Forest OS is a network operating system (shell) with open source code, which is 
 | ------ | ------ |
 | *Free space* | 6 MB |
 | *PHP version* | 5.6 |
+
+## Change php.ini configuration
+
+| Value | Argument |
+| ------ | ------ |
 | *PHP short_open_tag* | On |
 | *PHP display_errors* | Off |
 
