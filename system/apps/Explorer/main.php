@@ -486,8 +486,8 @@ while (false !== ($entry = $d->read())) {
 		$select	=	'select'.$AppID.'(\''.md5($name).'\',\''.convert(realpath($entry)).'\',\''.$type.'\',\''.$name.'\');';
 		$load = 'load'.$AppID.'(this);';
 		$n_color	=	'#000';
-		if(eregi('system/users/',realpath($entry)) || eregi('system/core',realpath($entry))){
-			if($_SESSION['superuser'] != $_SESSION['loginuser'] && !eregi('system/users/'.$_SESSION['loginuser'],realpath($entry)) || $_SESSION['superuser'] != $_SESSION['loginuser'] && eregi('system/core',realpath($entry))){
+		if(preg_match('%system/users/%', realpath($entry)) || preg_match('%system/core%', realpath($entry))){
+			if($_SESSION['superuser'] != $_SESSION['loginuser'] && !preg_match('%system/users/'.$_SESSION['loginuser'].'%', realpath($entry)) || $_SESSION['superuser'] != $_SESSION['loginuser'] && preg_match('%system/core%', realpath($entry))){
 			$select	=	'';
 			$load = '';
 			$n_color	=	'#e63030';
