@@ -11,7 +11,9 @@ class http{
         CURLOPT_FOLLOWLOCATION => true,
         CURLOPT_CUSTOMREQUEST => "POST",
         CURLOPT_POSTREDIR => 3,
-        CURLOPT_POSTFIELDS => $data
+        CURLOPT_POSTFIELDS => $data,
+        CURLOPT_REFERER => $_SERVER ['HTTP_HOST'],
+        CURLOPT_AUTOREFERER => true
     ));
     $resp = curl_exec($curl);
     curl_close($curl);
