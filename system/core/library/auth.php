@@ -6,12 +6,10 @@ class AuthClassUser {
 
   public function construct($what, $type, $keyaccess = NULL){
       $bds = new readbd;
-  		global $getdata;
+  		//global $getdata;
       if(empty($keyaccess)){
-    		$bds->readglobalfunction('login', 'users', $what, $type);
-    		$this->_login = $getdata;
-    		$bds->readglobalfunction('password', 'users', $what, $type);
-    		$this->_password = $getdata;
+    		$this->_login = $bds->readglobal2("login", "forestusers", "login", $type, true);
+    		$this->_password = $bds->readglobal2("password", "forestusers", "login", $type, true);
       }else{
         $this->_login = $bds->readglobal2("login", "forestusers", "TempKey", $keyaccess, true, true);
         $this->_password = $bds->readglobal2("password", "forestusers", "TempKey", $keyaccess, true, true);
@@ -34,7 +32,7 @@ class AuthClassUser {
 
           if(!empty($keyaccess)){
             $bds = new readbd;
-            global $getdata;
+            //global $getdata;
             $login = $bds->readglobal2("login", "forestusers", "TempKey", $keyaccess, true, true);
             $password = $bds->readglobal2("password", "forestusers", "TempKey", $keyaccess, true, true);
             if(empty($login) && empty($password)){
@@ -53,7 +51,7 @@ class AuthClassUser {
             if(!empty($keyaccess)){
 
               $bds = new readbd;
-              global $getdata;
+              //global $getdata;
 
               $TempKeyArray = $bds->readglobal2("TempKey", "forestusers", "login", $login, true);
 

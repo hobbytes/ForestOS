@@ -29,17 +29,28 @@ class  AppContainer {
   public $securityMode = true; // use security fucntion @boolean
   public $showError = false; // error display @boolean
   public $showStatistics = false; // statistics display @boolean
+  public $userControl = false; // superuser control @boolean
 
 
 /* start container */
   public function StartContainer(){
 
-    //start session
+    // start session
     if(!isset($_SESSION)){
       session_start();
     }
 
-    //start timer for stats
+    // check superuser control
+    if( $this->userControl && $_SESSION['superuser'] != $_SESSION['loginuser'] ){
+    	exit();
+      echo '
+      <script>
+        $("#process'.$this->$appID.'").remove();
+      </script>
+      ';
+    }
+
+    // start timer for stats
     if($this->showStatistics){
       echo '
       <script>
@@ -48,19 +59,19 @@ class  AppContainer {
       ';
     }
 
-    //check error state
+    // check error state
     if($this->showError){
       ini_set('display_errors','On');
       error_reporting(E_ALL);
     }
 
-    //set timezone
+    // set timezone
     $timezone = $_SESSION['timezone'];
     if (function_exists('date_default_timezone_set')){
       date_default_timezone_set("$timezone");
     }
 
-    //set Application Information
+    // set Application Information
     if(isset($_GET['getinfo']) && $_GET['getinfo'] == 'true'){
       $arrayInfo = array(
         'name' => $this->AppNameInfo, // set app name
@@ -116,7 +127,7 @@ class  AppContainer {
 /* end container + JS Function for resize window */
   public function EndContainer(){
 
-    //statistics container
+    // statistics container
     if($this->showStatistics){
       echo '<div id="statistics-'.$this->appID.'" class="stat-container"></div>';
     }
@@ -126,10 +137,10 @@ class  AppContainer {
 
       echo '$( function() { $(document).ready(function(){ UpdateWindow("'.$this->appID.'","'.$this->appName.'"); }); });';
 
-      //update app length
+      // update app length
       echo '$("#app'.$this->appID.'").attr("applength-'.$this->appID.'", parseInt($("#app'.$this->appID.'").attr("applength-'.$this->appID.'")) + $("#'.$this->appName.$this->appID.'").html().length);';
 
-      //show statistics data
+      // show statistics data
       if($this->showStatistics){
         echo '
         let pagebytes = $("#'.$this->appName.$this->appID.'").html().length;
@@ -142,7 +153,7 @@ class  AppContainer {
 
       echo '</script>';
 
-      //close container
+      // close container
       echo '</div>';
     }
   }

@@ -40,9 +40,9 @@ public static function readglobal2($globaldata, $from, $what, $like, $Return = f
   global $getdata;
   $conn = new PDO (DB_DSN, DB_USERNAME, DB_PASSWORD);
   if($likeMode){
-    $sql = "SELECT $globaldata,$what FROM $from where $what like '%$like%'";
+    $sql = "SELECT $globaldata, $what FROM $from where $what like '%$like%'";
   }else{
-    $sql = "SELECT $globaldata,$what FROM $from where $what='$like'";
+    $sql = "SELECT $globaldata, $what FROM $from where $what='$like'";
   }
 
   $id = $conn->query($sql);
@@ -55,14 +55,26 @@ public static function readglobal2($globaldata, $from, $what, $like, $Return = f
   unset($conn);
 }
 
-public static function readglobalfunction($globaldata,$table,$what,$this){
-  global $getdata;
-  $conn = new PDO (DB_DSN, DB_USERNAME, DB_PASSWORD);
-  $sql="SELECT $globaldata FROM forest$table where $what='$this'";
-  if($id=$conn->query($sql)){
-    $row = $id->fetch();
-    $getdata=$row[0];
-    $conn=null;
+function GetAllUsers(){
+  if( $_SESSION['superuser'] == $_SESSION['loginuser'] ){
+    $usersArray = array();
+    $conn = new PDO (DB_DSN, DB_USERNAME, DB_PASSWORD);
+    $sql = "SELECT login, fuid, userhash FROM forestusers";
+    $id = $conn->query($sql);
+    while ($row = $id->fetch())
+    {
+
+      $usersArray['login'] = $row['login'];
+      $usersArray['login'] = $row['fuid'];
+      $usersArray['login'] = $row['userhash'];
+
+    }
+    return $usersArray;
+
+  }else{
+
+    return NULL;
+
   }
 }
 

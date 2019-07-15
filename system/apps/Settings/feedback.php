@@ -22,8 +22,9 @@ $AppContainer->StartContainer();
 $gui = new gui;
 ?>
 <div style="width:100%; text-align:left; padding-bottom:10px; font-size:30px; border-bottom:#d8d8d8 solid 2px; text-overflow:ellipsis; overflow:hidden;">
-<span onClick="back<?echo $AppID;?>();" class="ui-forest" style="background-color:#d8d8d8; color:#000; border-radius:30%; cursor:pointer; font-size:25px; margin-left:5px;"> &#9668 </span><?echo $language[$_SESSION['locale'].'_feedback']?></div>
+<span onClick="back<?echo $AppID;?>();" class="ui-forest" style="background-color:#d8d8d8; color:#000; border-radius:30%; cursor:pointer; font-size:25px; margin-left:5px;"> &#9668; </span><?echo $language[$_SESSION['locale'].'_feedback']?></div>
 <?php
+
 if(!empty($_GET['t']) && !empty($_GET['m'])){
   $osinfo = parse_ini_file('../../core/osinfo.foc', false);
   $status = file_get_contents('http://forest.hobbytes.com/media/os/feedback.php?u='.$_SESSION['loginuser'].'&t='.urlencode($_GET['t']).'&m='.urlencode($_GET['m']).'&v='.str_replace(' ','_',$osinfo['codename'].$osinfo['subversion']));

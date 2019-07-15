@@ -8,6 +8,7 @@ ru_settings_users = Учетные записи
 ru_settings_autorun = Менеджер автозапуска
 ru_settings_appmanager = Менеджер приложений
 ru_settings_feedback = Обратная связь
+ru_settings_reset = Сброс системы
 
 en_settings_label = Settings
 en_settings_about = About
@@ -18,3 +19,4 @@ en_settings_users = Users
 en_settings_autorun = Autorun manager
 en_settings_appmanager = Application manager
 en_settings_feedback = Feedback
+en_settings_reset = Reset

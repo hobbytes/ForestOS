@@ -22,6 +22,7 @@ $AppContainer->StartContainer();
 $language_settings  = parse_ini_file('lang/main.lang');
 ?>
 	<div style="text-align:left; padding:0 10px 5px; font-size:30px; border-bottom:#d8d8d8 solid 2px; text-overflow:ellipsis; overflow:hidden;"><?echo $language_settings[$_SESSION['locale'].'_settings_label']?></div>
+
 <?php
 /* Settings */
 function newbutton($name_btn){
@@ -55,6 +56,9 @@ echo '</div>';
 
 echo '<div style="width:100%; height:auto; background-color:#e5e5e5; border-bottom:1px solid #d6d6d6; float:left;">';
 newbutton('feedback');
+if($_SESSION['superuser'] == $_SESSION['loginuser']){
+	newbutton('reset');
+}
 echo '</div>';
 
 $AppContainer->EndContainer();
