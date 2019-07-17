@@ -16,7 +16,7 @@ $AppContainer->VersionInfo = '1.0.9';
 $AppContainer->AuthorInfo = 'Forest Media';
 
 /* Library List */
-$AppContainer->LibraryArray = Array('filesystem','bd','gui');
+$AppContainer->LibraryArray = Array('filesystem','gui');
 
 /* Container Info */
 $AppContainer->appName = $AppName;

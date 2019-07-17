@@ -16,13 +16,32 @@ $AppContainer = new AppContainer;
 $AppContainer->appName = $AppName;
 $AppContainer->appID = $AppID;
 $AppContainer->userControl = true;
+$AppContainer->LibraryArray = Array('bd', 'http');
 $AppContainer->StartContainer();
 
 /* Delete system */
 $DeleteStatus = $AppContainer->GetAnyRequest('reset');
 
 if($DeleteStatus){
-  
+
+  $bd = new readbd;
+  $HttpRequest = new http;
+  $UsersList = $bd->GetAllUsers();
+
+  foreach ($UsersList as $key => $value) {
+
+    $server_url = "http://forest.hobbytes.com/media/os/ubase/deleteuser.php";
+    $password = $UsersList[$key]['password'];
+    $fuid = $UsersList[$key]['fuid'];
+
+    $userhash = md5($fuid.$_SERVER['DOCUMENT_ROOT'].$password);
+    $HttpRequest->makeNewRequest($server_url, 'Forest OS', $data = array('fuid' => "$fuid", 'followlink' => $_SERVER['SERVER_NAME'], 'userhash' => "$userhash"), "GET");
+
+  }
+  $conn = new PDO (DB_DSN, DB_USERNAME, DB_PASSWORD);
+  $conn->query("TRUNCATE TABLE forestusers");
+  unset($password, $fuid, $userhash);
+
 }
 
 /* Make new objects */
