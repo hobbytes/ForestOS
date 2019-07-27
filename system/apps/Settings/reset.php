@@ -78,9 +78,29 @@ if($DeleteStatus){
   ?>
 
   <script language="JavaScript">
-  setTimeout(function () {
-    window.location.replace("http://<?php echo $_SERVER['SERVER_NAME'] ?>");
-  }, 5000);
+
+  function timer(time,update,complete) {
+      var start = new Date().getTime();
+      var interval = setInterval(function() {
+          var now = time-(new Date().getTime()-start);
+          if( now <= 0) {
+              clearInterval(interval);
+              complete();
+          }
+          else update(Math.floor(now/1000));
+      },100);
+  }
+
+  timer(
+      11000, // milliseconds
+      function(timeleft) {
+          document.getElementById('timersad').innerHTML = timeleft+" ";
+      },
+      function() {
+          window.location.replace("http://<?php echo $_SERVER['SERVER_NAME'] ?>");
+      }
+  );
+
   </script>
 
   <?php
@@ -90,6 +110,7 @@ if($DeleteStatus){
 ?>
 <div style="width:100%; text-align:left; padding-bottom:10px; font-size:30px; border-bottom:#d8d8d8 solid 2px; text-overflow:ellipsis; overflow:hidden;">
 <span onClick="back<? echo $AppID ?>();" class="ui-forest" style="background-color:#d8d8d8; color:#000; border-radius:30%; cursor:pointer; font-size:25px; margin-left:5px;"> &#9668; </span><?echo $language[$_SESSION['locale'].'_reset']?></div>
+
 <?php
 
 echo '<div style="text-align:left; margin-top:10px; margin-left:10px;">';
@@ -144,4 +165,5 @@ $AppContainer->Event(
 	)
 );
 ?>
+
 </script>
