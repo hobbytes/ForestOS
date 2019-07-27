@@ -1,0 +1,18 @@
+[reset]
+ru_reset = 'Сброс системы'
+ru_reset_label = 'Удаление системы'
+ru_reset_warning_1 = 'Внимание! Все данные, а также учетные записи всех пользователей будут безвозвратно удалены!'
+ru_reset_warning_2 = 'ВНИМАНИЕ! ЗАПУЩЕН ПРОЦЕСС УДАЛЕНИЯ <i>FOREST OS</i>.<br>Страница автоматически обновится через 5 секунд.'
+ru_messageTitle = 'Полное удаление системы'
+ru_messageBody = 'Вы уверены, что хотите полностью удалить систему?'
+ru_okButton = 'Удалить'
+ru_cancelButton = 'Отмена'
+
+en_reset = Reset
+en_reset_label = 'Remove system'
+en_reset_warning_1 = 'Attention! All data as well as all user accounts will be permanently deleted!'
+en_reset_warning_2 = 'IMPORTANT! LOCKED REMOVE PROCESS <i>FOREST OS</i>.<br>Page will be automatically updated after 5 seconds.'
+en_messageTitle = 'Complete system removal'
+en_messageBody = 'Are you sure you want to completely remove the system?'
+en_okButton = 'Remove'
+en_cancelButton = 'Cancel'
