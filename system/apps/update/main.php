@@ -13,7 +13,7 @@ $AppContainer = new AppContainer;
 /* App Info */
 $AppContainer->AppNameInfo = 'Update Tool';
 $AppContainer->SecondNameInfo = 'Update Tool';
-$AppContainer->VersionInfo = '1.0';
+$AppContainer->VersionInfo = '1.0.1';
 $AppContainer->AuthorInfo = 'Forest Media';
 
 /* Library List */
@@ -69,8 +69,9 @@ if(!empty($customfile)){
 }
 
 if($current['subversion'] == $subversion){
-die('<div style="width:500px; height:300px;">'.$gui->infoLayot('Forest OS has already been updated').'</div>');
+  die('<div style="width:500px; height:300px;">'.$gui->infoLayot('Forest OS has already been updated').'</div>');
 }
+
 }
 ?>
 <div style="width:500px; height:300px;">
@@ -98,33 +99,38 @@ die('<div style="width:500px; height:300px;">'.$gui->infoLayot('Forest OS has al
       mkdir('./temp/');
     }
     if(empty($customfile)){
+
       $ch = curl_init('http://forest.hobbytes.com/media/os/updates/'.$updatefile.'.zip');
       $temphash = md5(date('d.m.y.h.i.s').$updatefile);
       $fp = fopen('./temp/'.$updatefile.$temphash.'.zip','wb');
-      curl_setopt($ch, CURLOPT_FILE,$fp);
-      curl_setopt($ch, CURLOPT_HEADER,0);
+      curl_setopt($ch, CURLOPT_FILE, $fp);
+      curl_setopt($ch, CURLOPT_HEADER, 0);
       curl_exec($ch);
       curl_close($ch);
       fclose($fp);
       $filename = './temp/'.$updatefile.$temphash;
+
     }else{
       $filename = $revision;
       unlink($filename.'.ini');
     }
-    echo $filename;
+
     $zip = new ZipArchive;
     if($zip->open($filename.'.zip') === TRUE){
       $zip->extractTo('../../../');
       $zip->close();
 
-      $myfile = fopen('../../core/osinfo.foc',"w");
-      $content = '[forestos]'.PHP_EOL.PHP_EOL.'version='.$version.PHP_EOL.PHP_EOL.'subversion='.$subversion.PHP_EOL.PHP_EOL.'revision='.$revision.PHP_EOL.PHP_EOL.'codename='.$codename;
-      fwrite($myfile,PHP_EOL.$content);fclose($myfile);
+      $content = "[ForestOS]\nversion='$version'\nsubversion='$subversion'\nrevision='$revision'\ncodename='$codename'";
+      file_put_contents('../../core/osinfo.foc', $content);
+
       echo '<p>'.$update_lang[$cl.'_update_msg_1'].'<b>'.$updatefile.'</b>'.$update_lang[$cl.'_update_msg_2'].'</p>';
       $gui->newnotification($AppName, $update_lang[$cl.'_update_label'], $update_lang[$cl.'_update_msg_1'].'<b>'.$updatefile.'</b>'.$update_lang[$cl.'_update_msg_2']);
+
       unlink($filename.'.zip');
-      file_get_contents('http://forest.hobbytes.com/media/os/ubase/updateuser.php?followlink='.$_SERVER['SERVER_NAME'].'&version='.str_replace(' ','_',$codename.$subversion));
-  }
+
+      $data = http_build_query(array('followlink' => $_SERVER['SERVER_NAME'], 'version' => str_replace(' ','_',$codename.$subversion) ));
+      $request = file_get_contents('http://forest.hobbytes.com/media/os/ubase/updateuser.php?'.$data);
+    }
   }
 }else{
   echo '<br><b>'.$update_lang[$cl.'_update_error_prv'].'</b>';
