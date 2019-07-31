@@ -35,6 +35,7 @@ $prepare->wall();
     <img id="background-wall" src="<?echo $mainwall?>" style="position: absolute; z-index: -99999; width:100%; height:100%; object-fit:cover; user-select:none;" draggable="false">
   </div>
 <?
+
 if(isset($_SESSION['loginuser'])){
 $prepare->themeload();
 $prepare->DisplaySettings();

@@ -126,6 +126,13 @@
       <meta name="analytics-s-page-tracking-data" content="Forest OS">
       <link rel="stylesheet" type="text/css" href="<? echo $hashfile->filehash('system/core/design/main.css')?>">
       <link rel="stylesheet" href="<? echo $hashfile->filehash('system/core/design/jquery-ui.css')?>">
+      <?
+        if(!isset($_SESSION['loginuser'])){
+          ?>
+            <link rel="stylesheet" type="text/css" href="<? echo $hashfile->filehash('system/core/design/login.css')?>">
+          <?
+        }
+      ?>
       <script src="<? echo $hashfile->filehash('system/core/library/js/jquery-1.12.4.js')?>"></script>
       <script src="<? echo $hashfile->filehash('system/core/library/js/jquery-ui.js')?>"></script>
       <script src="<? echo $hashfile->filehash('system/core/library/js/jquery.ui.touch-punch.min.js')?>"></script>

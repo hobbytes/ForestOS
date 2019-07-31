@@ -60,7 +60,7 @@ if(isset($_GET['wbmode'])){
 
 if(!empty($wall)){
   $wall_link = '../../../system/users/'.$_SESSION["loginuser"].'/settings/etc/wall.jpg';
-  if($wall=='none'){
+  if($wall == 'none'){
     if(unlink($wall_link)){
       $object->newnotification($AppName,$language_screen[$_SESSION['locale'].'_settings_screen'],$language_screen[$_SESSION['locale'].'_notwalldelete']);
     }
@@ -79,7 +79,7 @@ if(!empty($wall)){
   }
 }
 }
-if ($theme!=''){
+if ($theme != ''){
   if(copy('../../../system/core/design/themes/'.$theme.'','../../../system/users/'.$_SESSION["loginuser"].'/settings/etc/theme.fth'))  {
     $object->newnotification($AppName,$language_screen[$_SESSION['locale'].'_settings_screen'],$language_screen[$_SESSION['locale'].'_notthemechange_1']."<b>".$theme."</b>. ".$language_screen[$_SESSION['locale'].'_notthemechange_2']."<br><span id='restart' style='margin-left: 25%;' class='ui-button ui-widget ui-corner-all'>".$language_screen[$_SESSION['locale'].'_restart']."</span>");
   }else{

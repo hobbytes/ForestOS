@@ -2,11 +2,11 @@
 Name="Original"
 
 topbar]
-topbarbackcolor="rgba(240, 238, 236, 0.7);"
+topbarbackcolor="rgba(249, 249, 249, 0.5);"
 topbarfontcolor="rgb(0, 0, 0);"
 
 [menu]
-menubackcolor="rgba(240, 238, 236, 0.95);"
+menubackcolor="rgba(240, 238, 236, 0.9);"
 menufontcolor="rgb(0, 0, 0);"
 
 [window]

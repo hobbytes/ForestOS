@@ -1,7 +1,7 @@
-
-<div id="login" style="margin:auto; text-align:center; max-width:500px; height:80%;">
+<div style="display: grid; grid-template-rows: 70% 30%; width: 100%; height: 100%;">
+<div id="login" style="width: 100%; margin:auto; text-align:center; max-width:500px; height: 100%;">
 <div style="text-align:center; margin:auto; width:auto; height:auto; ">
-<div id="loginin" style="padding-top: 50%;">
+<div id="loginin" style="padding-top: 25vh;">
 <div id="labelos">Forest OS</div>
 <?
 
@@ -88,8 +88,10 @@ if(!$_SESSION['BlockDate'] || date('d-m-y H:i:s') >= $_SESSION['BlockDate']){
   $_SESSION['BlockDate'] = false;
   $gui = new gui;
   $gui->formstart('POST');
-  $gui->inputslabel('Логин', 'text', 'loginin', "$login_get",'70', $language[$_SESSION['locale'].'_login_input']);
-  $gui->inputslabel('Пароль', 'password', 'passwordin', '','70', $language[$_SESSION['locale'].'_password_input']);
+  ?>
+  <input class="loginin input-login" id="loginin" placeholder="<?=$language[$_SESSION['locale'].'_login_input']?>" type="text" name="loginin" value="<?=$login_get?>">
+  <input class="passwordin input-login" id="passwordin" placeholder="<?=$language[$_SESSION['locale'].'_password_input']?>" type="password" name="passwordin" value="">
+  <?
 }else{
   $_date = strtotime($_SESSION['BlockDate']) - strtotime(date('d-m-y H:i:s'));
   $timeleft = round(abs($_date/60));
@@ -103,11 +105,11 @@ if(!$_SESSION['BlockDate'] || date('d-m-y H:i:s') >= $_SESSION['BlockDate']){
   <?
   echo $language[$_SESSION['locale'].'_safemode_label'].'</div>';
 
-  $gui->inputslabel('keyaccess', 'text', 'keyaccess', "$keyaccess",'70', 'Key Access');
   ?>
+  <input class="keyaccess input-login" id="keyaccess" placeholder="Key Access" type="text" name="keyaccess" value="<?=$keyaccess?>">
 </div>
+<input class="buttoncustom" type="submit" name="logins" value="<?=$language[$_SESSION['locale'].'_login_button']?>">
 <?
-$gui->button($language[$_SESSION['locale'].'_login_button'], '#fff', '#f45c43', '30','logins');
 $gui->formend();
 
 $timezone = $_SESSION['timezone'];
@@ -119,20 +121,21 @@ $offset = $_offset->getOffset()/3600;
 </div>
 </div>
 </div>
-<div class="date" style="float:left; user-select: none; cursor: default; color:#fff; padding-left:30px; margin-bottom:10px; position:relative;">
-  <span id="date" style="font-size:27pt; font-weight:700; text-transform:uppercase;"><?php echo $object->getDayRus().', '.date('d').'<br>';?></span>
-  <span id="time" style="font-size:35pt;"></span>
+<div class="date" style="margin-top: 10vh; float: left; user-select: none; cursor: default; color:#fff; padding-left: 5vw; margin-bottom:10px; position:relative;">
+  <span id="date" style="font-size: 27pt; font-weight: 700; text-transform: uppercase;"><?php echo $object->getDayRus().', '.date('d').'<br>';?></span>
+  <span id="time" style="font-size: 35pt;"></span>
+</div>
 </div>
 <script type="text/javascript">
 $( function() {
   $(window).load(function(){
-    $(".welcomescreen").hide('fade',500);
     var is_mobile = "<?echo $mobile?>";
     if(is_mobile == "true"){
       $("#loginin").css("padding-top","0");
       $("#date").css("font-size","20pt");
       $("#time").css("font-size","30pt");
     }
+    $(".welcomescreen").hide('fade',500);
   });
 });
 
@@ -161,7 +164,7 @@ function showTime()
   M = M.length < 2 ? '0' + M:M;
   var clock = H + ":" + M;
   $("#time").text(clock);
-  setTimeout(showTime,1000); // перерисовать 1 раз в сек.
+  setTimeout(showTime,1000);
 }
 showTime();
 </script>

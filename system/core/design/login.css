@@ -1,0 +1,74 @@
+
+#labelos{
+	font-size: 30px;
+	padding: 30px;
+	color: #fff;
+	text-shadow: 0px 0px 1px #8e8e8e;
+	user-select: none;
+	cursor: default;
+	text-transform: uppercase;
+	font-weight: 700;
+	transition: all 0.2s ease;
+	width: max-content;
+	margin: 0 auto;
+}
+
+#labelos:hover{
+	color: #f45c43;
+	text-shadow: 0px 0px 1px #651111;
+}
+
+.input-login{
+  width: 70%;
+  -webkit-appearance: none;
+  padding: 15px;
+  border-radius: 6px;
+  margin: 17px auto;
+  background-color: rgba(202, 202, 202, 0.5);
+  float: none;
+  border: none;
+  color: #fff;
+  font-size: 18px;
+  display: block;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  border: none;
+  -webkit-text-fill-color: #fff;
+  -webkit-box-shadow: 0 0 0px 1000px rgba(202, 202, 202, 0.5) inset;
+  transition: background-color 5000s ease-in-out 0s;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  font-size: 18px;
+}
+
+.input-login::placeholder {
+    color: #eaeaea;
+}
+
+.buttoncustom {
+  background: rgba(29, 29, 31, 0.9);
+  border:none;
+  width:30%;
+  color:#fff;
+  padding:10px 20px;
+  border-radius:5px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14pt;
+  margin: 0;
+  cursor: pointer;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  -webkit-appearance:none;
+  text-transform: uppercase;
+  font-variant-caps: all-petite-caps;
+  letter-spacing: 0.1em;
+  font-weight: 600;
+}
