@@ -52,7 +52,7 @@ if (isset($loginin) && isset($passwordin)) {
 
   if (!$auth->auth($loginin, $passwordin, $keyaccess)) {
 
-    echo '<h2 style="color:#fff; background-color:#ec6767; border:2px solid #791a1a; width:350px; padding:13px 0; margin:10px auto; font-size:small;">'.$language[$_SESSION['locale'].'_login_error'].'</h2>';
+    echo '<h2 class="error-layout">'.$language[$_SESSION['locale'].'_login_error'].'</h2>';
     $login_get = $loginin;
 
     if(empty($keyaccess)){
@@ -86,6 +86,7 @@ if (isset($_GET["exit"])) {
 
 if(!$_SESSION['BlockDate'] || date('d-m-y H:i:s') >= $_SESSION['BlockDate']){
   $_SESSION['BlockDate'] = false;
+  $_SESSION['counter'] = 0;
   $gui = new gui;
   $gui->formstart('POST');
   ?>
@@ -95,22 +96,25 @@ if(!$_SESSION['BlockDate'] || date('d-m-y H:i:s') >= $_SESSION['BlockDate']){
 }else{
   $_date = strtotime($_SESSION['BlockDate']) - strtotime(date('d-m-y H:i:s'));
   $timeleft = round(abs($_date/60));
-  echo '<h2 style="color:#fff; background-color:#ec6767; border:2px solid #791a1a; width:350px; padding:13px 0; margin:10px auto; font-size:small;">'.$language[$_SESSION['locale'].'_login_error_2'].$timeleft.' min</h2>';
+  echo '<h2 class="error-layout">'.$language[$_SESSION['locale'].'_login_error_2'].$timeleft.' min</h2>';
 }
 
 ?>
 <div id="safemode" style="color:#63e47a; margin:10px 0; display:none;">
   <div style="margin:10 0;">
-  <input type="checkbox" name="safemode" value="true" style="vertical-align:top; margin: 0 3px 0 0; width:17px; height:17px;">
-  <?
-  echo $language[$_SESSION['locale'].'_safemode_label'].'</div>';
-
-  ?>
+  <label>
+    <input type="checkbox" name="safemode" value="true" style="vertical-align:top; margin: 0 3px 0 0; width:17px; height:17px;">
+    <?
+    echo $language[$_SESSION['locale'].'_safemode_label'].'</div>';
+    ?>
+  </label>
   <input class="keyaccess input-login" id="keyaccess" placeholder="Key Access" type="text" name="keyaccess" value="<?=$keyaccess?>">
 </div>
-<input class="buttoncustom" type="submit" name="logins" value="<?=$language[$_SESSION['locale'].'_login_button']?>">
 <?
-$gui->formend();
+if(!$_SESSION['BlockDate']){
+  echo '<input class="buttoncustom" type="submit" name="logins" value="'.$language[$_SESSION['locale'].'_login_button'].'">';
+  $gui->formend();
+}
 
 $timezone = $_SESSION['timezone'];
 date_default_timezone_set("$timezone");
