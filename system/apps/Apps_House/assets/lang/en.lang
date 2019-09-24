@@ -13,10 +13,16 @@ app_button_open = Open
 app_button_install = Install
 os_need_update = 'Requires a newer OS version'
 
-more_apps = More
+more_apps = more
 
 placeholder_search = Search
 button_search = Find
+
+show_sort_label = Show
+show_sort_popular = Popular
+show_sort_new = New
+show_sort_unpopular = Not popular
+show_sort_old = Old
 
 install_caption_1 = Install
 install_caption_2 = installed

@@ -25,6 +25,8 @@ $AppContainer->appID = $AppID;
 $AppContainer->height = '530px';
 $AppContainer->backgroundColor = '#e8e8e8';
 $AppContainer->customStyle = 'padding-top:0px; max-width:100%;';
+$AppContainer->isMobile = $_GET['mobile'];
+
 //$AppContainer->showError = true;
 $AppContainer->StartContainer();
 
@@ -64,6 +66,18 @@ if(!empty($AppSearch)){
   $_AppSearch = UTFTransform($AppSearch);
 }
 
+/* Sort Apps */
+
+$SortApps = $AppContainer->GetAnyRequest('SortApps');
+
+if(empty($SortApps)){
+  $SortApps = 'rating_DESC';
+}
+
+$sortParts = explode("_", $SortApps);
+
+$SortBy = $sortParts[0];
+$SortType = $sortParts[1];
 
 ?>
 
@@ -80,12 +94,31 @@ if(!empty($AppSearch)){
   <div id="TabTitle"><? echo $language['app_tab'] ?></div>
 
   <div style="text-align: center; border-bottom: 1px solid #d4d4d4;">
-    <input style="-webkit-appearance: none; padding: 5px; border: 1px solid #ccc; border-radius: 6px; width: 270px; margin-bottom: 20px;" id="AppSearch<? echo $AppID ?>" type="search" value="<? echo $_AppSearch ?>" placeholder="<? echo $language['placeholder_search'] ?>">
+    <input style="-webkit-appearance: none; padding: 7px; border: 1px solid #ccc; border-radius: 6px; width: 270px; margin-bottom: 20px; font-size: 15px;" id="AppSearch<? echo $AppID ?>" type="search" value="<? echo $_AppSearch ?>" placeholder="<? echo $language['placeholder_search'] ?>">
     <div class="ui-forest-blink" onClick="AppSearch<? echo $AppID ?>()" style="display: inline-block; background: #2196F3; color: #fff; padding: 5px; border-radius: 6px; cursor: default;"><? echo $language['button_search'] ?></div>
+  </div>
+
+  <div style="text-align:left; margin-top: 10px; user-select: none;">
+  <label for="SortApps<?=$AppID?>"><?=$language['show_sort_label']?>:</label>
+    <select id="SortApps<?=$AppID?>" style="-webkit-appearance: none; background: #fff; cursor: default; padding: 7px; border: 1px solid #9E9E9E; font-size: 15px; border-radius: 5px;">
+      <option value="rating_DESC"><?=$language['show_sort_popular']?></option>
+      <option value="date_DESC"><?=$language['show_sort_new']?></option>
+      <option value="rating_ASC"><?=$language['show_sort_unpopular']?></option>
+      <option value="date_ASC"><?=$language['show_sort_old']?></option>
+    </select>
   </div>
 
   <div style="margin-top: 15px">
     <?
+
+    /* adapts for smartphone */
+    if($AppContainer->isMobile == 'true'){
+      echo '
+      <style>
+        .AppTile { min-width: 300px; }
+      </style>
+      ';
+    }
 
     /* install app */
 
@@ -166,12 +199,12 @@ if(!empty($AppSearch)){
     $ScrollTo = $AppContainer->GetAnyRequest('ScrollTo', 0);
     $GetPage = $AppContainer->GetAnyRequest('Page', 12);
 
-    $GetApps = $HttpRequest->makeNewRequest($server_url.'GetApp.php', 'Forest OS', $data = array('login' => $_SESSION["loginuser"], 'token' => "$token", 'page' => $GetPage, 'search' => $AppSearch));
+    $GetApps = $HttpRequest->makeNewRequest($server_url.'GetApp.php', 'Forest OS', $data = array('login' => $_SESSION["loginuser"], 'token' => "$token", 'page' => $GetPage, 'search' => $AppSearch, 'sortby' => $SortBy, 'sort' => $SortType));
     $GetApps = json_decode($GetApps, TRUE);
 
     $MaxRating = $HttpRequest->makeNewRequest($server_url.'MaxRating.php', 'Forest OS', $data = array('login' => $_SESSION["loginuser"], 'token' => "$token"));
-    /* create array with installed apps */
 
+    /* create array with installed apps */
     $InstalledApps = array();
 
     foreach (glob("../*/main.php") as $filename) {
@@ -180,6 +213,7 @@ if(!empty($AppSearch)){
     }
 
     /* rating function */
+
     function getRating($rating, $MaxRating){
       $r = ($rating / $MaxRating) * 5;
       $r_int = intval($r);
@@ -270,12 +304,12 @@ if(!empty($AppSearch)){
     ?>
   </div>
 
-  <div style="font-size: 20px; width: 100%; text-align: center; float: none; display: inline-block; font-weight: 900;">
+  <div style="font-size: 20px; width: 100%; text-align: center; float: none; display: inline-block;">
   <?
 
   $MoreApps = $GetPage + 5;
   if($GetApps['Page']['All'] > $GetPage){
-    echo '<span style="padding: 0px 5px; cursor: default; background: #03A9F4; color: #fff; border-radius: 10px;" class="ui-forest-blink" onClick="LoadPage'.$AppID.'('.$MoreApps.');">'.$language['more_apps'].'</span>';
+    echo '<span style="padding: 3px 5px; cursor: default; background: #03A9F4; color: #fff; border-radius: 10px;" class="ui-forest-blink" onClick="LoadPage'.$AppID.'('.$MoreApps.');">'.$language['more_apps'].'</span>';
   }
 
   ?>
@@ -585,7 +619,8 @@ $AppContainer->Event(
 	array(
     'Page' => '"+page+"',
     'activetab' => '"+$("#Tabs'.$AppID.'").tabs(\'option\',\'active\')+"',
-    'ScrollTo' => '"+$("#'.$AppName.$AppID.'").scrollTop()+"'
+    'ScrollTo' => '"+$("#'.$AppName.$AppID.'").scrollTop()+"',
+    'SortApps' => '"+escape($( "#SortApps'.$AppID.'" ).val())+"'
 	)
 );
 
@@ -596,7 +631,8 @@ $AppContainer->Event(
 	$Folder,
 	'main',
 	array(
-    'AppSearch' => '"+escape($("#AppSearch'.$AppID.'").val())+"'
+    'AppSearch' => '"+escape($("#AppSearch'.$AppID.'").val())+"',
+    'SortApps' => '"+escape($( "#SortApps'.$AppID.'" ).val())+"'
 	)
 );
 
@@ -661,6 +697,12 @@ $AppContainer->Event(
 );
 
 ?>
+
+$( "#SortApps<?=$AppID?>" ).val('<?=$SortApps?>');
+
+$( "#SortApps<?=$AppID?>" ).change(function() {
+  LoadPage<?=$AppID?>(<?=$GetPage?>);
+});
 
 $('.A-button-open').click(function(){
   makeprocess('system/apps/'+$(this).attr('app')+'/main.php', '', '', $(this).attr('app'));

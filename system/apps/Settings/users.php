@@ -20,7 +20,7 @@ $AppContainer->StartContainer();
 ?>
 
 <div style="width:100%; text-align:left; padding-bottom:10px; font-size:30px; border-bottom:#d8d8d8 solid 2px; text-overflow:ellipsis; overflow:hidden;">
-<span onClick="back<?echo $AppID;?>();" class="ui-forest" style="background-color:#d8d8d8; color:#000; border-radius:30%; cursor:pointer; font-size:25px; margin-left:5px;"> &#9668; </span><?echo $language_users[$_SESSION['locale'].'_settings_users']?></div>
+<span onClick="back<?=$AppID?>();" class="ui-forest" style="background-color:#d8d8d8; color:#000; border-radius:30%; cursor:pointer; font-size:25px; margin-left:5px;"> &#9668; </span><?=$language_users[$_SESSION['locale'].'_settings_users']?></div>
 <?php
 
 global $security;
@@ -115,51 +115,54 @@ if($adduserlogin!='' && $adduserpassword!='' && $_SESSION['loginuser'] == $_SESS
 /*-----check users----*/
 if($selectuser!=''){
   if($selectuser!='newuser'){
-  $fuid = $settingsbd->readglobal2("fuid", "forestusers", "login", $selectuser, true);
-  $pubusername = str_replace('_',' ',$selectuser);
-  echo '<div style="text-align:left; margin-top:100px; "><b style="font-size:35px; text-transform:uppercase;">'.$pubusername.'</b>';
-  echo '<div><br> FUID: '.$fuid.'</div></div><br>';
-  if($_SESSION['loginuser'] == $_SESSION['superuser'] && $_SESSION['loginuser'] != $selectuser){
-    $settingsbd->readglobal2("status", "forestusers", "login", $selectuser);
-    if($getdata == 'superuser'){
-      echo '<div id="'.$selectuser.'" messageTitle="'.$language_users[$_SESSION['locale'].'_button_removerule'].'?" messageBody="'.$language_users[$_SESSION['locale'].'_remove_mb'].'" okButton="'.$language_users[$_SESSION['locale'].'_ok_btn'].'" cancelButton="'.$language_users[$_SESSION['locale'].'_cancel_btn'].'" onClick="ExecuteFunctionRequest'.$AppID.'(this, \'removerule'.$AppID.'\', \''.$selectuser.'\')" class="ui-forest-button ui-forest-cancel">'.$language_users[$_SESSION['locale'].'_button_removerule'].'</div><br>';
-    }else{
-      echo '<div id="'.$selectuser.'" messageTitle="'.$language_users[$_SESSION['locale'].'_button_addrule'].'?" messageBody="'.$language_users[$_SESSION['locale'].'_add_mb'].'" okButton="'.$language_users[$_SESSION['locale'].'_ok_btn'].'" cancelButton="'.$language_users[$_SESSION['locale'].'_cancel_btn'].'" onClick="ExecuteFunctionRequest'.$AppID.'(this, \'addrule'.$AppID.'\', \''.$selectuser.'\')" class="ui-forest-button ui-forest-accept">'.$language_users[$_SESSION['locale'].'_button_addrule'].'</div><br>';
+    $fuid = $settingsbd->readglobal2("fuid", "forestusers", "login", $selectuser, true);
+    $pubusername = str_replace('_',' ',$selectuser);
+    echo '<div style="text-align:left; margin-top:100px; "><b style="font-size:35px; text-transform:uppercase;">'.$pubusername.'</b>';
+    echo '<div><br> FUID: '.$fuid.'</div></div><br>';
+    if($_SESSION['loginuser'] == $_SESSION['superuser'] && $_SESSION['loginuser'] != $selectuser){
+      $settingsbd->readglobal2("status", "forestusers", "login", $selectuser);
+      if($getdata == 'superuser'){
+        echo '<div id="'.$selectuser.'" messageTitle="'.$language_users[$_SESSION['locale'].'_button_removerule'].'?" messageBody="'.$language_users[$_SESSION['locale'].'_remove_mb'].'" okButton="'.$language_users[$_SESSION['locale'].'_ok_btn'].'" cancelButton="'.$language_users[$_SESSION['locale'].'_cancel_btn'].'" onClick="ExecuteFunctionRequest'.$AppID.'(this, \'removerule'.$AppID.'\', \''.$selectuser.'\')" class="ui-forest-button ui-forest-cancel">'.$language_users[$_SESSION['locale'].'_button_removerule'].'</div><br>';
+      }else{
+        echo '<div id="'.$selectuser.'" messageTitle="'.$language_users[$_SESSION['locale'].'_button_addrule'].'?" messageBody="'.$language_users[$_SESSION['locale'].'_add_mb'].'" okButton="'.$language_users[$_SESSION['locale'].'_ok_btn'].'" cancelButton="'.$language_users[$_SESSION['locale'].'_cancel_btn'].'" onClick="ExecuteFunctionRequest'.$AppID.'(this, \'addrule'.$AppID.'\', \''.$selectuser.'\')" class="ui-forest-button ui-forest-accept">'.$language_users[$_SESSION['locale'].'_button_addrule'].'</div><br>';
+      }
     }
-  }
-  if($_SESSION['loginuser'] != $selectuser){
-    echo '<div id="'.$selectuser.'" messageTitle="'.$language_users[$_SESSION['locale'].'_button_deleteuser'].'?" messageBody="'.$language_users[$_SESSION['locale'].'_delete_mb'].'" okButton="'.$language_users[$_SESSION['locale'].'_ok_btn'].'" cancelButton="'.$language_users[$_SESSION['locale'].'_cancel_btn'].'" onClick="ExecuteFunctionRequest'.$AppID.'(this, \'deleteuser'.$AppID.'\', \''.$selectuser.'\')" class="ui-forest-button ui-forest-cancel">'.$language_users[$_SESSION['locale'].'_button_deleteuser'].'</div>';
-  }
+    if($_SESSION['loginuser'] != $selectuser){
+      echo '<div id="'.$selectuser.'" messageTitle="'.$language_users[$_SESSION['locale'].'_button_deleteuser'].'?" messageBody="'.$language_users[$_SESSION['locale'].'_delete_mb'].'" okButton="'.$language_users[$_SESSION['locale'].'_ok_btn'].'" cancelButton="'.$language_users[$_SESSION['locale'].'_cancel_btn'].'" onClick="ExecuteFunctionRequest'.$AppID.'(this, \'deleteuser'.$AppID.'\', \''.$selectuser.'\')" class="ui-forest-button ui-forest-cancel">'.$language_users[$_SESSION['locale'].'_button_deleteuser'].'</div>';
+    }
 }
 else
 {
   echo '<div style="text-align:left; margin-top:100px; "><b style="font-size:25px; text-transform:uppercase;">'.$language_users[$_SESSION['locale'].'_newuser_label'].'</b></div>';
+  echo "<div>".$language_users[$_SESSION['locale'].'_inputuser_label'].":</div>";
 
-echo "<div>".$language_users[$_SESSION['locale'].'_inputuser_label'].":</div>";
   $gui->inputslabel('', 'text', ''.$AppID.'reglogin', ''.$adduserlogin.'','50', $language_users[$_SESSION['locale'].'_inputuser_label']);
-echo "<div>".$language_users[$_SESSION['locale'].'_inputpass_label'].":</div>";
+
+  echo "<div>".$language_users[$_SESSION['locale'].'_inputpass_label'].":</div>";
+
   $gui->inputslabel('', 'password', ''.$AppID.'regpassword', ''.$adduserpassword.'','50',$language_users[$_SESSION['locale'].'_inputpass_label']);
+
   echo '<div id="addbtnuser'.$AppID.'" onClick="adduser'.$AppID.'();" class="ui-forest-button ui-forest-accept">'.$language_users[$_SESSION['locale'].'_button_adduser'].'</div>';
 }
 }
 
-if($deleteuser!=''){
-  $settingsbd->readglobal2("status","forestusers","login",$deleteuser);
-  if($getdata!='superuser'){
+if(!empty($deleteuser)){
+  $settingsbd->readglobal2("status", "forestusers", "login", $deleteuser);
+  if($getdata != 'superuser'){
     $sql="DELETE FROM forestusers WHERE login='$deleteuser'";
     $fuid = $_GET['fuid'];
     $dr = $_SERVER['DOCUMENT_ROOT'];
-    $settingsbd->readglobal2("password","forestusers","login",$deleteuser);
+    $settingsbd->readglobal2("password", "forestusers", "login", $deleteuser);
     $userhash = md5($fuid.$dr.$getdata);
     if($conn->query($sql)){
       $e = file_get_contents('http://forest.hobbytes.com/media/os/ubase/deleteuser.php?fuid='.$fuid.'&followlink='.$_SERVER['SERVER_NAME'].'&userhash='.$userhash.'');
-      if($e=='true'){
+      if($e == 'true'){
         $faction = new fileaction;
         $faction->deleteDir($_SERVER['DOCUMENT_ROOT'].'/system/users/'.$deleteuser);
         $gui->newnotification($AppName,$language_users[$_SESSION['locale'].'_settings_users'],  $language_users[$_SESSION['locale'].'_deleteusernot'].": <b>".str_replace('_',' ',$deleteuser)."</b>");
         ?>
         <script>
-        $("#<?echo $deleteuser?>").remove();
+        $("#<?=$deleteuser?>").remove();
         </script>
         <?
       }
@@ -241,17 +244,17 @@ $AppContainer->Event(
 );
 ?>
 
-function adduser<?echo $AppID;?>(){
-  var u_login = escape($('.<?echo $AppID?>reglogin').val());
-  var u_password = escape($('.<?echo $AppID?>regpassword').val());
+function adduser<?=$AppID?>(){
+  var u_login = escape($('.<?=$AppID?>reglogin').val());
+  var u_password = escape($('.<?=$AppID?>regpassword').val());
   if(u_login && u_password){
-    $("#<?echo $AppID;?>").load("<?echo $Folder?>users.php?id=<?echo rand(0,10000).'&destination='.$Folder.'&appname='.$AppName.'&appid='.$AppID?>&adduserlogin="+u_login+"&selectuser="+u_login+"&adduserpassword="+u_password);
+    $("#<?=$AppID;?>").load("<?=$Folder?>users.php?id=<?=rand(0,10000).'&destination='.$Folder.'&appname='.$AppName.'&appid='.$AppID?>&adduserlogin="+u_login+"&selectuser="+u_login+"&adduserpassword="+u_password);
   }else{
     if(!u_password){
-      $('.<?echo $AppID?>regpassword').focus();
+      $('.<?=$AppID?>regpassword').focus();
     }
     if(!u_login){
-      $('.<?echo $AppID?>reglogin').focus();
+      $('.<?=$AppID?>reglogin').focus();
     }
   }
 };
