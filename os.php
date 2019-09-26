@@ -10,6 +10,7 @@ require 'system/core/library/auth.php';
 require 'system/core/library/etc.php';
 require 'system/core/library/filesystem.php';
 require 'system/core/library/prepare.php';
+require 'system/core/library/dock.php';
 require 'system/core/library/etc/security.php';
 
 if(!isset($_SESSION)){
@@ -20,6 +21,7 @@ $object = new gui;
 $infob = new info;
 $hashfile = new fileaction;
 $prepare = new prepare;
+$Dock = new Dock;
 $security = new security;
 $auth = new AuthClassUser();
 
@@ -82,6 +84,11 @@ $infob->beacon();
 <div class="selectors-container">
   <div id="selector-1" desktop="1" class="selector ui-forest-blink"></div>
 </div>
+
+<?
+  $Dock->CreateNewDock();
+?>
+
 <script>
 var id = <? echo $_SESSION['appid'] = $_SESSION['appid'] + 1 ?>;
 <?
@@ -94,6 +101,6 @@ require 'system/core/library/js/core-js.php';
 $_SESSION['appid']  = '<script>document.writeln(id)</script>';
 $prepare->autorun();
 }else{
-require 'login.php';
+  require 'login.php';
 }
 ?>

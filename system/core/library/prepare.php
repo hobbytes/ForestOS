@@ -89,11 +89,13 @@
         $top = '20px';
         $left = '0px';
         $maxwidth = '100%';
+        $_SESSION['is_mobile'] = true;
       }else{
         $click = 'dblclick';
         $top = '25%';
         $left = '25%';
         $maxwidth = '90%';
+        $_SESSION['is_mobile'] = false;
       }
 
       $themeload = parse_ini_file("system/users/".$_SESSION["loginuser"]."/settings/etc/theme.fth");

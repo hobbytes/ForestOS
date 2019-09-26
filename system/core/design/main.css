@@ -148,7 +148,7 @@ body {
 	position: absolute;
 	left: 0;
 	right: 0;
-	top: 90%;
+	top: 80vh;
 	margin-left: auto;
 	margin-right: auto;
 	width: max-content;
@@ -170,6 +170,53 @@ body {
 .selector-hidden{
 	background: #a9a9a9;
 }
+
+.dock-container {
+	background: rgba(241, 241, 241, 0.6);
+  height: 80px;
+  margin: 0 auto;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 85vh;
+  margin-left: auto;
+  margin-right: auto;
+  width: max-content;
+	max-width: 90%;
+  z-index: -1;
+  border-radius: 10px;
+  text-align: center;
+	padding-top: 10px;
+	backdrop-filter: blur(5px)!important;
+	-webkit-backdrop-filter: blur(5px)!important;
+	overflow: auto;
+	white-space: nowrap;
+}
+
+.dock-container::-webkit-scrollbar {
+	display: none;
+}
+
+.dock-icon {
+	 margin: 0 11px;
+	 background-size: cover;
+	 height: 70px;
+	 width: 70px;
+	 background-color: transparent;
+	 display: inline-block;
+	 vertical-align: middle;
+	 transition: all 0.2s ease;
+}
+
+@media (min-width: 768px) and (max-width: 1280px) {
+
+	.dock-icon:hover {
+		filter: brightness(110%);
+	}
+
+}
+
+
 
 .ui-forest{
 	transition: all 0.2s ease;
@@ -234,20 +281,20 @@ body {
 	float: left
 }
 
-.ui-forest-accept{
+.ui-forest-accept {
 	background: linear-gradient(45deg,	#6b99fe 30%,	#53b8ff 90%);
 }
 
-.ui-forest-cancel{
+.ui-forest-cancel {
 	background: linear-gradient(45deg,	#fe6b6b 30%,	#ff7171 90%);
 }
 
-.ui-forest-tblack{
+.ui-forest-tblack {
 	color: #151515;
 	border: 2px solid #151515;
 }
 
-.stat-container{
+.stat-container {
 	position: absolute;
 	top: 88%;
 	left: 2%;
@@ -259,30 +306,30 @@ body {
 	font-weight: 600;
 }
 
-.ui-forest-tblack:hover{
+.ui-forest-tblack:hover {
 	color: #fff;
 	border: 2px solid #151515;
 	background: #151515;
 }
 
-.ui-forest-twhite{
+.ui-forest-twhite {
 	color: #fff;
 	border: 2px solid #fff;
 }
 
-.ui-forest-twhite:hover{
+.ui-forest-twhite:hover {
 	color: #151515;
 	border: 2px solid #fff;
 	background: #fff;
 }
 
-.ui-forest-menu-labels{
+.ui-forest-menu-labels {
 	cursor:pointer;
 	padding:15px;
 	transition: all 0.1s ease;
 }
 
-.ui-forest-menu-labels:hover{
+.ui-forest-menu-labels:hover {
 	filter: hue-rotate(20deg);
 }
 

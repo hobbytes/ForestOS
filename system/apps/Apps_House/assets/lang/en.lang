@@ -19,10 +19,10 @@ placeholder_search = Search
 button_search = Find
 
 show_sort_label = Show
-show_sort_popular = Popular
-show_sort_new = New
-show_sort_unpopular = Not popular
-show_sort_old = Old
+show_sort_popular = popular
+show_sort_new = new
+show_sort_unpopular = not popular
+show_sort_old = old
 
 install_caption_1 = Install
 install_caption_2 = installed

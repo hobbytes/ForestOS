@@ -19,10 +19,10 @@ placeholder_search = Поиск
 button_search = Найти
 
 show_sort_label = Показать
-show_sort_popular = Популярные
-show_sort_new = Новые
-show_sort_unpopular = Не популярные
-show_sort_old = Старые
+show_sort_popular = популярные
+show_sort_new = новые
+show_sort_unpopular = не популярные
+show_sort_old = старые
 
 install_caption_1 = Установка
 install_caption_2 = установлено

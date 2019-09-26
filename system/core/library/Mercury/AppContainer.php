@@ -36,7 +36,7 @@ class  AppContainer {
   public function StartContainer(){
 
     // start session
-    if(!isset($_SESSION)){
+    if( !isset($_SESSION) ){
       session_start();
     }
 
@@ -51,7 +51,7 @@ class  AppContainer {
     }
 
     // start timer for stats
-    if($this->showStatistics){
+    if( $this->showStatistics ){
       echo '
       <script>
         var timerStart = performance.now();
@@ -119,7 +119,7 @@ class  AppContainer {
 
     // check var and make new container
     if($this->appName && $this->appID){
-      echo '<div id="'.$this->appName.$this->appID.'" style="background-color:'.$this->backgroundColor.'; color:'.$this->fontColor.'; height:'.$this->height.'; width:'.$this->width.'; max-height:96%; padding-top:10px; border-radius:0px 0px 5px 5px; overflow:auto; '.$this->customStyle.'">';
+      echo '<div id="'.$this->appName.$this->appID.'" style="background:'.$this->backgroundColor.'; color:'.$this->fontColor.'; height:'.$this->height.'; width:'.$this->width.'; max-height:96%; padding-top:10px; border-radius:0px 0px 5px 5px; overflow:auto; '.$this->customStyle.'">';
     }
 
   }
