@@ -191,6 +191,7 @@ body {
 	-webkit-backdrop-filter: blur(5px)!important;
 	overflow: auto;
 	white-space: nowrap;
+	user-select: none;
 }
 
 .dock-container::-webkit-scrollbar {
@@ -205,13 +206,22 @@ body {
 	 background-color: transparent;
 	 display: inline-block;
 	 vertical-align: middle;
-	 transition: all 0.2s ease;
+	 position: relative;
+	 top: 0;
+	 transition: all 0.1s ease 0s;
+}
+
+.dock-separator {
+	border: 1px solid rgba(84, 84, 84, 0.5);
+  padding: 10px 0;
 }
 
 @media (min-width: 768px) and (max-width: 1280px) {
 
 	.dock-icon:hover {
-		filter: brightness(110%);
+		filter: brightness(107%);
+		top: -2px;
+    position: relative;
 	}
 
 }
