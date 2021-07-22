@@ -32,7 +32,7 @@ class Dock {
         $object = pathinfo($object);
         $ObjectName = $object['filename'];
         $ObjectExt = $object['extension'];
-        $ObjectApp = "/home/u588238148/public_html/forestos/system/apps/$ObjectName/main.php";
+        $ObjectApp = $_SERVER['DOCUMENT_ROOT']."/system/apps/$ObjectName/main.php";
         if(is_file($ObjectApp)){
 
           if($CountFolders >= 2 && $Temp != $object['dirname']){
@@ -43,7 +43,8 @@ class Dock {
             $Temp = $object['dirname'];
           }
 
-          $Action = "makeprocess('/home/u588238148/public_html/forestos/system/apps/$ObjectName/main.php', '$ObjectName', '', '$ObjectName');";
+          $dir_ = $_SERVER['DOCUMENT_ROOT'];
+          $Action = "makeprocess('$dir_/system/apps/$ObjectName/main.php', '$ObjectName', '', '$ObjectName');";
           echo '<div class="dock-icon" onClick="'.$Action.'" style="background-image: url(./system/apps/'.$ObjectName.'/app.png?h=1ca7108a11d44b16d38fce45ef19670b);">';
           echo '</div>';
         }
