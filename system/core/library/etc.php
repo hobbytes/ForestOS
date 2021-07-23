@@ -37,10 +37,10 @@ class info{
       if($currentFileSize >= $maxFileSize){
         $_getstat = preg_replace('/^.+\n/', '', nl2br($getstat));
         $_getstat = preg_replace('/^.+\n/', '', nl2br($_getstat));
-        $content  = "$_getstat\n$text";
+        $content  = "$_getstat\n\n$text";
         $content = str_replace('<br />','',$content);
       }else{
-        $content  = "$getstat\n$text";
+        $content  = "$getstat\n\n$text";
       }
       $text = $security->__encode($content, $key);
       file_put_contents($folder, $text);

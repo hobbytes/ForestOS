@@ -28,10 +28,30 @@ function appprepare(){
   if(!isset($_SESSION)){
     session_start();
   }
+
   if(!isset($_SESSION['loginuser'])){
+
+    $backtrace = debug_backtrace();
+    $File = $backtrace[1][file];
+
+    if(!empty($File)){
+      $File = ", FILE -> '$File'";
+    }elseif (!empty($backtrace[0][file])) {
+      $File = $backtrace[0][file];
+      $File = ", FILE -> '$File'";
+    }else{
+      $File = '';
+    }
+
+    if(!empty($backtrace['1']['object']->AppNameInfo)){
+      $AppName = ', APP NAME -> '.$backtrace['1']['object']->AppNameInfo;
+    }else{
+      $AppName = '';
+    }
+
     require_once $_SERVER['DOCUMENT_ROOT'].'/system/core/library/etc.php';
     $infob = new info;
-    $infob->writestat('ALARM! Unauthorized app launch access', $_SERVER['DOCUMENT_ROOT'].'/system/core/journal.mcj');
+    $infob->writestat( "ALARM! Unauthorized app launch access$File$AppName", $_SERVER['DOCUMENT_ROOT'].'/system/core/journal.mcj');
     exit;
     ?>
     <script>document.body.innerHTML = '';</script>
