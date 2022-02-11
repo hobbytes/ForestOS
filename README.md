@@ -20,6 +20,10 @@ Forest OS is a network operating system (shell) with open source code, which is 
 1. Download the file http://forest.hobbytes.com/media/os/installer.zip and unzip it into the root of the site
 2. Run `<index.php>`
 
+IMPORTANT: install the os in the **root directory** <br>
+**Right:** site.com/index.php <br>
+**Wrong:** site.com/os/index.php <br>
+
 ## Screenshots:
 
 <img src="http://forest.hobbytes.com/media/os/screenshot/login.png" width="512">
