@@ -12,7 +12,7 @@ require '../../core/library/Mercury/AppContainer.php';
 $AppContainer = new AppContainer;
 $AppContainer->AppNameInfo = 'Settings';
 $AppContainer->SecondNameInfo = 'Параметры';
-$AppContainer->VersionInfo = '1.2.1';
+$AppContainer->VersionInfo = '1.2.2';
 $AppContainer->AuthorInfo = 'Forest Media';
 $AppContainer->appName = $AppName;
 $AppContainer->appID = $AppID;
@@ -41,6 +41,7 @@ function newbutton($name_btn){
 echo '<div style="width:100%; height:auto; float:left; border-bottom:1px solid #d6d6d6;">';
 newbutton('about');
 newbutton('personalization');
+newbutton('dock');
 newbutton('language');
 echo '</div>';
 

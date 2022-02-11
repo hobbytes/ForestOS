@@ -35,6 +35,7 @@ $warn_apps = array('Apps_House', 'Explorer', 'update', 'Settings');
 $app_delete = $_GET['app_delete'];
 $app_link = $_GET['app_link'];
 
+//Make link
 if(!empty($app_link)){
   $info = file_get_contents('http://'.$_SERVER['HTTP_HOST'].'/system/apps/'.$app_link.'/main.php?getinfo=true&h='.md5(date('dmyhis')));
   $arrayInfo = json_decode($info);
@@ -47,6 +48,7 @@ if(!empty($app_link)){
   $fileaction->makelink($file, $_SERVER['DOCUMENT_ROOT'].'/system/apps/'.$app_link.'/', 'main', '', $app_link, $pubname, $pubname, 'system/apps/'.$app_link.'/app.png');
 }
 
+//Delete App
 if(!empty($app_delete) && !in_array($app_delete, $warn_apps)){
   if(is_file("../$app_delete/app.hash")){
     $GetHash = file_get_contents("../$app_delete/app.hash");
@@ -97,7 +99,7 @@ foreach (glob($_SERVER['DOCUMENT_ROOT']."/system/apps/*/main.php") as $filenames
   }else{
     $AppName_	=	$arrayInfo->{'secondname'};
   }
-  if(empty($AppName)){
+  if(empty($AppName_)){
     $AppName_ = $app_name;
   }
 
