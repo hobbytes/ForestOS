@@ -68,7 +68,7 @@ if($adduserlogin!='' && $adduserpassword!='' && $_SESSION['loginuser'] == $_SESS
 {
   $adduserlogin = strtolower(addslashes(strip_tags(htmlspecialchars($adduserlogin))));
   $adduserlogin = str_replace(' ','_',$adduserlogin);
-  $usercheck = file_get_contents('http://forest.hobbytes.com/media/os/ubase/checkuser.php?check='.$adduserlogin);
+  $usercheck = file_get_contents('https://forest.hobbytes.com/media/os/ubase/checkuser.php?check='.$adduserlogin);
   if($usercheck == 'true'){
     die($gui->errorLayot($language_users[$_SESSION['locale'].'_twinuser_error']));
   }
@@ -98,7 +98,7 @@ if($adduserlogin!='' && $adduserpassword!='' && $_SESSION['loginuser'] == $_SESS
       $content="[link]\n\rdestination=system/apps/Explorer/\n\rfile=main\n\rkey=dir\n\rparam=$dr/system/users/$adduserlogin/trash\n\rname=Explorer\n\rlinkname=Корзина\n\ricon=system/apps/Explorer/assets/trashicon.png";
       $os_info = parse_ini_file('../../core/osinfo.foc');
       file_put_contents('../../users/'.$adduserlogin.'/desktop/trash.link', $content);
-      file_get_contents('http://forest.hobbytes.com/media/os/ubase/adduser.php?fuid='.$fuid.'&followlink='.$_SERVER['SERVER_NAME'].'&userhash='.$userhash.'&login='.$adduserlogin.'&version='.str_replace(' ','_',$os_info['codename'].$os_info['subversion']));
+      file_get_contents('https://forest.hobbytes.com/media/os/ubase/adduser.php?fuid='.$fuid.'&followlink='.$_SERVER['SERVER_NAME'].'&userhash='.$userhash.'&login='.$adduserlogin.'&version='.str_replace(' ','_',$os_info['codename'].$os_info['subversion']));
     }
     catch (PDOException $e){
       echo 'false: '.$e->getMessage().'\n';
@@ -155,7 +155,7 @@ if(!empty($deleteuser)){
     $settingsbd->readglobal2("password", "forestusers", "login", $deleteuser);
     $userhash = md5($fuid.$dr.$getdata);
     if($conn->query($sql)){
-      $e = file_get_contents('http://forest.hobbytes.com/media/os/ubase/deleteuser.php?fuid='.$fuid.'&followlink='.$_SERVER['SERVER_NAME'].'&userhash='.$userhash.'');
+      $e = file_get_contents('https://forest.hobbytes.com/media/os/ubase/deleteuser.php?fuid='.$fuid.'&followlink='.$_SERVER['SERVER_NAME'].'&userhash='.$userhash.'');
       if($e == 'true'){
         $faction = new fileaction;
         $faction->deleteDir($_SERVER['DOCUMENT_ROOT'].'/system/users/'.$deleteuser);

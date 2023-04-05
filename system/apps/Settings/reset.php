@@ -29,7 +29,7 @@ if($DeleteStatus){
 
   $bd = new readbd;
   $UsersList = $bd->GetAllUsers();
-  $server_url = "http://forest.hobbytes.com/media/os/ubase/deleteuser.php";
+  $server_url = "https://forest.hobbytes.com/media/os/ubase/deleteuser.php";
 
   foreach ($UsersList as $key => $value) {
 
@@ -49,7 +49,7 @@ if($DeleteStatus){
   unset($password, $fuid, $userhash);
 
   $curlCh = curl_init();
-  curl_setopt($curlCh, CURLOPT_URL, "http://forest.hobbytes.com/media/os/installer.zip");
+  curl_setopt($curlCh, CURLOPT_URL, "https://forest.hobbytes.com/media/os/installer.zip");
   curl_setopt($curlCh, CURLOPT_RETURNTRANSFER, 1);
   curl_setopt($curlCh, CURLOPT_SSLVERSION,3);
   $curlData = curl_exec($curlCh);

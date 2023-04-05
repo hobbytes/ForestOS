@@ -69,7 +69,7 @@
         $fuid = $bd->readglobal2("fuid", "forestusers", "login", $_SESSION["loginuser"], true);
         $doc_root = $_SERVER['DOCUMENT_ROOT'];
         $hash = md5($fuid.$doc_root.$pwd);
-        $_SESSION['godmode'] = file_get_contents("http://forest.hobbytes.com/media/os/ubase/checkgodmode?userhash=$hash");
+        $_SESSION['godmode'] = file_get_contents("https://forest.hobbytes.com/media/os/ubase/checkgodmode?userhash=$hash");
         unset($pwd, $fuid, $doc_root, $hash);
       }
 
@@ -603,12 +603,12 @@ function DisplaySettings(){
 /*---------changewall function---------*/
     function changewall($file)
     {
-      $urlw='http://forest.hobbytes.com/media/os/loginwalls.php';
+      $urlw='https://forest.hobbytes.com/media/os/loginwalls.php';
       $filew=file_get_contents($urlw);
       $arrayw=json_decode($filew,TRUE);
       if($arrayw!='')
       {
-      $mainwall='http://forest.hobbytes.com/media/os/loginpage/'.$arrayw[rand(0,count($arrayw)-1)]['file'].'.jpg';
+      $mainwall='https://forest.hobbytes.com/media/os/loginpage/'.$arrayw[rand(0,count($arrayw)-1)]['file'].'.jpg';
       $ch=curl_init($mainwall);
        $fp=fopen($file,'wb');
        curl_setopt($ch, CURLOPT_FILE,$fp);

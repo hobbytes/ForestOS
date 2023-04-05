@@ -46,7 +46,7 @@ $BD = new readbd;
 $HttpRequest = new http;
 $gui = new gui;
 
-$server_url = "http://forest.hobbytes.com/media/os/AppsHouse/";
+$server_url = "https://forest.hobbytes.com/media/os/AppsHouse/";
 
 $FUID = $BD->readglobal2("fuid", "forestusers", "login", $_SESSION["loginuser"], true);
 $PWD = $BD->readglobal2("password", "forestusers", "login", $_SESSION["loginuser"], true);
@@ -123,7 +123,7 @@ $SortType = $sortParts[1];
     /* install app */
 
     if(isset($_GET['install_app_hash'])){
-      $AppDestination = "http://forest.hobbytes.com/media/os/AppsHouse/Apps/".$_GET['install_app_hash']."/app.zip";
+      $AppDestination = "https://forest.hobbytes.com/media/os/AppsHouse/Apps/".$_GET['install_app_hash']."/app.zip";
 
       if(!is_dir('./temp/')){
         mkdir('./temp/');
@@ -468,7 +468,7 @@ $SortType = $sortParts[1];
     $no_check_apps = array('Apps_House', 'Explorer', 'update', 'Settings');
     $showEmpty = true;
 
-    $OSUpdateURL = file_get_contents("http://forest.hobbytes.com/media/os/update.php");
+    $OSUpdateURL = file_get_contents("https://forest.hobbytes.com/media/os/update.php");
     $OSUpdateURL = json_decode($OSUpdateURL, true);
 
     $CondidateVersionOS = $OSUpdateURL['0']['subversion'];
@@ -486,7 +486,7 @@ $SortType = $sortParts[1];
 
       echo '<div style="color: #ebece6; border-radius: 5px; padding: 20px; border: 1px solid #ccc; background: #2c2d3c; margin: 10px;">';
       echo '<div id="TabTitle" style="font-size: 23px; font-weight: 600; color: #53e579;"> '.$language['os_update_caption'].' </div>';
-      echo '<p style="text-align:left; background-image: url(http://forest.hobbytes.com/media/os/updates/uplogo.png); background-size:cover; height:80px; width:80px;"></p>';
+      echo '<p style="text-align:left; background-image: url(https://forest.hobbytes.com/media/os/updates/uplogo.png); background-size:cover; height:80px; width:80px;"></p>';
       echo '<span style="font-size:17px;"><b>Forest OS</b> '.$OSUpdateURL['0']['codename'].'</span><br>';
       echo '<span style="font-size:12px; font-weight:900; " >'.$language['os_revision'].': <span style="color:#ebece6; text-transform: uppercase;">'.$OSUpdateURL['0']['file'].'</span></span><br>';
       echo '<span style="font-size:12px; ">'.mb_strtolower($language['version_caption']).': '.$OSUpdateURL['0']['version'].'<br>'.$language['os_sub_version'].': '.$OSUpdateURL['0']['subversion'].'<br>'.mb_strtolower($language['size_caption']).': '.$format.'</span></span>';
