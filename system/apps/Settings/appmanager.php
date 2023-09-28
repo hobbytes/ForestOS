@@ -34,6 +34,13 @@ $warn_apps = array('Apps_House', 'Explorer', 'update', 'Settings');
 
 $app_delete = $_GET['app_delete'];
 $app_link = $_GET['app_link'];
+$app_dock = $_GET['app_dock'];
+
+//Pin to Dock
+if(!empty($app_dock)){
+  $file = $_SERVER['DOCUMENT_ROOT'].'/system/users/'.$_SESSION['loginuser'].'/settings/Dock/A/'.$app_dock;
+  file_put_contents($file, '');
+} 
 
 //Make link
 if(!empty($app_link)){
@@ -105,7 +112,7 @@ foreach (glob($_SERVER['DOCUMENT_ROOT']."/system/apps/*/main.php") as $filenames
 
   echo'
   <div id="'.$_app_name.$AppID.'" class="app-container'.$AppID.'" style="display:flex; padding:10px; border-bottom:1px solid #ccc; transition:all 0.1s ease-in;">
-  <div style="background-color:transparent;  background-image: url('.$app_icon.'); background-size:cover; height:30px; width:30px; float:left;"></div>
+  <div style="background-color:transparent;  background-image: url('.$app_icon.'); background-size:cover; height:60px; width:60px; float:left;"></div>
   <div style="padding:7px 25px; width:200px; border-right:1px solid #ccc;">'.$AppName_.'</div>
   <div id="button_layer'.$_app_name.$AppID.'" class="button_layer" style="opacity:0; display:none; padding:7 10px;">
   <div style="float:right;">
@@ -117,6 +124,9 @@ foreach (glob($_SERVER['DOCUMENT_ROOT']."/system/apps/*/main.php") as $filenames
   </div>
   <div app-link="'.$_app_name.'" class="ui-forest-accept ui-forest-button ui-forest-center app-link'.$AppID.'" >
   '.$language[$_SESSION['locale'].'_link_button'].'
+  </div>
+  <div app-dock="'.$_app_name.'" class="ui-forest-accept ui-forest-button ui-forest-center app-dock'.$AppID.'" >
+  '.$language[$_SESSION['locale'].'_btn_dock'].'
   </div>
   '.$delete_button.'
   </div>
@@ -155,6 +165,11 @@ $("#<?echo $AppID?>").load("<?echo $Folder?>appmanager.php?app_delete="+app_dele
 $(".app-link<?echo $AppID?>").click(function(){
 var app_link = $(this).attr('app-link');
 $("#<?echo $AppID;?>").load("<?echo $Folder?>appmanager.php?app_link="+app_link+"&id=<?echo rand(0,10000).'&destination='.$Folder.'&appname='.$AppName.'&appid='.$AppID?>")
+});
+
+$(".app-dock<?echo $AppID?>").click(function(){
+var app_dock = $(this).attr('app-dock');
+$("#<?echo $AppID;?>").load("<?echo $Folder?>appmanager.php?app_dock="+app_dock+"&id=<?echo rand(0,10000).'&destination='.$Folder.'&appname='.$AppName.'&appid='.$AppID?>")
 });
 
 $(".app-open<?echo $AppID?>").click(function(){

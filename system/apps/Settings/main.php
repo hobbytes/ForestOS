@@ -29,7 +29,7 @@ function newbutton($name_btn){
 	global $Folder,	$AppID,	$language_settings;
 	echo '
 	<div id="'.$name_btn.'" class="ui-button ui-widget ui-corner-all" onClick="loadsettings'.$AppID.'(this);" style="word-wrap:break-word; text-overflow:ellipsis; text-align:center; position:relative; display:block; float:left; margin:5px; color:#000; width:83px; height:83px; padding:13px; font-size:12px; cursor:pointer;">
-		<div style="-webkit-user-select:none; margin:auto; user-select:none; background-image: url('.$Folder.'/icons/'.$name_btn.'.png); background-size:cover; height:50px; width:50px;">
+		<div style="-webkit-user-select:none; margin:auto; user-select:none; background-image: url('.$Folder.'/icons/'.$name_btn.'.png); background-size:cover; height:60px; width:60px;">
 		</div>
 		<div>
 			'.$language_settings[$_SESSION['locale'].'_settings_'.$name_btn].'

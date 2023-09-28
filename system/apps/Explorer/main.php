@@ -40,11 +40,13 @@ $callback = NULL;
 $ExplorerMode = $AppContainer->GetAnyRequest('explorermode');
 $callback = $AppContainer->GetAnyRequest('callback');
 $ShowOnly = $AppContainer->GetAnyRequest('showonly');
+$DefaultDirectory = $AppContainer->GetAnyRequest('defaultdirectory');
 
 if(!empty($ShowOnly)){
 	$_ShowOnly = $ShowOnly;
 	$ShowOnly = explode(',', $ShowOnly);
 }
+
 
 //convert
 function convert($string){
@@ -58,6 +60,10 @@ $dir = convert($AppContainer->GetAnyRequest('defaultloader'));
 
 if(empty($dir)){
 	$dir = convert($AppContainer->GetAnyRequest('dir'));
+}
+
+if(!empty($DefaultDirectory)){
+	$dir = $DefaultDirectory;
 }
 
 $del = $AppContainer->GetAnyRequest('del');
