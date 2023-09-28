@@ -445,10 +445,10 @@ $SortType = $sortParts[1];
     <?
 
     echo '<div>'.$language['install_n_2'].' (zip):</div>';
-    $AppGUI->SelectFile($AppID, "file_url", "70%", "zip" , $language['pub_file_caption'].' (zip)', $language['pub_select_file'], "/home/vg/system/apps");
+    $AppGUI->SelectFile($AppID, "file_url", "70%", "zip" , $language['pub_file_caption'].' (zip)', $language['pub_select_file'], "/home/".$_SESSION["loginuser"]."/system/apps");
 
     echo '<div>'.$language['pub_icon'].' (png):</div>';
-    $AppGUI->SelectFile($AppID, "icon_url", "70%", "png" , $language['pub_icon_caption'].' (png)', $language['pub_select_file'], "/home/vg/system/apps");
+    $AppGUI->SelectFile($AppID, "icon_url", "70%", "png" , $language['pub_icon_caption'].' (png)', $language['pub_select_file'], "/home/".$_SESSION["loginuser"]."/system/apps");
 
     if(!$AppEditMode){
       echo '<div id="PublishApp'.$AppID.'" onClick="PublishNewApp'.$AppID.'();" class="ui-forest-button ui-forest-accept" style="margin:30 auto;"> '.$language['pub_load_app'].' </div>';
