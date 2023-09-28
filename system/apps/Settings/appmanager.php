@@ -57,7 +57,7 @@ if(!empty($app_delete) && !in_array($app_delete, $warn_apps)){
       $PWD = $BD->readglobal2("password", "forestusers", "login", $_SESSION["loginuser"], true);
       $DROOT = $_SERVER['DOCUMENT_ROOT'];
       $token = md5($FUID.$DROOT.$PWD);
-      $HttpRequest->makeNewRequest("https://forest.hobbytes.com/media/os/AppsHouse/StatApp.php", 'Forest OS', $data = array('login' => $_SESSION["loginuser"], 'token' => "$token", 'hash' => $GetHash, 'action' => 'delete'));
+      $HttpRequest->makeNewRequest("http://forest.hobbytes.com/media/os/AppsHouse/StatApp.php", 'Forest OS', $data = array('login' => $_SESSION["loginuser"], 'token' => "$token", 'hash' => $GetHash, 'action' => 'delete'));
     }
   }
   $fileaction->deleteDir('../'.$app_delete);

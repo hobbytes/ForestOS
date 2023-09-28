@@ -575,7 +575,7 @@ unset($objectArray);
 
 <div style="padding:0 10px; background-color: rgba(0, 0, 0, 0); width:97%; top:97%; word-wrap:break-word; font-size:10px; float:right; position:absolute; text-align:right;">
 <?
-/* Maybe later
+/*
 $fo->size_check(dirname(dirname(dirname(__DIR__))));
 $fo->format($size);
 echo $explorer_lang['use_label'].': '.$format;

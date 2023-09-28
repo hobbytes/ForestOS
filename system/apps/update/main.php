@@ -37,7 +37,7 @@ $update_lang  = parse_ini_file('app.lang');
 $cl = $_SESSION['locale'];
 
 //Логика
-$urlu = 'https://forest.hobbytes.com/media/os/update.php';
+$urlu = 'http://forest.hobbytes.com/media/os/update.php';
 $fileu = file_get_contents($urlu);
 $arrayu = json_decode($fileu,TRUE);
 
@@ -76,7 +76,7 @@ if($current['subversion'] == $subversion){
 ?>
 <div style="width:500px; height:300px;">
 <p style="text-align:center">
-  <div style="background-image: url(https://forest.hobbytes.com/media/os/updates/uplogo.png); background-size:cover; margin:auto; height:90px; width:90px;">
+  <div style="background-image: url(http://forest.hobbytes.com/media/os/updates/uplogo.png); background-size:cover; margin:auto; height:90px; width:90px;">
   </div>
 </p>
 <div style="text-align:center; font-size:20px;">
@@ -100,7 +100,7 @@ if($current['subversion'] == $subversion){
     }
     if(empty($customfile)){
 
-      $ch = curl_init('https://forest.hobbytes.com/media/os/updates/'.$updatefile.'.zip');
+      $ch = curl_init('http://forest.hobbytes.com/media/os/updates/'.$updatefile.'.zip');
       $temphash = md5(date('d.m.y.h.i.s').$updatefile);
       $fp = fopen('./temp/'.$updatefile.$temphash.'.zip','wb');
       curl_setopt($ch, CURLOPT_FILE, $fp);
@@ -129,7 +129,7 @@ if($current['subversion'] == $subversion){
       unlink($filename.'.zip');
 
       $data = http_build_query(array('followlink' => $_SERVER['SERVER_NAME'], 'version' => str_replace(' ','_',$codename.$subversion) ));
-      $request = file_get_contents('https://forest.hobbytes.com/media/os/ubase/updateuser.php?'.$data);
+      $request = file_get_contents('http://forest.hobbytes.com/media/os/ubase/updateuser.php?'.$data);
     }
   }
 }else{

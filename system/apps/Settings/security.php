@@ -105,7 +105,7 @@ if(!empty($oldpassword) && !empty($newpassword) && !empty($checkpassword)){
       $d_root = $_SERVER['DOCUMENT_ROOT'];
       $token = md5($fuid.$d_root.$newpassword);
       $oldtoken = md5($fuid.$d_root.$oldpassword);
-      $getRequest = file_get_contents('https://forest.hobbytes.com/media/os/ubase/updatetoken.php?token='.$token.'&oldtoken='.$oldtoken.'&login='.$_SESSION["loginuser"]);
+      $getRequest = file_get_contents('http://forest.hobbytes.com/media/os/ubase/updatetoken.php?token='.$token.'&oldtoken='.$oldtoken.'&login='.$_SESSION["loginuser"]);
       if($getRequest != "OK"){
         $gui->errorLayot("Invalid token!");
         exit();

@@ -1,4 +1,7 @@
-<?
+
+        
+          
+            <?
 /* Application Store */
 
 $AppName = $_GET['appname'];
@@ -46,7 +49,7 @@ $BD = new readbd;
 $HttpRequest = new http;
 $gui = new gui;
 
-$server_url = "https://forest.hobbytes.com/media/os/AppsHouse/";
+$server_url = "http://forest.hobbytes.com/media/os/AppsHouse/";
 
 $FUID = $BD->readglobal2("fuid", "forestusers", "login", $_SESSION["loginuser"], true);
 $PWD = $BD->readglobal2("password", "forestusers", "login", $_SESSION["loginuser"], true);
@@ -123,7 +126,7 @@ $SortType = $sortParts[1];
     /* install app */
 
     if(isset($_GET['install_app_hash'])){
-      $AppDestination = "https://forest.hobbytes.com/media/os/AppsHouse/Apps/".$_GET['install_app_hash']."/app.zip";
+      $AppDestination = "http://forest.hobbytes.com/media/os/AppsHouse/Apps/".$_GET['install_app_hash']."/app.zip";
 
       if(!is_dir('./temp/')){
         mkdir('./temp/');
@@ -751,3 +754,6 @@ CheckUpdateLabel<?echo $AppID?>();
 $('#<?echo $AppName.$AppID?>').scrollTop(<?echo $ScrollTo?>);
 
 </script>
+        
+          
+            

@@ -146,16 +146,13 @@ else
 }
 }
 
-if(!empty($deleteuser)){
-  $settingsbd->readglobal2("status", "forestusers", "login", $deleteuser);
+if(!empty($deleteuser)){  $settingsbd->readglobal2("status", "forestusers", "login", $deleteuser);
   if($getdata != 'superuser'){
     $sql="DELETE FROM forestusers WHERE login='$deleteuser'";
     $fuid = $_GET['fuid'];
     $dr = $_SERVER['DOCUMENT_ROOT'];
     $settingsbd->readglobal2("password", "forestusers", "login", $deleteuser);
-    $userhash = md5($fuid.$dr.$getdata);
-    if($conn->query($sql)){
-      $e = file_get_contents('https://forest.hobbytes.com/media/os/ubase/deleteuser.php?fuid='.$fuid.'&followlink='.$_SERVER['SERVER_NAME'].'&userhash='.$userhash.'');
+    $userhash = md5($fuid.$dr.$getdata);    if($conn->query($sql)){      $e = file_get_contents('https://forest.hobbytes.com/media/os/ubase/deleteuser.php?fuid='.$fuid.'&followlink='.$_SERVER['SERVER_NAME'].'&userhash='.$userhash.'');
       if($e == 'true'){
         $faction = new fileaction;
         $faction->deleteDir($_SERVER['DOCUMENT_ROOT'].'/system/users/'.$deleteuser);

@@ -27,7 +27,7 @@ $gui = new gui;
 
 if(!empty($_GET['t']) && !empty($_GET['m'])){
   $osinfo = parse_ini_file('../../core/osinfo.foc', false);
-  $status = file_get_contents('https://forest.hobbytes.com/media/os/feedback.php?u='.$_SESSION['loginuser'].'&t='.urlencode($_GET['t']).'&m='.urlencode($_GET['m']).'&v='.str_replace(' ','_',$osinfo['codename'].$osinfo['subversion']));
+  $status = file_get_contents('http://forest.hobbytes.com/media/os/feedback.php?u='.$_SESSION['loginuser'].'&t='.urlencode($_GET['t']).'&m='.urlencode($_GET['m']).'&v='.str_replace(' ','_',$osinfo['codename'].$osinfo['subversion']));
   if($status == 'true'){
     $gui->infoLayot($language[$_SESSION['locale'].'_status_true']);
   }else{

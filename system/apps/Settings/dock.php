@@ -23,8 +23,17 @@ $gui = new gui;
 ?>
 <div style="width:100%; text-align:left; padding-bottom:10px; font-size:30px; border-bottom:#d8d8d8 solid 2px; text-overflow:ellipsis; overflow:hidden;">
 <span onClick="back<?echo $AppID;?>();" class="ui-forest" style="background-color:#d8d8d8; color:#000; border-radius:30%; cursor:pointer; font-size:25px; margin-left:5px;"> &#9668; </span><?echo $language[$_SESSION['locale'].'_feedback']?></div>
+
+<script>
+  $( function() {
+    $( "#sortable1, #sortable2, #sortableA, #sortableB, #sortableC, #sortableD, #sortableE, #sortableF, #sortableG" ).sortable({
+      connectWith: ".connectedSortable"
+    }).disableSelection();
+  } );
+  </script>
+
 <div style="display: flex; user-select: none;">
-  <div style="flex: 50%; border-right: 1px solid #ccc;">
+  <div id="sortable1" class="connectedSortable" style="flex: 50%; border-right: 1px solid #ccc;">
 
 <?php
 
@@ -85,7 +94,7 @@ foreach (glob($_SERVER['DOCUMENT_ROOT']."/system/apps/*/main.php") as $filenames
   $infoApp = GetAppInfo($_app_name);
 
   echo'
-  <div id="'.$_app_name.$AppID.'" class="app-container'.$AppID.' ui-forest-blink" style="display:flex; padding:10px; border-bottom:1px solid #ccc; transition:all 0.1s ease-in;">
+  <div id="'.$_app_name.$AppID.'" class="ui-state-default app-container'.$AppID.' ui-forest-blink" style="display:flex; padding:10px; border-bottom:1px solid #ccc; transition:all 0.1s ease-in;">
   <div style="background-color:transparent;  background-image: url('.$infoApp["icon"].'); background-size:cover; height:30px; width:30px; float:left;"></div>
   <div style="padding:7px 25px; width:200px;">'.$infoApp["name"].'</div>
   <div id="button_layer'.$_app_name.$AppID.'" class="button_layer" style="opacity:0; display:none; padding:7 10px;">
@@ -94,7 +103,7 @@ foreach (glob($_SERVER['DOCUMENT_ROOT']."/system/apps/*/main.php") as $filenames
   ';
 
 }
-echo '</div><div style="flex: 50%;">';
+echo '</div><div id="sortable2" class="connectedSortable" style="flex:50%;">';
 $CountFolders = count( glob("$dir/*", GLOB_ONLYDIR) ); // > 1
 $Temp = "";
 $SeparatorCount = 0;
@@ -111,10 +120,14 @@ $FoldersArray = glob($dir.'*/');
 foreach ($FoldersArray as $keydir => $valuedir) {
   
 if (is_dir_empty($valuedir)) {
-  echo '<div style="padding: 10px; background-color: #b1b1b1; color: #242424; font-size: 20px;">Разделитель '.$dir_array[$keydir].'</div>';
+  echo '
+  <div id="sortable'.$dir_array[$keydir].'" class="connectedSortable">
+    <div style="padding: 10px; background-color: #b1b1b1; color: #242424; font-size: 20px;">Разделитель '.$dir_array[$keydir].'</div>';
 }
 else{
-  echo '<div style="padding: 10px; background-color: #6ab6ff; color: #142b60; font-size: 20px;">Разделитель '.$dir_array[$keydir].'</div>';
+  echo '
+  <div id="sortable'.$dir_array[$keydir].'" class="connectedSortable">
+    <div style="padding: 10px; background-color: #6ab6ff; color: #142b60; font-size: 20px;">Разделитель '.$dir_array[$keydir].'</div>';
 
   foreach (glob($valuedir.'*') as $key => $object) {
 
@@ -126,7 +139,7 @@ else{
     $infoApp_ = GetAppInfo($ObjectName);
 
     echo'
-  <div id="'.$ObjectName.$AppID.'" class="app-container'.$AppID.' ui-forest-blink" style="display:flex; padding:10px; border-bottom:1px solid #ccc; transition:all 0.1s ease-in;">
+  <div id="'.$ObjectName.$AppID.'" class="ui-state-default app-container'.$AppID.' ui-forest-blink" style="display:flex; padding:10px; border-bottom:1px solid #ccc; transition:all 0.1s ease-in;">
   <div style="background-color:transparent;  background-image: url('.$infoApp_["icon"].'); background-size:cover; height:30px; width:30px; float:left;"></div>
   <div style="padding:7px 25px; width:200px;">'.$infoApp_["name"].'</div>
   <div id="button_layer'.$ObjectName.$AppID.'" class="button_layer" style="opacity:0; display:none; padding:7 10px;">
@@ -136,7 +149,7 @@ else{
 
   }
 }
-
+echo "</div>";
 }
 ?>
 </div>
