@@ -11,6 +11,7 @@ Forest OS is a network operating system (shell) with open source code, which is 
 | *PHP module* | mcrypt |
 | *PHP module* | PDO |
 | *PHP module* | CURL |
+| *PHP module* | mbstring |
 
 ## Change php.ini configuration
 
