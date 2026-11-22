@@ -95,7 +95,14 @@ if (!$stmt->fetch()) {
     $insert->execute([$login, $passwordHash, $fuid, 'superuser']);
     echo "Created superuser: {$login}\n";
 } else {
-    echo "User already exists: {$login}\n";
+    /* база уже есть: пароль из .env сам по себе не применяется — нужно разрешение */
+    if (filter_var(envv('FOREST_ADMIN_PASSWORD_RESET', 'false'), FILTER_VALIDATE_BOOLEAN)) {
+        $pdo->prepare('UPDATE forestusers SET password = ?, TempKey = NULL WHERE login = ?')
+            ->execute([$passwordHash, $login]);
+        echo "Password updated for existing user: {$login}\n";
+    } else {
+        echo "User already exists: {$login} (пароль не менялся; см. bin/forest-password.php)\n";
+    }
 }
 
 // Legacy DB include expected by system/core/library/bd.php
