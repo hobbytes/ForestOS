@@ -147,6 +147,7 @@ if (fo_has_superuser($pdo) && !$resetWanted) {
 
 // Права для веб-процесса (Apache работает от www-data)
 chmod_tree($root . '/system/users');
+@chmod($root . '/system/instance.foc', 0666);
 foreach (array('/system/core/osinfo.foc', '/system/core/extconfiguration.foc', '/system/core/journal.mcj', '/system/core/library/bd_inc.php') as $f) {
     @chmod($root . $f, 0666);
 }

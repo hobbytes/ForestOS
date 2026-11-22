@@ -50,15 +50,32 @@ class AppStore
         }
     }
 
-    private function save(): void
+    /** Последняя ошибка сохранения (для внятных сообщений в интерфейсе). */
+    private string $saveError = '';
+
+    public function lastSaveError(): string
+    {
+        return $this->saveError;
+    }
+
+    private function save(): bool
     {
         $body = "[instance]\n"
             . 'instance_id="' . $this->cfg['instance_id'] . "\"\n"
             . 'secret="' . $this->cfg['secret'] . "\"\n"
             . 'hub="' . str_replace('"', '', (string)$this->cfg['hub']) . "\"\n"
             . 'registered="' . (string)($this->cfg['registered'] ?? '0') . "\"\n";
-        @file_put_contents($this->file, $body);
-        @chmod($this->file, 0666);
+
+        $this->saveError = '';
+        /* файл мог быть создан установщиком от root — пробуем поправить права сами */
+        if (!is_writable($this->file)) {
+            @chmod($this->file, 0666);
+        }
+        if (@file_put_contents($this->file, $body) === false) {
+            $this->saveError = 'not_writable';
+            return false;
+        }
+        return true;
     }
 
     public function instanceId(): string
@@ -155,12 +172,12 @@ class AppStore
     {
         $url = self::normalizeUrl($url);
         if ($url === '' || !preg_match('#^https?://[^\s"\']+$#i', $url)) {
+            $this->saveError = 'bad_url';
             return false;
         }
         $this->cfg['hub'] = $url;
         $this->cfg['registered'] = '0';
-        $this->save();
-        return true;
+        return $this->save();
     }
 
     public static function uuid4(): string

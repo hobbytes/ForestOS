@@ -287,7 +287,13 @@ $AppContainer->StartContainer();
     jsonGet('action=catalog&q=' + encodeURIComponent(q) + '&sort=' + encodeURIComponent(el('sort').value) + '&page=1')
       .then(function(d){
         state.catalog = d.apps || [];
-        if(!d.ok){ state.catalog = []; toast('Хаб недоступен: ' + (d.error || 'ошибка')); }
+        if(!d.ok){
+          state.catalog = [];
+          var why = d.error === 'hub_unreachable' ? 'хаб не отвечает — проверьте адрес на вкладке «Репозитории»'
+            : (d.error === 'not_registered' ? 'хаб не принял регистрацию установки'
+            : (d.error || 'ошибка'));
+          toast('Каталог не загрузился: ' + why);
+        }
         renderCatalog();
         refreshHubBadge();
       });
@@ -527,12 +533,21 @@ $AppContainer->StartContainer();
   el('hub-save').addEventListener('click', function(){
     var url = el('hub-input').value.trim();
     post({action:'hub-set', url:url}).then(function(d){
-      if(d.ok){
-        toast('Хаб: ' + d.hub);
+      if(d.ok && d.hub_ok){
+        toast('Хаб сохранён: ' + d.hub);
         checkHub(d.hub).then(function(){ loadRepos(); loadCatalog(); });
+      } else if(d.ok){
+        showHubState({ ok:false, hint: d.hub_hint || 'сохранено, но хаб не отвечает' });
+        toast('Адрес сохранён, но хаб не отвечает');
+        loadRepos();
+      } else if(d.error === 'hub_not_saved'){
+        showHubState({ ok:false, hint: d.hint || 'нет прав на запись system/instance.foc' });
+        toast('Не удалось сохранить адрес');
       } else {
         toast('Не удалось: ' + (d.error || 'ошибка'));
       }
+    }).catch(function(){
+      showHubState({ ok:false, hint:'запрос на сохранение не выполнился' });
     });
   });
 

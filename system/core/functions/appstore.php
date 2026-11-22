@@ -342,10 +342,27 @@ if ($action === 'repo-apps') {
 if ($action === 'hub-set') {
     $url = isset($_POST['url']) ? (string)$_POST['url'] : '';
     if (!$store->setHub($url)) {
-        st_fail('bad_url');
+        $err = $store->lastSaveError();
+        if ($err === 'not_writable') {
+            st_fail('hub_not_saved', 500, array(
+                'hint' => 'Не удалось записать system/instance.foc. Перезапустите контейнер: '
+                    . 'docker compose restart web (bootstrap выдаст права) — или выполните '
+                    . 'chmod 666 system/instance.foc.',
+            ));
+        }
+        st_fail($err !== '' ? $err : 'bad_url');
     }
-    $reg = $store->ensureRegistered();
-    st_out(array('ok' => true, 'hub' => $store->hub(), 'registered' => $reg['ok'], 'error' => $reg['ok'] ? null : $reg['error']));
+    $check = $store->hubCheck();
+    $reg = $check['ok'] ? $store->ensureRegistered() : array('ok' => false, 'error' => 'hub_unreachable');
+    st_out(array(
+        'ok' => true,
+        'hub' => $store->hub(),
+        'saved' => true,
+        'hub_ok' => !empty($check['ok']),
+        'hub_hint' => (string)($check['hint'] ?? ''),
+        'registered' => !empty($reg['ok']),
+        'error' => !empty($check['ok']) ? ($reg['ok'] ? null : ($reg['error'] ?? 'not_registered')) : 'hub_unreachable',
+    ));
 }
 
 if ($action === 'install') {
