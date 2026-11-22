@@ -356,7 +356,7 @@ showTime();
         btn.disabled = false;
         var name = (err && err.name) || '';
         var code = (err && err.code) || '';
-        if(name === 'NotAllowedError'){ say('Отменено или не распознано', true); return; }
+        if(name === 'NotAllowedError'){ say('На этом устройстве нет ключа Face ID. Войдите паролем — и добавьте ключ: Settings → Безопасность.', true); return; }
         if(code === 'no_keys' || code === 'not_allowed'){ wrap.style.display = 'none'; return; }
         if(code === 'challenge_expired'){ say('Истекло время — попробуйте ещё раз', true); return; }
         if(code === 'too_many_attempts'){ say('Слишком много попыток, подождите пару минут', true); return; }

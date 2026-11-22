@@ -179,7 +179,9 @@ $waKeys = $waAllowed ? ForestWebAuthn::listKeys($me) : array();
           Нужен HTTPS-домен, а обратный прокси должен передавать заголовок
           <code>X-Forwarded-Proto: https</code>.
         <? else: ?>
-          Face ID / отпечаток / Windows Hello вместо пароля. Ключ остаётся на устройстве.
+          Face ID / отпечаток / Windows Hello вместо пароля. Ключ создаётся на этом
+          устройстве и остаётся на нём — добавляйте его на телефоне, с которого
+          собираетесь входить.
         <? endif; ?>
       </div>
     </div>
