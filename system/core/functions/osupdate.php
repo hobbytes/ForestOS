@@ -26,6 +26,30 @@ if (empty($_SESSION['loginuser']) || empty($_SESSION['is_authuser'])) {
 
 require_once $_SERVER['DOCUMENT_ROOT'] . '/system/core/library/osupdate.php';
 
+/** Значение из .env (в веб-запросе переменные окружения контейнера не всегда видны). */
+function ou_env(string $key, string $default = ''): string
+{
+    static $cfg = null;
+    if ($cfg === null) {
+        $file = $_SERVER['DOCUMENT_ROOT'] . '/.env';
+        $cfg = is_file($file) ? (array)@parse_ini_file($file) : array();
+    }
+    $v = $cfg[$key] ?? getenv($key);
+    return ($v === false || $v === null || $v === '') ? $default : (string)$v;
+}
+
+/** Кто может публиковать релизы и ставить обновления. */
+function ou_can_manage(): bool
+{
+    $me = (string)($_SESSION['loginuser'] ?? '');
+    $super = (string)($_SESSION['superuser'] ?? '');
+    if ($me === '' || $me !== $super) {
+        return false;
+    }
+    $only = ou_env('FOREST_RELEASE_LOGIN', '');
+    return $only === '' || $only === $me;
+}
+
 $action = isset($_POST['action']) ? (string)$_POST['action'] : (isset($_GET['action']) ? (string)$_GET['action'] : 'status');
 $up = new OsUpdate();
 
@@ -34,7 +58,7 @@ if ($action === 'status') {
         'ok' => true,
         'current' => $up->current(),
         'feed' => $up->feedUrl(),
-        'superuser' => (string)($_SESSION['superuser'] ?? '') === (string)$_SESSION['loginuser'],
+        'superuser' => ou_can_manage(),
         'can_write' => is_writable($_SERVER['DOCUMENT_ROOT'] . '/system/core'),
     ), JSON_UNESCAPED_UNICODE);
     exit;
@@ -47,7 +71,7 @@ if ($action === 'check') {
 }
 
 if ($action === 'install') {
-    if ((string)($_SESSION['superuser'] ?? '') !== (string)$_SESSION['loginuser']) {
+    if (!ou_can_manage()) {
         ou_fail('forbidden', 403);
     }
     $token = isset($_POST['token']) ? (string)$_POST['token'] : '';
@@ -61,7 +85,7 @@ if ($action === 'install') {
 }
 
 if ($action === 'release') {
-    if ((string)($_SESSION['superuser'] ?? '') !== (string)$_SESSION['loginuser']) {
+    if (!ou_can_manage()) {
         ou_fail('forbidden', 403);
     }
     $token = isset($_POST['token']) ? (string)$_POST['token'] : '';

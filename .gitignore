@@ -13,6 +13,7 @@
 /data/*
 
 # состояние работы (генерируется)
+/system/core/osinfo.foc
 /system/core/journal.mcj
 /system/core/TempTable/*.foc
 /system/core/library/etc/*.bak

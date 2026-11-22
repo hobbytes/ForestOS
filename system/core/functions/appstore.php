@@ -320,21 +320,7 @@ if ($action === 'install') {
     $meta = null;
     $downloadUrl = '';
 
-    if ($repoId === AppStore::BUNDLED_REPO) {
-        /* приложение из комплекта: метаданные и zip лежат локально */
-        $bundled = $store->bundledApps();
-        foreach ($bundled['apps'] as $ba) {
-            if ($ba['hash'] === $hash) {
-                $meta = $ba;
-                break;
-            }
-        }
-        if ($meta === null) {
-            st_fail('app_not_in_catalog', 404);
-        }
-        $downloadUrl = (string)$meta['zip'];
-        $meta['ok'] = true;
-    } elseif ($repoId === 'official') {
+    if ($repoId === 'official') {
         $meta = $store->appMeta($hash);
         if (empty($meta['ok'])) {
             st_fail($meta['error'] ?? 'meta_failed', 502);

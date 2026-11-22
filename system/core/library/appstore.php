@@ -11,9 +11,6 @@ class AppStore
     public const MAX_APP_BYTES = 16777216;
     public const PROTECTED_APPS = array('Explorer', 'Settings', 'Apps_House', 'update');
 
-    /** Репозиторий приложений «в комплекте»: папка catalog/ рядом с ядром. */
-    public const BUNDLED_REPO = 'bundled';
-
     private string $doc;
     private string $login;
     private string $file;
@@ -417,84 +414,9 @@ class AppStore
     }
 
     /** Full repo list: official (from the hub) + custom. */
-    /* ---------------- встроенный каталог (catalog/) ---------------- */
-
-    public function bundledDir(): string
-    {
-        return $this->doc . '/catalog';
-    }
-
-    public function bundledIndex(): array
-    {
-        $file = $this->bundledDir() . '/index.json';
-        if (!is_file($file)) {
-            return array();
-        }
-        $j = json_decode((string)@file_get_contents($file), true);
-        if (!is_array($j) || empty($j['apps']) || !is_array($j['apps'])) {
-            return array();
-        }
-        return $j['apps'];
-    }
-
-    /**
-     * Приложения, которые поставляются вместе с ОС, но не установлены сразу.
-     * Ставятся из локального zip — без интернета и без подписи.
-     */
-    public function bundledApps(): array
-    {
-        $apps = array();
-        foreach ($this->bundledIndex() as $a) {
-            if (!is_array($a)) {
-                continue;
-            }
-            $name = (string)($a['name'] ?? '');
-            if (!preg_match('/^[A-Za-z0-9_.\-]{2,64}$/', $name)) {
-                continue;
-            }
-            $zipRel = (string)($a['zip'] ?? '');
-            if ($zipRel === '') {
-                continue;
-            }
-            $zipAbs = $this->doc . '/' . ltrim($zipRel, '/');
-            if (!is_file($zipAbs)) {
-                continue;
-            }
-            $installed = is_dir($this->appsDir() . '/' . $name);
-            $apps[] = array(
-                'hash' => substr(md5('bundled:' . $name), 0, 32),
-                'name' => $name,
-                'second_name' => (string)($a['title'] ?? $name),
-                'description' => (string)($a['description'] ?? ''),
-                'version' => (string)($a['version'] ?? ''),
-                'author_label' => (string)($a['author'] ?? 'Forest OS'),
-                'size' => (int)@filesize($zipAbs),
-                'sha256' => (string)@hash_file('sha256', $zipAbs),
-                'zip' => $zipRel,
-                'repo' => self::BUNDLED_REPO,
-                'icon' => (string)($a['icon'] ?? ''),
-                'downloads' => 0,
-                'installed' => $installed,
-                'ok' => true,
-            );
-        }
-        usort($apps, function ($x, $y) {
-            return strcasecmp((string)$x['name'], (string)$y['name']);
-        });
-        return array('ok' => true, 'verified' => true, 'repo' => self::BUNDLED_REPO, 'apps' => $apps);
-    }
-
     public function repos(): array
     {
         $out = array();
-        $out[] = array(
-            'id' => self::BUNDLED_REPO,
-            'name' => 'В комплекте',
-            'url' => 'catalog/',
-            'pubkey' => '',
-            'official' => true,
-            'builtin' => true,
-        );
         foreach ($this->hubRepos() as $r) {
             if (!empty($r['official'])) {
                 $out[] = array(
@@ -524,9 +446,6 @@ class AppStore
     /** Apps of one repo, signature-verified when a key is known. */
     public function repoApps(string $id): array
     {
-        if ($id === self::BUNDLED_REPO) {
-            return $this->bundledApps();
-        }
         $repo = null;
         foreach ($this->repos() as $r) {
             if ($r['id'] === $id) {
@@ -621,17 +540,6 @@ class AppStore
 
     public function downloadTo(string $url, string $dest): array
     {
-        /* локальный файл (встроенный каталог): просто копируем */
-        if (!preg_match('#^https?://#i', $url)) {
-            $src = $this->doc . '/' . ltrim($url, '/');
-            if (!is_file($src)) {
-                return array('ok' => false, 'error' => 'file_not_found');
-            }
-            if (!@copy($src, $dest)) {
-                return array('ok' => false, 'error' => 'copy_failed');
-            }
-            return array('ok' => true, 'bytes' => (int)@filesize($dest), 'local' => true);
-        }
         $fp = @fopen($dest, 'wb');
         if (!$fp) {
             return array('ok' => false, 'error' => 'tmp_open');
