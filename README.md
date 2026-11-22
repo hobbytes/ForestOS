@@ -10,6 +10,43 @@
 > A browser-based desktop OS in PHP + JS, with a visual node/dataflow mode,
 > mobile shell and a dark theme. Docker-first setup, no build step.
 
+![Рабочий стол Forest OS](docs/screenshots/desktop.jpg)
+
+---
+
+## Скриншоты
+
+| Проводник | Настройки |
+|---|---|
+| ![Проводник](docs/screenshots/explorer.jpg) | ![Настройки](docs/screenshots/settings.jpg) |
+
+| Магазин приложений | Обновление системы |
+|---|---|
+| ![Apps House](docs/screenshots/appshouse.jpg) | ![Обновление](docs/screenshots/update.jpg) |
+
+| Node-режим: файл из проводника сразу открывается в просмотрщике |
+|---|
+| ![Node-режим](docs/screenshots/nodes.jpg) |
+
+| Мобильный рабочий стол | Приложение | Список запущенных |
+|---|---|---|
+| ![Мобильный рабочий стол](docs/screenshots/mobile-desktop.jpg) | ![Мобильное приложение](docs/screenshots/mobile-app.jpg) | ![Переключатель](docs/screenshots/mobile-switcher.jpg) |
+
+---
+
+## Стандартные приложения
+
+| Приложение | Что делает |
+|---|---|
+| **Explorer** (Проводник) | файлы и папки, избранное, корзина, ассоциации, выбор файла для других приложений |
+| **Settings** (Настройки) | темы и акцент, тёмная тема, док, автозапуск, язык и время, пользователи, блокировка учёток, ключи доступа, управление приложениями |
+| **Apps House** (Магазин) | каталог приложений, установка и удаление, публикация своих |
+| **Update** (Обновление) | текущая версия и сборка, проверка источника обновлений, установка пакета |
+
+Дополнительно в комплекте: **Rich Text Editor**, **Image Viewer**,
+**Audio Player**, **Converter** (перевод старых приложений на токены темы),
+а также примеры для разработчиков — **Demo** и **PickerTest** (выбор файла через Mercury `AppGUI`).
+
 ---
 
 ## Возможности
@@ -19,12 +56,6 @@
 * сетка рабочего стола: ярлыки не накладываются, но двигаются свободно;
 * контекстные меню везде, создание папок и файлов прямо на столе;
 * динамическое обновление дока и рабочего стола без перезагрузки.
-
-**Приложения**
-* Проводник (избранное, мобильная навигация, ассоциации файлов);
-* Rich Text Editor, Image Viewer, Audio Player;
-* Настройки: темы, акцент, тёмная тема, пользователи, блокировка учёток, ключи доступа;
-* Магазин приложений (Apps House) и **Конвертер** старых приложений под токены темы.
 
 **Node-режим** (`Ctrl+Shift+N`)
 * у приложений есть входы и выходы; на окнах и на элементах появляются якоря;
@@ -49,8 +80,8 @@
 ## Быстрый старт (Docker)
 
 ```bash
-git clone https://github.com/<you>/forest-os.git
-cd forest-os
+git clone https://github.com/hobbytes/ForestOS.git
+cd ForestOS
 cp .env.example .env      # и обязательно поменяйте пароли в .env
 docker compose up -d --build
 ```
@@ -102,7 +133,7 @@ system/core/functions/     AJAX-эндпоинты (настройки, док, 
 system/core/design/        CSS, картинки, темы (.fth)
 system/apps/<App>/         приложения (main.php + assets)
 system/users/<login>/      данные пользователя (не хранится в git)
-docs/                      внутренние заметки
+docs/                      документация и скриншоты
 ```
 
 ---
