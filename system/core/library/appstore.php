@@ -275,6 +275,7 @@ class AppStore
         return array(
             'ok' => false,
             'error' => $res['error'] !== '' ? 'hub_unreachable' : ('http_' . $res['status']),
+            'hub_status' => (int)$res['status'],
             'raw' => substr($res['raw'], 0, 300),
         );
     }
@@ -297,7 +298,13 @@ class AppStore
             'search' => $search, 'sort' => $sort, 'page' => $page, 'per_page' => $per,
         ));
         if (!$res['ok']) {
-            return array('ok' => false, 'error' => $res['json']['error'] ?? ('http_' . $res['status']), 'apps' => array());
+            return array(
+                'ok' => false,
+                'error' => $res['json']['error'] ?? ('http_' . $res['status']),
+                'hub_status' => (int)$res['status'],
+                'hub_body' => substr(preg_replace('/\s+/', ' ', trim((string)$res['raw'])), 0, 300),
+                'apps' => array(),
+            );
         }
         return array(
             'ok' => true,
