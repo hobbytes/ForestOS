@@ -1,6 +1,6 @@
 <?
 
-/* Update Tool — проверка и установка обновлений Forest OS */
+/* Update Tool — проверка и установка обновлений Forest OS из GitHub Releases */
 
 $AppName = $_GET['appname'];
 $AppID = $_GET['appid'];
@@ -11,7 +11,7 @@ $AppContainer = new AppContainer;
 
 $AppContainer->AppNameInfo = 'Update Tool';
 $AppContainer->SecondNameInfo = 'Обновление системы';
-$AppContainer->VersionInfo = '1.1.0';
+$AppContainer->VersionInfo = '2.0.0';
 $AppContainer->AuthorInfo = 'Forest Media';
 
 $AppContainer->LibraryArray = Array('filesystem','gui');
@@ -23,96 +23,16 @@ $AppContainer->width = '100%';
 $AppContainer->customStyle = 'padding:0; overflow:auto;';
 $AppContainer->StartContainer();
 
-$gui = new gui;
-$fo = new filecalc;
-$Folder = $_GET['destination'];
-$updatefile = isset($_GET['updatefile']) ? $_GET['updatefile'] : '';
+require_once $_SERVER['DOCUMENT_ROOT'].'/system/core/library/osupdate.php';
 
-$update_lang = parse_ini_file('app.lang');
-$cl = $_SESSION['locale'];
-
-/* ---------- текущая версия ---------- */
-$current = @parse_ini_file('../../core/osinfo.foc');
-if (!is_array($current)) { $current = array(); }
-$curVersion = (string)($current['version'] ?? '—');
-$curSub = (string)($current['subversion'] ?? '—');
-$curBuild = (string)($current['revision'] ?? '—');
-$curCode = (string)($current['codename'] ?? '—');
-
-/* ---------- источник обновлений ---------- */
-$urlu = 'http://forest.hobbytes.com/media/os/update.php';
-$ctx = stream_context_create(array('http' => array('timeout' => 4, 'ignore_errors' => true)));
-$fileu = @file_get_contents($urlu, false, $ctx);
-$arrayu = $fileu ? json_decode($fileu, TRUE) : NULL;
-
-$remote = NULL;
-if (!empty($arrayu) && is_array($arrayu)) {
-  foreach ($arrayu as $key) {
-    $remote = array(
-      'file' => (string)($key['file'] ?? ''),
-      'version' => (string)($key['version'] ?? ''),
-      'subversion' => (string)($key['subversion'] ?? ''),
-      'size' => (int)($key['size'] ?? 0),
-      'codename' => (string)($key['codename'] ?? ''),
-    );
-  }
+if (empty($_SESSION['fo_update_csrf'])) {
+  $_SESSION['fo_update_csrf'] = bin2hex(random_bytes(16));
 }
+$TOKEN = (string)$_SESSION['fo_update_csrf'];
 
-/* локальный пакет обновления (zip + ini рядом с приложением) */
-$customfile = NULL;
-foreach (glob('*.zip') as $filename) { $customfile = $filename; }
-if (!empty($customfile)) {
-  $fwInfo = @parse_ini_file(str_replace('.zip', '.ini', $customfile));
-  $remote = array(
-    'file' => str_replace('.zip', '', $customfile),
-    'version' => (string)($fwInfo['version'] ?? ''),
-    'subversion' => (string)($fwInfo['subversion'] ?? ''),
-    'size' => (int)@filesize($customfile),
-    'codename' => (string)($fwInfo['codename'] ?? ''),
-  );
-}
-
-$hasUpdate = $remote !== NULL && $remote['subversion'] !== '' && $remote['subversion'] !== $curSub;
-$isSuper = ($_SESSION['superuser'] == $_SESSION['loginuser']);
-$statusText = 'Обновления не проверялись';
-$statusClass = 'upd-status-idle';
-if ($remote !== NULL) {
-  if ($hasUpdate) { $statusText = 'Доступно обновление'; $statusClass = 'upd-status-new'; }
-  else { $statusText = 'Установлена последняя версия'; $statusClass = 'upd-status-ok'; }
-} else {
-  $statusText = 'Сервер обновлений недоступен';
-  $statusClass = 'upd-status-off';
-}
-
-/* ---------- установка (сохранён прежний механизм) ---------- */
-if (!empty($updatefile) && $isSuper) {
-  if (!is_dir('./temp/')) { @mkdir('./temp/'); }
-  $filename = './temp/' . $updatefile;
-  $ch = curl_init('http://forest.hobbytes.com/media/os/updates/' . $updatefile . '.zip');
-  $fp = @fopen($filename . '.zip', 'wb');
-  if ($fp) {
-    curl_setopt($ch, CURLOPT_FILE, $fp);
-    curl_setopt($ch, CURLOPT_HEADER, 0);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-    @curl_exec($ch);
-    curl_close($ch);
-    fclose($fp);
-  }
-  $zip = new ZipArchive;
-  if (@$zip->open($filename . '.zip') === TRUE) {
-    $zip->extractTo('../../../');
-    $zip->close();
-    $content = "[ForestOS]\nversion='{$remote['version']}'\nsubversion='{$remote['subversion']}'\nrevision='{$remote['file']}'\ncodename='{$remote['codename']}'";
-    @file_put_contents('../../core/osinfo.foc', $content);
-    @unlink($filename . '.zip');
-    $gui->newnotification($AppName, 'Обновление системы', 'Установлено обновление <b>' . htmlspecialchars($updatefile) . '</b>');
-    $statusText = 'Обновление установлено';
-    $statusClass = 'upd-status-ok';
-  } else {
-    $statusText = 'Не удалось установить обновление';
-    $statusClass = 'upd-status-off';
-  }
-}
+$up = new OsUpdate();
+$cur = $up->current();
+$isSuper = ((string)($_SESSION['superuser'] ?? '') === (string)$_SESSION['loginuser']);
 ?>
 
 <style>
@@ -132,8 +52,8 @@ if (!empty($updatefile) && $isSuper) {
 .upd-title{ font-size:15px; font-weight:700; }
 .upd-sub{ font-size:12px; opacity:.65; margin-top:2px; }
 .upd-status{
-  align-self:flex-start; margin-top:2px; padding:5px 11px; border-radius:999px;
-  font-size:11.5px; font-weight:700; letter-spacing:.01em;
+  align-self:flex-start; padding:5px 11px; border-radius:999px;
+  font-size:11.5px; font-weight:700;
 }
 .upd-status-idle{ background:color-mix(in srgb, var(--fo-text, #151a17) 8%, transparent); }
 .upd-status-new{ background:color-mix(in srgb, var(--fo-accent) 26%, transparent); color:#0b160f; }
@@ -147,6 +67,10 @@ if (!empty($updatefile) && $isSuper) {
 .upd-row{ display:flex; justify-content:space-between; gap:16px; font-size:12.5px; }
 .upd-row span:first-child{ opacity:.6; }
 .upd-row b{ font-weight:600; }
+.upd-notes{
+  white-space:pre-wrap; font-size:12.5px; line-height:1.5; opacity:.86;
+  max-height:150px; overflow:auto;
+}
 .upd-actions{ display:flex; gap:10px; flex-wrap:wrap; margin-top:auto; }
 .upd-btn{
   height:38px; padding:0 18px; border-radius:10px; border:0; cursor:pointer;
@@ -156,7 +80,7 @@ if (!empty($updatefile) && $isSuper) {
   background:transparent; color:var(--fo-text, #151a17);
   border:1px solid color-mix(in srgb, var(--fo-text, #151a17) 18%, transparent);
 }
-.upd-btn:active{ transform:scale(.98); }
+.upd-btn:disabled{ opacity:.55; cursor:default; }
 .upd-note{ font-size:11.5px; opacity:.55; }
 </style>
 
@@ -165,47 +89,139 @@ if (!empty($updatefile) && $isSuper) {
     <div class="upd-logo">↑</div>
     <div>
       <div class="upd-title">Обновление системы</div>
-      <div class="upd-sub">Forest OS <? echo htmlspecialchars($curSub) ?> · <? echo htmlspecialchars($curCode) ?></div>
+      <div class="upd-sub">Forest OS <? echo htmlspecialchars($cur['subversion']) ?> · <? echo htmlspecialchars($cur['codename']) ?></div>
     </div>
   </div>
 
-  <div class="upd-status <? echo $statusClass ?>"><? echo htmlspecialchars($statusText) ?></div>
+  <div class="upd-status upd-status-idle" id="upd-status<?echo $AppID?>">Проверяем обновления…</div>
 
   <div class="upd-card">
-    <div class="upd-row"><span>Текущая версия</span><b><? echo htmlspecialchars($curVersion) ?></b></div>
-    <div class="upd-row"><span>Выпуск</span><b><? echo htmlspecialchars($curSub) ?></b></div>
-    <div class="upd-row"><span>Сборка</span><b><? echo htmlspecialchars($curBuild) ?></b></div>
-    <div class="upd-row"><span>Кодовое имя</span><b><? echo htmlspecialchars($curCode) ?></b></div>
-    <? if ($remote !== NULL): ?>
-      <div class="upd-row"><span>Доступно</span><b><? echo htmlspecialchars($remote['subversion'] !== '' ? $remote['subversion'] : '—') ?></b></div>
-      <div class="upd-row"><span>Размер пакета</span><b><? echo $remote['size'] > 0 ? round($remote['size'] / 1024) . ' КБ' : '—' ?></b></div>
-    <? endif; ?>
+    <div class="upd-row"><span>Текущая версия</span><b><? echo htmlspecialchars($cur['version']) ?></b></div>
+    <div class="upd-row"><span>Выпуск</span><b><? echo htmlspecialchars($cur['subversion']) ?></b></div>
+    <div class="upd-row"><span>Сборка</span><b><? echo htmlspecialchars($cur['revision']) ?></b></div>
+    <div class="upd-row"><span>Кодовое имя</span><b><? echo htmlspecialchars($cur['codename']) ?></b></div>
+    <div class="upd-row"><span>Источник</span><b id="upd-feed<?echo $AppID?>" style="font-weight:500;font-size:11.5px;opacity:.8;word-break:break-all;text-align:right"></b></div>
+  </div>
+
+  <div class="upd-card" id="upd-new<?echo $AppID?>" style="display:none">
+    <div class="upd-row"><span>Доступно</span><b id="upd-latest<?echo $AppID?>"></b></div>
+    <div class="upd-row"><span>Опубликовано</span><b id="upd-date<?echo $AppID?>"></b></div>
+    <div class="upd-notes" id="upd-notes<?echo $AppID?>"></div>
   </div>
 
   <div class="upd-actions">
-    <? if ($isSuper && $hasUpdate): ?>
-      <button type="button" class="upd-btn" onclick="updatenow<?echo $AppID;?>(null);">Обновить до <? echo htmlspecialchars($remote['subversion']) ?></button>
+    <button type="button" class="upd-btn ghost" id="upd-check<?echo $AppID?>">Проверить обновления</button>
+    <? if ($isSuper): ?>
+      <button type="button" class="upd-btn" id="upd-install<?echo $AppID?>" style="display:none">Установить</button>
     <? endif; ?>
-    <button type="button" class="upd-btn ghost" onclick="location.reload();">Проверить снова</button>
   </div>
 
   <div class="upd-note">
-    <? if ($remote === NULL): ?>
-      Источник обновлений (forest.hobbytes.com) сейчас недоступен — проверьте подключение или
-      положите пакет <b>.zip</b> с описанием <b>.ini</b> в папку приложения.
-    <? else: ?>
-      Обновление устанавливается поверх текущей копии. Перед установкой сделайте резервную копию.
-    <? endif; ?>
+    Обновления собираются автоматически при публикации релиза в GitHub
+    (тег <b>vX.Y</b> → zip + update.json). Пользовательские файлы, настройки и база
+    при обновлении не затрагиваются.
   </div>
 </div>
 
 <script>
-function updatenow<?echo $AppID;?>(el){
-  var base = '<? echo $Folder ?>main.php?appname=<? echo $AppName ?>&appid=<? echo $AppID ?>&destination=<? echo $Folder ?>';
-  <? if ($hasUpdate): ?>
-  window.location.href = base + '&updatefile=<? echo rawurlencode($remote['file']) ?>';
-  <? endif; ?>
-}
+(function(){
+  var API = 'system/core/functions/osupdate.php';
+  var TOKEN = <? echo json_encode($TOKEN); ?>;
+  var el = function(id){ return document.getElementById(id + '<?echo $AppID?>'); };
+  var state = { latest: null };
+
+  function setStatus(text, cls){
+    var s = el('upd-status');
+    if(!s) return;
+    s.textContent = text;
+    s.className = 'upd-status ' + (cls || 'upd-status-idle');
+  }
+
+  function bytes(n){
+    n = Number(n || 0);
+    if(n >= 1048576) return (n/1048576).toFixed(1) + ' МБ';
+    if(n >= 1024) return Math.round(n/1024) + ' КБ';
+    return n + ' Б';
+  }
+
+  function check(){
+    var btn = el('upd-check');
+    if(btn) btn.disabled = true;
+    setStatus('Проверяем обновления…', 'upd-status-idle');
+    fetch(API + '?action=check', {credentials:'same-origin'})
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        if(btn) btn.disabled = false;
+        var feed = el('upd-feed');
+        if(feed && d.feed) feed.textContent = d.feed;
+        if(!d.ok){
+          setStatus(d.error === 'feed_unavailable' ? 'Источник обновлений недоступен' : 'Не удалось проверить обновления', 'upd-status-off');
+          return;
+        }
+        if(!d.has_update){
+          setStatus('Установлена последняя версия', 'upd-status-ok');
+          el('upd-new').style.display = 'none';
+          return;
+        }
+        state.latest = d.latest;
+        setStatus('Доступно обновление ' + d.latest.version, 'upd-status-new');
+        el('upd-latest').textContent = d.latest.name + ' · ' + bytes(d.latest.size);
+        el('upd-date').textContent = d.latest.published_at || '—';
+        el('upd-notes').textContent = d.latest.notes || 'Без описания';
+        el('upd-new').style.display = 'flex';
+        var ib = el('upd-install');
+        if(ib) ib.style.display = 'inline-flex';
+      })
+      .catch(function(){
+        if(btn) btn.disabled = false;
+        setStatus('Не удалось проверить обновления', 'upd-status-off');
+      });
+  }
+
+  function install(){
+    var btn = el('upd-install');
+    if(!btn) return;
+    if(!confirm('Установить обновление? Текущая версия будет заменена, пользовательские файлы останутся.')) return;
+    btn.disabled = true;
+    btn.textContent = 'Установка…';
+    setStatus('Скачиваем и распаковываем…', 'upd-status-idle');
+    var body = new URLSearchParams();
+    body.append('action', 'install');
+    body.append('token', TOKEN);
+    fetch(API, {method:'POST', credentials:'same-origin', body: body})
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        if(d.ok){
+          setStatus('Обновление установлено: ' + d.installed, 'upd-status-ok');
+          btn.textContent = 'Готово';
+          if(window.FO_TOAST) FO_TOAST('Обновление установлено: ' + d.installed);
+          setTimeout(function(){ location.reload(); }, 1200);
+        } else {
+          btn.disabled = false;
+          btn.textContent = 'Установить';
+          setStatus('Не удалось установить: ' + (d.error || 'ошибка'), 'upd-status-off');
+        }
+      })
+      .catch(function(){
+        btn.disabled = false;
+        btn.textContent = 'Установить';
+        setStatus('Ошибка сети при установке', 'upd-status-off');
+      });
+  }
+
+  fetch(API + '?action=status', {credentials:'same-origin'})
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      var feed = el('upd-feed');
+      if(feed && d.feed) feed.textContent = d.feed;
+    })
+    .catch(function(){});
+
+  var cb = el('upd-check'); if(cb) cb.addEventListener('click', check);
+  var ib = el('upd-install'); if(ib) ib.addEventListener('click', install);
+
+  setTimeout(check, 250);
+})();
 </script>
 
 <?

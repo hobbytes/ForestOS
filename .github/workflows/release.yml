@@ -1,0 +1,114 @@
+name: release
+
+# Собирает архив обновления и публикует его в GitHub Releases.
+# Достаточно поставить тег:  git tag v4.4 && git push --tags
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Версия (например 4.4)'
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Version
+        id: ver
+        run: |
+          if [ -n "${{ github.event.inputs.version }}" ]; then
+            VERSION="${{ github.event.inputs.version }}"
+          else
+            VERSION="${GITHUB_REF_NAME#v}"
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Собираем Forest OS $VERSION"
+
+      - name: Build archive
+        id: build
+        run: |
+          set -euo pipefail
+          VERSION="${{ steps.ver.outputs.version }}"
+          NAME="forest-os-${VERSION}"
+          mkdir -p "dist/${NAME}"
+          rsync -a \
+            --exclude '.git' \
+            --exclude '.github' \
+            --exclude 'data' \
+            --exclude '.env' \
+            --exclude 'system/users' \
+            --exclude 'system/instance.foc' \
+            --exclude 'system/core/library/bd_inc.php' \
+            --exclude 'system/core/journal.mcj' \
+            --exclude '*.bak*' \
+            --exclude 'docs/screenshots' \
+            ./ "dist/${NAME}/"
+          mkdir -p "dist/${NAME}/system/users"
+          touch "dist/${NAME}/system/users/.gitkeep"
+          cd dist
+          zip -qr "${NAME}.zip" "${NAME}"
+          SIZE=$(stat -c %s "${NAME}.zip")
+          SHA=$(sha256sum "${NAME}.zip" | cut -d' ' -f1)
+          echo "size=$SIZE" >> "$GITHUB_OUTPUT"
+          echo "sha=$SHA" >> "$GITHUB_OUTPUT"
+          echo "zip=${NAME}.zip" >> "$GITHUB_OUTPUT"
+          echo "archive ${NAME}.zip: ${SIZE} bytes, sha256 ${SHA}"
+
+      - name: update.json
+        run: |
+          set -euo pipefail
+          VERSION="${{ steps.ver.outputs.version }}"
+          ZIP="${{ steps.build.outputs.zip }}"
+          SIZE="${{ steps.build.outputs.size }}"
+          SHA="${{ steps.build.outputs.sha }}"
+          NOTES=$(python3 - "$VERSION" <<'PY'
+import json, os, re, sys
+version = sys.argv[1]
+notes = ""
+try:
+    text = open("CHANGELOG.md", encoding="utf-8").read()
+    m = re.search(r"##\s*" + re.escape(version) + r"\s*[—-]\s*(.+?)(?=\n##\s|\Z)", text, re.S)
+    if m:
+        notes = m.group(1).strip()
+except Exception:
+    pass
+print(json.dumps(notes, ensure_ascii=False))
+PY
+)
+          python3 - "$VERSION" "$ZIP" "$SIZE" "$SHA" "$NOTES" <<'PY'
+import json, sys, datetime
+version, zip_name, size, sha, notes_json = sys.argv[1:6]
+notes = json.loads(notes_json)
+data = {
+    "version": version,
+    "name": "Forest OS " + version,
+    "notes": notes or ("Обновление Forest OS " + version),
+    "published_at": datetime.datetime.utcnow().strftime("%Y-%m-%d"),
+    "file": zip_name,
+    "size": int(size),
+    "sha256": sha,
+    "url": "https://github.com/%s/releases/latest/download/%s" % (__import__("os").environ["GITHUB_REPOSITORY"], zip_name),
+    "os_min": "2.0",
+}
+open("dist/update.json", "w", encoding="utf-8").write(json.dumps(data, ensure_ascii=False, indent=2))
+print(open("dist/update.json", encoding="utf-8").read())
+PY
+
+      - name: Publish release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: Forest OS ${{ steps.ver.outputs.version }}
+          tag_name: ${{ github.ref_name }}
+          generate_release_notes: false
+          body_path: dist/update.json
+          files: |
+            dist/${{ steps.build.outputs.zip }}
+            dist/update.json
