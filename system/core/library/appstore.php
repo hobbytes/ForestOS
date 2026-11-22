@@ -492,7 +492,7 @@ class AppStore
             'name' => 'В комплекте',
             'url' => 'catalog/',
             'pubkey' => '',
-            'official' => false,
+            'official' => true,
             'builtin' => true,
         );
         foreach ($this->hubRepos() as $r) {
