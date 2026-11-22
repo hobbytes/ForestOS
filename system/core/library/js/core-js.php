@@ -651,6 +651,8 @@ function foWindowIdOf(el){
 function foRaiseWindow(id){
   var $w = $("#app" + id);
   if(!$w.length){ return; }
+  /* окно могло быть скрыто кнопкой «Домой» — возвращаем его на экран */
+  $w.removeClass("fo-home-hidden");
   FO_ZTOP++;
   $w.css("z-index", FO_ZTOP);
   $(".window").removeClass("windowactive");

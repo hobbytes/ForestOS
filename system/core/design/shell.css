@@ -1711,3 +1711,29 @@ body.fo-grid-drag #fo-desktop-grid { opacity: 1; }
 .desktop .link [id^="icon"]:not([id^="icons"]) {
   background-color: transparent !important;
 }
+
+/* ---------- мобильные правки: меню (launcher) и «Домой» ------------------ */
+/* окно, скрытое кнопкой «Домой»: остаётся в списке запущенных */
+.window.fo-home-hidden{ display:none !important; }
+
+@media (max-width: 760px){
+  /* меню Forest OS: карточка не должна уезжать под нижнюю панель —
+     иначе список не докрутить до кнопок перезагрузки/сна/выхода */
+  body.fo-mobile .fo-launcher{
+    padding: calc(var(--fo-bar-h) + 8px) 8px calc(var(--fo-mb-bar, 62px) + env(safe-area-inset-bottom, 0px) + 8px);
+    align-items: flex-start;
+  }
+  body.fo-mobile .fo-launcher-card{
+    max-height: calc(100vh - var(--fo-bar-h) - var(--fo-mb-bar, 62px) - 32px);
+    max-height: calc(100dvh - var(--fo-bar-h) - var(--fo-mb-bar, 62px) - 32px);
+    width: 100%;
+  }
+  body.fo-mobile .fo-launcher-list{
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    touch-action: pan-y;
+  }
+  body.fo-mobile .fo-launcher-foot{
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 2px);
+  }
+}

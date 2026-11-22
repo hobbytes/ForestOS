@@ -110,11 +110,26 @@
   }
 
   function home() {
-    $('.window').removeClass('windowactive');
+    /* «Домой» = свернуть всё: окна прячутся, но остаются в списке запущенных */
+    $('.window').addClass('fo-home-hidden').removeClass('windowactive');
     document.body.classList.remove('fo-mb-app', 'fo-mb-dock');
     closeSwitcher();
     updateCount();
   }
+
+  /* меню Forest OS закрылось: если приложение было открыто — показываем его снова */
+  window.FO_MB_LAUNCHER_CLOSED = function () {
+    if (!narrow()) { return; }
+    var $w = $('.window[data-app]').filter(function () {
+      return !$(this).hasClass('fo-home-hidden');
+    }).last();
+    if ($w.length) {
+      $('.window').removeClass('windowactive');
+      $w.addClass('windowactive');
+      document.body.classList.add('fo-mb-app');
+    }
+    updateCount();
+  };
 
   function toggleDock() {
     document.body.classList.toggle('fo-mb-dock');

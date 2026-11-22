@@ -50,6 +50,8 @@
 
   function closeLauncher() {
     $launcher().removeClass('is-open').attr('aria-hidden', 'true');
+    /* на телефоне меню забирает фокус у окна: возвращаем приложение на экран */
+    if (window.FO_MB_LAUNCHER_CLOSED) { window.FO_MB_LAUNCHER_CLOSED(); }
   }
 
   function run(i) {
