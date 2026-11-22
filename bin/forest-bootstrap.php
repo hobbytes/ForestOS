@@ -208,15 +208,4 @@ $docRoot = '/var/www/html';
 $trashLink = "[link]\ndestination=system/apps/Explorer/\nfile=main\nkey=dir\nparam={$docRoot}/system/users/{$login}/trash\nname=Explorer\nlinkname=Корзина\nicon=system/apps/Explorer/assets/trashicon.png\n";
 write_if_missing($userRoot . '/desktop/trash.link', $trashLink);
 
-// Install PHP 8 security compatibility patch if present
-$patch = 'patches/system/core/library/etc/security.php';
-$target = 'system/core/library/etc/security.php';
-if (file_exists($patch) && file_exists($target)) {
-    if (!file_exists($target . '.legacy-mcrypt.bak')) {
-        copy($target, $target . '.legacy-mcrypt.bak');
-    }
-    copy($patch, $target);
-    echo "Applied PHP 8 security compatibility patch.\n";
-}
-
 echo "Forest OS bootstrap complete. Open http://localhost:" . envv('APP_PORT', '8080') . "\n";
