@@ -22,7 +22,7 @@ $AppContainer->width = '820px';
 $AppContainer->backgroundColor = '#fbfbfd';
 $AppContainer->fontColor = '#151a17';
 $AppContainer->customStyle = 'padding-top:0; max-width:100%; overflow:hidden;';
-$AppContainer->isMobile = $mobile;
+$AppContainer->isMobile = isset($mobile) ? $mobile : 'false';
 $AppContainer->StartContainer();
 ?>
 
@@ -348,7 +348,14 @@ $AppContainer->StartContainer();
       b.disabled = true; b.textContent = 'Установка…';
       post({action:'install', hash: hash, repo: repo}).then(function(d){
         if(d.ok){ toast('Установлено: ' + d.app + ' v' + d.version + (d.repo && d.repo !== 'official' ? ' (' + d.repo + ')' : '')); loadInstalled(); loadCatalog(); }
-        else { toast('Не удалось установить: ' + (d.error || 'ошибка')); b.disabled = false; b.textContent = 'Установить'; }
+        else {
+          var why = d.hint ? d.hint
+            : (d.error === 'no_write_access' ? 'нет прав на запись в system/apps — перезапустите контейнер'
+            : (d.error === 'checksum_mismatch' ? 'файл приложения не совпал по контрольной сумме'
+            : (d.error || 'ошибка')));
+          toast('Не удалось установить: ' + why);
+          b.disabled = false; b.textContent = 'Установить';
+        }
       }).catch(function(){ b.disabled = false; b.textContent = 'Установить'; });
       return;
     }

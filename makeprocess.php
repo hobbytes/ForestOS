@@ -50,7 +50,7 @@ if(isset($_SESSION['loginuser'])){
       $name = basename($destination);
     }
 
-    $destination_ =  $destination.$file;
+    $destination_ = $destination;
     if(!preg_match('/.php/',$destination_)){
       $destination_ = $destination_.'.php';
     }

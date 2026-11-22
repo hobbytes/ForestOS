@@ -164,6 +164,16 @@ if (!is_file($root . '/system/instance.foc')) {
 }
 @chmod($root . '/system', 0777);
 @chmod($root . '/system/instance.foc', 0666);
+/* system/apps нужен на запись: установка и удаление приложений создают там
+   каталоги. В образе он принадлежит root, поэтому без этого установка падала
+   с «mkdir». Правим только каталог и уже установленные приложения (у них есть
+   app.meta) — файлы Explorer/Settings/update не трогаем. */
+@chmod($root . '/system/apps', 0777);
+foreach ((array)@glob($root . '/system/apps/*', GLOB_ONLYDIR) as $appDir) {
+    if (is_file($appDir . '/app.meta')) {
+        chmod_tree($appDir);
+    }
+}
 foreach (array('/system/core/osinfo.foc', '/system/core/extconfiguration.foc', '/system/core/journal.mcj', '/system/core/library/bd_inc.php') as $f) {
     @chmod($root . $f, 0666);
 }

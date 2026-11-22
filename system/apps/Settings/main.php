@@ -80,7 +80,7 @@ $AppContainer->width = '820px';
 $AppContainer->backgroundColor = '#fbfbfd';
 $AppContainer->fontColor = '#151a17';
 $AppContainer->customStyle = 'padding-top:0; max-width:100%; overflow:hidden;';
-$AppContainer->isMobile = $mobile;
+$AppContainer->isMobile = isset($mobile) ? $mobile : (isset($_GET['mobile']) ? (string)$_GET['mobile'] : 'false');
 $AppContainer->StartContainer();
 ?>
 

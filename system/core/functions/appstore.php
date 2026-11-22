@@ -102,8 +102,13 @@ function st_extract(string $zipPath, string $target): array
 
     $stage = $target . '.new-' . bin2hex(random_bytes(4));
     if (!@mkdir($stage, 0777, true) && !is_dir($stage)) {
-        $zip->close();
-        return array('ok' => false, 'error' => 'mkdir');
+        /* system/apps мог достаться от образа с правами root:0755 — пробуем
+           выдать права сами и повторить, иначе говорим прямо, что делать */
+        @chmod(dirname($stage), 0777);
+        if (!@mkdir($stage, 0777, true) && !is_dir($stage)) {
+            $zip->close();
+            return array('ok' => false, 'error' => 'no_write_access');
+        }
     }
 
     $written = 0;
@@ -428,7 +433,13 @@ if ($action === 'install') {
     $res = st_extract($tmp, $target);
     @unlink($tmp);
     if (empty($res['ok'])) {
-        st_fail($res['error'] ?? 'extract_failed', 500);
+        $err = (string)($res['error'] ?? 'extract_failed');
+        if ($err === 'no_write_access' || $err === 'mkdir' || $err === 'swap_failed') {
+            st_fail('no_write_access', 500, array(
+                'hint' => 'Нет прав на запись в system/apps. Перезапустите контейнер: docker compose restart web',
+            ));
+        }
+        st_fail($err, 500);
     }
     @file_put_contents($target . '/app.meta', json_encode(array(
         'name' => $name,
