@@ -95,11 +95,12 @@ if ($action === 'release') {
     }
     $version = isset($_POST['version']) ? trim((string)$_POST['version']) : '';
     $notes = isset($_POST['notes']) ? trim((string)$_POST['notes']) : '';
+    $codename = isset($_POST['codename']) ? trim((string)$_POST['codename']) : '';
     if ($version === '') {
         ou_fail('no_version');
     }
     require_once $_SERVER['DOCUMENT_ROOT'] . '/bin/release.php';
-    $res = rl_build($version, $notes);
+    $res = rl_build($version, $notes, $codename);
     echo json_encode($res + array('ok' => !empty($res['ok'])), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
 }

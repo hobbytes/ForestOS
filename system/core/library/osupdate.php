@@ -150,6 +150,7 @@ class OsUpdate
                 'file' => (string)($j['file'] ?? ''),
                 'url' => (string)($j['url'] ?? ''),
                 'os_min' => (string)($j['os_min'] ?? ''),
+                'codename' => (string)($j['codename'] ?? ''),
             ),
             'has_update' => $hasUpdate,
         );
@@ -256,7 +257,10 @@ class OsUpdate
         $cfg['version'] = $latest['version'];
         $cfg['subversion'] = $latest['version'];
         $cfg['revision'] = $latest['file'] !== '' ? $latest['file'] : $latest['version'];
-        /* кодовое имя не трогаем: оно про ветку разработки, а не про версию */
+        /* кодовое имя берём из релиза, если оно там указано */
+        if (!empty($latest['codename'])) {
+            $cfg['codename'] = (string)$latest['codename'];
+        }
         $this->writeIni($this->osInfo, $cfg);
         @chmod($this->osInfo, 0666);
 

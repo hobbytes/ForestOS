@@ -30,7 +30,7 @@ function rl_root(): string
 /**
  * @return array{ok:bool,error?:string,version?:string,file?:string,size?:int,sha256?:string,url?:string,files?:int}
  */
-function rl_build(string $version, string $notes, array $opts = array()): array
+function rl_build(string $version, string $notes, string $codename = '', array $opts = array()): array
 {
     $doc = rl_root();
     $owner = $opts['owner'] ?? rl_env('FOREST_REPO_OWNER', 'hobbytes');
@@ -161,9 +161,11 @@ function rl_build(string $version, string $notes, array $opts = array()): array
     }
     $base = rtrim(rl_env('FOREST_RELEASES_URL', $scheme . '://' . $host . '/releases'), '/');
 
+    $codename = trim($codename) !== '' ? trim($codename) : (string)rl_env('FOREST_CODENAME', '');
     $payload = array(
         'version' => $version,
         'name' => 'Forest OS ' . $version,
+        'codename' => $codename,
         'notes' => $notes,
         'published_at' => date('Y-m-d H:i'),
         'file' => $outName,
@@ -172,6 +174,7 @@ function rl_build(string $version, string $notes, array $opts = array()): array
         'url' => $base . '/' . $outName,
         'os_min' => '2.0',
         'source' => $srcUrl,
+        'codename' => $codename,
     );
     @file_put_contents($releases . '/update.json', json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
     @chmod($releases . '/update.json', 0666);
@@ -203,18 +206,21 @@ function rl_build(string $version, string $notes, array $opts = array()): array
 if (PHP_SAPI === 'cli' && isset($argv) && basename((string)$argv[0]) === 'release.php') {
     $version = '';
     $notes = '';
+    $codename = '';
     foreach ($argv as $arg) {
         if (strpos($arg, '--version=') === 0) {
             $version = substr($arg, 10);
         } elseif (strpos($arg, '--notes=') === 0) {
             $notes = substr($arg, 8);
+        } elseif (strpos($arg, '--codename=') === 0) {
+            $codename = substr($arg, 11);
         }
     }
     if ($version === '') {
-        fwrite(STDERR, "usage: php bin/release.php --version=4.4 --notes=\"Что нового\"\n");
+        fwrite(STDERR, "usage: php bin/release.php --version=2.0 --notes=\"Что нового\" [--codename=\"Wet Stone\"]\n");
         exit(1);
     }
-    $res = rl_build($version, $notes);
+    $res = rl_build($version, $notes, $codename);
     echo json_encode($res, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT), "\n";
     exit($res['ok'] ? 0 : 1);
 }
