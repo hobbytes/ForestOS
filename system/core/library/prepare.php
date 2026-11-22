@@ -38,7 +38,9 @@
         session_start();
       }
 
-      if($_SESSION["is_authuser"] === true && $_SESSION["CookieIsMine"] != md5($_SESSION["loginuser"].$_SERVER['HTTP_USER_AGENT'].$_SERVER['REMOTE_ADDR'].$_SERVER['HTTP_X_FORWARDED_FOR'])){
+      $forwardedFor = isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : '';
+
+      if(isset($_SESSION["is_authuser"]) && $_SESSION["is_authuser"] === true && isset($_SESSION["loginuser"]) && isset($_SESSION["CookieIsMine"]) && $_SESSION["CookieIsMine"] != md5($_SESSION["loginuser"].$_SERVER['HTTP_USER_AGENT'].$_SERVER['REMOTE_ADDR'].$forwardedFor)){
         $_SESSION = array();
         session_destroy();
         header("Location: ?exit=0");
@@ -51,7 +53,7 @@
       $bd->readglobal2("status", "forestusers", "login", $_SESSION["loginuser"]);
 
       if($getdata != 'superuser'){
-        $bd->readglobal2("login", "forestusers", "status", superuser);
+        $bd->readglobal2("login", "forestusers", "status", 'superuser');
       }else{
         $getdata = $_SESSION["loginuser"];
       }
@@ -104,8 +106,11 @@
         $rgbtohex = explode(",", str_replace(array('rgba', 'rgb', '(', ')',' '), '', $themeload['topbarbackcolor']), 3);
         $themecolor = sprintf("#%02x%02x%02x", $rgbtohex[0], $rgbtohex[1], $rgbtohex[2]);
       }
+      /* тёмная тема: атрибут ставим сразу на <html>, чтобы не было вспышки светлого */
+      $__darkFile = $_SERVER['DOCUMENT_ROOT'].'/system/users/'.$_SESSION["loginuser"].'/settings/etc/dark.foc';
+      $__dark = is_file($__darkFile) && trim((string)@file_get_contents($__darkFile)) === '1';
       ?>
-      <html>
+      <html<? if ($__dark) { echo ' data-fo-dark="1"'; } ?>>
       <head>
       <title>Forest OS</title>
       <link rel="apple-touch-icon" sizes="180x180" href="system/core/design/images/favicons/apple-touch-icon.png">
@@ -126,10 +131,13 @@
       <meta name="description" content="Forest OS - web shell">
       <meta name="copyright" content="Hobbytes">
       <meta name="analytics-s-page-tracking-data" content="Forest OS">
+      <link rel="stylesheet" type="text/css" href="<? echo $hashfile->filehash('system/core/design/tokens.css')?>">
       <link rel="stylesheet" type="text/css" href="<? echo $hashfile->filehash('system/core/design/main.css')?>">
       <link rel="stylesheet" href="<? echo $hashfile->filehash('system/core/design/jquery-ui.css')?>">
+      <link rel="stylesheet" type="text/css" href="<? echo $hashfile->filehash('system/core/design/shell.css')?>">
+      <link rel="stylesheet" type="text/css" href="<? echo $hashfile->filehash('system/core/design/app-shell.css')?>">
       <?
-        if(!isset($_SESSION['loginuser'])){
+        if(!(isset($_SESSION['is_authuser']) && $_SESSION['is_authuser'] === true)){
           ?>
             <link rel="stylesheet" type="text/css" href="<? echo $hashfile->filehash('system/core/design/login.css')?>">
           <?
@@ -203,6 +211,15 @@
     global $name, $login, $hashfile, $click, $top, $left, $maxwidth;
     $id = 0;
 
+    $__device = !empty($_SESSION['is_mobile']) ? 'mobile' : 'desktop';
+    $__layoutFile = $_SERVER['DOCUMENT_ROOT'].'/system/users/'.$_SESSION['loginuser'].'/settings/desktop-'.$__device.'.json';
+    $__layout = array();
+    if (is_file($__layoutFile)) {
+      $__j = json_decode((string)@file_get_contents($__layoutFile), true);
+      if (is_array($__j)) { $__layout = $__j; }
+    }
+    $__hasLayout = !empty($__layout);
+
     if(!empty($user)){
       $login = $user;
       chdir($_SERVER['DOCUMENT_ROOT']);
@@ -261,12 +278,29 @@
       }else{
         $type = '';
       }
+      $__pos = isset($__layout[$filenames]) ? $__layout[$filenames] : null;
+      $__style = '';
+      if (is_array($__pos)) {
+        $__style = ' style="position:absolute;left:'.(int)$__pos['x'].'px;top:'.(int)$__pos['y'].'px;"';
+      }
+      $__app = '';
+      if ($classtrash === '' && preg_match('#system/apps/([^/]+)/#', $ref, $__m)) { $__app = $__m[1]; }
+      /* файл: аккуратная страница с иконкой приложения, которое его открывает */
+      $__filebadge = '';
+      if ($key === 'defaultloader' && $param !== '' && $__app !== '' && @is_file($param)) {
+        $linkicon = './system/core/design/images/file-doc.svg';
+        $__filebadge = $hashfile->filehash('./system/apps/'.$__app.'/app.png');
+        $extension = '';
+      }
+      $__badgeHtml = empty($__filebadge) ? '' : '<span class="filebadge" style="background-image:url(' . $__filebadge . ')"></span>';
+      $__placed = is_array($__pos) ? ' fo-placed' : '';
+      /* a folder shortcut can be pinned to the dock by dragging it down */
+      $__folder = ($key === 'dir' && $param !== '') ? ' data-folder="' . htmlspecialchars($param) . '"' : '';
       ?>
-      <div class="link<? echo $id ?> link" link="<? echo $id ?>" <? echo $type ?>>
+      <div class="link<? echo $id ?> link<? echo $__placed ?>" link="<? echo $id ?>" title="Перетащите, чтобы переместить" d="<? echo htmlspecialchars($filenames) ?>" i="<? echo $id ?>" data-key="<? echo htmlspecialchars($filenames) ?>" data-app="<? echo htmlspecialchars($__app) ?>"<? echo $__folder ?><? echo $__style ?> <? echo $type ?>>
       <div id="linklog<? echo $id ?>" class="<? echo $delclassname ?>">
       <script>
       $( function() {
-        $( ".ico" ).draggable({ containment:"body", snap:".ico, #topbar" });
         $( "#<?echo 'icon'.$id ?>" ).click(function(){
         releaselink();
         $( "#<?echo 'icons'.$id ?>" ).css('z-index', '-3');
@@ -281,12 +315,6 @@
       });
         $( "#background-wall" ).click(function(){
           releaselink();
-        });
-        $( "#<?echo 'icon'.$id ?>" ).mouseover(function(){
-          $(this).css('background-color'  , 'rgba(192,192,192,0.3)');
-        });
-        $( "#<?echo 'icon'.$id ?>" ).mouseout(function(){
-          $(this).css('background-color'  , 'transparent');
         });
         $( "#<?echo 'icon'.$id ?>" ).dblclick(function(){$("#<?echo 'app'.$id ?>").show('drop',500)})
         } );
@@ -308,7 +336,7 @@
             echo'
             <div id="link'.$id.'" class="'.$delclassname.'" on'.$click.'="makeprocess('.$destination.','.$param.','.$key.','.str_replace(' ','_',$name).'); releaselink();">
               <div id=icons'.$id.' class="ui-widget-header ui-widget-content ico clickme'.$classtrash.'" d="'.$filenames.'" i="'.$id.'">
-                <div class="iconimage" style="background-image: url('.$linkicon.');">
+                <div class="iconimage" style="background-image: url('.$linkicon.');">'.$__badgeHtml.'
                   <div id=icon'.$id.' style="width:100%; height:auto;">
                     '.$extension.'
                     <div id="link_content'.$id.'" class="linktheme">
@@ -340,6 +368,8 @@
                     });
                     </script>
                     <?
+                    echo '<script>window.FO_DESKTOP_DEVICE='.json_encode($__device).';window.FO_DESKTOP_HAS_LAYOUT='.($__hasLayout?'true':'false').';</script>';
+                    echo '<script src="system/core/library/js/desktop-layout.js"></script>';
                   }
 
 /*---------welcomescreen load---------*/
@@ -387,146 +417,272 @@ function hibernation(){
 function topbar(){
   global $object, $login, $language;
   $settings_name = $language[$_SESSION['locale'].'_settings_menu'];
-  $store_name = $language[$_SESSION['locale'].'_store_menu'];
   $about_name = $language[$_SESSION['locale'].'_about_menu'];
-  $explorer_name = $language[$_SESSION['locale'].'_explorer_menu'];
+  $exit_name = isset($language[$_SESSION['locale'].'_exit']) ? $language[$_SESSION['locale'].'_exit'] : 'Выход';
+  $apps = $this->appcatalog($login, $language);
   ?>
-  <div id="topbar" class="ui-widget-content topbartheme" style="display:none; z-index:9999; height:auto; padding-top:5px;">
-    <div id="fastbuttons" style="display:none; float: right;">
-      <span id="hideall" class="topbaractbtn ui-forest-blink" style="cursor:default; background-color:#37a22e; color:#fff; width:12px; float:right; text-align:center; width:20px; margin-right: 8px; font-family:monospace; padding:3px 0; border-radius:0px 4px 4px 0px;">
-        -
-      </span>
-      <span id="closeall" class="topbaractbtn ui-forest-blink" style="cursor:default; background-color:#ed2020; color:#fff; float:right; text-align:center; width:20px; font-family:monospace; padding:3px 0; border-radius:4px 0px 0px 4px;" onclick="$('.process').remove(); $('#fastbuttons').hide('fast');">
-        x
-      </span>
+  <div id="topbar" class="fo-bar topbartheme" style="display:none;">
+    <div class="fo-bar-side fo-bar-left">
+      <button type="button" id="fo-launcher-btn" class="fo-bar-btn" title="Приложения (Ctrl+K)" aria-label="Приложения">
+        <span class="fo-ico-grid"></span>
+      </button>
+      <div id="fo-bar-workspaces" class="fo-ws" aria-hidden="true"></div>
+      <div id="fo-bar-title" class="fo-bar-title">Forest OS</div>
     </div>
-    <div class="date " style="float:right; font-size:15px; padding-right:10px; user-select: none; cursor: default;">
-      <?php echo $object->getDayRus().' '.date('d').',';?>
-      <span id="time"></span>
+    <div class="fo-bar-center">
+      <button type="button" id="fo-bar-clock" class="fo-bar-clock" title="Дата и время">
+        <span id="time" class="fo-bar-time">--:--</span>
+        <span class="fo-bar-date"><?echo $object->getDayRus().', '.date('d');?></span>
+      </button>
     </div>
-    <div id="notificationsbtn" class="ui-forest-blink not-btn" style="float:right; font-size: 11px; margin-right: 10px; padding: 1px; user-select: none; border: 2px solid #fff; border-radius: 4px; cursor: default; color:#fff; filter:hue-rotate(90deg);">
-      N
+    <div class="fo-bar-side fo-bar-right">
+      <div id="fastbuttons" class="fo-bar-group fo-hidden">
+        <button type="button" id="hideall" class="fo-bar-btn" title="Свернуть все окна">−</button>
+        <button type="button" id="closeall" class="fo-bar-btn" title="Закрыть все окна" onclick="$('.process').remove(); $('#fastbuttons').addClass('fo-hidden');">×</button>
+      </div>
+      <button type="button" id="notificationsbtn" class="fo-bar-btn fo-bar-bell not-btn" title="Уведомления">N</button>
+      <button type="button" id="fo-mb-close" class="fo-bar-btn fo-bar-mbclose" title="Закрыть приложение">×</button>
+      <button type="button" id="fo-node-btn" class="fo-bar-btn fo-bar-node" title="Node-режим (Ctrl+Shift+N)" onclick="if(window.FONode){window.FONode.toggle();}">&#9095;</button>
+      <button type="button" id="fo-user-btn" class="fo-bar-user" title="<?echo str_replace('_',' ',$login)?>">
+        <span class="fo-avatar"><?echo strtoupper(substr($login, 0, 1))?></span>
+      </button>
     </div>
-    <div id="menu1" class="ui-forest" onmouseover="$('#aboutmenu').css('display','block')" onmouseout="$('#aboutmenu').css('display','none')" style="z-index:9999; user-select: none; cursor: default; text-align:center; width:50px; font-size:19px; padding:2px 0;">
-      =
+  </div>
+
+  <div id="fo-usermenu" class="fo-popover fo-hidden" role="menu">
+    <div class="fo-popover-head"><b><?echo str_replace('_',' ',$login)?></b><span>Администратор</span></div>
+    <button type="button" class="fo-popover-item" data-act="accounts">Учётные записи</button>
+    <button type="button" class="fo-popover-item" data-act="about"><?echo $about_name?></button>
+    <button type="button" class="fo-popover-item fo-danger" data-act="logout"><?echo $exit_name?></button>
+  </div>
+
+  <div id="fo-launcher" class="fo-launcher" aria-hidden="true">
+    <div class="fo-launcher-card" role="dialog" aria-modal="true" aria-label="Приложения">
+      <div class="fo-launcher-search">
+        <span class="fo-ico-search"></span>
+        <input id="fo-launcher-input" type="text" placeholder="Поиск приложений и действий…" autocomplete="off" spellcheck="false">
+        <kbd>esc</kbd>
+      </div>
+      <div id="fo-launcher-list" class="fo-launcher-list fo-scroll"></div>
+      <div class="fo-launcher-foot">
+        <span class="fo-launcher-hint">↑ ↓ — выбор · Enter — открыть</span>
+        <div class="fo-launcher-power">
+          <button type="button" class="fo-power" data-power="restart" title="<?echo $language[$_SESSION['locale'].'_restart']?>">R</button>
+          <button type="button" class="fo-power" data-power="sleep" title="<?echo $language[$_SESSION['locale'].'_memoryrestart']?>">S</button>
+          <button type="button" class="fo-power" data-power="hibernate" title="<?echo $language[$_SESSION['locale'].'_hibernation']?>">H</button>
+          <button type="button" class="fo-power" data-power="logout" title="<?echo $exit_name?>">E</button>
+        </div>
+      </div>
     </div>
-  </div>
-  <div id="aboutmenu" class="ui-widget-content menutheme" onmouseover="$('#aboutmenu').css('display','block')" onmouseout="$('#aboutmenu').css('display','none')" style="z-index:9999; user-select:none; display:none; text-align:justify; min-width:250px; max-width:350px; position:absolute; text-overflow:hidden; overflow:ellipsis;">
-  <div class="ui-forest-menu-labels" style="text-transform:uppercase;" onclick="makeprocess('system/apps/Settings/users.php','<?echo $login;?>','selectuser','<?echo $settings_name?>'); hide_menu();">
-    <? echo str_replace('_',' ',$login) ?>
-  </div>
-  <div class="ui-forest-menu-labels" onclick="makeprocess('system/apps/Explorer/main.php','','','<?echo $explorer_name?>'); hide_menu();">
-    <?echo $explorer_name?>
-  </div>
-  <div class="ui-forest-menu-labels" onclick="makeprocess('system/apps/Settings/main.php','','','<?echo $settings_name?>'); hide_menu();">
-    <?echo $settings_name?>
-  </div>
-  <div class="ui-forest-menu-labels" onclick="makeprocess('system/apps/Apps_House/main.php','','','<?echo $store_name?>'); hide_menu();">
-    <?echo $store_name?>
-  </div>
-  <div class="ui-forest-menu-labels" onclick="makeprocess('system/apps/Settings/about.php','','','<?echo str_replace(' ','_',$about_name)?>'); hide_menu();">
-    <?echo $about_name?>
-  </div>
-    <div class="action-buttons" style="text-align:center; padding:20px 0px 14px; filter:hue-rotate(8deg);">
-    <span style="font-size:26px; cursor:default; width:26px;">
-    <b class="ui-forest action_button" name="<?echo $language[$_SESSION['locale'].'_restart'];?>" onclick="SaveNotification(); return location.href = 'os.php'">R</b>
-    <b class="ui-forest action_button" name="<?echo $language[$_SESSION['locale'].'_memoryrestart'];?>" onclick="SaveNotification(); hibernation('false')">S</b>
-    <b class="ui-forest action_button" name="<?echo $language[$_SESSION['locale'].'_hibernation'];?>" onclick="SaveNotification(); hibernation('true')">H</b>
-    <b class="ui-forest action_button" name="<?echo $language[$_SESSION['locale'].'_exit'];?>" onclick="SaveNotification(); return location.href = '?action=logout'">E</b>
-  </span>
-  <div id="buttons_label" style="opacity:0; height:0; font-variant: all-petite-caps; font-weight:600; transition: all 0.2s ease; font-size:14px; padding:10 0 0; letter-spacing: 3px;"></div>
-  </div>
   </div>
   <script>
-  function hide_menu(){
-    $("#aboutmenu").css('display','none');
-  }
-  $(".action_button").on( "mouseover", function() {
-    $("#buttons_label").css("opacity", "1");
-    $("#buttons_label").css("height", "100%");
-    $("#buttons_label").text($(this).attr("name"));
-  });
-  $(".action_button").on( "mouseout", function() {
-  $("#buttons_label").css("opacity", "0");
-  $("#buttons_label").css("height", "0");
-  });
+  window.FO_APPS = <? echo json_encode(array_values($apps), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP); ?>;
+  window.FO_LOGIN = <? echo json_encode($login); ?>;
+  function hide_menu(){ $('#fo-launcher').removeClass('is-open').attr('aria-hidden','true'); }
   </script>
   <?
 }
+
+/*---------app catalog (launcher data)---------*/
+function appcatalog($login, $language){
+  $loc = $_SESSION['locale'];
+  $doc = $_SERVER['DOCUMENT_ROOT'];
+  $names = array(
+    'Explorer'   => isset($language[$loc.'_explorer_menu']) ? $language[$loc.'_explorer_menu'] : 'Explorer',
+    'Settings'   => isset($language[$loc.'_settings_menu']) ? $language[$loc.'_settings_menu'] : 'Settings',
+    'Apps_House' => isset($language[$loc.'_store_menu']) ? $language[$loc.'_store_menu'] : 'Store',
+    'update'     => 'Обновления'
+  );
+  $hints = array(
+    'Explorer'   => 'Файлы и папки',
+    'Settings'   => 'Параметры системы',
+    'Apps_House' => 'Каталог приложений',
+    'update'     => 'Центр обновлений'
+  );
+  $out = array();
+  foreach (glob($doc.'/system/apps/*', GLOB_ONLYDIR) as $dir) {
+    $app = basename($dir);
+    if (!is_file($dir.'/main.php')) { continue; }
+    if (!preg_match('/^[A-Za-z0-9_\-]+$/', $app)) { continue; }
+    $icon = is_file($dir.'/app.png') ? 'system/apps/'.$app.'/app.png' : 'system/core/design/images/app.png';
+    $out[] = array(
+      'id'   => $app,
+      'name' => isset($names[$app]) ? $names[$app] : $app,
+      'hint' => isset($hints[$app]) ? $hints[$app] : 'Приложение',
+      'icon' => $icon,
+      'path' => 'system/apps/'.$app.'/main.php'
+    );
+  }
+  $out[] = array(
+    'id' => 'accounts', 'name' => 'Учётные записи', 'hint' => 'Пользователи системы',
+    'icon' => 'system/apps/Settings/app.png', 'path' => 'system/apps/Settings/users.php',
+    'param' => $login, 'key' => 'selectuser'
+  );
+  $out[] = array(
+    'id' => 'about', 'name' => 'О системе', 'hint' => 'Версия и сведения',
+    'icon' => 'system/core/design/images/forestosicon.png', 'path' => 'system/apps/Settings/about.php'
+  );
+  return $out;
+}
+
+/*---------appearance (accent + frame)---------*/
+function appearance(){
+  global $login;
+  $file = $_SERVER['DOCUMENT_ROOT'].'/system/users/'.$login.'/settings/appearance.foc';
+  $a = @parse_ini_file($file);
+  if(!is_array($a)){ $a = array(); }
+  $accent = isset($a['accent']) ? trim((string)$a['accent'], " ;") : '';
+  if(!preg_match('/^#[0-9a-fA-F]{3,8}$/', $accent)){ $accent = ''; }
+  $frame = !isset($a['frame']) || (string)$a['frame'] === '1';
+  return array('accent' => $accent, 'frame' => $frame);
+}
+
 /*---------theme load---------*/
     function themeload()
     {
       global $login, $mobile;
       $themeload = parse_ini_file("system/users/$login/settings/etc/theme.fth");
+      if(!is_array($themeload)){ $themeload = array(); }
+      $__appearance = $this->appearance();
+      $__accent = ($__appearance['accent'] !== '') ? $__appearance['accent'] : $this->accentcolor($themeload);
+      $__chrome = trim((string)(isset($themeload['topbarbackcolor']) ? $themeload['topbarbackcolor'] : ''), " ;");
+      $__chromeFg = trim((string)(isset($themeload['topbarfontcolor']) ? $themeload['topbarfontcolor'] : ''), " ;");
+      $__menu = trim((string)(isset($themeload['menubackcolor']) ? $themeload['menubackcolor'] : ''), " ;");
+      $__drag = trim((string)(isset($themeload['draggablebackcolor']) ? $themeload['draggablebackcolor'] : ''), " ;");
+      $__dragFg = trim((string)(isset($themeload['draggablefontcolor']) ? $themeload['draggablefontcolor'] : ''), " ;");
+      $__bgFg = trim((string)(isset($themeload['backgroundfontcolor']) ? $themeload['backgroundfontcolor'] : ''), " ;");
+      $__shellBase = $this->islightcolor($__chrome) ? '#f2f3f2' : '#101312';
+      if($__chrome === ''){ $__chrome = 'rgba(28,28,30,0.9)'; }
+      if($__chromeFg === ''){ $__chromeFg = '#ffffff'; }
+      if($__menu === ''){ $__menu = 'rgba(28,28,30,0.95)'; }
       echo '<style>';
       ?>
-      .dragwindow
+      :root
       {
-        background: <?echo $themeload['draggablebackcolor']?>;
-        color: <?echo $themeload['draggablefontcolor']?>;
+        --fo-theme-topbar: <?echo $__chrome?>;
+        --fo-theme-text: <?echo $__chromeFg?>;
+        --fo-accent: <?echo $__accent?>;
+        --fo-theme-menu: <?echo $__menu?>;
+        --fo-shell-base: <?echo $__shellBase?>;
       }
       .topbartheme
       {
-        background: <?echo $themeload['topbarbackcolor']?>;
-        color: <?echo $themeload['topbarfontcolor']?>;
+        background: <?echo $__chrome?>;
+        color: <?echo $__chromeFg?>;
       }
       .menutheme
       {
-        background: <?echo $themeload['menubackcolor']?>;
-        color: <?echo $themeload['menufontcolor']?>;
+        background: <?echo $__menu?>;
+        color: <?echo trim((string)(isset($themeload['menufontcolor']) ? $themeload['menufontcolor'] : ''), " ;")?>;
       }
       .menulines{
         height: 2px;
         border:none;
-        background: <?echo $themeload['topbarbackcolor']?>;
-        color: <?echo $themeload['topbarbackcolor']?>;
+        background: <?echo $__chrome?>;
+        color: <?echo $__chrome?>;
         filter:contrast(0.9);
       }
       .backgroundtheme
       {
-        background: <?echo $themeload['backgroundcolor']?>;
+        background: <?echo trim((string)(isset($themeload['backgroundcolor']) ? $themeload['backgroundcolor'] : ''), " ;")?>;
       }
       .linktheme
       {
-        color: <?echo $themeload['backgroundfontcolor']?>;
-      }
-      .windowborder
-      {
-        <?
-        if($mobile == 'true'){
-          echo 'border: 3px solid '.$themeload['draggablebackcolor'].';';
-          echo 'border-top: 0;';
-        }
-        ?>
-        border-radius: 6px 6px 8px 8px;
+        color: <?echo $__bgFg?>;
       }
       .action-buttons{
-        background: <?echo $themeload['draggablebackcolor']?>;
-        color: <?echo $themeload['draggablefontcolor']?>;
+        background: <?echo $__drag?>;
+        color: <?echo $__dragFg?>;
       }
 
       .ui-forest-menu-labels:hover{
-      	background: <?echo $themeload['draggablebackcolor']?>;
+      	background: <?echo $__drag?>;
       }
 
       <?
 
-      if($mobile == 'true'){
-        echo '
-        .appwindowbutton
-        {
-        	margin-right: 13px;
-        	font-size: 14px;
-        	padding: 4px 7px;
-        	border-radius: 4px;
-        }
-        ';
-      }
-
-      if(!isset($themeload['customCSS'])){
+      if(!empty($themeload['customCSS'])){
         echo $themeload['customCSS'];
       }
 
+      /* dark mode: атрибут уже выставлен на <html> выше */
+
+    }
+
+    /* Pick an accent colour for the window chrome: explicit theme value first,
+       otherwise a lively version of the theme's top bar colour. */
+    function accentcolor($themeload){
+      $raw = trim((string)(isset($themeload['accentcolor']) ? $themeload['accentcolor'] : ''), " ;");
+      if($raw !== ''){
+        $rgba = $this->hexorrgb($raw);
+        if($rgba !== null){ return $rgba; }
+      }
+      $base = isset($themeload['topbarbackcolor']) ? $themeload['topbarbackcolor'] : '';
+      $c = $this->rgbparts($base);
+      if($c === null){
+        $c = $this->rgbparts(isset($themeload['draggablebackcolor']) ? $themeload['draggablebackcolor'] : '');
+      }
+      if($c === null){ return '#6ea8fe'; }
+      list($h, $s, $l) = $this->rgb2hsl($c[0], $c[1], $c[2]);
+      if($s < 0.16){ return '#6ea8fe'; }
+      $s = min(1, max(0.5, $s));
+      $l = 0.62;
+      $o = $this->hsl2rgb($h, $s, $l);
+      return sprintf('#%02x%02x%02x', $o[0], $o[1], $o[2]);
+    }
+
+    function islightcolor($c){
+      $p = $this->rgbparts($c);
+      if($p === null){ return false; }
+      $l = (0.299 * $p[0] + 0.587 * $p[1] + 0.114 * $p[2]) / 255;
+      return $l > 0.6;
+    }
+
+    function rgbparts($c){
+      $c = (string)$c;
+      if(preg_match('/rgba?\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})/i', $c, $m)){
+        return array((int)$m[1], (int)$m[2], (int)$m[3]);
+      }
+      if(preg_match('/#([0-9a-fA-F]{6})/', $c, $m)){
+        return array(hexdec(substr($m[1],0,2)), hexdec(substr($m[1],2,2)), hexdec(substr($m[1],4,2)));
+      }
+      if(preg_match('/#([0-9a-fA-F]{3})\b/', $c, $m)){
+        return array(hexdec($m[1][0].$m[1][0]), hexdec($m[1][1].$m[1][1]), hexdec($m[1][2].$m[1][2]));
+      }
+      return null;
+    }
+
+    function hexorrgb($c){
+      $p = $this->rgbparts($c);
+      if($p === null){ return null; }
+      return sprintf('#%02x%02x%02x', max(0,min(255,$p[0])), max(0,min(255,$p[1])), max(0,min(255,$p[2])));
+    }
+
+    function rgb2hsl($r, $g, $b){
+      $r /= 255; $g /= 255; $b /= 255;
+      $max = max($r, $g, $b); $min = min($r, $g, $b);
+      $l = ($max + $min) / 2;
+      if($max == $min){ return array(0, 0, $l); }
+      $d = $max - $min;
+      $s = $l > 0.5 ? $d / (2 - $max - $min) : $d / ($max + $min);
+      if($max == $r){ $h = fmod(($g - $b) / $d, 6); }
+      elseif($max == $g){ $h = ($b - $r) / $d + 2; }
+      else { $h = ($r - $g) / $d + 4; }
+      $h *= 60; if($h < 0){ $h += 360; }
+      return array($h, $s, $l);
+    }
+
+    function hsl2rgb($h, $s, $l){
+      $c = (1 - abs(2 * $l - 1)) * $s;
+      $x = $c * (1 - abs(fmod($h / 60, 2) - 1));
+      $m = $l - $c / 2;
+      if($h < 60){ $rgb = array($c, $x, 0); }
+      elseif($h < 120){ $rgb = array($x, $c, 0); }
+      elseif($h < 180){ $rgb = array(0, $c, $x); }
+      elseif($h < 240){ $rgb = array(0, $x, $c); }
+      elseif($h < 300){ $rgb = array($x, 0, $c); }
+      else { $rgb = array($c, 0, $x); }
+      return array((int)round(($rgb[0] + $m) * 255), (int)round(($rgb[1] + $m) * 255), (int)round(($rgb[2] + $m) * 255));
     }
 
 function DisplaySettings(){
@@ -534,41 +690,19 @@ function DisplaySettings(){
   $displaySettings = "system/users/$login/settings/display.foc";
   $appSettings = "system/users/$login/settings/AppWindow.foc";
   if($_SESSION["safemode"] != 'true'){
-    /* app title direction */
-    $getAppSettings = parse_ini_file($appSettings);
-    if(isset($getAppSettings['WindowSize'])){
-      $size_w = $getAppSettings['WindowSize'];
-      echo '
-      .dragwindow{
-        padding: '.$size_w.' 0 '.$size_w.' 0;
-      }';
-    }else{
-      echo '
-      .dragwindow{
-        padding: 8 0 8 0;
-      }';
-    }
-      if($getAppSettings['ControlMode'] == '2'){
-        echo '
-        .appwindowbutton-container{
-          float: left;
-          display: flex;
-        }
-        .process-title{
-          float: right;
-          display: flex;
-          flex-direction: row-reverse;
-        }';
-      }elseif(empty($getAppSettings['ControlMode']) || !intval($getAppSettings['ControlMode']) || $getAppSettings['ControlMode'] == '1'){
-        echo '
-        .appwindowbutton-container{
-          float: right;
-        }
-        .process-title{
-          float: left;
-        }';
-      }
+    /* window chrome metrics */
+    $getAppSettings = @parse_ini_file($appSettings);
+    if(!is_array($getAppSettings)){ $getAppSettings = array(); }
+    $__btn = isset($getAppSettings['ButtonSize']) ? (int)$getAppSettings['ButtonSize'] : 12;
+    if($__btn < 8){ $__btn = 8; }
+    if($__btn > 18){ $__btn = 18; }
+    $__size = isset($getAppSettings['WindowSize']) ? (int)$getAppSettings['WindowSize'] : 8;
+    if($__size < 5){ $__size = 5; }
+    if($__size > 12){ $__size = 12; }
+    echo ':root{--fo-winbtn:'.$__btn.'px;--fo-winsize:'.$__size.';}';
     echo '</style>';
+    $__appearance = $this->appearance();
+    echo '<script>document.documentElement.setAttribute("data-fo-frame","'.($__appearance['frame'] ? 'accent' : 'neutral').'");</script>';
     /* display settings */
   if(file_exists($displaySettings)){
     $getSettings = parse_ini_file($displaySettings);

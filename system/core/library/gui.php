@@ -85,40 +85,38 @@ $(".ui-dialog").css('z-index','9999');
 }
 
 function newnotification($name, $title, $text, $time = 0, $customDate = 0){
-  if($time == 0){
-    $time = 10000;
-  }
-  $_target = md5($name);
-  $name = $name.md5(date('dmyhis'));
-  if($customDate == 0){
-    $date = date('H:i, d.m');
-  }else{
-    $date = $customDate;
-  }
+  $target = md5($name);
+  $uid = $name . md5(date('dmyhis') . mt_rand(0, 9999));
+  $date = ($customDate == 0) ? date('H:i, d.m') : $customDate;
+  $appName = str_replace('_', ' ', $name);
   ?>
-  <div id="notification_<? echo $name ?>" class="<? echo $_target ?> topbartheme notificationclass" onmouseover="$('#closenot_<?echo $name?>').css('opacity','1');" onmouseout="$('#closenot_<? echo $name ?>').css('opacity','0');" style="right:0; width:290px; font-size:14px; margin:10px 10px 20px 10px; height:auto; max-height:300px; text-align:left; transition:all 0.2s ease; overflow:auto; ">
-  <div id="closenot_<? echo $name ?>" onclick="$('#notification_<?echo $name?>').remove(); SaveNotification();" class="topbartheme" style="position:relative; opacity:0; left:95%; width:8px; background-color:transparent; cursor:pointer; transition:all 0.2s ease; margin:5px 0px 0px -10px;">x</div>
-  <span style="font-size:15px; padding: 10px;"><?echo '<b>'.$title.'</b> <span style="font-size:14px;">'.$date.'</span>'?></span><br><br>
-  <div style="background-color: #d6d6d6; color: #000; padding: 10px; word-wrap: break-word;"><? echo $text ?></div>
-
-    <div id="script_<? echo $name ?>">
-    <script>
-    $("#notification_<? echo $name ?>").prependTo("#notification-container");
-    $(".notificationclass").css({'opacity':'0','display':'none'});
-    $("#notification-container").css('display','block');
-    setTimeout(function() {$("#notification_<? echo $name ?>").css('opacity','0.97'); $("#notification_<? echo $name ?>").css('display','block'),1000});
-    <? if($time!='infinite'){ ?>
-      setTimeout(function() {$("#notification_<? echo $name ?>").css('opacity','0'); $("#notification_<? echo $name ?>").css('display','none');},<? echo $time ?>);
-      <? } ?>
-      $( function() {
-        $(document).ready(function(){
-          SaveNotification();
-        });
-      });
-      $("#script_<? echo $name ?>").remove();
-    </script>
+  <div id="notification_<?echo $uid?>" class="<?echo $target?> notificationclass fo-notif" data-notif-app="<?echo htmlspecialchars($appName)?>">
+    <div class="fo-notif-top">
+      <span class="fo-notif-app"><?echo htmlspecialchars($appName)?></span>
+      <span class="fo-notif-time"><?echo htmlspecialchars($date)?></span>
+      <button type="button" id="closenot_<?echo $uid?>" class="fo-notif-close" title="Удалить">&#215;</button>
     </div>
-    </div>
+    <? if($title !== ''){ ?><div class="fo-notif-title"><?echo $title?></div><? } ?>
+    <div class="fo-notif-body"><?echo $text?></div>
+  </div>
+  <script>
+  (function(){
+    var el = document.getElementById('notification_<?echo $uid?>');
+    if(!el){ return; }
+    var close = document.getElementById('closenot_<?echo $uid?>');
+    if(close){
+      close.onclick = function(){
+        if(el.parentNode){ el.parentNode.removeChild(el); }
+        if(window.FO_NOTIFY_SYNC){ FO_NOTIFY_SYNC(); }
+        if(window.SaveNotification){ SaveNotification(); }
+      };
+    }
+    var box = document.getElementById('notification-container');
+    if(box){ box.insertBefore(el, box.firstChild); }
+    if(window.FO_NOTIFY_SYNC){ FO_NOTIFY_SYNC(); }
+    if(window.SaveNotification){ SaveNotification(); }
+  })();
+  </script>
   <?
 }
 

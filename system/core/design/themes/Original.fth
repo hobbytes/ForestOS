@@ -1,7 +1,7 @@
 [Info]
 Name="Original"
 
-topbar]
+[topbar]
 topbarbackcolor="rgba(249, 249, 249, 0.5);"
 topbarfontcolor="rgb(0, 0, 0);"
 
@@ -16,3 +16,6 @@ draggablefontcolor="rgba(0,0,0,1);"
 [background]
 backgroundcolor="rgb(43, 43, 43);"
 backgroundfontcolor="rgb(242, 242, 242);"
+
+[accent]
+accentcolor="#4a7dff"

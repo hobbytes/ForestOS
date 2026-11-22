@@ -22,7 +22,7 @@ class  AppContainer {
   public $appID; // app container ID @integer
   public $backgroundColor = '#f7f7f7'; // custom background-color
   public $fontColor = '#000'; // custom font color
-  public $height = '550px'; // app container height @string
+  public $height = '488px'; // app container height @string
   public $width = '800px'; // app container width @string
   public $customStyle = NULL; // custom CSS style @string
   public $isMobile = NULL; // which device style @string
@@ -119,7 +119,7 @@ class  AppContainer {
 
     // check variables and make new container
     if($this->appName && $this->appID){
-      echo '<div id="'.$this->appName.$this->appID.'" style="background:'.$this->backgroundColor.'; color:'.$this->fontColor.'; height:'.$this->height.'; width:'.$this->width.'; max-height:96%; padding-top:10px; border-radius:0px 0px 5px 5px; overflow:auto; '.$this->customStyle.'">';
+      echo '<div id="'.$this->appName.$this->appID.'" class="fo-app" style="background:'.$this->backgroundColor.'; color:'.$this->fontColor.'; height:'.$this->height.'; width:'.$this->width.'; max-height:96%; padding-top:10px; border-radius:0px 0px 5px 5px; overflow:auto; '.$this->customStyle.'">';
     }
 
   }

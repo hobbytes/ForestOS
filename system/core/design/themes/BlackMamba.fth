@@ -25,3 +25,5 @@ draggablefontcolor='rgb(218, 218, 218);'
 backgroundcolor='rgb(15, 22, 29);'
 
 backgroundfontcolor='rgb(245, 245, 245);'
+[accent]
+accentcolor="#7f9dff"

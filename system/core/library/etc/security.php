@@ -1,68 +1,60 @@
-<?
+<?php
 class security {
 
-  function __encode($text, $key){
-    $td = mcrypt_module_open ("tripledes", '', 'cfb', '');
-    $iv = mcrypt_create_iv (mcrypt_enc_get_iv_size ($td), MCRYPT_RAND);
-    if (mcrypt_generic_init ($td, $key, $iv) != -1){
-      $enc_text=base64_encode(mcrypt_generic ($td,$iv.$text));
-      mcrypt_generic_deinit ($td);
-      mcrypt_module_close ($td);
-      return $enc_text;
-    }
+  private function normalizeKey($key) {
+    return hash('sha256', (string)$key, true);
   }
 
-function __decode($text, $key){
-        $td = mcrypt_module_open ("tripledes", '', 'cfb', '');
-        $iv_size = mcrypt_enc_get_iv_size ($td);
-        $iv = mcrypt_create_iv (mcrypt_enc_get_iv_size ($td), MCRYPT_RAND);
-        if (mcrypt_generic_init ($td, $key, $iv) != -1) {
-          $decode_text = substr(mdecrypt_generic ($td, base64_decode($text)),$iv_size);
-          mcrypt_generic_deinit ($td);
-          mcrypt_module_close ($td);
-          return $decode_text;
-        }
+  function __encode($text, $key){
+    $iv = random_bytes(16);
+    $cipher = openssl_encrypt((string)$text, 'AES-256-CBC', $this->normalizeKey($key), OPENSSL_RAW_DATA, $iv);
+    return base64_encode('FOS2' . $iv . $cipher);
+  }
+
+  function __decode($text, $key){
+    $raw = base64_decode((string)$text, true);
+    if ($raw === false || strlen($raw) < 20) {
+      return '';
+    }
+    if (substr($raw, 0, 4) === 'FOS2') {
+      $iv = substr($raw, 4, 16);
+      $cipher = substr($raw, 20);
+      $plain = openssl_decrypt($cipher, 'AES-256-CBC', $this->normalizeKey($key), OPENSSL_RAW_DATA, $iv);
+      return $plain === false ? '' : $plain;
+    }
+    // Old mcrypt payloads cannot be decoded on PHP 8 without mcrypt.
+    return '';
+  }
+
+  function appprepare(){
+    if(!isset($_SESSION)){
+      session_start();
+    }
+
+    if(!isset($_SESSION['loginuser'])){
+      $backtrace = debug_backtrace();
+      $File = $backtrace[1]['file'] ?? ($backtrace[0]['file'] ?? '');
+      $File = $File ? ", FILE -> '$File'" : '';
+      $AppName = '';
+      if(!empty($backtrace[1]['object']->AppNameInfo)){
+        $AppName = ', APP NAME -> '.$backtrace[1]['object']->AppNameInfo;
       }
 
-function appprepare(){
-  if(!isset($_SESSION)){
-    session_start();
+      if (file_exists($_SERVER['DOCUMENT_ROOT'].'/system/core/library/etc.php')) {
+        require_once $_SERVER['DOCUMENT_ROOT'].'/system/core/library/etc.php';
+        $infob = new info;
+        if (method_exists($infob, 'writestat')) {
+          @$infob->writestat("ALARM! Unauthorized app launch access$File$AppName", $_SERVER['DOCUMENT_ROOT'].'/system/core/journal.mcj');
+        }
+      }
+      exit;
+    }
   }
 
-  if(!isset($_SESSION['loginuser'])){
-
-    $backtrace = debug_backtrace();
-    $File = $backtrace[1][file];
-
-    if(!empty($File)){
-      $File = ", FILE -> '$File'";
-    }elseif (!empty($backtrace[0][file])) {
-      $File = $backtrace[0][file];
-      $File = ", FILE -> '$File'";
-    }else{
-      $File = '';
-    }
-
-    if(!empty($backtrace['1']['object']->AppNameInfo)){
-      $AppName = ', APP NAME -> '.$backtrace['1']['object']->AppNameInfo;
-    }else{
-      $AppName = '';
-    }
-
-    require_once $_SERVER['DOCUMENT_ROOT'].'/system/core/library/etc.php';
-    $infob = new info;
-    $infob->writestat( "ALARM! Unauthorized app launch access$File$AppName", $_SERVER['DOCUMENT_ROOT'].'/system/core/journal.mcj');
-    exit;
-    ?>
-    <script>document.body.innerHTML = '';</script>
-    <?
+  function crypt_s($string, $salt){
+    $crypt_string = crypt((string)$string, '$2a$10$'.md5((string)$salt));
+    $crypt_string = str_replace('$2a$10$','',$crypt_string);
+    return addslashes(strip_tags(htmlspecialchars($crypt_string, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8')));
   }
-}
-
-function crypt_s($string, $salt){
-  $crypt_string=addslashes(strip_tags(htmlspecialchars(crypt($string,'$2a$10$'.md5($salt)))));
-  $crypt_string=str_replace('$2a$10$','',$crypt_string);
-  return $crypt_string;
-}
 }
 ?>

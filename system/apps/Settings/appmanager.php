@@ -1,204 +1,110 @@
 <?
-/* App Manager */
+/* Settings → Приложения (единый дизайн) */
+if (!isset($_SESSION)) { session_start(); }
 
-/* get load data */
-$AppID  = $_GET['appid'];
-$AppName  = $_GET['appname'];
-$Folder = $_GET['destination'];
+$DOC = rtrim(str_replace('\\', '/', $_SERVER['DOCUMENT_ROOT']), '/');
+$me = (string)$_SESSION['loginuser'];
+$isSuper = ($me === ($_SESSION['superuser'] ?? ''));
+$token = (string)($_SESSION['fo_settings_csrf'] ?? '');
+$appid = (string)($_GET['appid'] ?? '');
 
-/* get localization file */
-$language  = parse_ini_file('lang/appmanager.lang');
+require_once $DOC . '/system/core/library/filesystem.php';
+$files = new fileaction();
 
-require $_SERVER['DOCUMENT_ROOT'].'/system/core/library/Mercury/AppContainer.php';
+$protected = array('Explorer', 'Settings', 'Apps_House', 'update');
+$msg = '';
+$action = isset($_GET['action']) ? (string)$_GET['action'] : '';
+$app = isset($_GET['app']) ? preg_replace('/[^A-Za-z0-9_.\-]/', '', (string)$_GET['app']) : '';
 
-/* Make new container */
-$AppContainer = new AppContainer;
-$AppContainer->appName = $AppName;
-$AppContainer->appID = $AppID;
-$AppContainer->LibraryArray = array('filesystem', 'gui', 'http', 'bd');
-$AppContainer->StartContainer();
-
-$app_install = $_SERVER['DOCUMENT_ROOT'].'/system/core/appinstall.foc';
-
-/* Make new objects */
-$gui = new gui;
-$fo = new filecalc;
-$fileaction = new fileaction;
-$HttpRequest = new http;
-$BD = new readbd;
-?>
-<div style="text-align:left; padding-bottom:10px; font-size:30px; border-bottom:#d8d8d8 solid 2px; text-overflow:ellipsis; overflow:hidden;">
-<span onClick="back<?echo $AppID;?>();" class="ui-forest" style="background-color:#d8d8d8; color:#000; border-radius:30%; cursor:pointer; font-size:25px; margin-left:5px;"> &#9668; </span><?echo $language[$_SESSION['locale'].'_name']?></div>
-<?
-$warn_apps = array('Apps_House', 'Explorer', 'update', 'Settings');
-
-$app_delete = $_GET['app_delete'];
-$app_link = $_GET['app_link'];
-$app_dock = $_GET['app_dock'];
-
-//Pin to Dock
-if(!empty($app_dock)){
-  $file = $_SERVER['DOCUMENT_ROOT'].'/system/users/'.$_SESSION['loginuser'].'/settings/Dock/A/'.$app_dock;
-  file_put_contents($file, '');
-} 
-
-//Make link
-if(!empty($app_link)){
-  $info = file_get_contents('http://'.$_SERVER['HTTP_HOST'].'/system/apps/'.$app_link.'/main.php?getinfo=true&h='.md5(date('dmyhis')));
-  $arrayInfo = json_decode($info);
-  if($_SESSION['locale'] == 'en'){
-    $pubname = $arrayInfo->{'name'};
-  }else{
-    $pubname = $arrayInfo->{'secondname'};
-  }
-  $file = $_SERVER['DOCUMENT_ROOT'].'/system/users/'.$_SESSION['loginuser'].'/desktop/'.$app_link.'_'.uniqid().'.link';
-  $fileaction->makelink($file, $_SERVER['DOCUMENT_ROOT'].'/system/apps/'.$app_link.'/', 'main', '', $app_link, $pubname, $pubname, 'system/apps/'.$app_link.'/app.png');
+if ($action !== '' && ($_GET['token'] ?? '') !== $token) {
+    $msg = 'Сессия устарела, откройте окно заново';
+    $action = '';
 }
 
-//Delete App
-if(!empty($app_delete) && !in_array($app_delete, $warn_apps)){
-  if(is_file("../$app_delete/app.hash")){
-    $GetHash = file_get_contents("../$app_delete/app.hash");
-    if(!empty($GetHash)){
-      $FUID = $BD->readglobal2("fuid", "forestusers", "login", $_SESSION["loginuser"], true);
-      $PWD = $BD->readglobal2("password", "forestusers", "login", $_SESSION["loginuser"], true);
-      $DROOT = $_SERVER['DOCUMENT_ROOT'];
-      $token = md5($FUID.$DROOT.$PWD);
-      $HttpRequest->makeNewRequest("http://forest.hobbytes.com/media/os/AppsHouse/StatApp.php", 'Forest OS', $data = array('login' => $_SESSION["loginuser"], 'token' => "$token", 'hash' => $GetHash, 'action' => 'delete'));
+if ($isSuper && $action === 'delete' && $app !== '' && !in_array($app, $protected, true)) {
+    $dir = $DOC . '/system/apps/' . $app;
+    if (is_dir($dir)) {
+        $files->deleteDir($dir);
+        $msg = 'Приложение «' . $app . '» удалено';
+    } else {
+        $msg = 'Приложение не найдено';
     }
-  }
-  $fileaction->deleteDir('../'.$app_delete);
-  $gui->newnotification($AppName, $language[$_SESSION['locale'].'_name'], $language[$_SESSION['locale'].'_not_1'].': <b>'.$app_delete.'</b> '.$language[$_SESSION['locale'].'_not_2']);
-  //update desktop
-  ?>
-  <script>
-    UpdateDesktop();
-  </script>
-  <?
 }
 
-foreach (glob($_SERVER['DOCUMENT_ROOT']."/system/apps/*/main.php") as $filenames)
-{
-  global $format, $size;
-  $fo->size_check(dirname($filenames));
-  $fo->format($size);
-
-  $get_name = preg_match('/apps.*?\/(.*?)\/main.php/',$filenames, $app_name);
-  $_app_name = $app_name[1];
-  $info = file_get_contents('http://'.$_SERVER['HTTP_HOST'].'/system/apps/'.$_app_name.'/main.php?getinfo=true&h='.md5(date('dmyhis')));
-  $arrayInfo = json_decode($info);
-  $app_icon = 'system/apps/'.$_app_name.'/app.png?h='.md5($arrayInfo->{'version'});
-  $app_name = str_replace('_', ' ', $_app_name);
-
-  if(!in_array($_app_name, $warn_apps)){
-    $delete_button = '<div class="ui-forest-cancel ui-forest-button ui-forest-center app-delete'.$AppID.'" messageTitle="'.$language[$_SESSION['locale'].'_mt_delete'].'" messageBody="'.$language[$_SESSION['locale'].'_mb_delete'].'" okButton="'.$language[$_SESSION['locale'].'_btn_ok'].'" cancelButton="'.$language[$_SESSION['locale'].'_btn_cancel'].'" onClick="ExecuteFunctionRequest'.$AppID.'(this, \'DeleteApp'.$AppID.'\', \''.$_app_name.'\')">'.$language[$_SESSION['locale'].'_delete_button'].'</div>';
-  }else{
-    $delete_button = '';
-  }
-
-  $version = $arrayInfo->{'version'};
-  if(empty($version)){
-    $version = $language[$_SESSION['locale'].'_unknow_version'];
-  }
-
-  if($_SESSION['locale'] == 'en'){
-    $AppName_	=	$arrayInfo->{'name'};
-  }else{
-    $AppName_	=	$arrayInfo->{'secondname'};
-  }
-  if(empty($AppName_)){
-    $AppName_ = $app_name;
-  }
-
-  echo'
-  <div id="'.$_app_name.$AppID.'" class="app-container'.$AppID.'" style="display:flex; padding:10px; border-bottom:1px solid #ccc; transition:all 0.1s ease-in;">
-  <div style="background-color:transparent;  background-image: url('.$app_icon.'); background-size:cover; height:60px; width:60px; float:left;"></div>
-  <div style="padding:7px 25px; width:200px; border-right:1px solid #ccc;">'.$AppName_.'</div>
-  <div id="button_layer'.$_app_name.$AppID.'" class="button_layer" style="opacity:0; display:none; padding:7 10px;">
-  <div style="float:right;">
-  <div app-run="'.$_app_name.'" class="ui-forest-accept ui-forest-button ui-forest-center app-run'.$AppID.'" >
-  '.$language[$_SESSION['locale'].'_run_button'].'
-  </div>
-  <div app-open="'.$_app_name.'" class="ui-forest-accept ui-forest-button ui-forest-center app-open'.$AppID.'" >
-  '.$language[$_SESSION['locale'].'_open_button'].'
-  </div>
-  <div app-link="'.$_app_name.'" class="ui-forest-accept ui-forest-button ui-forest-center app-link'.$AppID.'" >
-  '.$language[$_SESSION['locale'].'_link_button'].'
-  </div>
-  <div app-dock="'.$_app_name.'" class="ui-forest-accept ui-forest-button ui-forest-center app-dock'.$AppID.'" >
-  '.$language[$_SESSION['locale'].'_btn_dock'].'
-  </div>
-  '.$delete_button.'
-  </div>
-  <div style="float:right; width: 160px; background-color:#89b7f7; margin:11px; padding:10px;">
-  '.$language[$_SESSION['locale'].'_version_label'].':
-  '.$version.'<br>
-  '.$language[$_SESSION['locale'].'_size_label'].':
-  '.$format.'
-  </div>
-  </div>
-  </div>
-  ';
+$apps = array();
+foreach (glob($DOC . '/system/apps/*/main.php') as $f) {
+    $slug = basename(dirname($f));
+    $dir = dirname($f);
+    $size = 0;
+    foreach (glob($dir . '/*') as $file) {
+        if (is_file($file)) { $size += (int)@filesize($file); }
+    }
+    $apps[] = array(
+        'slug' => $slug,
+        'title' => str_replace('_', ' ', $slug),
+        'size' => $size,
+        'protected' => in_array($slug, $protected, true),
+        'icon' => is_file($dir . '/app.png') ? 'system/apps/' . $slug . '/app.png' : 'system/core/design/images/app.png',
+    );
 }
-
-$AppContainer->EndContainer();
+usort($apps, function ($a, $b) { return strcasecmp($a['title'], $b['title']); });
 ?>
+
+<h2 class="set-h">Приложения</h2>
+<p class="set-sub">Установленные приложения системы</p>
+
+<? if ($msg !== ''): ?>
+  <div class="set-card" style="border-color:color-mix(in srgb, var(--set-accent) 40%, #e6e7ea); background:color-mix(in srgb, var(--set-accent) 10%, #fff)">
+    <div class="set-lbl"><? echo htmlspecialchars($msg) ?></div>
+  </div>
+<? endif; ?>
+
+<div class="set-card">
+  <div class="set-list">
+    <? foreach ($apps as $a): ?>
+      <div class="set-item">
+        <span class="set-ico" style="background-image:url(<? echo htmlspecialchars($a['icon']) ?>)"></span>
+        <span class="grow">
+          <span class="set-lbl"><? echo htmlspecialchars($a['title']) ?></span>
+          <span class="set-hint">
+            <? echo htmlspecialchars($a['slug']) ?> · <? echo $a['size'] > 1048576 ? round($a['size'] / 1048576, 1) . ' МБ' : round($a['size'] / 1024) . ' КБ' ?>
+            <? echo $a['protected'] ? ' · системное' : '' ?>
+          </span>
+        </span>
+        <button type="button" class="set-btn" data-app-open="<? echo htmlspecialchars($a['slug']) ?>">Открыть</button>
+        <? if ($isSuper && !$a['protected']): ?>
+          <button type="button" class="set-btn danger" data-app-delete="<? echo htmlspecialchars($a['slug']) ?>">Удалить</button>
+        <? endif; ?>
+      </div>
+    <? endforeach; ?>
+  </div>
+</div>
+
 <script>
-<?php
-
-//Execute Function Request
-$AppContainer->ExecuteFunctionRequest();
-
-// back button
-$AppContainer->Event(
-  "back",
-  NULL,
-  $Folder,
-  'main'
-);
-?>
-
-function DeleteApp<?echo $AppID?>(app_delete){
-$("#<?echo $AppID?>").load("<?echo $Folder?>appmanager.php?app_delete="+app_delete+"&id=<?echo rand(0,10000).'&destination='.$Folder.'&appname='.$AppName.'&appid='.$AppID?>")
-};
-
-$(".app-link<?echo $AppID?>").click(function(){
-var app_link = $(this).attr('app-link');
-$("#<?echo $AppID;?>").load("<?echo $Folder?>appmanager.php?app_link="+app_link+"&id=<?echo rand(0,10000).'&destination='.$Folder.'&appname='.$AppName.'&appid='.$AppID?>")
-});
-
-$(".app-dock<?echo $AppID?>").click(function(){
-var app_dock = $(this).attr('app-dock');
-$("#<?echo $AppID;?>").load("<?echo $Folder?>appmanager.php?app_dock="+app_dock+"&id=<?echo rand(0,10000).'&destination='.$Folder.'&appname='.$AppName.'&appid='.$AppID?>")
-});
-
-$(".app-open<?echo $AppID?>").click(function(){
-var app_open = $(this).attr('app-open');
-makeprocess('system/apps/Explorer/main.php',"<?echo $_SERVER['DOCUMENT_ROOT'].'/system/apps/'?>"+app_open+"",'dir','Explorer');
-});
-
-$(".app-run<?echo $AppID?>").click(function(){
-var app_run = $(this).attr('app-run');
-makeprocess('system/apps/'+app_run+'/main.php','','',app_run);
-});
-
-$(".app-container<?echo $AppID?>").click(function(){
-  var id = $(this).attr('id');
-  $(".app-container<?echo $AppID?>").css({
-    'background-color':'rgba(0,0,0,0)',
-    'color':'#000'
+(function(){
+  var pane = document.getElementById('set-legacy' + <? echo json_encode($appid) ?>);
+  var base = <? echo json_encode('system/apps/Settings/appmanager.php?appid=' . $appid . '&appname=Settings&destination=' . urlencode((string)($_GET['destination'] ?? ''))) ?>;
+  var token = <? echo json_encode($token) ?>;
+  function go(extra){
+    fetch(base + '&token=' + encodeURIComponent(token) + extra, {credentials:'same-origin'})
+      .then(function(r){ return r.text(); })
+      .then(function(html){
+        if(!pane) return;
+        if(window.jQuery){ window.jQuery(pane).html(html); } else { pane.innerHTML = html; }
+      });
+  }
+  document.querySelectorAll('[data-app-open]').forEach(function(b){
+    b.addEventListener('click', function(){
+      var app = b.getAttribute('data-app-open');
+      if(window.makeprocess){ window.makeprocess('system/apps/' + app + '/main.php', '', '', app); }
+    });
   });
-  $(".button_layer").css({
-    'display':'none',
-    'opacity':'0'
+  document.querySelectorAll('[data-app-delete]').forEach(function(b){
+    b.addEventListener('click', function(){
+      var app = b.getAttribute('data-app-delete');
+      if(!confirm('Удалить приложение «' + app + '»?')) return;
+      go('&action=delete&app=' + encodeURIComponent(app));
+    });
   });
-  $("#"+id).css({
-    'background-color':'#3e8eff',
-    'color':'#fff'
-  });
-  $("#button_layer"+id).css({
-    'display':'block',
-    'opacity':'1'
-  });
-});
+})();
 </script>

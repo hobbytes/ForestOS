@@ -1,89 +1,327 @@
+/* ==========================================================================
+   Forest OS вЂ” Login UI v2 ("Forest Pro")
+   Single-card login surface. Scoped strictly to the guest login page.
+   Replaces the previous glass/override stack wholesale (no !important layer).
+   ========================================================================== */
 
-#labelos{
-	font-size: 30px;
-	padding: 30px;
-	color: #fff;
-	text-shadow: 0px 0px 1px #8e8e8e;
-	user-select: none;
-	cursor: default;
-	text-transform: uppercase;
-	font-weight: 700;
-	transition: all 0.2s ease;
-	width: max-content;
-	margin: 0 auto;
+/* --- Accent: default values, overridden inline by login.php from the ----
+   system appearance settings (Settings в†’ РџРµСЂСЃРѕРЅР°Р»РёР·Р°С†РёСЏ в†’ РђРєС†РµРЅС‚). ------ */
+:root {
+  --fo-accent: #3fa066;
+  --fo-accent-strong: #2f7f4f;
+  --fo-accent-ink: #ffffff;
 }
 
-#labelos:hover{
-	color: #f45c43;
-	text-shadow: 0px 0px 1px #651111;
+/* --- Root: fills the fixed <body>, scrolls only when it must ------------- */
+#login-root {
+  --fo-text: #e9efe9;
+  --fo-muted: #93a399;
+  --fo-card-bg: rgba(15, 19, 17, 0.62);
+  --fo-field-bg: rgba(255, 255, 255, 0.06);
+  --fo-field-border: rgba(255, 255, 255, 0.16);
+
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: max(20px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right))
+           max(20px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  background: linear-gradient(180deg,
+    rgba(7, 11, 9, 0.42) 0%,
+    rgba(7, 11, 9, 0.64) 55%,
+    rgba(7, 11, 9, 0.80) 100%);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+               "Helvetica Neue", Arial, sans-serif;
+  color: var(--fo-text);
 }
 
-.input-login{
-  width: 70%;
-  -webkit-appearance: none;
-  padding: 15px;
-  border-radius: 6px;
-  margin: 17px auto;
-  background-color: rgba(202, 202, 202, 0.5);
-  float: none;
-  border: none;
-  color: #fff;
-  font-size: 18px;
+#login-root *,
+#login-root *::before,
+#login-root *::after {
+  box-sizing: border-box;
+}
+
+/* --- Column: centred when there is room, top-aligned when it overflows --- */
+.login-inner {
+  width: 100%;
+  max-width: 390px;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+#login,
+#login-stage {
+  width: 100%;
+}
+
+/* --- The one and only surface ------------------------------------------- */
+#login-card {
+  width: 100%;
+  padding: 30px 28px 26px;
+  border-radius: 16px;
+  background: var(--fo-card-bg);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 22px 55px rgba(0, 0, 0, 0.45),
+              inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(16px) saturate(125%);
+  -webkit-backdrop-filter: blur(16px) saturate(125%);
+  text-align: left;
+}
+
+/* --- Brand -------------------------------------------------------------- */
+#labelos {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin: 0 0 22px;
+  cursor: default;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.login-brand-name {
+  font-size: 25px;
+  line-height: 1.15;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: #ffffff;
+  transition: color 0.18s ease;
+}
+
+.login-brand-tag {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #8fae9b;
+}
+
+#labelos:hover .login-brand-name {
+  color: #cfe9d8;
+}
+
+/* --- Form wrapper (replaces the legacy .guiuser rule from main.css) ------ */
+.guiuser {
+  width: 100%;
+  margin: 0;
   display: block;
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
+  overflow: visible;
+  white-space: normal;
 }
 
-input:-webkit-autofill,
-input:-webkit-autofill:hover,
-input:-webkit-autofill:focus,
-input:-webkit-autofill:active {
-  border: none;
-  -webkit-text-fill-color: #fff;
-  -webkit-box-shadow: 0 0 0px 1000px rgba(202, 202, 202, 0.5) inset;
-  transition: background-color 5000s ease-in-out 0s;
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
-  font-size: 18px;
+#login-card form {
+  margin: 0;
+}
+
+/* --- Fields ------------------------------------------------------------- */
+.input-login {
+  display: block;
+  width: 100%;
+  height: 46px;
+  margin: 0 0 12px;
+  padding: 0 14px;
+  border: 1px solid var(--fo-field-border);
+  border-radius: 10px;
+  background: var(--fo-field-bg);
+  color: #f2f6f2;
+  font-family: inherit;
+  /* 16px: prevents the iOS Safari focus-zoom without a viewport hack */
+  font-size: 16px;
+  line-height: 1.2;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+  transition: border-color 0.16s ease, background-color 0.16s ease,
+              box-shadow 0.16s ease;
 }
 
 .input-login::placeholder {
-    color: #eaeaea;
+  color: #8d9a91;
+  opacity: 1;
 }
 
+.input-login:hover {
+  border-color: rgba(255, 255, 255, 0.26);
+}
+
+.input-login:focus {
+  background: rgba(255, 255, 255, 0.09);
+  border-color: #4aa877;
+  box-shadow: 0 0 0 3px rgba(74, 168, 119, 0.22);
+}
+
+/* Keep autofilled fields dark instead of the browser's default white/yellow */
+.input-login:-webkit-autofill,
+.input-login:-webkit-autofill:hover,
+.input-login:-webkit-autofill:focus {
+  -webkit-text-fill-color: #f2f6f2;
+  -webkit-box-shadow: 0 0 0 1000px #1a221e inset;
+  caret-color: #f2f6f2;
+  transition: background-color 9999s ease-out 0s;
+}
+
+/* --- Submit ------------------------------------------------------------- */
 .buttoncustom {
-  background: rgba(29, 29, 31, 0.9);
-  border:none;
-  width:30%;
-  color:#fff;
-  padding:10px 20px;
-  border-radius:5px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 14pt;
-  margin: 0;
-  cursor: pointer;
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
-  -webkit-appearance:none;
-  text-transform: uppercase;
-  font-variant-caps: all-petite-caps;
-  letter-spacing: 0.1em;
+  display: block;
+  width: 100%;
+  height: 46px;
+  margin: 6px 0 0;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--fo-accent);
+  color: var(--fo-accent-ink, #ffffff);
+  font-family: inherit;
+  font-size: 15px;
   font-weight: 600;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.28);
+  transition: filter 0.16s ease, transform 0.06s ease, box-shadow 0.16s ease;
 }
 
-label {
+.buttoncustom:hover {
+  filter: brightness(1.08);
+}
+
+.buttoncustom:active {
+  transform: translateY(1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.buttoncustom:focus-visible {
+  outline: 2px solid var(--fo-accent);
+  outline-offset: 2px;
+}
+
+/* --- Hidden safe-mode / access-key block -------------------------------- */
+#safemode {
+  margin: 14px 0 0;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+}
+
+#safemode .login-safemode-label {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 13px;
+  color: #b9c9bf;
+  cursor: pointer;
   user-select: none;
+  -webkit-user-select: none;
 }
 
-.error-layout {
-  color:#fff;
-  background-color:rgba(247, 115, 115, 0.75);
-  -webkit-backdrop-filter: blur(5px);
-  border:2px solid #791a1a;
-  width:350px;
-  padding:13px 0;
-  margin:10px auto;
-  font-size:small;
+#safemode input[type="checkbox"] {
+  flex: 0 0 auto;
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  accent-color: var(--fo-accent);
 }
+
+#safemode .input-login {
+  height: 42px;
+  margin: 10px 0 0;
+  font-size: 15px;
+}
+
+/* --- Errors ------------------------------------------------------------- */
+.error-layout {
+  width: auto;
+  margin: 0 0 16px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(190, 64, 64, 0.16);
+  border: 1px solid rgba(224, 96, 96, 0.38);
+  color: #ffd7d7;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.35;
+  text-align: left;
+  text-shadow: none;
+}
+
+/* --- Clock / date ------------------------------------------------------- */
+.login-footer {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 14px;
+  width: 100%;
+  padding: 0 4px;
+  color: rgba(230, 238, 232, 0.75);
+  font-size: 13px;
+}
+
+.login-date {
+  text-transform: capitalize;
+  letter-spacing: 0.02em;
+}
+
+.login-time {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: 0.03em;
+  color: #eef4ef;
+}
+
+/* The splash belongs to the desktop boot, never to the login page. */
+.welcomescreen {
+  display: none !important;
+}
+
+/* --- Responsive --------------------------------------------------------- */
+@media (max-width: 430px) {
+  #login-card {
+    padding: 26px 20px 22px;
+    border-radius: 14px;
+  }
+  .login-brand-name { font-size: 23px; }
+  .login-inner { gap: 14px; }
+}
+
+@media (max-width: 340px) {
+  #login-card { padding: 22px 16px 20px; }
+  .login-brand-name { font-size: 21px; }
+  .input-login,
+  .buttoncustom { height: 44px; }
+  .login-footer { font-size: 12px; }
+}
+
+/* Short viewports (landscape phones, small laptops): allow scrolling from
+   the top instead of clipping the card. */
+@media (max-height: 600px) {
+  #login-root {
+    padding-top: max(14px, env(safe-area-inset-top));
+    padding-bottom: max(14px, env(safe-area-inset-bottom));
+  }
+  .login-inner { margin: 0 auto; gap: 12px; }
+  #labelos { margin-bottom: 16px; }
+  #login-card { padding: 22px 22px 20px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #login-root *,
+  #login-root *::before,
+  #login-root *::after {
+    transition: none !important;
+  }
+}
+
+/* ---------- access key login -------------------------------------------- */
+.login-keyblock{ display:flex; flex-direction:column; gap:6px; margin-top:10px; }
+.login-keyhint{ font-size:11px; line-height:1.35; color:rgba(255,255,255,0.55); text-align:left; padding:0 4px; }

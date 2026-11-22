@@ -1,0 +1,226 @@
+/* ==========================================================================
+   Forest OS — app shell (общий API приложений)
+   Любое приложение внутри окна получает класс .fo-app (AppContainer) и
+   автоматически подстраивается: ширина/высота окна, поля, таблицы, картинки,
+   кнопки и поля ввода. Ничего не нужно верстать под мобилку отдельно.
+   ========================================================================== */
+
+/* контейнер приложения по умолчанию не создаёт горизонтальный скролл */
+.process-container {
+  overflow: hidden;
+}
+
+.fo-app {
+  box-sizing: border-box;
+  overflow: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  font-family: var(--fo-font);
+}
+
+.fo-app img,
+.fo-app video,
+.fo-app canvas {
+  max-width: 100%;
+  height: auto;
+}
+
+.fo-app table {
+  max-width: 100%;
+}
+
+.fo-app pre {
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+.fo-app input,
+.fo-app select,
+.fo-app textarea {
+  max-width: 100%;
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
+/* общие элементы интерфейса приложений (единый дизайн-код) */
+.fo-app .ui-forest-button {
+  border-radius: var(--fo-r-sm);
+}
+
+.fo-app .ui-forest-accept {
+  background: var(--fo-accent) !important;
+  color: var(--fo-accent-ink) !important;
+  font-weight: 600;
+}
+
+.fo-app .ui-forest-cancel {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: inherit !important;
+}
+
+.fo-app .ui-forest-button:hover {
+  filter: brightness(1.06);
+}
+
+/* слайдеры и чекбоксы наследуют акцент системы */
+.fo-app input[type="range"],
+.fo-app input[type="checkbox"],
+.fo-app input[type="radio"] {
+  accent-color: var(--fo-accent);
+}
+
+/* jQuery UI внутри приложений перекрашивается в акцент системы */
+.fo-app .ui-state-active,
+.fo-app .ui-state-active a,
+.fo-app .ui-tabs-nav li.ui-tabs-active,
+.fo-app .ui-tabs-nav li.ui-tabs-active a,
+.fo-app .ui-tabs .ui-tabs-active a {
+  background: var(--fo-accent) !important;
+  background-image: none !important;
+  border-color: color-mix(in srgb, var(--fo-accent) 70%, #000) !important;
+  color: var(--fo-accent-ink) !important;
+  text-shadow: none !important;
+  box-shadow: none !important;
+}
+
+.fo-app .ui-tabs .ui-tabs-nav li a {
+  background: #f1f1f3 !important;
+  border-color: #d9d9dd !important;
+  color: #2c2c31 !important;
+  text-shadow: none !important;
+}
+
+.fo-app .ui-tabs .ui-tabs-nav li a:hover {
+  background: #e7e7ea !important;
+}
+
+.fo-app .ui-state-default,
+.fo-app .ui-widget-content .ui-state-default {
+  background: #f1f1f3;
+  border-color: #d9d9dd;
+  color: #2c2c31;
+  text-shadow: none;
+}
+
+.fo-app .ui-state-hover,
+.fo-app .ui-widget-content .ui-state-hover {
+  background: #e7e7ea;
+  border-color: #cfcfd4;
+}
+
+.fo-app .ui-widget-header {
+  background: #ececef;
+  border-color: #d9d9dd;
+  color: #2c2c31;
+  text-shadow: none;
+}
+
+.fo-app .ui-slider .ui-slider-handle {
+  background: var(--fo-accent) !important;
+  border: 1px solid color-mix(in srgb, var(--fo-accent) 65%, #000) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25) !important;
+}
+
+.fo-app .ui-slider .ui-slider-range {
+  background: color-mix(in srgb, var(--fo-accent) 55%, #fff) !important;
+}
+
+.fo-app .ui-button,
+.fo-app .ui-dialog .ui-dialog-buttonpane button {
+  background: #f1f1f3 !important;
+  border-color: #d9d9dd !important;
+  color: #2c2c31 !important;
+  text-shadow: none !important;
+}
+
+.fo-app .ui-button:hover,
+.fo-app .ui-dialog .ui-dialog-buttonpane button:hover {
+  background: #e7e7ea !important;
+}
+
+.fo-app .ui-tabs .ui-tabs-panel,
+.fo-app .ui-tabs .ui-tabs-nav {
+  background: transparent;
+}
+
+.fo-app a {
+  color: color-mix(in srgb, var(--fo-accent) 70%, var(--fo-fg));
+}
+
+/* ---------- мобильный режим: приложение занимает окно целиком ----------- */
+@media (max-width: 760px) {
+  .fo-app {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 100% !important;
+    max-height: 100% !important;
+    padding: 10px !important;
+    border-radius: 0 !important;
+    font-size: 14px;
+  }
+
+  /* длинные таблицы скроллятся, а не рвут вёрстку */
+  .fo-app table {
+    display: block;
+    width: 100% !important;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  /* кнопки-«таблетки» — на всю ширину, удобно нажимать пальцем */
+  .fo-app .ui-forest-button {
+    display: block;
+    width: 100%;
+    max-width: none;
+    margin: 6px 0;
+    padding: 12px 10px;
+  }
+
+  .fo-app .ui-forest-left,
+  .fo-app .ui-forest-right,
+  .fo-app .ui-forest-center {
+    float: none;
+    margin: 6px 0;
+    width: 100%;
+  }
+
+  /* двухколоночные layouts схлопываем */
+  .fo-app .fo-cols {
+    display: block !important;
+  }
+
+  /* инпуты на всю ширину */
+  .fo-app input[type="text"],
+  .fo-app input[type="password"],
+  .fo-app input[type="email"],
+  .fo-app input[type="number"],
+  .fo-app input[type="search"],
+  .fo-app select,
+  .fo-app textarea {
+    width: 100% !important;
+    font-size: 16px; /* без автозума на iOS */
+  }
+
+  /* заголовки приложений не должны раздуваться */
+  .fo-app [style*="font-size:30px"],
+  .fo-app [style*="font-size: 30px"] {
+    font-size: 22px !important;
+  }
+
+  .fo-app [style*="width:300px"],
+  .fo-app [style*="width: 300px"],
+  .fo-app [style*="width:325px"],
+  .fo-app [style*="width: 325px"] {
+    width: 100% !important;
+  }
+}
+
+/* активная вкладка должна перебивать общее правило вкладок (равная
+   специфичность — побеждает то, что ниже) */
+.fo-app .ui-tabs .ui-tabs-nav li.ui-tabs-active.ui-state-active a,
+.fo-app .ui-tabs .ui-tabs-nav li.ui-tabs-active.ui-state-active {
+  background: var(--fo-accent) !important;
+  background-image: none !important;
+  border-color: color-mix(in srgb, var(--fo-accent) 70%, #000) !important;
+  color: var(--fo-accent-ink) !important;
+}

@@ -1,0 +1,157 @@
+/* ==========================================================================
+   Forest OS — design tokens ("единый дизайн-код")
+   Один источник правды для акцента, поверхностей, радиусов, отступов и
+   типографики оболочки. Тема задаёт фон бара/дока, токены — всё остальное.
+   ========================================================================== */
+
+:root {
+  /* --- акцент: переопределяется из settings/appearance.foc ------------- */
+  --fo-accent: #5fe08c;
+  --fo-accent-ink: #06130b;
+  --fo-accent-soft: color-mix(in srgb, var(--fo-accent) 16%, transparent);
+  --fo-accent-line: color-mix(in srgb, var(--fo-accent) 44%, transparent);
+  --fo-accent-strong: color-mix(in srgb, var(--fo-accent) 82%, transparent);
+
+  /* --- поверхности ------------------------------------------------------ */
+  --fo-screen: #0b0d0c;
+  --fo-glass: rgba(16, 19, 17, 0.72);
+  --fo-glass-strong: rgba(16, 19, 17, 0.9);
+  --fo-panel: rgba(22, 26, 23, 0.94);
+  --fo-panel-2: rgba(31, 36, 32, 0.94);
+  --fo-hover: rgba(255, 255, 255, 0.075);
+  --fo-active: rgba(255, 255, 255, 0.12);
+
+  /* --- текст ------------------------------------------------------------ */
+  --fo-fg: #eef2ef;
+  --fo-fg-dim: rgba(238, 242, 239, 0.66);
+  --fo-fg-faint: rgba(238, 242, 239, 0.42);
+  --fo-fg-ink: #10150f;
+
+  /* --- линии ------------------------------------------------------------ */
+  --fo-line: rgba(255, 255, 255, 0.09);
+  --fo-line-2: rgba(255, 255, 255, 0.16);
+  --fo-line-3: rgba(255, 255, 255, 0.24);
+
+  /* --- форма ------------------------------------------------------------ */
+  --fo-r-xs: 6px;
+  --fo-r-sm: 9px;
+  --fo-r-md: 12px;
+  --fo-r-lg: 16px;
+  --fo-r-pill: 999px;
+
+  /* --- отступы ---------------------------------------------------------- */
+  --fo-sp-1: 4px;
+  --fo-sp-2: 8px;
+  --fo-sp-3: 12px;
+  --fo-sp-4: 16px;
+  --fo-sp-5: 24px;
+
+  /* --- оболочка --------------------------------------------------------- */
+  --fo-bar-h: 34px;
+  --fo-shell: #0d100e;
+  --fo-blur: blur(22px) saturate(150%);
+  --fo-shadow-1: 0 10px 30px rgba(0, 0, 0, 0.38);
+  --fo-shadow-2: 0 28px 80px rgba(0, 0, 0, 0.55);
+
+  /* --- типографика ------------------------------------------------------ */
+  --fo-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  --fo-font-size: 13px;
+  --fo-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+/* ---------- базовые вещи, общие для всей оболочки ----------------------- */
+::selection {
+  background: var(--fo-accent);
+  color: var(--fo-accent-ink, #0b160f);
+}
+
+input::selection,
+textarea::selection {
+  background: var(--fo-accent);
+  color: var(--fo-accent-ink, #0b160f);
+}
+
+:focus-visible {
+  outline: 2px solid var(--fo-accent-strong);
+  outline-offset: 2px;
+}
+
+/* ---------- примитивы, которыми пользуются оболочка и приложения -------- */
+.fo-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 32px;
+  padding: 0 14px;
+  border: 1px solid var(--fo-line-2);
+  border-radius: var(--fo-r-sm);
+  background: transparent;
+  color: var(--fo-fg);
+  font: 500 var(--fo-font-size)/1 var(--fo-font);
+  cursor: default;
+  transition: background-color 0.14s ease, border-color 0.14s ease, color 0.14s ease;
+}
+
+.fo-btn:hover {
+  background: var(--fo-hover);
+}
+
+.fo-btn-primary {
+  background: var(--fo-accent);
+  border-color: transparent;
+  color: var(--fo-accent-ink);
+  font-weight: 600;
+}
+
+.fo-btn-primary:hover {
+  filter: brightness(1.06);
+  background: var(--fo-accent);
+}
+
+.fo-btn-ghost {
+  border-color: transparent;
+}
+
+.fo-field {
+  height: 34px;
+  padding: 0 12px;
+  border: 1px solid var(--fo-line-2);
+  border-radius: var(--fo-r-sm);
+  background: rgba(0, 0, 0, 0.28);
+  color: var(--fo-fg);
+  font: 400 var(--fo-font-size)/1.2 var(--fo-font);
+}
+
+.fo-field::placeholder {
+  color: var(--fo-fg-faint);
+}
+
+.fo-field:focus {
+  border-color: var(--fo-accent-strong);
+  box-shadow: 0 0 0 3px var(--fo-accent-soft);
+  outline: none;
+}
+
+.fo-hidden {
+  display: none !important;
+}
+
+/* аккуратные скроллбары в тёмных панелях оболочки */
+.fo-scroll::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.fo-scroll::-webkit-scrollbar-thumb {
+  background: var(--fo-line-2);
+  border-radius: var(--fo-r-pill);
+}
+
+.fo-scroll::-webkit-scrollbar-thumb:hover {
+  background: var(--fo-line-3);
+}
+
+.fo-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}

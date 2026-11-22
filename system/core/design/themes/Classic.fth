@@ -28,3 +28,5 @@ backgroundcolor='rgb(58, 110, 165);'
 backgroundfontcolor='rgb(255, 255, 255);'
 
   
+[accent]
+accentcolor="#2f5fa8"

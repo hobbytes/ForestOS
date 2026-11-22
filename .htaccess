@@ -2,6 +2,16 @@
 RewriteBase /
 DirectoryIndex os.php
 Options All +ExecCGI -Indexes -Includes +FollowSymLinks
+# --- Forest OS: never serve project/service files over HTTP ----------------
+# .env holds DB/admin secrets, Dockerfile/compose hold deployment details,
+# docs/ and sql/ describe internals. None of them belong on the public web.
+<FilesMatch "(^\.(env|git|ht)|^Dockerfile$|^docker-compose\.ya?ml$|^README\.md$|\.(env|sql|log|bak|sh|ya?ml|foc|mcj|hdf|fth|ini)$)">
+    Require all denied
+</FilesMatch>
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^(docs|sql|bin|data|patches|docker)(/|$) - [F,L]
+</IfModule>
 <IfModule mod_expires.c>
     ExpiresActive On
     ExpiresDefault "access plus 1 month"
@@ -11,12 +21,15 @@ Options All +ExecCGI -Indexes -Includes +FollowSymLinks
 </IfModule>
 <IfModule mod_rewrite.c>
 RewriteEngine on
+RewriteCond %{REQUEST_METHOD} ^(GET|HEAD)$
 RewriteCond %{THE_REQUEST} ^[A-Z]{3,9}\ /os\.php\ HTTP/
 RewriteRule ^os\.php$ http://%{HTTP_HOST}/ [R=301,L]
 RewriteBase /
 RewriteCond %{HTTPS} !on
+RewriteCond %{REQUEST_METHOD} ^(GET|HEAD)$
 RewriteCond %{THE_REQUEST} ^[A-Z]{3,9}\ /os\.php\ HTTP/
 RewriteRule ^os\.php$ http://%{HTTP_HOST}/ [R=301,L]
+RewriteCond %{REQUEST_METHOD} ^(GET|HEAD)$
 RewriteCond %{THE_REQUEST} ^[A-Z]{3,9}\ /([^.]+)\.php\ HTTP
 RewriteRule ^([^.]+)\.php$ http://%{HTTP_HOST}/$1 [R=301,L]
 RewriteCond %{REQUEST_URI} !(\.[^./]+)$

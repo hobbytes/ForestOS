@@ -1,8 +1,7 @@
-
-        
-          
-            <?
-/* Application Store */
+<?
+/* Forest OS — AppsHouse 3.0 (store UI) */
+if (!isset($_SESSION)) { session_start(); }
+if (empty($_SESSION['fo_store_csrf'])) { $_SESSION['fo_store_csrf'] = bin2hex(random_bytes(16)); }
 
 $AppName = $_GET['appname'];
 $AppID = $_GET['appid'];
@@ -10,750 +9,525 @@ $Folder = $_GET['destination'];
 
 require $_SERVER['DOCUMENT_ROOT'].'/system/core/library/Mercury/AppContainer.php';
 
-/* Make new container */
 $AppContainer = new AppContainer;
-
-/* App Info */
 $AppContainer->AppNameInfo = 'Apps House';
 $AppContainer->SecondNameInfo = 'Магазин';
-$AppContainer->VersionInfo = '1.1';
+$AppContainer->VersionInfo = '3.0.0';
 $AppContainer->AuthorInfo = 'Forest Media';
-
-/* Library List */
-$AppContainer->LibraryArray = Array('AppGUI', 'filesystem', 'bd', 'http', 'gui');
-
-/* Container Info */
+$AppContainer->LibraryArray = array();
 $AppContainer->appName = $AppName;
 $AppContainer->appID = $AppID;
-$AppContainer->height = '530px';
-$AppContainer->backgroundColor = '#e8e8e8';
-$AppContainer->customStyle = 'padding-top:0px; max-width:100%;';
-$AppContainer->isMobile = $_GET['mobile'];
-
-//$AppContainer->showError = true;
+$AppContainer->height = '488px';
+$AppContainer->width = '820px';
+$AppContainer->backgroundColor = '#fbfbfd';
+$AppContainer->fontColor = '#151a17';
+$AppContainer->customStyle = 'padding-top:0; max-width:100%; overflow:hidden;';
+$AppContainer->isMobile = $mobile;
 $AppContainer->StartContainer();
-
-//load language
-$language = parse_ini_file('assets/lang/'.$_SESSION['locale'].'.lang');
-
-/* get data */
-$activeTab = 0;
-if(isset($_GET['activetab'])){
-  $activeTab = $_GET['activetab'];
-}
-
-$AppGUI = new AppGUI;
-$FileCalc = new filecalc;
-$FileAction = new fileaction;
-$BD = new readbd;
-$HttpRequest = new http;
-$gui = new gui;
-
-$server_url = "http://forest.hobbytes.com/media/os/AppsHouse/";
-
-$FUID = $BD->readglobal2("fuid", "forestusers", "login", $_SESSION["loginuser"], true);
-$PWD = $BD->readglobal2("password", "forestusers", "login", $_SESSION["loginuser"], true);
-$DROOT = $_SERVER['DOCUMENT_ROOT'];
-$token = md5($FUID.$DROOT.$PWD);
-
-$OSInfo = parse_ini_file('../../core/osinfo.foc', false);
-$CurrentVersionOS = $OSInfo['subversion'];
-
-function UTFTransform($text){
-  return preg_replace('#%u([0-9A-F]{4})#se','iconv("UTF-16BE","UTF-8",pack("H4","$1"))', $text);
-}
-
-$AppSearch = $AppContainer->GetAnyRequest('AppSearch');
-
-if(!empty($AppSearch)){
-  $_AppSearch = UTFTransform($AppSearch);
-}
-
-/* Sort Apps */
-
-$SortApps = $AppContainer->GetAnyRequest('SortApps');
-
-if(empty($SortApps)){
-  $SortApps = 'rating_DESC';
-}
-
-$sortParts = explode("_", $SortApps);
-
-$SortBy = $sortParts[0];
-$SortType = $sortParts[1];
-
 ?>
 
-<link rel="stylesheet" type="text/css" href="<? echo $Folder.$FileAction->filehash("assets/main.css") ?>">
+<style>
+/* ---------- AppsHouse 3.0 ------------------------------------------------ */
+#st<?echo $AppID?>{
+  --st-accent: var(--fo-accent, #5fe08c);
+  position: relative; height: 100%; display: flex; flex-direction: column;
+  font: 13px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  color: #151a17; background: #fbfbfd;
+}
+#st<?echo $AppID?> *{ box-sizing: border-box; }
+.st-head{ display:flex; align-items:center; gap:10px; padding:8px 12px; border-bottom:1px solid #e6e7ea; background:#fff; }
+.st-tabs{ display:flex; gap:2px; }
+.st-tab{ border:1px solid transparent; background:transparent; padding:6px 12px; border-radius:8px; cursor:default;
+  font:600 12.5px/1 inherit; color:#5a6068; transition:background .12s,color .12s; }
+.st-tab:hover{ background:#f0f1f3; }
+.st-tab.is-on{ background:var(--st-accent); color:#0b160f; border-color:transparent; }
+.st-hub{ margin-left:auto; display:flex; align-items:center; gap:6px; font-size:11px; color:#7a818a; }
+.st-dot{ width:7px; height:7px; border-radius:50%; background:#c9ced6; }
+.st-dot.ok{ background:var(--st-accent); box-shadow:0 0 0 3px color-mix(in srgb, var(--st-accent) 22%, transparent); }
+.st-dot.bad{ background:#e2594b; }
+.st-body{ flex:1 1 auto; min-height:0; overflow:auto; padding:12px; }
+.st-panel{ display:none; }
+.st-panel.is-on{ display:block; }
 
-<div id="Tabs<? echo $AppID ?>">
-  <ul>
-    <li><a href="#Apps<? echo $AppID ?>"><? echo $language['app_tab'] ?></a></li>
-    <li><a href="#Control<? echo $AppID ?>"><? echo $language['control_tab'] ?></a></li>
-    <li><a href="#Updates<? echo $AppID ?>"><? echo $language['update_tab'] ?></a></li>
-  </ul>
+.st-toolbar{ display:flex; gap:8px; align-items:center; margin-bottom:12px; flex-wrap:wrap; }
+.st-search{ flex:1 1 200px; min-width:140px; height:34px; padding:0 12px; border:1px solid #d9dbe0; border-radius:9px;
+  background:#fff; font:400 13px/1 inherit; color:#151a17; outline:none; }
+.st-search:focus{ border-color:var(--st-accent); box-shadow:0 0 0 3px color-mix(in srgb, var(--st-accent) 20%, transparent); }
+.st-sort{ height:34px; padding:0 10px; border:1px solid #d9dbe0; border-radius:9px; background:#fff; font:500 12.5px/1 inherit; color:#31363d; }
+.st-btn{ height:34px; padding:0 14px; border:1px solid #d9dbe0; border-radius:9px; background:#fff; color:#31363d;
+  font:600 12.5px/1 inherit; cursor:default; transition:background .12s,border-color .12s; }
+.st-btn:hover{ background:#f2f3f5; }
+.st-btn.primary{ background:var(--st-accent); border-color:transparent; color:#0b160f; }
+.st-btn.primary:hover{ filter:brightness(1.05); }
+.st-btn:disabled{ opacity:.5; }
+.st-btn.danger:hover{ background:#fdeceb; border-color:#f0b5ae; color:#a8332a; }
 
-<div id="Apps<? echo $AppID ?>" style="margin: 0 auto; overflow: auto;">
-  <div id="TabTitle"><? echo $language['app_tab'] ?></div>
+.st-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(240px, 1fr)); gap:10px; }
+.st-card{ display:flex; gap:10px; padding:10px; border:1px solid #e6e7ea; border-radius:12px; background:#fff; }
+.st-ico{ flex:0 0 auto; width:46px; height:46px; border-radius:11px; background:#eef0f2 center/cover no-repeat; }
+.st-main{ min-width:0; flex:1 1 auto; display:flex; flex-direction:column; gap:3px; }
+.st-name{ font-weight:700; font-size:13px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.st-sub{ color:#6d747c; font-size:11.5px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.st-desc{ color:#7d848c; font-size:11.5px; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; }
+.st-meta{ display:flex; gap:8px; color:#8b929a; font-size:11px; }
+.st-actions{ display:flex; gap:6px; margin-top:4px; }
+.st-actions .st-btn{ height:28px; padding:0 10px; font-size:11.5px; }
 
-  <div style="text-align: center; border-bottom: 1px solid #d4d4d4;">
-    <input style="-webkit-appearance: none; padding: 7px; border: 1px solid #ccc; border-radius: 6px; width: 270px; margin-bottom: 20px; font-size: 15px;" id="AppSearch<? echo $AppID ?>" type="search" value="<? echo $_AppSearch ?>" placeholder="<? echo $language['placeholder_search'] ?>">
-    <div class="ui-forest-blink" onClick="AppSearch<? echo $AppID ?>()" style="display: inline-block; background: #2196F3; color: #fff; padding: 5px; border-radius: 6px; cursor: default;"><? echo $language['button_search'] ?></div>
-  </div>
+.st-list{ display:flex; flex-direction:column; gap:8px; }
+.st-row{ display:flex; align-items:center; gap:10px; padding:10px 12px; border:1px solid #e6e7ea; border-radius:12px; background:#fff; }
+.st-row .st-main{ gap:2px; }
+.st-empty{ padding:26px 12px; text-align:center; color:#8b929a; font-size:12.5px; }
+.st-badge{ display:inline-block; padding:1px 7px; border-radius:999px; background:#eef0f2; color:#5c636b; font-size:10.5px; font-weight:600; }
+.st-badge.ok{ background:color-mix(in srgb, var(--st-accent) 22%, #fff); color:#1c4630; }
 
-  <div style="text-align:left; margin-top: 10px; user-select: none;">
-  <label for="SortApps<?=$AppID?>"><?=$language['show_sort_label']?>:</label>
-    <select id="SortApps<?=$AppID?>" style="-webkit-appearance: none; background: #fff; cursor: default; padding: 7px; border: 1px solid #9E9E9E; font-size: 15px; border-radius: 5px;">
-      <option value="rating_DESC"><?=$language['show_sort_popular']?></option>
-      <option value="date_DESC"><?=$language['show_sort_new']?></option>
-      <option value="rating_ASC"><?=$language['show_sort_unpopular']?></option>
-      <option value="date_ASC"><?=$language['show_sort_old']?></option>
-    </select>
-  </div>
+.st-form{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:10px; padding:12px; border:1px dashed #d9dbe0; border-radius:12px; background:#fff; }
+.st-form input{ height:34px; padding:0 10px; border:1px solid #d9dbe0; border-radius:9px; font:400 12.5px/1 inherit; background:#fff; color:#151a17; min-width:0; }
+.st-form .wide{ grid-column:1 / -1; }
+.st-form .st-actions{ margin-top:0; justify-content:flex-end; grid-column:1 / -1; }
+.st-note{ color:#8b929a; font-size:11.5px; margin:6px 0 0; }
+.st-repo{ display:flex; align-items:center; gap:10px; padding:10px 12px; border:1px solid #e6e7ea; border-radius:12px; background:#fff; }
+.st-repo .st-main{ gap:2px; }
+.st-repo-url{ color:#6d747c; font-size:11.5px; word-break:break-all; }
 
-  <div style="margin-top: 15px">
-    <?
+/* publish dialog */
+.st-overlay{ position:absolute; inset:0; background:rgba(12,16,14,.45); backdrop-filter:blur(3px); display:none; align-items:center; justify-content:center; z-index:50; }
+.st-overlay.is-on{ display:flex; }
+.st-dialog{ width:min(520px, calc(100% - 24px)); max-height:calc(100% - 24px); overflow:auto; background:#fff; border-radius:14px;
+  border:1px solid #e2e4e8; box-shadow:0 24px 60px rgba(0,0,0,.35); padding:16px; }
+.st-dialog h3{ margin:0 0 12px; font-size:16px; letter-spacing:-0.01em; }
+.st-field{ display:flex; flex-direction:column; gap:5px; margin-bottom:10px; }
+.st-field span{ font-size:11.5px; color:#6d747c; font-weight:600; }
+.st-field input, .st-field textarea{ width:100%; padding:8px 10px; border:1px solid #d9dbe0; border-radius:9px; font:400 13px/1.4 inherit; color:#151a17; background:#fff; }
+.st-field textarea{ min-height:84px; resize:vertical; }
+.st-field input:focus, .st-field textarea:focus{ outline:none; border-color:var(--st-accent); box-shadow:0 0 0 3px color-mix(in srgb, var(--st-accent) 20%, transparent); }
+.st-dialog-actions{ display:flex; justify-content:flex-end; gap:8px; margin-top:6px; }
+.st-dialog-note{ font-size:11px; color:#8b929a; margin:2px 0 10px; }
+.st-publish-list{ border:1px solid #e6e7ea; border-radius:10px; padding:10px; background:#fbfbfd; margin-bottom:10px; }
+.st-publish-head{ font-size:11.5px; color:#5a6068; font-weight:600; margin-bottom:6px; }
+.st-publish-files{ max-height:104px; overflow:auto; display:flex; flex-direction:column; gap:3px; }
+.st-publish-files span{ font-size:11px; color:#6d747c; font-family:ui-monospace,Consolas,monospace; display:flex; justify-content:space-between; gap:8px; }
+.st-publish-note{ font-size:10.5px; color:#8b929a; margin-top:8px; }
+.st-publish-note code{ background:#eef0f2; border-radius:4px; padding:0 4px; }
 
-    /* adapts for smartphone */
-    if($AppContainer->isMobile == 'true'){
-      echo '
-      <style>
-        .AppTile { min-width: 300px; }
-      </style>
-      ';
-    }
+@media (max-width:760px){
+  #st<?echo $AppID?>{ height:100%; }
+  .st-grid{ grid-template-columns:1fr; }
+  .st-head{ flex-wrap:wrap; padding:8px; }
+  .st-tabs{ width:100%; overflow-x:auto; }
+  .st-hub{ width:100%; margin-left:0; }
+  .st-form{ grid-template-columns:1fr; }
+}
+</style>
 
-    /* install app */
-
-    if(isset($_GET['install_app_hash'])){
-      $AppDestination = "http://forest.hobbytes.com/media/os/AppsHouse/Apps/".$_GET['install_app_hash']."/app.zip";
-
-      if(!is_dir('./temp/')){
-        mkdir('./temp/');
-      }
-
-      $updateMode = false;
-      if($_GET['install_app_update_mode'] == 'true'){
-        $updateMode = true;
-      }
-
-      $curlCh = curl_init();
-      curl_setopt($curlCh, CURLOPT_URL, $AppDestination);
-      curl_setopt($curlCh, CURLOPT_RETURNTRANSFER, 1);
-      curl_setopt($curlCh, CURLOPT_SSLVERSION,3);
-      $curlData = curl_exec($curlCh);
-      curl_close($curlCh);
-
-      $TempFile = './temp/'.$_GET['install_app_hash'].'.zip';
-      $file = fopen($TempFile, "w+");
-      fputs($file, $curlData);
-      fclose($file);
-
-      $zip = new ZipArchive;
-      if($zip->open($TempFile) === TRUE){
-        $zip->extractTo('../');
-        $zip->close();
-        unlink($TempFile);
-        file_put_contents('../'.$_GET['install_app_name'].'/app.hash', $_GET['install_app_hash']);
-
-        if($_SESSION['locale'] == 'en'){
-          $pubname = $_GET['install_app_name'];
-        }else{
-          $pubname = UTFTransform($_GET['install_app_second_name']);
-        }
-
-        $pubname = str_replace('_', ' ', $pubname);
-
-        if(!$updateMode){
-          $LinkFile = $_SERVER['DOCUMENT_ROOT'].'/system/users/'.$_SESSION['loginuser'].'/desktop/'.$_GET['install_app_name'].'_'.uniqid().'.link';
-          $FileAction->makelink($LinkFile, $_SERVER['DOCUMENT_ROOT'].'/system/apps/'.$_GET['install_app_name'].'/', 'main', '', $app_link, $pubname, $pubname, 'system/apps/'.$_GET['install_app_name'].'/app.png');
-
-          if(is_file('../'.$_GET['install_app_name'].'/app.hash')){
-            $HttpRequest->makeNewRequest($server_url.'StatApp.php', 'Forest OS', $data = array('login' => $_SESSION["loginuser"], 'token' => "$token", 'hash' => $_GET['install_app_hash'], 'action' => 'install'));
-          }
-
-          $InstallCaption_1 = $language['install_caption_1'];
-          $InstallCaption_2 = $language['install_caption_2'];
-        }else{
-          $InstallCaption_1 = $language['update_caption_1'];
-          $InstallCaption_2 = $language['update_caption_2'];
-        }
-
-        $gui->newnotification(UTFTransform($AppName), $InstallCaption_1.' '.$language['install_n_1'], $language['install_n_2'].' <b>'.$pubname.'</b> '.$InstallCaption_2);
-
-      }
-    }
-
-    function showError($data){
-      if(!empty($data)){
-        echo '<div style="padding: 10px;background: #e0645b;color: #6d2620;font-weight: 900;margin: 10px 0;border: 3px dashed;">';
-        echo 'Error:<br>';
-        echo '<ul>';
-        foreach ($data as $key => $value) {
-          echo '<li>'.$value.'</li>';
-        }
-        echo '</ul>';
-        echo '</div>';
-      }
-    }
-
-    /* make few requets */
-
-    $ScrollTo = $AppContainer->GetAnyRequest('ScrollTo', 0);
-    $GetPage = $AppContainer->GetAnyRequest('Page', 12);
-
-    $GetApps = $HttpRequest->makeNewRequest($server_url.'GetApp.php', 'Forest OS', $data = array('login' => $_SESSION["loginuser"], 'token' => "$token", 'page' => $GetPage, 'search' => $AppSearch, 'sortby' => $SortBy, 'sort' => $SortType));
-    $GetApps = json_decode($GetApps, TRUE);
-
-    $MaxRating = $HttpRequest->makeNewRequest($server_url.'MaxRating.php', 'Forest OS', $data = array('login' => $_SESSION["loginuser"], 'token' => "$token"));
-
-    /* create array with installed apps */
-    $InstalledApps = array();
-
-    foreach (glob("../*/main.php") as $filename) {
-      $filename = str_replace(array('..','/','main.php'), '', $filename);
-      $InstalledApps[] = $filename;
-    }
-
-    /* rating function */
-
-    function getRating($rating, $MaxRating){
-      $r = ($rating / $MaxRating) * 5;
-      $r_int = intval($r);
-      $r_null = 5 - $r_int;
-      $dots = NULL;
-
-      for ($i = 0; $i < $r_int; $i++){
-        $dots .= '<div class="AppTile-rating" ></div>';
-      }
-
-      for ($i = 0; $i < $r_null; $i++){
-        $dots .= '<div class="AppTile-rating AppTile-rating-null" ></div>';
-      }
-
-      return $dots;
-    }
-
-    /* show available apps */
-
-    foreach ($GetApps['Apps'] as $key) {
-
-      if($_SESSION["locale"]  ==  'en'){
-      	$AppName_ = str_replace('_', ' ', $key['name']);
-    	}else{
-      	$AppName_ = str_replace('_', ' ', $key['second_name']);
-    	}
-      $AppHash = $key['hash'];
-
-      //print_r($key);
-
-      $rating = $language['rating_caption'].': '.getRating($key['rating'], $MaxRating).' ('.$key['rating'].')';
-
-      $TempIconHash = md5($AppHash.$key['version']);
-      $AppIcon = $server_url.'Apps/'.$key['hash'].'/app.png?h='.$TempIconHash;
-
-      $FileCalc->format($key['size']*1024);
-      $size = $format;
-      $description = UTFTransform($key['description']);
-      $AppName_ = UTFTransform($AppName_);
-
-      if (in_array($key['name'], $InstalledApps)) {
-        $ButtonClass = "A-button-open";
-        $ButtonCaption = $language['app_button_open'];
-      }else{
-        $ButtonClass = "A-button-install";
-        $ButtonCaption = $language['app_button_install'];
-      }
-
-      echo '<div class="AppTile" onClick="showInfo'.$AppID.'(\''.$AppHash.'\')">';
-      echo '<div class="AppTile-icon" style="background-image: url('.$AppIcon.'); ">';
-    	echo '</div>';
-      echo '<div class="AppTile-info">';
-      echo '<div class="AppTile-name">';
-      echo $AppName_;
-      echo '</div>';
-      echo '<span>';
-      echo $language['autor_caption'].': '.$key['author'].'<br>';
-      echo $language['version_caption'].': '.$key['version'].'<br>';
-      echo '<div class="AppTile-rating-container">'.$rating.'</div>';
-      echo $language['size_caption'].': '.$size.'<br>';
-      echo '</span>';
-      echo '</div>';
-      echo '</div>';
-      echo '<div class="AppTile-full" id="'.$AppHash.'">';
-      echo '<div class="AppTile-close ui-forest-blink" onClick="closeInfo'.$AppID.'(\''.$AppHash.'\')"> x ';
-      echo '</div>';
-      echo '<div class="AppTile-icon" style="background-image: url('.$AppIcon.'); margin: unset;">';
-    	echo '</div>';
-      echo '<div class="AppTile-name">';
-      echo '<span class="AppTile-strong-name">'.$AppName_.'</span><br>';
-      echo '<span style="font-size: 13px; color: #464646;">'.$AppName_.' by '. $key['author'] . ', version: '.$key['version'].'</span>';
-
-      if($CurrentVersionOS < $key['os_version']){
-        echo '<div class="AppTile-button A-button-open">';
-        echo $language['os_need_update'];
-      }else{
-        echo '<div update="false"  app="'.$key['name'].'" app_second="'.$key['second_name'].'" hash="'.$AppHash.'" class="AppTile-button '.$ButtonClass.'">';
-        echo $ButtonCaption;
-      }
-      echo '</div>';
-      echo '</div>';
-      echo '<div style="font-size:13px; color:#464646; font-weight:600; padding-top: 5px;">'.$language['description_caption'].'</div>';
-      echo '<div class="AppTile-description">';
-      echo $description;
-      echo '</div>';
-      echo '</div>';
-    }
-    ?>
-  </div>
-
-  <div style="font-size: 20px; width: 100%; text-align: center; float: none; display: inline-block;">
-  <?
-
-  $MoreApps = $GetPage + 5;
-  if($GetApps['Page']['All'] > $GetPage){
-    echo '<span style="padding: 3px 5px; cursor: default; background: #03A9F4; color: #fff; border-radius: 10px;" class="ui-forest-blink" onClick="LoadPage'.$AppID.'('.$MoreApps.');">'.$language['more_apps'].'</span>';
-  }
-
-  ?>
-  </div>
-
-</div>
-
-<div id="Control<? echo $AppID ?>" style="margin: 0 auto;">
-  <div id="TabTitle"><? echo $language['control_tab'] ?></div>
-  <div style="padding: 10px; border-bottom: 2px dashed #ccc;">
-    <?
-    echo '
-    <div style="text-align:left; margin-bottom: 10px">
-    <b style="font-size:20px;">'.$language['my_apps_caption'].'</b>
+<div id="st<?echo $AppID?>" data-appid="<?echo $AppID?>">
+  <div class="st-head">
+    <div class="st-tabs">
+      <button type="button" class="st-tab is-on" data-tab="catalog">Каталог</button>
+      <button type="button" class="st-tab" data-tab="installed">Установленные</button>
+      <button type="button" class="st-tab" data-tab="updates">Обновления</button>
+      <button type="button" class="st-tab" data-tab="repos">Репозитории</button>
     </div>
-    ';
-
-    $GetUsersApp = $HttpRequest->makeNewRequest($server_url.'GetApp.php', 'Forest OS', $data = array('login' => $_SESSION["loginuser"], 'token' => "$token", 'search_field' => 'EditMode'));
-    $GetUsersApp = json_decode($GetUsersApp, TRUE);
-
-    echo '<select id="SelectApp'.$AppID.'" style="width:70%; background: #fff; font-size:15px; padding:10px; -webkit-appearance:none; border: 1px solid #ccc;">';
-    $CountApps = 0;
-    foreach ($GetUsersApp as $key => $value) {
-      echo '<option value="'.$value['hash'].'">'.str_replace('_', ' ', $value['name']).'</option>';
-      $CountApps++;
-    }
-
-    echo '</select>';
-    echo '<div id="SelectEditApp'.$AppID.'" onClick="SelectEditApp'.$AppID.'();" class="ui-forest-button ui-forest-accept" style="margin:10 0;"> '.$language['select_app'].' </div>';
-    echo '<div style="font-weight: 900;font-variant: all-petite-caps;font-size: 18px;">'.$language['all_my_apps'].': <b>'.$CountApps.'</b></div>';
-    ?>
+    <div class="st-hub"><span class="st-dot" id="st-hub-dot<?echo $AppID?>"></span><span id="st-hub-url<?echo $AppID?>">…</span></div>
   </div>
-  <div style="padding: 10px; border-bottom: 2px dashed #ccc;">
-    <?
 
-    $AppEditMode = false;
-    if(isset($_GET['select_edit_app'])){
-      $AppEditMode = true;
-    }
+  <div class="st-body">
+    <section class="st-panel is-on" data-panel="catalog">
+      <div class="st-toolbar">
+        <input class="st-search" id="st-q<?echo $AppID?>" placeholder="Поиск приложений…" autocomplete="off">
+        <select class="st-sort" id="st-source<?echo $AppID?>">
+          <option value="official">Официальный репозиторий</option>
+        </select>
+        <select class="st-sort" id="st-sort<?echo $AppID?>">
+          <option value="popular">По популярности</option>
+          <option value="new">Новые</option>
+          <option value="name">По названию</option>
+          <option value="size">По размеру</option>
+        </select>
+        <button type="button" class="st-btn" id="st-refresh<?echo $AppID?>">Обновить</button>
+      </div>
+      <div class="st-grid" id="st-catalog<?echo $AppID?>"></div>
+      <div class="st-empty" id="st-catalog-empty<?echo $AppID?>" style="display:none"></div>
+    </section>
 
-    if($AppEditMode){
-      $AppTabCaption = $language['app_tab_mode_1'];
-    }else{
-      $AppTabCaption = $language['app_tab_mode_2'];
-    }
+    <section class="st-panel" data-panel="installed">
+      <div class="st-list" id="st-installed<?echo $AppID?>"></div>
+      <div class="st-empty" id="st-installed-empty<?echo $AppID?>" style="display:none">Пока ничего не установлено</div>
+    </section>
 
-    if($AppEditMode){
-      $GetUserApp = $HttpRequest->makeNewRequest($server_url.'GetApp.php', 'Forest OS', $data = array('login' => $_SESSION["loginuser"], 'token' => "$token", 'search_field' => 'hash', 'search' => $_GET['select_edit_app']));
-      $GetUserApp = json_decode($GetUserApp, TRUE);
+    <section class="st-panel" data-panel="updates">
+      <div class="st-list" id="st-updates<?echo $AppID?>"></div>
+      <div class="st-empty" id="st-updates-empty<?echo $AppID?>" style="display:none">Обновлений нет</div>
+    </section>
 
-      foreach ($GetUserApp['Apps'] as $key) {
-        $u_name = UTFTransform(str_replace('_', ' ', $key['name']));
-        $u_sname = UTFTransform(str_replace('_', ' ', $key['second_name']));
-        $u_version = $key['version'];
-        $u_osversion = $key['os_version'];
-        $u_description = UTFTransform($key['description']);
-      }
+    <section class="st-panel" data-panel="repos">
+      <div class="st-toolbar">
+        <input class="st-search" id="st-hub-input<?echo $AppID?>" placeholder="Адрес хаба, например http://172.17.0.1:48090">
+        <button type="button" class="st-btn" id="st-hub-save<?echo $AppID?>">Сохранить хаб</button>
+      </div>
+      <p class="st-note">Официальный репозиторий живёт на хабе. Дополнительные репозитории — любой URL с парой <b>index.json</b> + <b>index.sig</b> (ed25519).</p>
+      <div class="st-list" id="st-repos<?echo $AppID?>" style="margin-top:10px"></div>
+      <div class="st-form">
+        <input id="st-repo-name<?echo $AppID?>" class="wide" placeholder="Название (необязательно)">
+        <input id="st-repo-url<?echo $AppID?>" class="wide" placeholder="https://example.org/apphouse">
+        <input id="st-repo-key<?echo $AppID?>" class="wide" placeholder="Публичный ключ ed25519 (base64url, необязательно)">
+        <div class="st-actions">
+          <button type="button" class="st-btn primary" id="st-repo-add<?echo $AppID?>">Добавить репозиторий</button>
+        </div>
+      </div>
+    </section>
+  </div>
 
-    }else{
-      $u_name = ''; $u_sname = ''; $u_version = '1.0'; $u_osversion = $_SESSION['os_version']; $u_description = '';
-    }
-
-    echo '
-    <div style="text-align:left; margin-bottom: 10px">
-    <b style="font-size:20px;">'.$AppTabCaption.'</b>
+  <div class="st-overlay" id="st-overlay<?echo $AppID?>">
+    <div class="st-dialog" role="dialog" aria-modal="true">
+      <h3 id="st-dialog-title<?echo $AppID?>">Публикация приложения</h3>
+      <p class="st-dialog-note">Приложение уйдёт в официальный хаб AppsHouse. Повторная публикация заменяет предыдущую версию.</p>
+      <input type="hidden" id="st-pub-app<?echo $AppID?>">
+      <div class="st-field"><span>Название (как в каталоге)</span><input id="st-pub-title<?echo $AppID?>" maxlength="120"></div>
+      <div class="st-field"><span>Версия</span><input id="st-pub-version<?echo $AppID?>" placeholder="1.0.0" maxlength="32"></div>
+      <div class="st-field"><span>Описание</span><textarea id="st-pub-desc<?echo $AppID?>" maxlength="2000" placeholder="Что делает приложение"></textarea></div>
+      <div class="st-field"><span>Требуемая версия ОС (необязательно)</span><input id="st-pub-os<?echo $AppID?>" placeholder="2.5" maxlength="32"></div>
+      <div class="st-publish-list">
+        <div class="st-publish-head">Уйдёт в архив <b id="st-pub-count<?echo $AppID?>">…</b></div>
+        <div class="st-publish-files" id="st-pub-files<?echo $AppID?>"></div>
+        <div class="st-publish-note">Служебные файлы не попадают в архив: <code>app.meta</code>, <code>data/</code>, <code>.env</code>, <code>*.log</code>, <code>.git/</code>, <code>node_modules/</code>.</div>
+      </div>
+      <div class="st-dialog-actions">
+        <button type="button" class="st-btn" id="st-pub-cancel<?echo $AppID?>">Отмена</button>
+        <button type="button" class="st-btn primary" id="st-pub-ok<?echo $AppID?>">Опубликовать</button>
+      </div>
     </div>
-    ';
-
-    if(isset($_GET['delete_app'])){
-      $DeleteUserApp = $HttpRequest->makeNewRequest($server_url.'DeleteApp.php', 'Forest OS', $data = array('author' => $_SESSION["loginuser"], 'token' => "$token", 'hash' => $_GET['delete_app']));
-      $DeleteUserApp = json_decode($DeleteUserApp, TRUE);
-      showError($DeleteUserApp);
-    }
-
-    if(isset($_GET['name'])){
-
-      $name = strip_tags(str_replace(' ', '_', $_GET['name']));
-      $second_name = strip_tags(str_replace(' ', '_', $_GET['second_name']));
-      $version = strip_tags($_GET['version']);
-      $os_version = strip_tags($_GET['os_version']);
-      $description = strip_tags($_GET['description']);
-      $file_url = strip_tags($_GET['file_url']);
-      $file_url = str_replace($_SERVER['DOCUMENT_ROOT'], 'http://'.$_SERVER['SERVER_NAME'], $file_url);
-      $icon_url = strip_tags($_GET['icon_url']);
-      $icon_url = str_replace($_SERVER['DOCUMENT_ROOT'], 'http://'.$_SERVER['SERVER_NAME'], $icon_url);
-      $hash = md5($name.$_SESSION["loginuser"].$token);
-
-      if($_GET['update'] != 'true'){
-        $ServerFile = 'AddApp.php';
-      }else{
-        $ServerFile = 'UpdateApp.php';
-      }
-
-      $GetStatusUpload = $HttpRequest->makeNewRequest(
-        $server_url.$ServerFile,
-        'Forest OS',
-        $data = array(
-          'author' => $_SESSION["loginuser"],
-          'token' => "$token",
-          'name' => "$name",
-          'second_name' => "$second_name",
-          'version' => "$version",
-          'os_version' => "$os_version",
-          'description' => "$description",
-          'file_url' => "$file_url",
-          'icon_url' => "$icon_url",
-          'hash' => "$hash",
-        )
-      );
-
-      $GetStatusUpload = json_decode($GetStatusUpload, TRUE);
-      showError($GetStatusUpload);
-    }
-
-    echo '<div>'.$language['pub_name'].' ('.$language['pub_lat'].'):</div>';
-    $gui->inputslabel('', 'text', 'name'.$AppID, $u_name,'70', $language['pub_name']);
-
-    echo '<div>'.$language['pub_name'].' ('.$language['pub_cyr'].'):</div>';
-    $gui->inputslabel('', 'text', 'second_name'.$AppID, $u_sname,'70', $language['pub_name']);
-
-    echo '<div>'.$language['version_caption'].':</div>';
-    $gui->inputslabel('', 'text', 'version'.$AppID, $u_version,'70', $language['version_caption']);
-
-    echo '<div>'.$language['pub_os_ver'].':</div>';
-    $gui->inputslabel('', 'text', 'os_version'.$AppID, $u_osversion,'70', $language['pub_os_ver']);
-
-    echo '<div>'.$language['description_caption'].':</div>';
-    ?>
-    <textarea rows="10" id="description<? echo $AppID ?>" placeholder="<? echo $language['pub_desc_caption'] ?>" style="width: 70%; padding: 10px; margin: 10px 0; border: 1px solid #ccc;" name="description"><? echo $u_description ?></textarea>
-    <?
-
-    echo '<div>'.$language['install_n_2'].' (zip):</div>';
-    $AppGUI->SelectFile($AppID, "file_url", "70%", "zip" , $language['pub_file_caption'].' (zip)', $language['pub_select_file'], "/home/".$_SESSION["loginuser"]."/system/apps");
-
-    echo '<div>'.$language['pub_icon'].' (png):</div>';
-    $AppGUI->SelectFile($AppID, "icon_url", "70%", "png" , $language['pub_icon_caption'].' (png)', $language['pub_select_file'], "/home/".$_SESSION["loginuser"]."/system/apps");
-
-    if(!$AppEditMode){
-      echo '<div id="PublishApp'.$AppID.'" onClick="PublishNewApp'.$AppID.'();" class="ui-forest-button ui-forest-accept" style="margin:30 auto;"> '.$language['pub_load_app'].' </div>';
-    }else{
-      echo '<div id="UpdateApp'.$AppID.'" onClick="UpdateApp'.$AppID.'();" class="ui-forest-button ui-forest-accept" style="margin:30 auto;"> '.$language['pub_update_app'].' </div>';
-      echo '<div id="DeleteApp'.$AppID.'" messageTitle="'.$language['delete_mesage_t'].'" messageBody="'.$language['delete_mesage_b'].'" okButton="'.$language['pub_delete_app'].'" cancelButton="'.$language['delete_mesage_cancel'].'" onClick="ExecuteFunctionRequest'.$AppID.'(this, \'DeleteApp'.$AppID.'\')" class="ui-forest-button ui-forest-cancel" style="margin:30 auto;"> '.$language['pub_delete_app'].' </div>';
-    }
-
-    ?>
   </div>
 </div>
-
-<div id="Updates<? echo $AppID ?>" style="margin: 0 auto; overflow: auto;">
-  <div id="TabTitle"><? echo $language['update_tab'] ?></div>
-  <div>
-    <?
-
-    $UpdatesCount = 0;
-
-    $no_check_apps = array('Apps_House', 'Explorer', 'update', 'Settings');
-    $showEmpty = true;
-
-    $OSUpdateURL = file_get_contents("https://forest.hobbytes.com/media/os/update.php");
-    $OSUpdateURL = json_decode($OSUpdateURL, true);
-
-    $CondidateVersionOS = $OSUpdateURL['0']['subversion'];
-
-    if($CondidateVersionOS > $CurrentVersionOS){
-      $UpdatesCount++;
-      $FileCalc->format($OSUpdateURL['0']['size']*1024);
-      $showEmpty = false;
-
-      $OSDescription = $OSUpdateURL['0']['description'];
-
-      if(empty($OSDescription)){
-        $OSDescription = $language['os_null_description'];
-      }
-
-      echo '<div style="color: #ebece6; border-radius: 5px; padding: 20px; border: 1px solid #ccc; background: #2c2d3c; margin: 10px;">';
-      echo '<div id="TabTitle" style="font-size: 23px; font-weight: 600; color: #53e579;"> '.$language['os_update_caption'].' </div>';
-      echo '<p style="text-align:left; background-image: url(https://forest.hobbytes.com/media/os/updates/uplogo.png); background-size:cover; height:80px; width:80px;"></p>';
-      echo '<span style="font-size:17px;"><b>Forest OS</b> '.$OSUpdateURL['0']['codename'].'</span><br>';
-      echo '<span style="font-size:12px; font-weight:900; " >'.$language['os_revision'].': <span style="color:#ebece6; text-transform: uppercase;">'.$OSUpdateURL['0']['file'].'</span></span><br>';
-      echo '<span style="font-size:12px; ">'.mb_strtolower($language['version_caption']).': '.$OSUpdateURL['0']['version'].'<br>'.$language['os_sub_version'].': '.$OSUpdateURL['0']['subversion'].'<br>'.mb_strtolower($language['size_caption']).': '.$format.'</span></span>';
-      echo '<br><br><b>'.$language['description_caption'].':</b><br><div style="font-size:15px; color:#ebece6; white-space:pre-wrap; padding: 4px 0px;">'.$OSDescription.'</div>';
-      echo '<div id="'.$OSUpdateURL['0']['file'].'" class="ui-forest-blink" t="app_h" onClick="update'.$AppID.'()" style="background-color:#962439; color:#fff; width:30%; margin: 70px auto 10px auto; font-size:15px; padding:10px; border-radius:5px; text-align:center;">'.$language['pub_update_app'].'</div>';
-      echo '</div>';
-      echo '<div style="border-bottom: 1px solid #ccc; padding: 10px; margin-bottom: 36px;"></div>';
-    }
-
-
-    $ComparisonApps = array();
-    foreach ($InstalledApps as $key){
-      if(!in_array($key, $no_check_apps)){
-        $hash = file_get_contents('http://'.$_SERVER['HTTP_HOST'].'/system/apps/'.$key.'/app.hash');
-
-        if(!empty($hash)){
-          $ComparisonApps[] = $hash;
-        }
-      }
-    }
-
-    $GetComApps = $HttpRequest->makeNewRequest($server_url.'Comparison.php', 'Forest OS', $data = array('login' => $_SESSION["loginuser"], 'token' => "$token", 'data' => json_encode($ComparisonApps)));
-    $GetComApps = json_decode($GetComApps, TRUE);
-
-    foreach ($InstalledApps as $key){
-      if(!in_array($key, $no_check_apps) && !empty($GetComApps[$key]['name'])){
-        $info = file_get_contents('http://'.$_SERVER['HTTP_HOST'].'/system/apps/'.$key.'/main.php?getinfo=true&h='.md5(date('dmyhis')));
-  			$arrayInfo = json_decode($info);
-  	    $curversion	=	$arrayInfo->{'version'};
-
-  			if(empty($curversion)){
-  				$curversion = '1.0';
-  			}
-
-        $newversion = $GetComApps[$key]['version'];
-
-        if($newversion > $curversion && !empty($GetComApps[$key]['hash'])){
-          $UpdatesCount++;
-          $showEmpty = false;
-          $FileCalc->format($GetComApps[$key]['size']*1024);
-          $size = $format;
-          $description = UTFTransform($GetComApps[$key]['description']);
-          $TempIconHash = md5($GetComApps[$key]['hash'].$GetComApps[$key]['version']);
-          $AppIcon = $server_url.'Apps/'.$GetComApps[$key]['hash'].'/app.png?h='.$TempIconHash;
-
-          echo '<div style="border-bottom: 1px solid #ccc;">';
-          echo '<div class="AppTile" style="height: 115px;">';
-          echo '<div class="AppTile-icon" style="background-image: url('.$AppIcon.'); ">';
-        	echo '</div>';
-          echo '<div class="AppTile-info">';
-          echo '<div class="AppTile-name">';
-          echo str_replace('_', ' ', $GetComApps[$key]['name']);
-          echo '</div>';
-          echo '<span>';
-          echo $language['autor_caption'].': '.$GetComApps[$key]['author'].'<br>';
-          echo $language['version_caption'].': '.$GetComApps[$key]['version'].'<br>';
-          echo $language['size_caption'].': '.$size.'<br>';
-          echo '</span>';
-          echo '<div style="padding: 25px 60px;">';
-
-          if($CurrentVersionOS < $GetComApps[$key]['os_version']){
-            echo '<div class="AppTile-button A-button-open" style="width: max-content;">';
-            echo $language['need_update_button'];
-          }else{
-            echo '<div update="true" app="'.$GetComApps[$key]['name'].'" app_second="'.UTFTransform($GetComApps[$key]['second_name']).'" hash="'.$GetComApps[$key]['hash'].'" class="AppTile-button A-button-install">';
-            echo $language['pub_update_app'];
-          }
-
-          echo '</div>';
-          echo '</div>';
-          echo '</div>';
-          echo '</div>';
-          echo '<div class="AppTile-description">';
-          echo $description;
-          echo '</div>';
-          echo '</div>';
-        }
-        unset($newversion, $curversion);
-      }
-    }
-
-    if($showEmpty){
-      echo '<div style="padding: 10px; font-size: 17px; text-align: center; color: #3c3c3c;">'.$language['updates_null'].'</div>';
-    }
-    ?>
-  </div>
-</div>
-
-
-</div>
-
-<?
-$AppContainer->EndContainer()
-?>
 
 <script>
+(function(){
+  var id = '<?echo $AppID?>';
+  var root = document.getElementById('st' + id);
+  var API = 'system/core/functions/appstore.php';
+  var TOKEN = <?echo json_encode($_SESSION['fo_store_csrf'] ?? '');?>;
+  var state = { tab: 'catalog', catalog: [], installed: [], repos: [], q: '', source: 'official' };
+
+  function el(name){ return document.getElementById('st-' + name + id); }
+  function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
+    return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]; }); }
+  function bytes(n){ n = Number(n)||0; if(n<1024) return n+' B'; if(n<1048576) return (n/1024).toFixed(1)+' KB'; return (n/1048576).toFixed(1)+' MB'; }
+  function jsonGet(qs){
+    return fetch(API + '?' + qs, {credentials:'same-origin'}).then(function(r){ return r.json(); });
+  }
+  function post(data){
+    data.token = TOKEN;
+    var body = new URLSearchParams();
+    Object.keys(data).forEach(function(k){ body.append(k, data[k]); });
+    return fetch(API, {method:'POST', credentials:'same-origin', body: body}).then(function(r){ return r.json(); });
+  }
+  function toast(msg){
+    if(window.FO_TOAST){ window.FO_TOAST(msg); } else { alert(msg); }
+  }
+  function iconFor(hash){
+    if(hash){ return API + '?action=icon&hash=' + encodeURIComponent(hash) + '&t=' + Date.now(); }
+    return 'system/core/design/images/app.png';
+  }
+
+  /* ---------- tabs ---------- */
+  root.querySelectorAll('.st-tab').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var tab = btn.getAttribute('data-tab');
+      state.tab = tab;
+      root.querySelectorAll('.st-tab').forEach(function(b){ b.classList.toggle('is-on', b === btn); });
+      root.querySelectorAll('.st-panel').forEach(function(p){ p.classList.toggle('is-on', p.getAttribute('data-panel') === tab); });
+      if(tab === 'installed'){ loadInstalled(); }
+      if(tab === 'updates'){ loadUpdates(); }
+      if(tab === 'repos'){ loadRepos(); }
+      if(tab === 'catalog'){ loadCatalog(); }
+    });
+  });
+
+  /* ---------- catalog ---------- */
+  function renderCatalog(){
+    var box = el('catalog'), empty = el('catalog-empty');
+    var list = state.catalog;
+    box.innerHTML = list.map(function(a){
+      var installed = state.installed.some(function(i){ return i.hash === a.hash; });
+      return '<div class="st-card">' +
+        '<div class="st-ico" style="background-image:url(' + iconFor(a.hash) + ')"></div>' +
+        '<div class="st-main">' +
+          '<div class="st-name">' + esc(a.second_name || a.name) + '</div>' +
+          '<div class="st-sub">' + esc(a.name) + ' · v' + esc(a.version) + '</div>' +
+          '<div class="st-desc">' + esc(a.description || '') + '</div>' +
+          '<div class="st-meta"><span>' + bytes(a.size) + '</span><span>' + Number(a.downloads||0) + ' устан.</span></div>' +
+          '<div class="st-actions">' +
+            (installed
+              ? '<span class="st-badge ok">Установлено</span>'
+              : '<button type="button" class="st-btn primary" data-install="' + esc(a.hash) + '" data-repo="' + esc(state.source) + '">Установить</button>') +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+    var isEmpty = list.length === 0;
+    empty.style.display = isEmpty ? 'block' : 'none';
+    empty.textContent = state.q ? 'Ничего не найдено по запросу «' + state.q + '»' : 'Каталог пуст — опубликуйте первое приложение.';
+  }
+
+  function loadCatalog(){
+    var q = state.q || '';
+    if(state.source !== 'official'){
+      jsonGet('action=repo-apps&id=' + encodeURIComponent(state.source)).then(function(d){
+        state.catalog = (d.ok && d.apps) ? d.apps : [];
+        if(!d.ok){ toast('Репозиторий недоступен: ' + (d.error || 'ошибка')); }
+        if(!d.verified && state.catalog.length){ toast('Внимание: подпись репозитория не проверена'); }
+        renderCatalog();
+      });
+      return;
+    }
+    jsonGet('action=catalog&q=' + encodeURIComponent(q) + '&sort=' + encodeURIComponent(el('sort').value) + '&page=1')
+      .then(function(d){
+        state.catalog = d.apps || [];
+        if(!d.ok){ state.catalog = []; toast('Хаб недоступен: ' + (d.error || 'ошибка')); }
+        renderCatalog();
+        refreshHubBadge();
+      });
+  }
+
+  function refreshHubBadge(){
+    jsonGet('action=status').then(function(s){
+      var dot = el('hub-dot'), url = el('hub-url');
+      if(!dot || !url) return;
+      dot.className = 'st-dot ' + (s.hub_ok ? 'ok' : 'bad');
+      url.textContent = s.hub + (s.hub_ok ? '' : ' · недоступен');
+    });
+  }
+
+  root.addEventListener('click', function(e){
+    var b = e.target.closest('[data-install]');
+    if(b){
+      var hash = b.getAttribute('data-install');
+      var repo = b.getAttribute('data-repo') || 'official';
+      b.disabled = true; b.textContent = 'Установка…';
+      post({action:'install', hash: hash, repo: repo}).then(function(d){
+        if(d.ok){ toast('Установлено: ' + d.app + ' v' + d.version + (d.repo && d.repo !== 'official' ? ' (' + d.repo + ')' : '')); loadInstalled(); loadCatalog(); }
+        else { toast('Не удалось установить: ' + (d.error || 'ошибка')); b.disabled = false; b.textContent = 'Установить'; }
+      }).catch(function(){ b.disabled = false; b.textContent = 'Установить'; });
+      return;
+    }
+    var u = e.target.closest('[data-uninstall]');
+    if(u){
+      var app = u.getAttribute('data-uninstall');
+      if(!confirm('Удалить «' + app + '»?')) return;
+      post({action:'uninstall', app: app}).then(function(d){
+        if(d.ok){ toast('Удалено: ' + app); loadInstalled(); }
+        else { toast('Не удалось удалить: ' + (d.error || 'ошибка')); }
+      });
+      return;
+    }
+    var p = e.target.closest('[data-publish]');
+    if(p){
+      openPublish(p.getAttribute('data-publish'));
+      return;
+    }
+    var r = e.target.closest('[data-repo-remove]');
+    if(r){
+      var rid = r.getAttribute('data-repo-remove');
+      if(!confirm('Убрать репозиторий?')) return;
+      post({action:'repo-remove', id: rid}).then(function(d){
+        if(d.ok){ loadRepos(); } else { toast('Не удалось: ' + (d.error || 'ошибка')); }
+      });
+      return;
+    }
+    var c = e.target.closest('[data-repo-check]');
+    if(c){
+      var cid = c.getAttribute('data-repo-check');
+      c.disabled = true;
+      jsonGet('action=repo-apps&id=' + encodeURIComponent(cid)).then(function(d){
+        c.disabled = false;
+        if(!d.ok){ toast('Репозиторий недоступен: ' + (d.error || 'ошибка')); return; }
+        var n = (d.apps || []).length;
+        toast('Приложений: ' + n + ' · подпись: ' + (d.verified ? 'проверена' : 'не проверена'));
+      }).catch(function(){ c.disabled = false; toast('Репозиторий недоступен'); });
+      return;
+    }
+  });
+
+  /* ---------- publish dialog ---------- */
+  function openPublish(app){
+    var rec = null;
+    state.installed.forEach(function(i){ if(i.app === app){ rec = i; } });
+    rec = rec || { app: app };
+    el('pub-app').value = app;
+    el('pub-title').value = rec.title || rec.name || app;
+    el('pub-version').value = rec.published_version || rec.version || '1.0.0';
+    el('pub-desc').value = rec.description || '';
+    el('pub-os').value = rec.os_version || '';
+    el('dialog-title').textContent = 'Публикация: ' + app;
+    el('overlay').classList.add('is-on');
+    setTimeout(function(){ el('pub-title').focus(); }, 60);
+
+    // what exactly will be uploaded
+    el('pub-count').textContent = '…';
+    el('pub-files').innerHTML = '';
+    jsonGet('action=preview&app=' + encodeURIComponent(app)).then(function(d){
+      if(!d || !d.ok){
+        el('pub-count').textContent = 'не удалось получить список';
+        return;
+      }
+      var total = d.total > 1048576 ? (d.total / 1048576).toFixed(1) + ' МБ' : Math.round(d.total / 1024) + ' КБ';
+      el('pub-count').textContent = d.count + ' файл(ов) · ' + total;
+      el('pub-files').innerHTML = (d.files || []).map(function(f){
+        var sz = f.size > 1048576 ? (f.size / 1048576).toFixed(1) + ' МБ' : Math.round(f.size / 1024) + ' КБ';
+        return '<span><b>' + esc(f.name) + '</b><i>' + sz + '</i></span>';
+      }).join('');
+    });
+  }
+  function closePublish(){ el('overlay').classList.remove('is-on'); }
+
+  el('pub-cancel').addEventListener('click', closePublish);
+  el('overlay').addEventListener('click', function(e){ if(e.target === this){ closePublish(); } });
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape'){ closePublish(); } });
+
+  el('pub-ok').addEventListener('click', function(){
+    var app = el('pub-app').value;
+    var title = el('pub-title').value.trim() || app;
+    var version = el('pub-version').value.trim() || '1.0.0';
+    var desc = el('pub-desc').value.trim();
+    var osv = el('pub-os').value.trim();
+    var btn = this;
+    btn.disabled = true; btn.textContent = 'Публикация…';
+    post({action:'publish', app: app, version: version, second_name: title, description: desc, os_version: osv})
+      .then(function(d){
+        btn.disabled = false; btn.textContent = 'Опубликовать';
+        if(d.ok){
+          closePublish();
+          toast('Опубликовано: ' + title + ' v' + version + ' (hash ' + String(d.hash).slice(0,8) + ')');
+          loadInstalled();
+        } else {
+          toast('Публикация не удалась: ' + (d.error || 'ошибка'));
+        }
+      })
+      .catch(function(){ btn.disabled = false; btn.textContent = 'Опубликовать'; toast('Публикация не удалась'); });
+  });
+
+  /* ---------- installed ---------- */
+  function loadInstalled(){
+    jsonGet('action=installed').then(function(d){
+      state.installed = d.apps || [];
+      var box = el('installed'), empty = el('installed-empty');
+      box.innerHTML = state.installed.map(function(a){
+        return '<div class="st-row">' +
+          '<div class="st-ico" style="background-image:url(' + esc(a.icon) + ')"></div>' +
+          '<div class="st-main">' +
+            '<div class="st-name">' + esc(a.name) + ' <span class="st-badge">' + esc(a.app) + '</span></div>' +
+            '<div class="st-sub">' + (a.version ? 'v' + esc(a.version) : 'локальное приложение') +
+              (a.installed_at ? ' · ' + esc(a.installed_at) : '') + '</div>' +
+          '</div>' +
+          '<div class="st-actions">' +
+            (a.protected ? '<span class="st-badge">системное</span>' : '<button type="button" class="st-btn" data-publish="' + esc(a.app) + '">Выложить</button>') +
+            (a.protected ? '' : '<button type="button" class="st-btn danger" data-uninstall="' + esc(a.app) + '">Удалить</button>') +
+          '</div>' +
+        '</div>';
+      }).join('');
+      empty.style.display = state.installed.length ? 'none' : 'block';
+      if(state.tab === 'catalog') renderCatalog();
+    });
+  }
+
+  /* ---------- updates ---------- */
+  function loadUpdates(){
+    Promise.all([jsonGet('action=installed'), jsonGet('action=repo-apps&id=official')]).then(function(res){
+      state.installed = res[0].apps || [];
+      var repo = res[1].apps || [];
+      var box = el('updates'), empty = el('updates-empty');
+      var rows = [];
+      state.installed.forEach(function(i){
+        if(!i.app) return;
+        var remote = repo.filter(function(a){ return a.name === i.app; })[0];
+        if(!remote) return;
+        if(String(remote.version) && String(i.version) && String(remote.version) !== String(i.version)){
+          rows.push({local:i, remote:remote});
+        }
+      });
+      box.innerHTML = rows.map(function(r){
+        return '<div class="st-row">' +
+          '<div class="st-ico" style="background-image:url(' + iconFor(r.remote.hash) + ')"></div>' +
+          '<div class="st-main">' +
+            '<div class="st-name">' + esc(r.local.name) + '</div>' +
+            '<div class="st-sub">установлено v' + esc(r.local.version) + ' → доступно v' + esc(r.remote.version) + '</div>' +
+          '</div>' +
+          '<div class="st-actions"><button type="button" class="st-btn primary" data-install="' + esc(r.remote.hash) + '">Обновить</button></div>' +
+        '</div>';
+      }).join('');
+      empty.style.display = rows.length ? 'none' : 'block';
+    });
+  }
+
+  /* ---------- repos ---------- */
+  function loadRepos(){
+    jsonGet('action=repos').then(function(d){
+      state.repos = d.repos || [];
+      el('hub-url').textContent = d.hub || '';
+      el('hub-input').value = d.hub || '';
+      var sel = el('source');
+      if(sel){
+        sel.innerHTML = state.repos.map(function(r){
+          return '<option value="' + esc(r.id) + '">' + esc(r.name) + (r.official ? '' : ' · сторонний') + '</option>';
+        }).join('');
+        if(!state.repos.some(function(r){ return r.id === state.source; })){ state.source = 'official'; }
+        sel.value = state.source;
+      }
+      el('repos').innerHTML = state.repos.map(function(r){        return '<div class="st-repo">' +
+          '<div class="st-main">' +
+            '<div class="st-name">' + esc(r.name) + ' ' +
+              (r.official ? '<span class="st-badge ok">официальный</span>' : '<span class="st-badge">сторонний</span>') + '</div>' +
+            '<div class="st-repo-url">' + esc(r.url) + '</div>' +
+            (r.pubkey ? '<div class="st-sub">key: ' + esc(String(r.pubkey).slice(0, 24)) + '…</div>' : '') +
+          '</div>' +
+          (r.official ? '' : '<div class="st-actions"><button type="button" class="st-btn" data-repo-check="' + esc(r.id) + '">Проверить</button><button type="button" class="st-btn danger" data-repo-remove="' + esc(r.id) + '">Убрать</button></div>') +
+        '</div>';
+      }).join('');
+      refreshHubBadge();
+    });
+  }
+
+  el('repo-add').addEventListener('click', function(){
+    var name = el('repo-name').value.trim();
+    var url = el('repo-url').value.trim();
+    var key = el('repo-key').value.trim();
+    if(!url){ toast('Укажите адрес репозитория'); return; }
+    post({action:'repo-add', name:name, url:url, pubkey:key}).then(function(d){
+      if(d.ok){ toast('Репозиторий добавлен'); el('repo-url').value=''; el('repo-key').value=''; loadRepos(); }
+      else { toast('Не удалось: ' + (d.error || 'ошибка')); }
+    });
+  });
+
+  el('hub-save').addEventListener('click', function(){
+    var url = el('hub-input').value.trim();
+    post({action:'hub-set', url:url}).then(function(d){
+      if(d.ok){ toast('Хаб: ' + d.hub); loadRepos(); loadCatalog(); }
+      else { toast('Не удалось: ' + (d.error || 'ошибка')); }
+    });
+  });
+
+  /* ---------- init ---------- */
+  var t = null;
+  el('q').addEventListener('input', function(){
+    state.q = this.value.trim();
+    clearTimeout(t);
+    t = setTimeout(loadCatalog, 260);
+  });
+  el('sort').addEventListener('change', loadCatalog);
+  el('source').addEventListener('change', function(){ state.source = this.value; loadCatalog(); });
+  el('refresh').addEventListener('click', function(){ loadInstalled(); loadCatalog(); });
+
+  window.FO_STORE = {
+    token: TOKEN,
+    reload: function(){ loadInstalled(); loadCatalog(); loadRepos(); },
+    post: post,
+    get: jsonGet
+  };
+
+  loadInstalled();
+  loadCatalog();
+})();
+</script>
 
 <?
-
-//Execute Function Request
-$AppContainer->ExecuteFunctionRequest();
-
-// Select file Callback
-$AppGUI->CallbackSelectFile($AppID);
-
-// Publish App!
-$AppContainer->Event(
-	"PublishNewApp",
-  NULL,
-	$Folder,
-	'main',
-	array(
-    'name' => '"+escape($("#name'.$AppID.'").val())+"',
-    'second_name' => '"+escape($("#second_name'.$AppID.'").val())+"',
-    'version' => '"+escape($("#version'.$AppID.'").val())+"',
-    'os_version' => '"+escape($("#os_version'.$AppID.'").val())+"',
-    'description' => '"+escape($("#description'.$AppID.'").val())+"',
-    'file_url' => '"+escape($("#file_url'.$AppID.'").val())+"',
-    'icon_url' => '"+escape($("#icon_url'.$AppID.'").val())+"',
-    'activetab' => '"+$("#Tabs'.$AppID.'").tabs(\'option\',\'active\')+"'
-	)
-);
-
-// LoadPage
-$AppContainer->Event(
-	"LoadPage",
-  'page',
-	$Folder,
-	'main',
-	array(
-    'Page' => '"+page+"',
-    'activetab' => '"+$("#Tabs'.$AppID.'").tabs(\'option\',\'active\')+"',
-    'ScrollTo' => '"+$("#'.$AppName.$AppID.'").scrollTop()+"',
-    'SortApps' => '"+escape($( "#SortApps'.$AppID.'" ).val())+"'
-	)
-);
-
-// App Search
-$AppContainer->Event(
-	"AppSearch",
-  NULL,
-	$Folder,
-	'main',
-	array(
-    'AppSearch' => '"+escape($("#AppSearch'.$AppID.'").val())+"',
-    'SortApps' => '"+escape($( "#SortApps'.$AppID.'" ).val())+"'
-	)
-);
-
-// Update App!
-$AppContainer->Event(
-	"UpdateApp",
-  NULL,
-	$Folder,
-	'main',
-	array(
-    'name' => '"+escape($("#name'.$AppID.'").val())+"',
-    'second_name' => '"+escape($("#second_name'.$AppID.'").val())+"',
-    'version' => '"+escape($("#version'.$AppID.'").val())+"',
-    'os_version' => '"+escape($("#os_version'.$AppID.'").val())+"',
-    'description' => '"+escape($("#description'.$AppID.'").val())+"',
-    'file_url' => '"+escape($("#file_url'.$AppID.'").val())+"',
-    'icon_url' => '"+escape($("#icon_url'.$AppID.'").val())+"',
-    'update' => 'true',
-    'activetab' => '"+$("#Tabs'.$AppID.'").tabs(\'option\',\'active\')+"'
-	)
-);
-
-// Select App
-$AppContainer->Event(
-	"SelectEditApp",
-  NULL,
-	$Folder,
-	'main',
-	array(
-    'select_edit_app' => '"+escape($("#SelectApp'.$AppID.'").val())+"',
-    'activetab' => '"+$("#Tabs'.$AppID.'").tabs(\'option\',\'active\')+"'
-	)
-);
-
-// Delete App
-$AppContainer->Event(
-	"DeleteApp",
-  NULL,
-	$Folder,
-	'main',
-	array(
-    'delete_app' => $_GET['select_edit_app'],
-    'activetab' => '"+$("#Tabs'.$AppID.'").tabs(\'option\',\'active\')+"'
-	)
-);
-
-// Install App!
-$AppContainer->Event(
-	"InstallApp",
-  "AppHash, AppName, SecondName, UpdateMode",
-	$Folder,
-	"main",
-	array(
-    'install_app_hash' => '"+AppHash+"',
-    'install_app_name' => '"+AppName+"',
-    'install_app_second_name' => '"+SecondName+"',
-    'install_app_update_mode' => '"+UpdateMode+"',
-    'activetab' => '"+$("#Tabs'.$AppID.'").tabs(\'option\',\'active\')+"',
-    'ScrollTo' => '"+$("#'.$AppName.$AppID.'").scrollTop()+"',
-    'AppSearch' => '"+escape($("#AppSearch'.$AppID.'").val())+"'
-	)
-);
-
+$AppContainer->EndContainer();
 ?>
-
-$( "#SortApps<?=$AppID?>" ).val('<?=$SortApps?>');
-
-$( "#SortApps<?=$AppID?>" ).change(function() {
-  LoadPage<?=$AppID?>(<?=$GetPage?>);
-});
-
-$('.A-button-open').click(function(){
-  makeprocess('system/apps/'+$(this).attr('app')+'/main.php', '', '', $(this).attr('app'));
-  closeInfo<?echo $AppID?>($(this).attr('hash'));
-});
-
-$('.A-button-install').click(function(){
-  InstallApp<?echo $AppID?>($(this).attr('hash'), $(this).attr('app'), $(this).attr('app_second'), $(this).attr('update'));
-  closeInfo<?echo $AppID?>($(this).attr('hash'));
-});
-
-$(function(){
-  $("#Tabs<?echo $AppID?>").tabs();
-});
-
-//set active tab
-$(function(){
-  $("#Tabs<?echo $AppID?>").tabs({
-    active: <?echo $activeTab?>
-  });
-});
-
-function showInfo<?echo $AppID?>(object){
-  $(".AppTile-full").css('display', 'none');
-  $("#"+object).show("fade", 100);
-}
-
-function closeInfo<?echo $AppID?>(object){
-  $("#"+object).css('display', 'none');
-}
-
-function update<?echo $AppID?>(){
-  makeprocess('system/apps/update/main.php','','','Update');
-}
-
-function CheckUpdateLabel<?echo $AppID?>(){
-   count = <? echo $UpdatesCount ?>;
-  if(count > 0){
-    $( "a[href='#Updates<?echo $AppID?>" ).html($( "a[href='#Updates<?echo $AppID?>" ).html() +" <span class='AppHouseUpdateCount'>+" + count + "</span>");
-  }
-}
-
-CheckUpdateLabel<?echo $AppID?>();
-
-//ScrollWindow
-$('#<?echo $AppName.$AppID?>').scrollTop(<?echo $ScrollTo?>);
-
-</script>
-        
-          
-            

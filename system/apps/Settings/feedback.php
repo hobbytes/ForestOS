@@ -26,13 +26,12 @@ $gui = new gui;
 <?php
 
 if(!empty($_GET['t']) && !empty($_GET['m'])){
-  $osinfo = parse_ini_file('../../core/osinfo.foc', false);
-  $status = file_get_contents('http://forest.hobbytes.com/media/os/feedback.php?u='.$_SESSION['loginuser'].'&t='.urlencode($_GET['t']).'&m='.urlencode($_GET['m']).'&v='.str_replace(' ','_',$osinfo['codename'].$osinfo['subversion']));
-  if($status == 'true'){
-    $gui->infoLayot($language[$_SESSION['locale'].'_status_true']);
-  }else{
-    $gui->errorLayot($language[$_SESSION['locale'].'_status_false']);
-  }
+  // The central feedback endpoint (forest.hobbytes.com) no longer exists in
+  // this local installation, so messages cannot be delivered remotely.
+  $msg = ($_SESSION['locale'] == 'en')
+    ? 'The feedback service is unavailable in this local build. Your message was not sent.'
+    : 'Сервис обратной связи недоступен в локальной сборке. Сообщение не отправлено.';
+  $gui->errorLayot($msg);
 }
 
 echo '<div style="text-align:left; margin-top:10px; margin-left:10px;"><b style="font-size:20px;">'.$language[$_SESSION['locale'].'_feedback_label'].'</b>';

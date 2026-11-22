@@ -15,15 +15,26 @@ public static function updatebd($table, $key, $value, $key_2, $value_2){
 public static function addColumn($table, $newColumn, $type, $size){
   $dirname = $_SERVER['DOCUMENT_ROOT'].'/system/core/TempTable/';
   if(!is_dir($dirname)){
-    mkdir($dirname,0777);
+    mkdir($dirname,0777,true);
   }
-  if(!file_exists($dirname.$newColumn.'.foc')){
-    $type = mb_strtoupper($type);
-    $conn = new PDO (DB_DSN, DB_USERNAME, DB_PASSWORD);
-    $sql="ALTER TABLE $table ADD $newColumn $type( $size )";
-    $conn->query($sql);
+
+  $type = mb_strtoupper($type);
+  $conn = new PDO (DB_DSN, DB_USERNAME, DB_PASSWORD);
+
+  $check = $conn->prepare("SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ? AND COLUMN_NAME = ?");
+  $check->execute(array($table, $newColumn));
+
+  if((int)$check->fetchColumn() > 0){
     file_put_contents($dirname.$newColumn.'.foc','0');
+    unset($conn);
+    return true;
   }
+
+  $sql="ALTER TABLE `$table` ADD `$newColumn` $type( $size )";
+  $conn->query($sql);
+  file_put_contents($dirname.$newColumn.'.foc','0');
+  unset($conn);
+  return true;
 }
 
 public static function readglobal2($globaldata, $from, $what, $like, $Return = false, $likeMode = false){

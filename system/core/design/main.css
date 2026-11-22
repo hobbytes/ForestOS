@@ -11,14 +11,9 @@ body {
   A:active {text-decoration: none; color:#000;}
   A:hover {color: #000;}
 
-.guiuser
-{
-  white-space:nowrap;
-  width:100%;
-  margin:auto;
-  display:block;
-  overflow:auto;
-}
+/* .guiuser (login form wrapper) now lives in login.css, where its layout
+   belongs; the old white-space:nowrap / overflow:auto rule caused horizontal
+   overflow on the login page. */
 
 .notificationhide{
 	overflow: visible;
@@ -124,6 +119,11 @@ body {
 }
 
 /*links*/
+.link{
+	float:left;
+	width:96px;
+}
+
 .ico{
 	padding:5px;
 	z-index:-1000;
@@ -404,10 +404,7 @@ body {
 	color: #eaeaea;
 }
 
-.topbartheme{
-	backdrop-filter:	blur(3px);
-	-webkit-backdrop-filter:	blur(3px);
-}
+/* .topbartheme: фон задаёт тема; блюр — только у дока (см. .dock-container) */
 
 .menutheme{
 	backdrop-filter:	blur(3px);
@@ -510,4 +507,492 @@ body {
 .forest-ui-request-box-description div{
 	font-weight: 300;
 	padding-top: 5px;
+}
+
+/* ==========================================================================
+   Forest OS 2.0 - Hyprland-style chrome
+   Thin accent border, compact dark-glass title bar, monochrome controls.
+   All colours come from the active theme via --fo-theme-* / --fo-accent.
+   ========================================================================== */
+
+:root {
+  --fo-winbtn: 12px;
+  --fo-winsize: 8;
+  --fo-winbar-h: calc(var(--fo-winsize) * 1px + 22px);
+  --fo-win-radius: 10px;
+  --fo-win-body: #fbfbfd;
+  /* window frame: neutral by default, accent with data-fo-frame="accent" */
+  --fo-frame-line: rgba(255, 255, 255, 0.16);
+}
+
+/* ---------- window shell ------------------------------------------------- */
+.window {
+  display: block;
+  box-sizing: border-box;
+  background: var(--fo-win-body) !important;
+  border: 1px solid var(--fo-frame-line) !important;
+  border-radius: var(--fo-win-radius) !important;
+  box-shadow: 0 26px 70px rgba(0, 0, 0, 0.46), 0 6px 18px rgba(0, 0, 0, 0.26);
+  overflow: hidden;
+  filter: none !important;
+  transition: box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+/* accent frame - enabled in Settings -> Personalisation -> "Frame" */
+html[data-fo-frame="accent"] .window {
+  border-color: color-mix(in srgb, var(--fo-accent) 52%, transparent) !important;
+}
+
+.window:not(.windowactive) {
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.34);
+}
+
+.window.windowactive {
+  border-color: rgba(255, 255, 255, 0.26) !important;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5), 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+html[data-fo-frame="accent"] .window:not(.windowactive) {
+  border-color: color-mix(in srgb, var(--fo-accent) 24%, transparent) !important;
+}
+
+html[data-fo-frame="accent"] .window.windowactive {
+  border-color: color-mix(in srgb, var(--fo-accent) 82%, transparent) !important;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--fo-accent) 22%, transparent),
+              0 30px 80px rgba(0, 0, 0, 0.5), 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+.window.windowfullscreen {
+  border-radius: 0 !important;
+  height: 96%;
+}
+
+/* ---------- title bar ---------------------------------------------------- */
+.dragwindow {
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+  height: var(--fo-winbar-h);
+  min-height: 26px;
+  display: flex;
+  align-items: center;
+  padding: 0 6px;
+  /* solid background: theme tint on top, text always readable */
+  background-color: var(--fo-shell-base, #101312);
+  box-shadow: inset 0 0 0 999px var(--fo-theme-topbar, rgba(35, 35, 35, 0.85));
+  color: var(--fo-theme-text);
+  border: 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--fo-accent) 26%, transparent);
+  border-radius: 0;
+  font: 500 12.5px/1 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  cursor: default;
+  user-select: none;
+  word-break: normal;
+}
+
+.process-title {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  transform: translateX(-50%);
+  max-width: calc(100% - 132px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  margin: 0;
+  padding: 0;
+  float: none;
+  overflow: hidden;
+  color: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  text-align: center;
+  flex-direction: row;
+}
+
+.process-title-icon {
+  flex: 0 0 auto;
+  width: 15px;
+  height: 15px;
+  border-radius: 4px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.95;
+}
+
+.process-title-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 1;
+  opacity: 0.94;
+}
+
+/* ---------- window controls --------------------------------------------- */
+.appwindowbutton-container {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 2px;
+  float: none !important;
+  margin: 0 !important;
+  filter: none !important;
+  z-index: 2;
+}
+
+.dragwindow.controls-left .appwindowbutton-container {
+  right: auto;
+  left: 6px;
+  flex-direction: row-reverse;
+}
+
+.appwindowbutton {
+  position: relative;
+  box-sizing: border-box;
+  width: var(--fo-winbtn);
+  height: var(--fo-winbtn);
+  min-width: var(--fo-winbtn);
+  min-height: var(--fo-winbtn);
+  padding: 0;
+  margin: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent !important;
+  color: inherit;
+  font-size: 0 !important;
+  line-height: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  cursor: pointer;
+  opacity: 0.78;
+  box-shadow: none;
+  transition: background-color 0.14s ease, opacity 0.14s ease, color 0.14s ease;
+}
+
+.appwindowbutton:hover {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.16) !important;
+}
+
+.windowactive .appwindowbutton {
+  opacity: 0.86;
+  color: inherit;
+}
+
+.window:not(.windowactive) .dragwindow {
+  opacity: 0.9;
+}
+
+/* minimise: a short dash */
+.winbtn-min::before {
+  content: '';
+  position: absolute;
+  width: calc(var(--fo-winbtn) * 0.58);
+  height: 1.5px;
+  border-radius: 1px;
+  background: currentColor;
+}
+
+/* maximise: a small square outline */
+.winbtn-max::before {
+  content: '';
+  position: absolute;
+  box-sizing: border-box;
+  width: calc(var(--fo-winbtn) * 0.5);
+  height: calc(var(--fo-winbtn) * 0.5);
+  border: 1.5px solid currentColor;
+  border-radius: 2px;
+}
+
+/* close: an X drawn with two bars (no font dependency) */
+.winbtn-close::before,
+.winbtn-close::after {
+  content: '';
+  position: absolute;
+  width: calc(var(--fo-winbtn) * 0.54);
+  height: 1.5px;
+  border-radius: 1px;
+  background: currentColor;
+}
+
+.winbtn-close::before { transform: rotate(45deg); }
+.winbtn-close::after { transform: rotate(-45deg); }
+
+.winbtn-close:hover {
+  background: #ff5f57 !important;
+  color: #ffffff;
+  opacity: 1;
+}
+
+/* rolled-up ("shade") state - the bar becomes a compact pill */
+.dragwindowtoggle {
+  width: auto !important;
+  min-width: 180px;
+  max-width: 280px;
+  margin: 0 auto;
+  padding: 0 10px !important;
+  border: 1px solid color-mix(in srgb, var(--fo-accent) 50%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--fo-accent) 50%, transparent);
+  border-radius: 999px !important;
+  background: var(--fo-theme-topbar) !important;
+  background: color-mix(in srgb, var(--fo-theme-topbar) 92%, transparent) !important;
+  background-image: none !important;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+}
+
+.windowborderhide {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* ---------- dock --------------------------------------------------------- */
+.dock-container {
+  top: auto !important;
+  bottom: 16px !important;
+  left: 50% !important;
+  right: auto !important;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: 94%;
+  height: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 14px 18px !important;
+  border-radius: 26px !important;
+  background: var(--fo-theme-topbar);
+  background: color-mix(in srgb, var(--fo-theme-topbar) 78%, transparent) !important;
+  border: 1px solid color-mix(in srgb, var(--fo-accent) 30%, transparent);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(26px) saturate(150%);
+  -webkit-backdrop-filter: blur(26px) saturate(150%);
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  z-index: 500 !important;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.dock-container::-webkit-scrollbar {
+  display: none;
+}
+
+.dock-icon {
+  width: 64px !important;
+  height: 64px !important;
+  margin: 0 !important;
+  flex: 0 0 auto;
+  border-radius: 14px;
+  background-color: transparent;
+  background-size: cover;
+  position: relative;
+  top: 0;
+  transition: transform 0.18s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.18s ease;
+}
+
+/* Only a subtle lift - no magnification. */
+.dock-icon:hover {
+  transform: translateY(-4px);
+  filter: brightness(1.06);
+}
+
+.dock-icon:active {
+  transform: translateY(-1px) scale(0.97);
+}
+
+.dock-separator {
+  flex: 0 0 auto;
+  height: 42px;
+  border: 0;
+  border-left: 1px solid color-mix(in srgb, var(--fo-accent) 40%, transparent);
+  margin: 0 4px;
+  padding: 0;
+}
+
+/* drop target feedback while dragging a shortcut over the dock */
+.dock-container.fo-dock-target {
+  border-color: color-mix(in srgb, var(--fo-accent) 85%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--fo-accent) 28%, transparent),
+              0 18px 50px rgba(0, 0, 0, 0.45);
+  transform: translateX(-50%) scale(1.015);
+}
+
+.dock-icon.fo-dock-new {
+  animation: fo-dock-pop 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+}
+
+@keyframes fo-dock-pop {
+  0% { transform: scale(0.4); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* ---------- desktop tiles ------------------------------------------------ */
+.link {
+  width: 96px !important;
+  cursor: default;
+}
+
+.link.fo-dragging {
+  opacity: 0.92;
+}
+
+.ico {
+  width: 96px !important;
+  padding: 10px 4px 6px !important;
+  border-radius: 14px;
+  float: none;
+  display: block;
+  cursor: move;
+  transition: background-color 0.15s ease;
+}
+
+.ico:hover {
+  background-color: rgba(255, 255, 255, 0.16) !important;
+}
+
+.iconimage {
+  width: 60px !important;
+  height: 60px !important;
+  margin-top: 4px !important;
+}
+
+.linktheme {
+  color: #ffffff !important;
+  font-size: 12px !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.85), 0 0 2px rgba(0, 0, 0, 0.9);
+}
+
+/* desktop shortcut hint */
+#fo-link-hint {
+  position: fixed;
+  z-index: 100050;
+  pointer-events: none;
+  padding: 5px 9px;
+  border-radius: 7px;
+  background: rgba(22, 22, 24, 0.94);
+  color: #f2f2f4;
+  border: 1px solid color-mix(in srgb, var(--fo-accent) 45%, transparent);
+  font: 500 11.5px/1.3 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  opacity: 0;
+  transform: translateY(3px);
+  transition: opacity 0.14s ease, transform 0.14s ease;
+  white-space: nowrap;
+}
+
+#fo-link-hint.fo-show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* toast used for dock pin / refusal feedback */
+#fo-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 112px;
+  transform: translate(-50%, 8px);
+  z-index: 100060;
+  padding: 9px 15px;
+  border-radius: 10px;
+  background: rgba(22, 22, 24, 0.95);
+  color: #f4f4f6;
+  border: 1px solid color-mix(in srgb, var(--fo-accent) 50%, transparent);
+  font: 500 12.5px/1.2 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  max-width: 84vw;
+  text-align: center;
+}
+
+#fo-toast.fo-show {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+/* One desktop page - no page dots under the dock. */
+body.fo-single-desktop .selectors-container,
+body.fo-single-desktop .selector {
+  display: none !important;
+}
+
+/* ---------- mobile ------------------------------------------------------- */
+@media (max-width: 760px) {
+  .dock-container {
+    bottom: 8px !important;
+    gap: 8px;
+    padding: 10px 12px !important;
+    border-radius: 20px !important;
+    max-width: 96%;
+  }
+
+  .dock-icon {
+    width: 50px !important;
+    height: 50px !important;
+    border-radius: 12px;
+  }
+
+  .dock-icon:hover,
+  .dock-icon:active {
+    transform: none;
+    filter: none;
+  }
+
+  .dock-separator {
+    height: 32px;
+  }
+
+  .window.windownormal {
+    left: 0 !important;
+    top: var(--fo-bar-h) !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: calc(100% - var(--fo-bar-h) - 88px) !important;
+    border-radius: 0 !important;
+    border-left: 0 !important;
+    border-right: 0 !important;
+  }
+
+  .window.windownormal .dragwindow {
+    border-radius: 0 !important;
+  }
+
+  .window.windownormal .process-container {
+    height: calc(100% - var(--fo-winbar-h)) !important;
+    overflow: hidden !important;
+  }
+
+  .window.windownormal .process-container > div {
+    width: 100% !important;
+    height: 100% !important;
+    max-height: none !important;
+    max-width: 100% !important;
+    border-radius: 0 !important;
+  }
+
+  .process-title {
+    max-width: calc(100% - 116px);
+  }
+
+  .appwindowbutton {
+    opacity: 0.9;
+  }
+
+  #fo-toast {
+    bottom: 84px;
+  }
 }

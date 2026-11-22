@@ -28,7 +28,7 @@ class info{
       $maxFileSize = '10000'; //Max size for journal file => 10KB
       $currentFileSize = filesize($folder); //current size of journal file
       $bd = new readbd;
-      $key = $bd->readglobal2("password", "forestusers", "status", superuser, true);
+      $key = $bd->readglobal2("password", "forestusers", "status", 'superuser', true);
       $date = date("d.m.y, H:i:s");
       $ip = $_SERVER["REMOTE_ADDR"];
       $browser  = $this->browser($_SERVER["HTTP_USER_AGENT"]);
@@ -57,7 +57,7 @@ class info{
       global $getdata, $getstat;
       $security = new security;
       $bd = new readbd;
-      $key = $bd->readglobal2("password", "forestusers", "status", superuser, true);
+      $key = $bd->readglobal2("password", "forestusers", "status", 'superuser', true);
       $content  = file_get_contents($folder);
       $getstat = $security->__decode($content, $key);
     }

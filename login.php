@@ -1,8 +1,47 @@
-<div style="display: grid; grid-template-rows: 70% 30%; width: 100%; height: 100%;">
-<div id="login" style="width: 100%; margin:auto; text-align:center; max-width:500px; height: 100%;">
-<div style="text-align:center; margin:auto; width:auto; height:auto; ">
-<div id="loginin" style="padding-top: 25vh;">
-<div id="labelos">Forest OS</div>
+<?
+/* Системный акцент (Settings → Персонализация) — экран входа использует его
+   так же, как оболочка: та же кнопка, фокус и ссылки. */
+if (!isset($_SESSION)) { session_start(); }
+$__accentUser = !empty($_SESSION['loginuser']) ? (string)$_SESSION['loginuser'] : (getenv('FOREST_ADMIN_LOGIN') ?: 'admin');
+$__accent = '';
+$__af = $_SERVER['DOCUMENT_ROOT'] . '/system/users/' . $__accentUser . '/settings/appearance.foc';
+if (is_file($__af)) {
+    $__at = @parse_ini_file($__af);
+    if (!empty($__at['accent']) && preg_match('/^#[0-9a-fA-F]{3,8}$/', $__at['accent'])) { $__accent = $__at['accent']; }
+}
+if ($__accent === '') {
+    $__tf = $_SERVER['DOCUMENT_ROOT'] . '/system/users/' . $__accentUser . '/settings/etc/theme.fth';
+    if (is_file($__tf)) {
+        $__tt = @parse_ini_file($__tf);
+        if (!empty($__tt['accentcolor'])) {
+            $__tc = trim((string)$__tt['accentcolor'], " ;");
+            if (preg_match('/^#[0-9a-fA-F]{3,8}$/', $__tc)) { $__accent = $__tc; }
+        }
+    }
+}
+if ($__accent === '') { $__accent = '#5fe08c'; }
+$__ink = '#ffffff';
+if (preg_match('/^#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i', $__accent, $__m)) {
+    $__lum = (0.299 * hexdec($__m[1]) + 0.587 * hexdec($__m[2]) + 0.114 * hexdec($__m[3])) / 255;
+    if ($__lum > 0.62) { $__ink = '#06130b'; }
+}
+?>
+<style>
+:root{
+  --fo-accent: <?echo $__accent?>;
+  --fo-accent-strong: color-mix(in srgb, <?echo $__accent?> 78%, #000);
+  --fo-accent-ink: <?echo $__ink?>;
+}
+</style>
+<div id="login-root">
+<div class="login-inner">
+<div id="login">
+<div id="login-stage">
+<div id="login-card">
+<div id="labelos" class="login-brand">
+<span class="login-brand-name">Forest OS</span>
+<span class="login-brand-tag">Revival 2.0</span>
+</div>
 <?
 
 /* #Display errors */
@@ -36,6 +75,14 @@ if(!isset($_SESSION)){
   session_start();
 }
 
+if(empty($_SESSION['locale'])){
+  $_SESSION['locale'] = 'ru';
+}
+
+if(empty($_SESSION['timezone'])){
+  $_SESSION['timezone'] = 'Europe/Moscow';
+}
+
 if(!isset($_SESSION['counter'])){// prepare counter for capthca
   $_SESSION['counter'] = 0;
 }
@@ -45,10 +92,21 @@ if(!isset($_SESSION['BlockDate'])){// prepare counter for capthca
 }
 
 $auth = new AuthClassUser();
+
+/* ключ доступа можно вставить и в поле пароля — так удобнее */
+$__rawPass = isset($_POST['passwordin']) ? (string)$_POST['passwordin'] : '';
+if (($keyaccess === NULL || $keyaccess === '') && $__rawPass !== '' && class_exists('readbd')) {
+    $__bds = new readbd;
+    $__found = $__bds->readglobal2("login", "forestusers", "TempKey", $__rawPass, true, true);
+    if (!empty($__found)) {
+        $keyaccess = $__rawPass;
+    }
+}
+
 $auth->construct('login', $loginin, $keyaccess);
 
 if (isset($loginin) && isset($passwordin)) {
-  $_SESSION['safemode'] = $_POST['safemode'];
+  $_SESSION['safemode'] = isset($_POST['safemode']) ? $_POST['safemode'] : 'false';
 
   if (!$auth->auth($loginin, $passwordin, $keyaccess)) {
 
@@ -70,7 +128,8 @@ if (isset($loginin) && isset($passwordin)) {
 if (isset($_GET["exit"])) {
   if ($_GET["exit"] == 1) {
         $auth->out();
-        header("Location: ?exit=0");
+        echo '<script>window.location.href="?exit=0";</script>';
+        exit;
   }
 }
 
@@ -78,8 +137,17 @@ if (isset($_GET["exit"])) {
     if(!empty($keyaccess)){
       $prefix = '[via Access Key: '.$keyaccess.']';
     }
-    header("Location:os.php");
-    $infob->writestat('Success Login -> '.$prefix.$loginin,'system/core/journal.mcj');
+    $infob->writestat('Success Login -> '.(isset($prefix) ? $prefix : '').$loginin,'system/core/journal.mcj');
+    // Persist the authenticated session BEFORE the browser navigates away.
+    // The redirect below is emitted via meta/JS (headers are already sent by
+    // prepare.php), so without this the follow-up request can race the session
+    // write and still see the guest session -> login form appears again.
+    if (function_exists('session_status') && session_status() === PHP_SESSION_ACTIVE) {
+      session_write_close();
+    }
+    echo '<meta http-equiv="refresh" content="0;url=os.php">';
+    echo '<script>window.location.replace("os.php");</script>';
+    exit;
     unset($_SESSION['counter']);
     $_SESSION['BlockDate'] = false;
 }
@@ -90,8 +158,8 @@ if(!$_SESSION['BlockDate'] || date('d-m-y H:i:s') >= $_SESSION['BlockDate']){
   $gui = new gui;
   $gui->formstart('POST');
   ?>
-  <input class="loginin input-login" id="loginin" placeholder="<?=$language[$_SESSION['locale'].'_login_input']?>" type="text" name="loginin" value="<?=$login_get?>">
-  <input class="passwordin input-login" id="passwordin" placeholder="<?=$language[$_SESSION['locale'].'_password_input']?>" type="password" name="passwordin" value="">
+  <input class="loginin input-login" id="loginin" placeholder="<?=$language[$_SESSION['locale'].'_login_input']?>" type="text" name="loginin" value="<?=isset($login_get) ? $login_get : ''?>" autocomplete="username" autocapitalize="off" autocorrect="off" spellcheck="false">
+  <input class="passwordin input-login" id="passwordin" placeholder="<?=$language[$_SESSION['locale'].'_password_input']?>" type="password" name="passwordin" value="" autocomplete="current-password">
   <?
 }else{
   $_date = strtotime($_SESSION['BlockDate']) - strtotime(date('d-m-y H:i:s'));
@@ -100,15 +168,12 @@ if(!$_SESSION['BlockDate'] || date('d-m-y H:i:s') >= $_SESSION['BlockDate']){
 }
 
 ?>
-<div id="safemode" style="color:#63e47a; margin:10px 0; display:none;">
-  <div style="margin:10 0;">
-  <label>
-    <input type="checkbox" name="safemode" value="true" style="vertical-align:top; margin: 0 3px 0 0; width:17px; height:17px;">
-    <?
-    echo $language[$_SESSION['locale'].'_safemode_label'].'</div>';
-    ?>
+<div id="safemode" class="login-safemode" style="display:none;">
+  <label class="login-safemode-label">
+    <input type="checkbox" name="safemode" value="true">
+    <span><? echo $language[$_SESSION['locale'].'_safemode_label']; ?></span>
   </label>
-  <input class="keyaccess input-login" id="keyaccess" placeholder="Key Access" type="text" name="keyaccess" value="<?=$keyaccess?>">
+  <input class="keyaccess input-login" id="keyaccess" placeholder="Key Access" type="text" name="keyaccess" value="<?=isset($keyaccess) ? htmlspecialchars($keyaccess) : ''?>">
 </div>
 <?
 if(!$_SESSION['BlockDate']){
@@ -122,23 +187,18 @@ $date = date("m/d/Y H:i:s");
 $_offset = new DateTime($date, new DateTimeZone("$timezone"));
 $offset = $_offset->getOffset()/3600;
 ?>
+</div><!-- /#login-card -->
+</div><!-- /#login-stage -->
+</div><!-- /#login -->
+<div class="login-footer">
+  <span id="date" class="login-date"><?php echo $object->getDayRus().', '.date('d');?></span>
+  <span id="time" class="login-time"></span>
 </div>
-</div>
-</div>
-<div class="date" style="margin-top: 10vh; float: left; user-select: none; cursor: default; color:#fff; padding-left: 5vw; margin-bottom:10px; position:relative;">
-  <span id="date" style="font-size: 27pt; font-weight: 700; text-transform: uppercase;"><?php echo $object->getDayRus().', '.date('d').'<br>';?></span>
-  <span id="time" style="font-size: 35pt;"></span>
-</div>
-</div>
+</div><!-- /.login-inner -->
+</div><!-- /#login-root -->
 <script type="text/javascript">
 $( function() {
-  $(window).load(function(){
-    var is_mobile = "<?echo $mobile?>";
-    if(is_mobile == "true"){
-      $("#loginin").css("padding-top","0");
-      $("#date").css("font-size","20pt");
-      $("#time").css("font-size","30pt");
-    }
+  $(window).on('load', function(){
     $(".welcomescreen").hide('fade',500);
   });
 });
@@ -153,6 +213,27 @@ $("#labelos").click(function(){
   $("#safemode").slideUp("fast");
 }
 });
+
+// Some password managers fill the fields on the very click that submits the
+// form, so the first POST can carry empty values. Wait one tick and submit
+// again with the values autofill committed.
+(function(){
+  var form = document.querySelector('#login-card form');
+  if(!form){ return; }
+  var retried = false;
+  form.addEventListener('submit', function(e){
+    if(retried){ return; }
+    var l = document.getElementById('loginin');
+    var p = document.getElementById('passwordin');
+    if(!l || !p || (l.value && p.value)){ return; }
+    retried = true;
+    e.preventDefault();
+    setTimeout(function(){
+      var btn = form.querySelector('input[name="logins"]');
+      if(btn){ btn.click(); }
+    }, 150);
+  });
+})();
 
 $('.ui-body').css('background','linear-gradient(to top, #171717, #3a3a3a)')
 

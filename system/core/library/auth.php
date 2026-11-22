@@ -43,10 +43,29 @@ class AuthClassUser {
             }
           }
 
+          /* заблокированная учётная запись не может войти */
+          if (!empty($login)) {
+            try {
+              $__bds = new readbd;
+              $__blocked = $__bds->readglobal2("blocked", "forestusers", "login", $login, true);
+              if ((string)$__blocked === '1') {
+                global $infob;
+                if (isset($infob) && method_exists($infob, 'writestat')) {
+                  $infob->writestat('Blocked login attempt -> ' . $login, 'system/core/journal.mcj');
+                }
+                $_SESSION["is_authuser"] = false;
+                return false;
+              }
+            } catch (Throwable $e) {
+              /* колонки ещё нет — считаем, что блокировки нет */
+            }
+          }
+
           if ($login == $this->_login && $password == $this->_password) {
             $_SESSION["is_authuser"] = true;
             $_SESSION["loginuser"] = $login;
-            $_SESSION["CookieIsMine"] = md5($login.$_SERVER['HTTP_USER_AGENT'].$_SERVER['REMOTE_ADDR'].$_SERVER['HTTP_X_FORWARDED_FOR']);
+            $forwardedFor = isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : '';
+            $_SESSION["CookieIsMine"] = md5($login.$_SERVER['HTTP_USER_AGENT'].$_SERVER['REMOTE_ADDR'].$forwardedFor);
 
             if(!empty($keyaccess)){
 

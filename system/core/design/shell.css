@@ -1,0 +1,1713 @@
+/* ==========================================================================
+   Forest OS - shell: waybar, launcher (rofi-style), user popover
+   Uses only the tokens from tokens.css.
+   ========================================================================== */
+
+/* ---------- top bar ------------------------------------------------------ */
+#topbar.fo-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  box-sizing: border-box;
+  height: var(--fo-bar-h);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 8px;
+  /* solid bar: theme gives the tint, text always readable (no blur) */
+     background stays opaque so the clock/title never wash out */
+  background-color: var(--fo-shell-base, #101312);
+  box-shadow: inset 0 0 0 999px var(--fo-theme-topbar, rgba(16, 19, 17, 0.9)),
+              0 10px 30px rgba(0, 0, 0, 0.22);
+  color: var(--fo-theme-text, var(--fo-fg));
+  border-bottom: 1px solid var(--fo-accent-line);
+  font: 500 12.5px/1 var(--fo-font);
+  user-select: none;
+  z-index: 9999;
+}
+
+.fo-bar-side {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.fo-bar-left { flex: 1 1 auto; }
+.fo-bar-right { flex: 0 0 auto; justify-content: flex-end; }
+
+.fo-bar-center {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+}
+
+.fo-bar-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 26px;
+  height: 24px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  background: transparent;
+  color: inherit;
+  font: 500 13px/1 var(--fo-font);
+  cursor: default;
+  opacity: 0.82;
+  transition: background-color 0.14s ease, opacity 0.14s ease, border-color 0.14s ease;
+}
+
+.fo-bar-btn:hover {
+  opacity: 1;
+  background: color-mix(in srgb, currentColor 10%, transparent);
+}
+
+.fo-bar-btn:active {
+  background: var(--fo-active);
+}
+
+.fo-bar-group {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+/* launcher button: 3x3 grid drawn in CSS */
+.fo-ico-grid {
+  display: block;
+  width: 13px;
+  height: 13px;
+  background-image: radial-gradient(circle, currentColor 1.6px, transparent 1.8px);
+  background-size: 5px 5px;
+  background-position: 1px 1px;
+  opacity: 0.95;
+}
+
+#fo-launcher-btn {
+  width: 28px;
+}
+
+/* current window title */
+.fo-bar-title {
+  min-width: 0;
+  max-width: 34vw;
+  padding-left: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: color-mix(in srgb, currentColor 66%, transparent);
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+/* workspace dots (desktop pages) */
+.fo-ws {
+  display: none;
+  align-items: center;
+  gap: 5px;
+  padding: 0 6px;
+}
+
+.fo-ws.is-visible {
+  display: flex;
+}
+
+.fo-ws-dot {
+  width: 7px;
+  height: 7px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: color-mix(in srgb, currentColor 34%, transparent);
+  cursor: default;
+  transition: background-color 0.15s ease, transform 0.15s ease;
+}
+
+.fo-ws-dot:hover {
+  background: color-mix(in srgb, currentColor 70%, transparent);
+}
+
+.fo-ws-dot.is-active {
+  background: var(--fo-accent);
+  transform: scale(1.15);
+}
+
+/* clock */
+.fo-bar-clock {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  height: 24px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: inherit;
+  cursor: default;
+  transition: background-color 0.14s ease;
+}
+
+.fo-bar-clock:hover {
+  background: color-mix(in srgb, currentColor 10%, transparent);
+}
+
+.fo-bar-time {
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.fo-bar-date {
+  color: color-mix(in srgb, currentColor 62%, transparent);
+  font-size: 11.5px;
+  font-weight: 500;
+}
+
+/* notification bell */
+#notificationsbtn.fo-bar-bell {
+  position: relative;
+  font-size: 11px;
+  letter-spacing: 0.02em;
+}
+
+#notificationsbtn.has-notifications {
+  color: var(--fo-accent);
+  border-color: var(--fo-accent-line);
+}
+
+#notificationsbtn.has-notifications::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  right: 3px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--fo-accent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--fo-theme-topbar, #111) 80%, transparent);
+}
+
+/* user chip */
+.fo-bar-user {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 26px;
+  padding: 0 8px 0 3px;
+  border: 1px solid transparent;
+  border-radius: var(--fo-r-pill);
+  background: transparent;
+  color: inherit;
+  cursor: default;
+  transition: background-color 0.14s ease, border-color 0.14s ease;
+}
+
+.fo-bar-user:hover {
+  background: color-mix(in srgb, currentColor 10%, transparent);
+  border-color: color-mix(in srgb, currentColor 18%, transparent);
+}
+
+.fo-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--fo-accent);
+  color: var(--fo-accent-ink);
+  font: 700 11px/1 var(--fo-font);
+}
+
+/* ---------- user popover ------------------------------------------------- */
+.fo-popover {
+  position: fixed;
+  top: calc(var(--fo-bar-h) + 6px);
+  right: 8px;
+  z-index: 100001;
+  min-width: 232px;
+  padding: 6px;
+  background: var(--fo-panel);
+  border: 1px solid var(--fo-line-2);
+  border-radius: var(--fo-r-md);
+  box-shadow: var(--fo-shadow-2);
+  backdrop-filter: var(--fo-blur);
+  -webkit-backdrop-filter: var(--fo-blur);
+  color: var(--fo-fg);
+  font: 500 12.5px/1.2 var(--fo-font);
+  transform-origin: top right;
+  animation: fo-pop 0.14s ease;
+}
+
+@keyframes fo-pop {
+  from { opacity: 0; transform: translateY(-4px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+
+.fo-popover-head {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 10px 10px;
+  border-bottom: 1px solid var(--fo-line);
+  margin-bottom: 5px;
+}
+
+.fo-popover-head b {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.fo-popover-head span {
+  color: var(--fo-fg-faint);
+  font-size: 11.5px;
+}
+
+.fo-popover-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: var(--fo-r-xs);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: default;
+  transition: background-color 0.12s ease;
+}
+
+.fo-popover-item:hover {
+  background: var(--fo-hover);
+}
+
+.fo-popover-item.fo-danger:hover {
+  background: rgba(255, 90, 80, 0.16);
+  color: #ff9d95;
+}
+
+/* ---------- launcher ----------------------------------------------------- */
+.fo-launcher {
+  position: fixed;
+  inset: 0;
+  z-index: 100000;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: calc(var(--fo-bar-h) + 7vh) 16px 16px;
+  background: rgba(4, 6, 5, 0.5);
+  backdrop-filter: blur(12px) saturate(120%);
+  -webkit-backdrop-filter: blur(12px) saturate(120%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.16s ease;
+}
+
+.fo-launcher.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.fo-launcher-card {
+  display: flex;
+  flex-direction: column;
+  width: min(560px, 100%);
+  max-height: min(68vh, 600px);
+  background: var(--fo-panel);
+  border: 1px solid var(--fo-line-2);
+  border-radius: var(--fo-r-lg);
+  box-shadow: var(--fo-shadow-2);
+  overflow: hidden;
+  transform: translateY(-10px) scale(0.985);
+  transition: transform 0.18s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.fo-launcher.is-open .fo-launcher-card {
+  transform: none;
+}
+
+.fo-launcher-search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--fo-line);
+}
+
+.fo-ico-search {
+  position: relative;
+  flex: 0 0 auto;
+  width: 13px;
+  height: 13px;
+  border: 1.8px solid var(--fo-fg-dim);
+  border-radius: 50%;
+}
+
+.fo-ico-search::after {
+  content: '';
+  position: absolute;
+  right: -5px;
+  bottom: -4px;
+  width: 6px;
+  height: 1.8px;
+  background: var(--fo-fg-dim);
+  border-radius: 2px;
+  transform: rotate(45deg);
+}
+
+#fo-launcher-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 26px;
+  border: 0;
+  background: transparent;
+  color: var(--fo-fg);
+  font: 400 14px/1.2 var(--fo-font);
+  outline: none;
+}
+
+#fo-launcher-input::placeholder {
+  color: var(--fo-fg-faint);
+}
+
+.fo-launcher-search kbd {
+  padding: 2px 5px;
+  border: 1px solid var(--fo-line-2);
+  border-radius: 5px;
+  color: var(--fo-fg-faint);
+  font: 500 10px/1.2 var(--fo-mono);
+  text-transform: uppercase;
+}
+
+.fo-launcher-list {
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: 6px;
+  overflow-y: auto;
+}
+
+.fo-launcher-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 7px 9px;
+  border: 0;
+  border-radius: var(--fo-r-sm);
+  background: transparent;
+  color: var(--fo-fg);
+  text-align: left;
+  font: 500 13px/1.25 var(--fo-font);
+  cursor: default;
+  transition: background-color 0.1s ease;
+}
+
+.fo-launcher-item:hover {
+  background: var(--fo-hover);
+}
+
+.fo-launcher-item.is-active {
+  background: var(--fo-accent-soft);
+}
+
+.fo-launcher-item.is-active::before {
+  content: '';
+  position: absolute;
+  left: 2px;
+  top: 9px;
+  bottom: 9px;
+  width: 2px;
+  border-radius: 2px;
+  background: var(--fo-accent);
+}
+
+.fo-launcher-icon {
+  flex: 0 0 auto;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background-size: cover;
+  background-position: center;
+  background-color: rgba(255, 255, 255, 0.06);
+}
+
+.fo-launcher-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.fo-launcher-text b {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+.fo-launcher-text span {
+  color: var(--fo-fg-faint);
+  font-size: 11.5px;
+  font-weight: 400;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fo-launcher-empty {
+  padding: 22px 12px;
+  color: var(--fo-fg-faint);
+  text-align: center;
+  font: 400 12.5px/1.4 var(--fo-font);
+}
+
+.fo-launcher-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 12px;
+  border-top: 1px solid var(--fo-line);
+}
+
+.fo-launcher-hint {
+  color: var(--fo-fg-faint);
+  font: 400 11px/1.2 var(--fo-font);
+}
+
+.fo-launcher-power {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.fo-power {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 1px solid var(--fo-line-2);
+  border-radius: 7px;
+  background: transparent;
+  color: var(--fo-fg-dim);
+  font: 600 11px/1 var(--fo-mono);
+  cursor: default;
+  transition: background-color 0.12s ease, color 0.12s ease, border-color 0.12s ease;
+}
+
+.fo-power:hover {
+  background: var(--fo-hover);
+  color: var(--fo-fg);
+}
+
+.fo-power[data-power="logout"]:hover {
+  border-color: rgba(255, 90, 80, 0.5);
+  color: #ff9d95;
+}
+
+/* ---------- mobile ------------------------------------------------------- */
+@media (max-width: 760px) {
+  :root {
+    --fo-bar-h: 44px;
+  }
+
+  #topbar.fo-bar {
+    padding: 0 6px;
+    gap: 6px;
+    font-size: 13px;
+  }
+
+  .fo-bar-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+  }
+
+  .fo-bar-title {
+    max-width: 40vw;
+  }
+
+  .fo-bar-clock {
+    height: 30px;
+    padding: 0 8px;
+  }
+
+  .fo-bar-date {
+    display: none;
+  }
+
+  .fo-bar-user {
+    height: 32px;
+    padding: 0 4px 0 2px;
+  }
+
+  .fo-avatar {
+    width: 24px;
+    height: 24px;
+    font-size: 12px;
+  }
+
+  .fo-launcher {
+    padding: calc(var(--fo-bar-h) + 8px) 8px 8px;
+  }
+
+  .fo-launcher-card {
+    max-height: calc(100vh - var(--fo-bar-h) - 24px);
+    width: 100%;
+  }
+
+  .fo-launcher-item {
+    padding: 9px 8px;
+  }
+
+  .fo-launcher-hint {
+    display: none;
+  }
+
+  .fo-popover {
+    left: 8px;
+    right: 8px;
+    top: calc(var(--fo-bar-h) + 6px);
+    min-width: 0;
+  }
+}
+
+/* ==========================================================================
+   Notification centre
+   ========================================================================== */
+#notifications.fo-notif-panel {
+  position: fixed;
+  top: calc(var(--fo-bar-h) + 8px);
+  right: 8px;
+  z-index: 9998;
+  display: flex;
+  flex-direction: column;
+  width: min(366px, calc(100vw - 16px));
+  max-height: min(72vh, 580px);
+  background: var(--fo-panel);
+  border: 1px solid var(--fo-line-2);
+  border-radius: var(--fo-r-md);
+  box-shadow: var(--fo-shadow-2);
+  backdrop-filter: var(--fo-blur);
+  -webkit-backdrop-filter: var(--fo-blur);
+  color: var(--fo-fg);
+  font: 500 12.5px/1.35 var(--fo-font);
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(-6px) scale(0.99);
+  pointer-events: none;
+  transition: opacity 0.16s ease, transform 0.16s ease;
+}
+
+#notifications.fo-notif-panel.notificationshow {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+  overflow: hidden;
+  background: var(--fo-panel);
+}
+
+.fo-notif-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--fo-line);
+}
+
+.fo-notif-head-title {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.fo-notif-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: var(--fo-accent);
+  color: var(--fo-accent-ink);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.fo-notif-head-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.fo-notif-clear,
+.fo-notif-x {
+  height: 24px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--fo-fg-dim);
+  font: 500 11.5px/1 var(--fo-font);
+  cursor: default;
+  transition: background-color 0.12s ease, color 0.12s ease;
+}
+
+.fo-notif-x {
+  width: 24px;
+  padding: 0;
+  font-size: 15px;
+}
+
+.fo-notif-clear:hover {
+  background: var(--fo-hover);
+  color: var(--fo-accent);
+}
+
+.fo-notif-x:hover {
+  background: var(--fo-hover);
+  color: var(--fo-fg);
+}
+
+.fo-notif-sub {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 12px;
+  border-bottom: 1px solid var(--fo-line);
+  color: var(--fo-fg-faint);
+  font-size: 11px;
+}
+
+.fo-notif-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.fo-notif {
+  position: relative;
+  padding: 9px 10px;
+  border: 1px solid var(--fo-line);
+  border-radius: var(--fo-r-sm);
+  background: var(--fo-panel-2);
+}
+
+.fo-notif-top {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 4px;
+  padding-right: 18px;
+}
+
+.fo-notif-app {
+  color: var(--fo-accent);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.fo-notif-time {
+  margin-left: auto;
+  color: var(--fo-fg-faint);
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.fo-notif-title {
+  margin-bottom: 3px;
+  font-weight: 600;
+  font-size: 12.5px;
+}
+
+.fo-notif-body {
+  color: var(--fo-fg-dim);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+.fo-notif-body b {
+  color: var(--fo-fg);
+}
+
+.fo-notif-close {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--fo-fg-faint);
+  font: 400 14px/1 var(--fo-font);
+  cursor: default;
+  opacity: 0;
+  transition: opacity 0.12s ease, background-color 0.12s ease, color 0.12s ease;
+}
+
+.fo-notif:hover .fo-notif-close {
+  opacity: 1;
+}
+
+.fo-notif-close:hover {
+  background: rgba(255, 90, 80, 0.18);
+  color: #ff9d95;
+}
+
+.fo-notif-empty {
+  padding: 26px 16px;
+  color: var(--fo-fg-faint);
+  text-align: center;
+  font-size: 12px;
+}
+
+/* dock: minimized windows get an accent dot */
+.dock-icon.is-minimized::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -7px;
+  width: 5px;
+  height: 5px;
+  margin-left: -2.5px;
+  border-radius: 50%;
+  background: var(--fo-accent);
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.45);
+}
+
+@media (max-width: 760px) {
+  #notifications.fo-notif-panel {
+    left: 8px;
+    right: 8px;
+    width: auto;
+    top: calc(var(--fo-bar-h) + 6px);
+    max-height: calc(100vh - var(--fo-bar-h) - 96px);
+  }
+
+  .fo-notif-close {
+    opacity: 1;
+  }
+}
+
+/* ==========================================================================
+   2.6 — окно: кнопка перезагрузки, док: индикаторы, подсветка фокуса
+   ========================================================================== */
+
+/* перезагрузка приложения — появляется при наведении на заголовок окна */
+.process-title{ position:relative; }
+.process-refresh{
+  display:inline-block; width:14px; height:14px; margin-left:7px; flex:0 0 auto;
+  background-color:currentColor; opacity:0; border-radius:50%;
+  -webkit-mask:url("data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2024%2024'%3E%3Cpath%20d='M17.65%206.35A7.96%207.96%200%200%200%2012%204V1L7%206l5%205V8c1.66%200%203.14.69%204.22%201.78A5.98%205.98%200%200%201%2018%2014a6%206%200%200%201-6%206%206%206%200%200%201-5.65-4H4.26A8%208%200%201%200%2017.65%206.35z'/%3E%3C/svg%3E") center/12px no-repeat;
+  mask:url("data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2024%2024'%3E%3Cpath%20d='M17.65%206.35A7.96%207.96%200%200%200%2012%204V1L7%206l5%205V8c1.66%200%203.14.69%204.22%201.78A5.98%205.98%200%200%201%2018%2014a6%206%200%200%201-6%206%206%206%200%200%201-5.65-4H4.26A8%208%200%201%200%2017.65%206.35z'/%3E%3C/svg%3E") center/12px no-repeat;
+  transition:opacity .12s ease, background-color .12s ease; cursor:default;
+}
+.window:hover .process-refresh{ opacity:.55; }
+.process-refresh:hover{ opacity:1; background-color:var(--fo-accent); }
+
+/* индикатор запущенных/свёрнутых приложений под иконкой дока */
+.dock-icon{ position:relative; }
+.dock-dot{
+  position:absolute; left:50%; bottom:-6px; width:5px; height:5px; margin-left:-2.5px;
+  border-radius:50%; background:var(--fo-accent); opacity:0; pointer-events:none;
+  transition:opacity .16s ease, box-shadow .16s ease, background-color .16s ease;
+}
+.dock-icon.is-running .dock-dot{ opacity:1; }
+.dock-icon.is-minimized .dock-dot{
+  opacity:1; background:transparent; box-shadow:inset 0 0 0 1.5px var(--fo-accent);
+}
+.dock-icon{ transition:transform .12s ease; }
+.dock-icon:active{ transform:translateY(1px) scale(.96); }
+
+/* подсветка окна, когда на него переключились из дока */
+@keyframes fo-win-flash{
+  0%{ box-shadow:0 0 0 2px var(--fo-accent), 0 24px 60px rgba(0,0,0,.45); }
+  100%{ box-shadow:0 24px 60px rgba(0,0,0,.45); }
+}
+.window.fo-flash{ animation:fo-win-flash .6s ease; }
+
+/* ==========================================================================
+   2.7 — плашки при сворачивании, индикатор перезагрузки
+   ========================================================================== */
+
+/* свернутое окно = компактная плашка в заголовке */
+.window.windowborderhide{
+  width:auto !important;
+  height:auto !important;
+  min-width:210px !important;
+  max-width:340px !important;
+  background:transparent !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  overflow:visible !important;
+}
+.window.windowborderhide .process-container{ display:none !important; }
+.window.windowborderhide .dragwindow{ width:auto !important; padding:0 9px !important; cursor:default; }
+.window.windowborderhide .winbtn-max,
+.window.windowborderhide .process-refresh{ display:none !important; }
+.window.windowborderhide .process-title{
+  position:static; transform:none; left:auto; top:auto; bottom:auto;
+  flex:1 1 auto; min-width:0; max-width:calc(100% - 56px);
+}
+.window.windowborderhide .process-title-text{ max-width:none; }
+.window.windowborderhide.windowactive .dragwindowtoggle{
+  border-color:var(--fo-accent) !important;
+  box-shadow:0 12px 30px rgba(0,0,0,.45), 0 0 0 2px color-mix(in srgb, var(--fo-accent) 22%, transparent);
+}
+
+/* перезагрузка приложения: спиннер поверх контента */
+.window.fo-busy .process-container{ position:relative; }
+.window.fo-busy .process-container::after{
+  content:""; position:absolute; inset:0; z-index:5;
+  background:color-mix(in srgb, var(--fo-win-body, #ffffff) 68%, transparent);
+}
+.window.fo-busy .process-container::before{
+  content:""; position:absolute; left:50%; top:50%; width:22px; height:22px;
+  margin:-11px 0 0 -11px; z-index:6; border-radius:50%;
+  border:2px solid color-mix(in srgb, var(--fo-accent) 28%, transparent);
+  border-top-color:var(--fo-accent);
+  animation:fo-spin .7s linear infinite;
+}
+@keyframes fo-spin{ to{ transform:rotate(360deg); } }
+
+/* ==========================================================================
+   2.8 — мобильная адаптация (только смартфоны)
+   ========================================================================== */
+@media (max-width: 760px) {
+  .dragwindow{ height: 38px !important; }
+  .appwindowbutton{ width: 36px !important; height: 32px !important; }
+  .process-title-text{ font-size: 12.5px; }
+  .process-title-icon{ width: 16px; height: 16px; }
+  .dock-container{ padding: 10px 12px !important; gap: 10px; }
+  .dock-icon{ width: 56px !important; height: 56px !important; }
+  .window.windowborderhide{ min-width: 200px !important; max-width: 88vw !important; }
+  .window.windowborderhide .dragwindow{ height: 34px !important; }
+}
+
+/* ==========================================================================
+   3.0 — контекстное меню текста (копировать/вставить), тёмная тема
+   ========================================================================== */
+#fo-text-menu{
+  position:absolute; z-index:100050; min-width:186px; padding:5px;
+  background:rgba(24,24,26,0.97); border:1px solid rgba(255,255,255,0.14);
+  border-radius:10px; box-shadow:0 16px 42px rgba(0,0,0,0.5);
+  backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px);
+  color:#f2f2f4; font:500 12.5px/1 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+}
+#fo-text-menu .fo-tm-item{ padding:8px 12px; border-radius:7px; cursor:default; display:flex; justify-content:space-between; gap:12px; }
+#fo-text-menu .fo-tm-item:hover{ background:rgba(255,255,255,0.12); }
+#fo-text-menu .fo-tm-item.is-off{ opacity:.4; }
+#fo-text-menu .fo-tm-sep{ height:1px; margin:5px 8px; background:rgba(255,255,255,0.12); }
+
+/* системная тёмная тема: окна приложений тоже темнеют */
+html[data-fo-dark="1"] .fo-app{
+  background:#151a17 !important;
+  color:#e6f1ea !important;
+}
+html[data-fo-dark="1"] .fo-app .process-container,
+html[data-fo-dark="1"] .fo-app .fo-window,
+html[data-fo-dark="1"] .fo-app .fo-main,
+html[data-fo-dark="1"] .fo-app .fo-content{
+  background-color:#151a17 !important;
+  color:#e6f1ea !important;
+}
+html[data-fo-dark="1"] .fo-app input,
+html[data-fo-dark="1"] .fo-app textarea,
+html[data-fo-dark="1"] .fo-app select{
+  background:#1d2521 !important;
+  color:#e6f1ea !important;
+  border-color:#31403a !important;
+}
+
+/* тёмные токены окон: используются конвертером и приложениями на токенах */
+:root{ --fo-text: #151a17; }
+html[data-fo-dark="1"]{
+  --fo-win-body: #151a17 !important;
+  --fo-text: #e6f1ea !important;
+  --fo-frame-line: rgba(255,255,255,0.10) !important;
+}
+html[data-fo-dark="1"] .window{ background: var(--fo-win-body) !important; }
+html[data-fo-dark="1"] .window .dragwindow{ color: #e6f1ea; }
+
+/* ---------- тёмная тема: наши приложения (Settings / Explorer / Store) --- */
+html[data-fo-dark="1"] body,
+html[data-fo-dark="1"] .fo-app,
+html[data-fo-dark="1"] .fo-window,
+html[data-fo-dark="1"] .fo-sidebar,
+html[data-fo-dark="1"] .fo-main,
+html[data-fo-dark="1"] .fo-toolbar,
+html[data-fo-dark="1"] .fo-crumbs,
+html[data-fo-dark="1"] .fo-content,
+html[data-fo-dark="1"] .fo-mnav,
+html[data-fo-dark="1"] .set,
+html[data-fo-dark="1"] .set-side,
+html[data-fo-dark="1"] .set-body,
+html[data-fo-dark="1"] .set-card,
+html[data-fo-dark="1"] .set-item,
+html[data-fo-dark="1"] .st-head,
+html[data-fo-dark="1"] .st-body,
+html[data-fo-dark="1"] .st-card,
+html[data-fo-dark="1"] .st-row,
+html[data-fo-dark="1"] .cv-head,
+html[data-fo-dark="1"] .cv-card{
+  background: #151a17 !important;
+  color: #e6f1ea !important;
+  border-color: #2a3530 !important;
+}
+html[data-fo-dark="1"] .set-card,
+html[data-fo-dark="1"] .fo-item,
+html[data-fo-dark="1"] .st-card{
+  background: #1a211d !important;
+}
+html[data-fo-dark="1"] .set-side,
+html[data-fo-dark="1"] .fo-sidebar,
+html[data-fo-dark="1"] .st-head{
+  background: #101613 !important;
+}
+html[data-fo-dark="1"] .set-nav{ color:#cfe3d8 !important; }
+html[data-fo-dark="1"] .set-nav:hover,
+html[data-fo-dark="1"] .fo-side-item:hover,
+html[data-fo-dark="1"] .fo-item:hover{ background:#243029 !important; }
+html[data-fo-dark="1"] .set-btn,
+html[data-fo-dark="1"] .fo-tb,
+html[data-fo-dark="1"] .fo-crumb,
+html[data-fo-dark="1"] .fo-mnav-item,
+html[data-fo-dark="1"] .st-btn,
+html[data-fo-dark="1"] .cv-btn,
+html[data-fo-dark="1"] .set-search,
+html[data-fo-dark="1"] .st-search{
+  background:#1d2521 !important; color:#e6f1ea !important; border-color:#31403a !important;
+}
+html[data-fo-dark="1"] .set-hint,
+html[data-fo-dark="1"] .set-sub,
+html[data-fo-dark="1"] .st-sub{ color:#9fb3a8 !important; }
+html[data-fo-dark="1"] .set-lbl,
+html[data-fo-dark="1"] .set-h,
+html[data-fo-dark="1"] .st-name{ color:#e6f1ea !important; }
+html[data-fo-dark="1"] .fo-item-name,
+html[data-fo-dark="1"] .fo-crumb{ color:#d7e7dd !important; }
+html[data-fo-dark="1"] .set-btn.primary,
+html[data-fo-dark="1"] .st-btn.primary,
+html[data-fo-dark="1"] .cv-btn.primary{ background:var(--fo-accent) !important; color:#0b160f !important; }
+html[data-fo-dark="1"] .fo-title,
+html[data-fo-dark="1"] .fo-status{ color:#b9cec2 !important; }
+
+html[data-fo-dark="1"] [id^="set"],
+html[data-fo-dark="1"] [id^="cv"],
+html[data-fo-dark="1"] [id^="st"]{
+  background: #151a17 !important;
+  color: #e6f1ea !important;
+}
+
+html[data-fo-dark="1"] .set-theme,
+html[data-fo-dark="1"] .set-seg{ background:#1d2521 !important; color:#e6f1ea !important; border-color:#31403a !important; }
+html[data-fo-dark="1"] .set-seg button{ color:#b9cec2 !important; }
+html[data-fo-dark="1"] .set-seg button.is-on{ background:#2b3a32 !important; color:#ffffff !important; }
+html[data-fo-dark="1"] .set-chk:hover{ background:#1f2a24 !important; }
+html[data-fo-dark="1"] .set-dialog,
+html[data-fo-dark="1"] .set-list{ background: transparent !important; }
+
+/* ==========================================================================
+   3.1 — тёмный проводник и аккуратные акценты
+   ========================================================================== */
+
+/* акцентные кружки не перекрашиваем тёмной темой */
+html[data-fo-dark="1"] .set-sw{ background-color: unset; }
+
+/* проводник */
+html[data-fo-dark="1"] .fo-app{
+  --fo-text: #e6f1ea;
+  --fo-muted: #9fb3a8;
+  --fo-line: #2a3530;
+  --fo-line-soft: #243029;
+  --fo-sidebar: #101613;
+  --fo-toolbar: #151a17;
+  --fo-crumb: #151a17;
+  background: #151a17;
+  color: #e6f1ea;
+}
+html[data-fo-dark="1"] .fo-content,
+html[data-fo-dark="1"] .fo-crumbs,
+html[data-fo-dark="1"] .fo-status,
+html[data-fo-dark="1"] .fo-listhead,
+html[data-fo-dark="1"] .fo-mnav{
+  background: #151a17 !important;
+  border-color: #2a3530 !important;
+  color: #cfe3d8 !important;
+}
+html[data-fo-dark="1"] .fo-item{
+  background: transparent !important;
+  border-color: transparent !important;
+  color: #e6f1ea !important;
+}
+html[data-fo-dark="1"] .fo-item:hover{ background: #1f2a24 !important; }
+html[data-fo-dark="1"] .fo-item.is-selected{
+  background: color-mix(in srgb, var(--fo-accent) 24%, transparent) !important;
+}
+html[data-fo-dark="1"] .fo-item-name{ color: #e6f1ea !important; }
+html[data-fo-dark="1"] .fo-item-meta,
+html[data-fo-dark="1"] .fo-side-title,
+html[data-fo-dark="1"] .fo-status,
+html[data-fo-dark="1"] .fo-empty{ color: #8fa79a !important; }
+html[data-fo-dark="1"] .fo-side-item{ color: #cfe3d8 !important; }
+html[data-fo-dark="1"] .fo-side-item.is-active{
+  background: color-mix(in srgb, var(--fo-accent) 22%, transparent) !important;
+  color: #e6f1ea !important;
+}
+html[data-fo-dark="1"] .fo-seg{ background: #1d2521 !important; }
+html[data-fo-dark="1"] .fo-segbtn{ color: #b9cec2 !important; }
+html[data-fo-dark="1"] .fo-segbtn.is-on{ background: #2b3a32 !important; color: #ffffff !important; }
+html[data-fo-dark="1"] .fo-search,
+html[data-fo-dark="1"] .fo-search-input{
+  background: #1d2521 !important;
+  border-color: #31403a !important;
+  color: #e6f1ea !important;
+}
+html[data-fo-dark="1"] .fo-tb{ background: transparent !important; color: #cfe3d8 !important; }
+html[data-fo-dark="1"] .fo-tb:hover{ background: #243029 !important; }
+html[data-fo-dark="1"] .fo-title{ color: #e6f1ea !important; }
+html[data-fo-dark="1"] .fo-crumb{ color: #cfe3d8 !important; }
+html[data-fo-dark="1"] .fo-crumb:hover{ background: #243029 !important; }
+html[data-fo-dark="1"] .fo-listhead span{ color: #8fa79a !important; }
+html[data-fo-dark="1"] .fo-modal-card{ background: #1a211d !important; color: #e6f1ea !important; }
+html[data-fo-dark="1"] .fo-modal-input{ background: #101613 !important; color: #e6f1ea !important; border-color: #31403a !important; }
+html[data-fo-dark="1"] .fo-btn{ background: #1d2521 !important; color: #e6f1ea !important; border-color: #31403a !important; }
+html[data-fo-dark="1"] .fo-menu{ background: #101613 !important; border-color: #31403a !important; color: #e6f1ea !important; }
+html[data-fo-dark="1"] .fo-menu-item:hover{ background: #243029 !important; }
+html[data-fo-dark="1"] .fo-applist .fo-approw{ background: #1d2521 !important; color: #e6f1ea !important; border-color: #31403a !important; }
+
+/* ==========================================================================
+   3.2 — всплывающие уведомления и тёмный AppsHouse
+   ========================================================================== */
+#fo-notif-toasts{
+  position: fixed; top: 44px; right: 12px; z-index: 100040;
+  display: flex; flex-direction: column; gap: 8px; max-width: 320px; pointer-events: none;
+}
+.fo-notif-toast{
+  pointer-events: auto; cursor: default;
+  background: color-mix(in srgb, var(--fo-shell-base, #101312) 92%, transparent);
+  border: 1px solid color-mix(in srgb, var(--fo-accent) 34%, transparent);
+  border-left: 3px solid var(--fo-accent);
+  border-radius: 10px; padding: 9px 12px; color: var(--fo-theme-text, #eef2ef);
+  box-shadow: 0 14px 34px rgba(0,0,0,.42);
+  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+  font: 12px/1.35 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  animation: fo-nt-in .18s ease;
+  transition: opacity .25s ease, transform .25s ease;
+}
+.fo-notif-toast.fo-out{ opacity: 0; transform: translateX(16px); }
+.fo-nt-app{ font-size: 10.5px; text-transform: uppercase; letter-spacing: .05em; opacity: .6; margin-bottom: 3px; }
+.fo-nt-title{ font-weight: 700; font-size: 12.5px; margin-bottom: 2px; }
+.fo-nt-body{ color: color-mix(in srgb, var(--fo-theme-text, #eef2ef) 82%, transparent); }
+@keyframes fo-nt-in{ from{ opacity:0; transform: translateY(-6px);} to{ opacity:1; transform:none;} }
+
+/* AppsHouse в тёмной теме */
+html[data-fo-dark="1"] .st-tab{ color:#cfe3d8 !important; }
+html[data-fo-dark="1"] .st-tab:hover{ background:#243029 !important; }
+html[data-fo-dark="1"] .st-tab.is-on{ background:var(--fo-accent) !important; color:#0b160f !important; }
+html[data-fo-dark="1"] .st-card,
+html[data-fo-dark="1"] .st-row,
+html[data-fo-dark="1"] .st-repo{ background:#1a211d !important; border-color:#2a3530 !important; }
+html[data-fo-dark="1"] .st-name{ color:#e6f1ea !important; }
+html[data-fo-dark="1"] .st-sub,
+html[data-fo-dark="1"] .st-desc,
+html[data-fo-dark="1"] .st-meta,
+html[data-fo-dark="1"] .st-empty,
+html[data-fo-dark="1"] .st-note,
+html[data-fo-dark="1"] .st-repo-url{ color:#8fa79a !important; }
+html[data-fo-dark="1"] .st-dialog{ background:#151a17 !important; color:#e6f1ea !important; border-color:#2a3530 !important; }
+html[data-fo-dark="1"] .st-field input,
+html[data-fo-dark="1"] .st-field textarea{ background:#101613 !important; color:#e6f1ea !important; border-color:#31403a !important; }
+html[data-fo-dark="1"] .st-publish-list{ background:#101613 !important; border-color:#2a3530 !important; }
+html[data-fo-dark="1"] .st-publish-note code{ background:#243029 !important; color:#cfe3d8 !important; }
+html[data-fo-dark="1"] .st-badge{ background:#243029 !important; color:#cfe3d8 !important; }
+html[data-fo-dark="1"] .st-badge.ok{ background:color-mix(in srgb, var(--fo-accent) 26%, #151a17) !important; color:#d8f5e4 !important; }
+html[data-fo-dark="1"] .st-search,
+html[data-fo-dark="1"] .st-sort,
+html[data-fo-dark="1"] .st-btn{ background:#1d2521 !important; color:#e6f1ea !important; border-color:#31403a !important; }
+html[data-fo-dark="1"] .st-btn.primary{ background:var(--fo-accent) !important; color:#0b160f !important; }
+html[data-fo-dark="1"] .st-btn.danger:hover{ background:#3a2320 !important; }
+html[data-fo-dark="1"] .st-ico{ background-color:#243029 !important; }
+html[data-fo-dark="1"] .st-form{ background:#101613 !important; border-color:#2a3530 !important; }
+
+/* ==========================================================================
+   3.3 — Node-режим: сокеты, провода, панель
+   ========================================================================== */
+#fo-node-layer{
+  position: fixed; inset: 0; z-index: 9000; pointer-events: none; display: none;
+}
+#fo-node-layer.is-on{ display: block; }
+.fo-node-wires{ position: absolute; inset: 0; pointer-events: none; overflow: visible; }
+.fo-node-wire{
+  fill: none; stroke: var(--fo-accent, #5fe08c); stroke-width: 2.4;
+  opacity: .9; filter: drop-shadow(0 0 6px color-mix(in srgb, var(--fo-accent) 45%, transparent));
+}
+.fo-node-wire.is-drag{ stroke-dasharray: 6 5; opacity: .75; }
+.fo-node-wire-dot{
+  fill: #151a17; stroke: var(--fo-accent, #5fe08c); stroke-width: 2;
+  pointer-events: auto; cursor: default;
+}
+.fo-node-wire-dot:hover{ fill: var(--fo-accent); }
+.fo-node-anchor{
+  position: absolute; width: 14px; height: 14px; margin: -7px 0 0 -7px;
+  border-radius: 50%; pointer-events: auto; cursor: crosshair;
+  border: 2px solid var(--fo-accent, #5fe08c); background: #0d1512;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--fo-accent) 20%, transparent);
+  transition: transform .12s ease, background-color .12s ease;
+}
+.fo-node-anchor:hover{ transform: scale(1.25); background: var(--fo-accent); }
+.fo-node-out{ background: var(--fo-accent); }
+.fo-node-in{ border-style: dashed; }
+#fo-node-panel{
+  position: absolute; left: 50%; bottom: 18px; transform: translateX(-50%);
+  pointer-events: auto; width: min(560px, 92vw);
+  background: color-mix(in srgb, var(--fo-shell-base, #101312) 94%, transparent);
+  border: 1px solid color-mix(in srgb, var(--fo-accent) 36%, transparent);
+  border-radius: 12px; padding: 10px 12px; color: #eef2ef;
+  box-shadow: 0 18px 44px rgba(0,0,0,.5); backdrop-filter: blur(16px);
+  font: 12px/1.35 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  z-index: 9001;
+}
+.fo-np-title{ font-weight: 700; font-size: 12.5px; margin-bottom: 6px; letter-spacing: .02em; }
+.fo-np-name{
+  width: 100%; height: 28px; padding: 0 10px; margin-bottom: 8px;
+  border-radius: 8px; border: 1px solid #31403a; background: rgba(255,255,255,.06); color: #eef2ef;
+}
+.fo-np-actions{ display: flex; gap: 6px; flex-wrap: wrap; }
+.fo-np-actions button{
+  height: 26px; padding: 0 10px; border-radius: 7px; border: 1px solid #31403a;
+  background: rgba(255,255,255,.08); color: #eef2ef; font: 600 11.5px/1 inherit; cursor: default;
+}
+.fo-np-actions button:hover{ background: rgba(255,255,255,.16); }
+.fo-np-off{ border-color: #5c2f2c !important; color: #ffb4ac !important; }
+.fo-np-list{ margin-top: 8px; max-height: 120px; overflow: auto; display: flex; flex-direction: column; gap: 4px; }
+.fo-np-item{ display: flex; align-items: center; gap: 8px; padding: 4px 2px; border-top: 1px solid rgba(255,255,255,.08); }
+.fo-np-item span{ flex: 1 1 auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fo-np-item button{ height: 22px; padding: 0 8px; border-radius: 6px; border: 1px solid #31403a; background: rgba(255,255,255,.08); color: #eef2ef; font: 600 11px/1 inherit; cursor: default; }
+.fo-np-empty{ color: #9fb3a8; font-size: 11.5px; padding: 4px 0; }
+body.fo-node-mode .window{ outline: 1px dashed color-mix(in srgb, var(--fo-accent) 35%, transparent); }
+
+/* ---------- Node-режим 2.0: элементы, режимы, очередь -------------------- */
+.fo-node-anchor.is-element{ width: 11px; height: 11px; margin: -5.5px 0 0 -5.5px; border-width: 1.5px; }
+.fo-node-anchor.is-element.fo-node-out{ background: #ffd166; border-color: #ffd166; }
+.fo-node-anchor.is-element.fo-node-in{ border-color: #7fd1ff; }
+.fo-node-wire.is-file{ stroke: #ffd166; }
+.fo-np-head{ display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.fo-np-head .fo-np-title{ margin-bottom: 0; flex: 0 0 auto; }
+.fo-np-modes{ display: inline-flex; gap: 2px; background: rgba(255,255,255,.07); border-radius: 7px; padding: 2px; }
+.fo-np-modes button{ height: 22px; padding: 0 9px; border: 0; border-radius: 5px; background: transparent; color: #cfe3d8; font: 600 11px/1 inherit; cursor: default; }
+.fo-np-modes button.is-on{ background: var(--fo-accent, #5fe08c); color: #0b160f; }
+.fo-np-head .fo-np-off{ margin-left: auto; height: 24px; padding: 0 10px; }
+.fo-np-row{ display: flex; gap: 6px; align-items: center; margin-bottom: 6px; }
+.fo-np-row .fo-np-name{ margin-bottom: 0; flex: 1 1 auto; }
+.fo-np-row button{ height: 26px; padding: 0 10px; border-radius: 7px; border: 1px solid #31403a; background: rgba(255,255,255,.08); color: #eef2ef; font: 600 11.5px/1 inherit; cursor: default; }
+.fo-np-row button:hover{ background: rgba(255,255,255,.16); }
+.fo-np-run-row{ display: none; }
+.fo-np-run{ background: var(--fo-accent, #5fe08c) !important; border-color: transparent !important; color: #0b160f !important; }
+.fo-np-queue{ color: #9fb3a8; font-size: 11px; }
+
+/* Node-режим: кнопка в баре и позиция панели */
+#fo-node-btn{ font-size: 13px; line-height: 1; }
+body.fo-node-mode #fo-node-btn{
+  background: var(--fo-accent) !important;
+  color: #0b160f !important;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--fo-accent) 28%, transparent);
+}
+@media (min-width: 761px){
+  #fo-node-panel{ bottom: 112px !important; }
+}
+
+/* Node-режим: кнопки-действия и кнопки-события */
+.fo-node-anchor.is-action{ border-style: solid; border-color: #ff9f6b; background: #1d1410; }
+.fo-node-anchor.is-event{ border-style: solid; border-color: #9fe08c; background: #16200f; }
+.fo-node-anchor.is-element.fo-node-in.is-action{ background: #241a12; }
+.fo-node-anchor.is-element.fo-node-out.is-event{ background: #1a2412; }
+.fo-node-flash{ animation: fo-node-flash .55s ease; }
+@keyframes fo-node-flash{
+  0%{ box-shadow: 0 0 0 2px var(--fo-accent), 0 0 18px color-mix(in srgb, var(--fo-accent) 60%, transparent); }
+  100%{ box-shadow: none; }
+}
+
+.fo-np-hint{ margin-top: 8px; color: #8fa79a; font-size: 10.5px; line-height: 1.3; }
+
+/* ==========================================================================
+   3.7 — MOBILE SHELL (только узкие экраны; десктоп не затрагивается)
+   ========================================================================== */
+@media (max-width: 760px) {
+  :root { --fo-mb-bar: 58px; }
+
+  body.fo-mobile #fo-mobile-bar {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 100050;
+    height: calc(var(--fo-mb-bar) + env(safe-area-inset-bottom, 0px));
+    padding: 0 10px env(safe-area-inset-bottom, 0px);
+    display: flex; align-items: center; justify-content: space-around;
+    background: color-mix(in srgb, var(--fo-shell-base, #0f1311) 88%, transparent);
+    border-top: 1px solid rgba(255,255,255,.10);
+    backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+  }
+  body.fo-mobile #fo-mobile-bar button {
+    position: relative; flex: 0 0 64px; height: 46px;
+    display: inline-flex; align-items: center; justify-content: center;
+    border: 0; border-radius: 12px; background: transparent;
+    color: var(--fo-theme-text, #eef2ef); font-size: 20px; line-height: 1;
+    -webkit-tap-highlight-color: transparent;
+  }
+  body.fo-mobile #fo-mobile-bar button:active { background: rgba(255,255,255,.12); }
+  body.fo-mobile #fo-mobile-bar #fo-mb-count {
+    position: absolute; top: 4px; right: 8px; min-width: 17px; height: 17px; padding: 0 4px;
+    border-radius: 9px; background: var(--fo-accent); color: #0b160f;
+    font: 700 10.5px/17px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    font-style: normal; text-align: center;
+  }
+  body.fo-mobile #fo-mobile-bar #fo-mb-count:empty,
+  body.fo-mobile #fo-mobile-bar #fo-mb-count[style*="none"] { display: none; }
+
+  /* приложение = полноэкранное окно */
+  body.fo-mobile .window {
+    position: fixed !important;
+    left: 0 !important;
+    top: var(--fo-bar-h) !important;
+    width: 100vw !important;
+    height: calc(100dvh - var(--fo-bar-h) - var(--fo-mb-bar)) !important;
+    max-width: 100vw !important;
+    max-height: none !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    transition: transform .18s ease;
+  }
+  body.fo-mobile .window:not(.windowactive) { display: none !important; }
+  body.fo-mobile .window .dragwindow {
+    height: 44px !important; border-radius: 0 !important;
+    padding-left: 10px;
+  }
+  body.fo-mobile .window .appwindowbutton { width: 42px !important; height: 40px !important; font-size: 15px; }
+  body.fo-mobile .ui-resizable-handle { display: none !important; }
+  body.fo-mobile .window .windowcontent, body.fo-mobile .window .process-container { height: 100% !important; }
+
+  /* док: выезжает по кнопке, когда открыто приложение — скрыт */
+  body.fo-mobile .dock-container {
+    bottom: calc(var(--fo-mb-bar) + 10px + env(safe-area-inset-bottom, 0px)) !important;
+    left: 50% !important; transform: translate(-50%, 160%) !important;
+    opacity: 0; pointer-events: none;
+    transition: transform .22s ease, opacity .22s ease;
+    max-width: 94vw; overflow-x: auto;
+  }
+  body.fo-mobile.fo-mb-dock .dock-container {
+    transform: translate(-50%, 0) !important; opacity: 1; pointer-events: auto;
+  }
+  body.fo-mobile .dock-container .dock-icon { width: 54px !important; height: 54px !important; }
+
+  /* на мобильном прячем лишние кнопки бара */
+  body.fo-mobile #fastbuttons { display: none !important; }
+  body.fo-mobile .desktop .link .title { font-size: 11px; }
+
+  /* переключатель запущенных приложений */
+  #fo-mb-switcher {
+    position: fixed; inset: 0; z-index: 100060; display: none;
+    background: rgba(6, 10, 8, .66);
+    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    padding: calc(var(--fo-bar-h) + 8px) 12px calc(var(--fo-mb-bar) + 14px);
+    flex-direction: column; gap: 10px;
+    font: 13px/1.3 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  }
+  #fo-mb-switcher.is-on { display: flex; }
+  #fo-mb-switcher .fo-mb-sheet-head {
+    display: flex; align-items: center; justify-content: space-between;
+    color: #eef2ef; padding: 4px 4px 2px;
+  }
+  #fo-mb-switcher .fo-mb-sheet-head b { font-size: 13px; font-weight: 700; letter-spacing: .02em; }
+  #fo-mb-switcher .fo-mb-close {
+    height: 30px; padding: 0 14px; border-radius: 15px; border: 1px solid rgba(255,255,255,.18);
+    background: rgba(255,255,255,.10); color: #eef2ef; font: 600 12px/1 inherit;
+  }
+  #fo-mb-switcher .fo-mb-cards {
+    flex: 1 1 auto; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .fo-mb-card {
+    display: flex; align-items: center; gap: 12px; padding: 12px;
+    border-radius: 14px; background: rgba(255,255,255,.09);
+    border: 1px solid rgba(255,255,255,.10); color: #eef2ef;
+  }
+  .fo-mb-card.is-active { border-color: var(--fo-accent); box-shadow: 0 0 0 1px var(--fo-accent) inset; }
+  .fo-mb-card:active { background: rgba(255,255,255,.16); }
+  .fo-mb-ico {
+    width: 42px; height: 42px; flex: 0 0 42px; border-radius: 11px;
+    background: rgba(255,255,255,.10) center/cover no-repeat;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 17px; color: var(--fo-accent);
+  }
+  .fo-mb-name { flex: 1 1 auto; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .fo-mb-kill {
+    flex: 0 0 34px; width: 34px; height: 34px; border-radius: 50%;
+    border: 1px solid rgba(255,255,255,.18); background: rgba(255,255,255,.08);
+    color: #ffb4ac; font-size: 14px; line-height: 1;
+  }
+  .fo-mb-empty { color: #9fb3a8; padding: 28px 8px; text-align: center; }
+
+  /* меню (контекстные) — крупнее под палец */
+  #fo-desk-menu, #fo-node-menu, .fo-node-menu { font-size: 15px !important; }
+  #fo-desk-menu > div, #fo-node-menu > div { padding: 14px 16px !important; }
+
+  /* панель node-режима не мешает */
+  #fo-node-panel { bottom: calc(var(--fo-mb-bar) + 10px) !important; }
+
+  /* отключаем выделение и каллаут при долгом нажатии */
+  body.fo-mobile .desktop, body.fo-mobile .dock-container,
+  body.fo-mobile .dragwindow, body.fo-mobile #fo-mobile-bar {
+    -webkit-user-select: none; user-select: none;
+    -webkit-touch-callout: none;
+  }
+  body.fo-mobile #desktops { overflow: hidden; }
+}
+
+/* ---------- мобильные окна без рамки: заголовок в системном баре ---------- */
+@media (max-width: 760px) {
+  body.fo-mobile .window .dragwindow { display: none !important; }
+  body.fo-mobile .window {
+    top: var(--fo-bar-h) !important;
+    height: calc(100dvh - var(--fo-bar-h) - var(--fo-mb-bar)) !important;
+  }
+  body.fo-mobile .window .windowcontent,
+  body.fo-mobile .window .process-container { overflow-x: auto; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+  body.fo-mobile #fo-mb-close { display: none; }
+  body.fo-mobile.fo-mb-app #fo-mb-close {
+    display: inline-flex; align-items: center; justify-content: center;
+    background: rgba(255, 90, 80, .18); color: #ffb4ac; font-size: 18px; font-weight: 700;
+  }
+  body.fo-mobile #fo-mb-close:active { background: rgba(255, 90, 80, .34); }
+}
+
+/* ---------- мобильные детали: без кнопок окна, прокрутка вкладок ---------- */
+@media (max-width: 760px) {
+  body.fo-mobile .window .appwindowbutton { display: none !important; }
+  body.fo-mobile .window [class*="mnav"],
+  body.fo-mobile .window [class*="tabs"],
+  body.fo-mobile .window [class*="toolbar"] { overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  body.fo-mobile .window [class*="mnav"]::-webkit-scrollbar,
+  body.fo-mobile .window [class*="tabs"]::-webkit-scrollbar { display: none; }
+  body.fo-mobile .desktop .link { transform: scale(1.12); transform-origin: top left; }
+  body.fo-mobile .dock-container { max-width: 96vw; overflow-x: auto; }
+}
+
+/* бар мобильный существует только на узком экране */
+#fo-mobile-bar{ display: none; }
+#fo-mb-close{ display: none; }
+
+/* ---------- мобильный переключатель: иконки и подсказка ---------- */
+@media (max-width: 760px) {
+  body.fo-mobile #fo-node-btn { display: none; }
+  .fo-mb-ico {
+    background-image: none;
+    background: linear-gradient(160deg, color-mix(in srgb, var(--fo-accent) 42%, #101613), rgba(255,255,255,.06));
+    color: #0b160f; font-size: 19px; font-weight: 800; letter-spacing: .01em;
+  }
+  .fo-mb-ico span { display: block; line-height: 1; }
+  .fo-mb-hint { color: #8fa79a; font-size: 11.5px; padding: 0 4px 2px; }
+  .fo-mb-card { padding: 11px 12px; }
+  .fo-mb-name { font-size: 14.5px; }
+}
+
+/* аватар приложения в переключателе */
+@media (max-width: 760px) {
+  .fo-mb-ico { color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,.35); }
+}
+
+/* ==========================================================================
+   3.8 — мобильные правки: панель, свайп, блюр бара, «сохранить фото»
+   ========================================================================== */
+@media (max-width: 760px) {
+  /* --- нижняя панель: аккуратные SVG-кнопки --- */
+  body.fo-mobile #fo-mobile-bar {
+    height: calc(62px + env(safe-area-inset-bottom, 0px));
+    padding: 0 18px env(safe-area-inset-bottom, 0px);
+    gap: 6px;
+    justify-content: space-between;
+    background: color-mix(in srgb, var(--fo-shell-base, #0f1311) 82%, transparent);
+    border-top: 1px solid rgba(255, 255, 255, .08);
+  }
+  body.fo-mobile #fo-mobile-bar button {
+    flex: 0 0 56px; height: 46px; border-radius: 15px;
+    color: color-mix(in srgb, var(--fo-theme-text, #eef2ef) 78%, transparent);
+    transition: background-color .16s ease, color .16s ease, transform .12s ease;
+  }
+  body.fo-mobile #fo-mobile-bar button svg {
+    width: 23px; height: 23px;
+    fill: none; stroke: currentColor; stroke-width: 1.7;
+    stroke-linecap: round; stroke-linejoin: round;
+  }
+  body.fo-mobile #fo-mobile-bar button svg .dot { fill: currentColor; stroke: none; }
+  body.fo-mobile #fo-mobile-bar button:active { background: rgba(255,255,255,.10); transform: scale(.94); }
+  body.fo-mobile #fo-mobile-bar button:active svg { stroke-width: 1.9; }
+  body.fo-mobile #fo-mobile-bar #fo-mb-apps { color: var(--fo-theme-text, #eef2ef); }
+  body.fo-mobile.fo-mb-switcher-open #fo-mobile-bar [data-mb="apps"],
+  body.fo-mobile.fo-mb-dock #fo-mobile-bar [data-mb="dock"] {
+    background: color-mix(in srgb, var(--fo-accent) 22%, transparent);
+    color: var(--fo-accent);
+  }
+  body.fo-mobile #fo-mobile-bar #fo-mb-count {
+    top: 3px; right: 6px; min-width: 18px; height: 18px;
+    border-radius: 9px; background: var(--fo-accent); color: #0b160f;
+    font: 700 10.5px/18px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    font-style: normal; box-shadow: 0 1px 4px rgba(0,0,0,.35);
+  }
+  body.fo-mobile #fe-fix, body.fo-mobile #fo-mb-count[style*="display: none"] { display: none; }
+
+  /* --- блюр верхнего бара не пропадает: шторка ниже бара и под ним --- */
+  #fo-mb-switcher {
+    top: var(--fo-bar-h) !important;
+    z-index: 100000 !important;
+    padding-top: 10px;
+  }
+  body.fo-mobile #topbar.fo-bar {
+    z-index: 100001;
+    backdrop-filter: blur(18px) saturate(1.4);
+    -webkit-backdrop-filter: blur(18px) saturate(1.4);
+  }
+  #fo-mb-switcher .fo-mb-head-actions { display: flex; gap: 8px; align-items: center; }
+  #fo-mb-switcher .fo-mb-closeall {
+    height: 30px; padding: 0 12px; border-radius: 15px;
+    border: 1px solid rgba(255, 120, 110, .38);
+    background: rgba(255, 90, 80, .14); color: #ffb9b1;
+    font: 600 12px/1 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  }
+  #fo-mb-switcher .fo-mb-closeall.is-off { opacity: .45; }
+  #fo-mb-switcher .fo-mb-closeall:active { background: rgba(255, 90, 80, .26); }
+
+  /* --- iOS: не предлагать «Сохранить фото» и не выделять оболочку --- */
+  body.fo-mobile {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  body.fo-mobile .backgroundtheme,
+  body.fo-mobile .backgroundtheme img,
+  body.fo-mobile #background-container,
+  body.fo-mobile #background-container img,
+  body.fo-mobile .desktop,
+  body.fo-mobile .desktop * {
+    -webkit-touch-callout: none !important;
+    -webkit-user-select: none !important;
+    user-select: none !important;
+  }
+  body.fo-mobile .backgroundtheme,
+  body.fo-mobile .backgroundtheme img,
+  body.fo-mobile #background-container img { pointer-events: none !important; }
+  /* в приложениях текст по-прежнему можно выделять */
+  body.fo-mobile .window .fo-app,
+  body.fo-mobile .window .fo-app *,
+  body.fo-mobile .window input,
+  body.fo-mobile .window textarea,
+  body.fo-mobile .window [contenteditable="true"] {
+    -webkit-user-select: text; user-select: text;
+  }
+}
+
+/* ==========================================================================
+   3.9 — часы, разделители дока, иконки разделов настроек
+   ========================================================================== */
+
+/* часы строго по центру по вертикали */
+#topbar .fo-bar-center { display: flex; align-items: center; justify-content: center; height: 100%; }
+.fo-bar-clock {
+  align-items: center !important;
+  height: 28px !important;
+  line-height: 1;
+  padding-top: 0; padding-bottom: 0;
+}
+.fo-bar-clock .fo-bar-time, .fo-bar-clock .fo-bar-date { line-height: 1; display: inline-flex; align-items: center; }
+
+/* разделители в доке */
+.dock-separator {
+  flex: 0 0 auto;
+  width: 1px;
+  align-self: stretch;
+  margin: 8px 6px;
+  border-radius: 1px;
+  background: color-mix(in srgb, var(--fo-theme-text, #fff) 26%, transparent);
+  opacity: .75;
+}
+@media (max-width: 760px) {
+  .dock-separator { margin: 10px 5px; }
+}
+
+/* иконки разделов настроек: настоящие SVG вместо серых квадратов */
+.set-nav .dot {
+  width: 18px; height: 18px; flex: 0 0 18px;
+  background: none !important;
+  display: inline-flex; align-items: center; justify-content: center;
+  color: color-mix(in srgb, var(--set-ink, #1d1d1f) 62%, transparent);
+}
+.set-nav .dot svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.set-nav.is-on .dot { color: #0b160f; }
+html[data-fo-dark="1"] .set-nav .dot { color: #cfe3d8; }
+html[data-fo-dark="1"] .set-nav.is-on .dot { color: #0b160f; }
+
+/* ---------- диалог «Создать папку/файл» ---------- */
+.fo-newdlg{
+  position: fixed; inset: 0; z-index: 100090;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(6, 10, 8, .5); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  font: 13px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+}
+.fo-newdlg-card{
+  width: min(360px, 92vw); padding: 16px;
+  border-radius: 14px; background: var(--fo-win-body, #fbfbfd); color: var(--fo-text, #151a17);
+  box-shadow: 0 24px 60px rgba(0,0,0,.45); border: 1px solid color-mix(in srgb, var(--fo-accent) 24%, transparent);
+}
+.fo-newdlg-title{ font-weight: 700; font-size: 14px; margin-bottom: 10px; }
+.fo-newdlg-input{
+  width: 100%; height: 36px; padding: 0 11px; border-radius: 9px;
+  border: 1px solid color-mix(in srgb, var(--fo-text) 18%, transparent);
+  background: color-mix(in srgb, var(--fo-win-body) 88%, #000 2%); color: var(--fo-text);
+  font: 13px/1 inherit; outline: none;
+}
+.fo-newdlg-input:focus{ border-color: var(--fo-accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--fo-accent) 22%, transparent); }
+.fo-newdlg-actions{ display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px; }
+.fo-newdlg-actions button{
+  height: 32px; padding: 0 14px; border-radius: 9px; cursor: default;
+  border: 1px solid color-mix(in srgb, var(--fo-text) 16%, transparent);
+  background: transparent; color: var(--fo-text); font: 600 12.5px/1 inherit;
+}
+.fo-newdlg-actions button.primary{ background: var(--fo-accent); border-color: transparent; color: #0b160f; }
+.fo-newdlg-actions button:active{ transform: scale(.97); }
+html[data-fo-dark="1"] .fo-newdlg-card{ background: #1a211d; border-color: #31403a; }
+html[data-fo-dark="1"] .fo-newdlg-input{ background: #101613; border-color: #31403a; color: #e6f1ea; }
+html[data-fo-dark="1"] .fo-newdlg-actions button{ border-color: #31403a; color: #e6f1ea; }
+
+/* ==========================================================================
+   4.0 — иконки файлов на рабочем столе и подсветка ярлыков
+   ========================================================================== */
+
+/* файл: белая страница + иконка приложения по центру */
+.desktop .iconimage { position: relative; }
+.desktop .iconimage .filebadge {
+  position: absolute;
+  left: 50%; top: 54%;
+  width: 26px; height: 26px;
+  margin: -13px 0 0 -13px;
+  background: center / contain no-repeat;
+  border-radius: 6px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, .28));
+  pointer-events: none;
+}
+.desktop .iconimage .filebadge::after { content: none; }
+
+/* страница чуть крупнее, чтобы читалась как «файл» */
+.desktop .link[data-file] .iconimage { width: 58px !important; height: 58px !important; }
+
+/* подсветка ярлыка целиком, по наведению в любую его точку */
+.desktop .link .ico {
+  z-index: 1 !important;
+  border-radius: 14px;
+  transition: background-color .14s ease, transform .14s ease;
+}
+.desktop .link:hover .ico,
+.desktop .link .ico:hover {
+  background-color: rgba(255, 255, 255, .16) !important;
+}
+.desktop .link:active .ico { transform: scale(.97); }
+
+/* подпись не должна перекрывать подсветку */
+.desktop .link .linktheme { position: relative; z-index: 2; pointer-events: none; }
+/* внутренняя обёртка не перекрывает подсветку; сама иконка (.ico) остаётся интерактивной */
+.desktop .link [id^="icon"]:not(.clickme) { background: transparent !important; }
+
+/* страница файла сохраняет пропорции, бейдж приложения — чуть крупнее */
+.desktop .link .iconimage[style*="file-doc"] {
+  background-size: contain !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+}
+.desktop .iconimage .filebadge {
+  width: 30px; height: 30px; margin: -15px 0 0 -15px;
+  border-radius: 7px;
+  background-color: rgba(255, 255, 255, .92);
+  background-size: 82% !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .22);
+}
+
+/* квадратная «страница» файла: занимает всю площадь иконки, как папка */
+.desktop .link .iconimage[style*="file-doc"] {
+  background-size: 100% 100% !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  width: 58px !important;
+  height: 58px !important;
+}
+.desktop .iconimage .filebadge {
+  width: 26px; height: 26px; margin: -13px 0 0 -13px;
+  border-radius: 6px;
+  background-color: transparent;
+  background-size: contain !important;
+  box-shadow: none;
+  top: 50%;
+}
+
+/* бейдж приложения читаемее */
+.desktop .iconimage .filebadge {
+  width: 30px; height: 30px; margin: -15px 0 0 -15px;
+}
+
+/* ==========================================================================
+   4.1 — сетка рабочего стола, курсор ярлыков
+   ========================================================================== */
+
+/* сетка-подсказка появляется только во время перетаскивания */
+#fo-desktop-grid {
+  position: fixed;
+  left: 0; right: 0;
+  top: var(--fo-bar-h, 34px);
+  bottom: 96px;
+  z-index: 4;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .16s ease;
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, .10) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, .10) 1px, transparent 1px);
+  background-size: 108px 116px;
+}
+body.fo-grid-drag #fo-desktop-grid { opacity: 1; }
+
+/* ярлык плавно доезжает до клетки */
+.desktop .link.fo-snapping { transition: left .2s ease, top .2s ease; }
+
+/* обычный курсор-стрелка, а не «перекрестие» перемещения */
+.desktop .link,
+.desktop .link .ico { cursor: default; }
+.desktop .link .ico:active { cursor: default; }
+
+/* сетка-подсказка: координаты задаёт JS, чтобы линии совпадали с клетками */
+#fo-desktop-grid {
+  position: fixed;
+}
+
+/* внутренний слой иконки никогда не подсвечивается — только широкий ярлык */
+.desktop .link [id^="icon"]:not([id^="icons"]) {
+  background-color: transparent !important;
+}

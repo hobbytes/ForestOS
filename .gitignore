@@ -1,0 +1,36 @@
+# --- секреты и локальная среда ---------------------------------------------
+.env
+.env.local
+.env.*.local
+
+# сгенерированные при установке
+/system/core/library/bd_inc.php
+/system/instance.foc
+
+# пользовательские данные и «диск»
+/system/users/*
+!/system/users/.gitkeep
+/data/*
+
+# состояние работы (генерируется)
+/system/core/journal.mcj
+/system/core/TempTable/*.foc
+/system/core/library/etc/*.bak
+
+# артефакты сборки и резервные копии
+*.bak
+*.bak-*
+*.tar.gz
+*.zip
+/makeprocess.php
+/system/apps/update/temp/
+
+# логи и мусор ОС
+*.log
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/
+__pycache__/
+node_modules/

@@ -28,8 +28,20 @@ $auth = new AuthClassUser();
 $auth->checkout();
 $prepare->showversion();
 $prepare->language();
+
+$forestGuestMode = !(isset($_SESSION["is_authuser"]) && $_SESSION["is_authuser"] === true && !empty($_SESSION["loginuser"]));
+
+if($forestGuestMode){
+  $_SESSION["loginuser"] = getenv("FOREST_ADMIN_LOGIN") ?: "admin";
+  $_SESSION["safemode"] = "false";
+}
+
 $prepare->start();
 $prepare->wall();
+
+if($forestGuestMode){
+  $_SESSION["is_authuser"] = false;
+}
 
 ?>
 <body style="position:fixed; width:100%; height:100%; z-index:-2000; overflow-x:hidden; overflow-y:hidden; transition: all 0.5s ease; text-rendering: optimizeLegibility;" class="ui-body backgroundtheme" >
@@ -38,7 +50,7 @@ $prepare->wall();
   </div>
 <?
 
-if(isset($_SESSION['loginuser'])){
+if(isset($_SESSION["is_authuser"]) && $_SESSION["is_authuser"] === true && !empty($_SESSION["loginuser"])){
 $prepare->themeload();
 $prepare->DisplaySettings();
 $prepare->welcomescreen();
@@ -50,22 +62,23 @@ $infob->beacon();
   $prepare->hibernation();
   ?>
 </div>
-<div id="notifications" class="notificationhide" style="display:block; position:absolute; right: 0; height: 100%; padding: 10px; transition:all 0.2s ease; z-index:2;">
-  <div id="notificationTopLabel" style="width:310px; color:#fff; font-size:20pt; text-align:center; user-select: none; cursor: default; display:none; padding: 10 0; background: rgba(160,160,160,0.9);">
-    <div id="fulltime" style="font-size:20pt;">
-    </div>
-    <div class="date_" style="font-size:10pt;">
-      <?php echo date('d.m.Y')?>
-    </div>
-    <div style="font-weight:600; padding: 10 0; text-transform: uppercase; font-size: 18pt;">
+<div id="notifications" class="fo-notif-panel notificationhide" aria-label="<? echo $language[$_SESSION['locale'].'_notification_label']; ?>">
+  <div class="fo-notif-head">
+    <div class="fo-notif-head-title">
       <? echo $language[$_SESSION['locale'].'_notification_label']; ?>
+      <span id="fo-notif-count" class="fo-notif-count fo-hidden">0</span>
     </div>
-    <div id="clearNotifications" class="not-btn ui-forest-blink" onclick="NotificationClear();" style="font-size: 10pt; background: rgba(244,67,54,0.61); width:fit-content; padding:7px; margin:20 0; float:right; color:#fff; cursor:default; user-select: none;">
-      <? echo $language[$_SESSION['locale'].'_notification_clear']; ?>
+    <div class="fo-notif-head-actions">
+      <button type="button" id="clearNotifications" class="fo-notif-clear" onclick="NotificationClear();"><? echo $language[$_SESSION['locale'].'_notification_clear']; ?></button>
+      <button type="button" class="fo-notif-x" title="Закрыть" onclick="$('#notifications').removeClass('notificationshow');">&#215;</button>
     </div>
   </div>
-  <div id="notification-container">
+  <div class="fo-notif-sub">
+    <span id="fulltime"></span>
+    <span class="fo-notif-date"><?php echo date('d.m.Y')?></span>
   </div>
+  <div id="notification-container" class="fo-notif-list fo-scroll"></div>
+  <div id="fo-notif-empty" class="fo-notif-empty">Пока нет уведомлений</div>
 </div>
 
 <div id="desktops">
@@ -95,6 +108,10 @@ var id = <? echo $_SESSION['appid'] = $_SESSION['appid'] + 1 ?>;
 require 'system/core/library/js/core-js.php';
 ?>
 </script>
+<script src="<?echo $hashfile->filehash('system/core/library/js/launcher.js')?>"></script>
+<script src="<?echo $hashfile->filehash('system/core/library/js/nodes.js')?>"></script>
+<script src="<?echo $hashfile->filehash('system/core/library/js/mobile.js')?>"></script>
+<script src="<?echo $hashfile->filehash('system/core/library/js/shell-refresh.js')?>"></script>
 </body>
 </html>
 <?

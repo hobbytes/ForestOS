@@ -16,3 +16,6 @@ draggablefontcolor="#1E1E1E;"
 [background]
 backgroundcolor="#141516;"
 backgroundfontcolor="#FFC235;"
+
+[accent]
+accentcolor="#ffc235"
