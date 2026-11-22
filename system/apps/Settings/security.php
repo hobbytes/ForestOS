@@ -205,6 +205,48 @@ $waKeys = $waAllowed ? ForestWebAuthn::listKeys($me) : array();
   <div id="sec-faceid-msg" class="set-hint" style="margin-top:8px"></div>
 </div>
 
+<?
+require_once $DOC . '/system/core/library/bans.php';
+$isSuperUser = ($me === ($_SESSION['superuser'] ?? ''));
+$bans = $isSuperUser ? ForestBans::active() : array();
+?>
+<? if ($isSuperUser): ?>
+<div class="set-card" id="sec-bans-card">
+  <div class="set-row" style="border-top:0;padding-top:0;margin-top:0">
+    <div class="grow">
+      <div class="set-lbl">Блокировка IP</div>
+      <div class="set-hint">
+        3 неудачных входа в течение 15 минут — IP блокируется на 15 минут.
+        Повторно: 1 час, 6 часов, 24 часа. Успешный вход сбрасывает счётчик.
+      </div>
+    </div>
+    <button type="button" class="set-btn danger" id="sec-bans-clear" style="<? echo count($bans) ? '' : 'display:none' ?>">Разбанить всех</button>
+  </div>
+  <div class="set-list" id="sec-bans-list" style="margin-top:10px;<? echo count($bans) ? '' : 'display:none' ?>">
+    <? foreach ($bans as $b): ?>
+      <div class="set-item" data-ban-ip="<? echo htmlspecialchars($b['ip']) ?>">
+        <span class="grow">
+          <span class="set-lbl" style="display:block;font-family:ui-monospace,Consolas,monospace"><? echo htmlspecialchars($b['ip']) ?></span>
+          <span class="set-hint" style="display:block">
+            <? if ($b['banned']): ?>
+              заблокирован до <? echo htmlspecialchars(ForestBans::untilText((int)$b['until'])) ?>
+            <? else: ?>
+              неудачные попытки
+            <? endif; ?>
+            · неудач: <? echo (int)$b['failures'] ?>
+            · всего блокировок: <? echo (int)$b['bans'] ?>
+            <? if ($b['last_login'] !== ''): ?> · логин: <? echo htmlspecialchars($b['last_login']) ?><? endif; ?>
+          </span>
+        </span>
+        <button type="button" class="set-btn" data-ban-clear="<? echo htmlspecialchars($b['ip']) ?>">Разбанить</button>
+      </div>
+    <? endforeach; ?>
+  </div>
+  <div class="set-hint" id="sec-bans-empty" style="margin-top:8px;<? echo count($bans) ? 'display:none' : '' ?>">Активных блокировок нет</div>
+  <div id="sec-bans-msg" class="set-hint" style="margin-top:8px"></div>
+</div>
+<? endif; ?>
+
 <div class="set-card">
   <div class="set-row" style="border-top:0;padding-top:0;margin-top:0">
     <div class="grow">
@@ -445,5 +487,101 @@ $waKeys = $waAllowed ? ForestWebAuthn::listKeys($me) : array();
         .catch(function(){ say('Не удалось удалить', true); });
     });
   });
+})();
+</script>
+
+<script>
+/* Блокировка IP (fail2ban): список и снятие блокировок без перезагрузки окна */
+(function(){
+  var API = 'system/core/functions/bans.php';
+  var token = <? echo json_encode($token) ?>;
+  var msg = document.getElementById('sec-bans-msg');
+  function say(t, bad){ if(!msg) return; msg.textContent = t || ''; msg.style.color = bad ? '#c0392b' : ''; }
+
+  function minutes(left){ return Math.max(1, Math.ceil(Number(left || 0) / 60)); }
+
+  function render(rows){
+    var list = document.getElementById('sec-bans-list');
+    var empty = document.getElementById('sec-bans-empty');
+    var clear = document.getElementById('sec-bans-clear');
+    if(!list) return;
+    list.innerHTML = '';
+    (rows || []).forEach(function(b){
+      var item = document.createElement('div');
+      item.className = 'set-item';
+      item.setAttribute('data-ban-ip', b.ip);
+
+      var span = document.createElement('span');
+      span.className = 'grow';
+
+      var ip = document.createElement('span');
+      ip.className = 'set-lbl';
+      ip.style.display = 'block';
+      ip.style.fontFamily = 'ui-monospace,Consolas,monospace';
+      ip.textContent = b.ip;
+
+      var hint = document.createElement('span');
+      hint.className = 'set-hint';
+      hint.style.display = 'block';
+      hint.textContent = (b.banned ? 'заблокирован ещё ' + minutes(b.left) + ' мин' : 'неудачные попытки') +
+        ' · неудач: ' + b.failures + ' · всего блокировок: ' + b.bans +
+        (b.last_login ? ' · логин: ' + b.last_login : '');
+
+      span.appendChild(ip);
+      span.appendChild(hint);
+
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'set-btn';
+      btn.setAttribute('data-ban-clear', b.ip);
+      btn.textContent = 'Разбанить';
+      btn.addEventListener('click', function(){ unban(b.ip); });
+
+      item.appendChild(span);
+      item.appendChild(btn);
+      list.appendChild(item);
+    });
+    var has = !!(rows && rows.length);
+    list.style.display = has ? '' : 'none';
+    if(empty){ empty.style.display = has ? 'none' : ''; }
+    if(clear){ clear.style.display = has ? '' : 'none'; }
+  }
+
+  function load(){
+    fetch(API + '?action=list', { credentials: 'same-origin' })
+      .then(function(r){ return r.json(); })
+      .then(function(d){ if(d && d.ok){ render(d.bans || []); } })
+      .catch(function(){});
+  }
+
+  function post(action, data){
+    var body = new URLSearchParams();
+    body.append('action', action);
+    body.append('token', token);
+    Object.keys(data || {}).forEach(function(k){ body.append(k, data[k]); });
+    return fetch(API, { method: 'POST', credentials: 'same-origin', body: body }).then(function(r){ return r.json(); });
+  }
+
+  function unban(ip){
+    if(!confirm('Разблокировать ' + ip + '?')){ return; }
+    post('unban', { ip: ip }).then(function(d){
+      if(d && d.ok){ say('Разблокирован: ' + ip); load(); }
+      else { say('Не удалось: ' + ((d && d.error) || 'ошибка'), true); }
+    }).catch(function(){ say('Не удалось', true); });
+  }
+
+  var clear = document.getElementById('sec-bans-clear');
+  if(clear){
+    clear.addEventListener('click', function(){
+      if(!confirm('Снять все блокировки IP?')){ return; }
+      post('unban-all').then(function(d){
+        if(d && d.ok){ say('Блокировки сняты'); load(); }
+        else { say('Не удалось', true); }
+      });
+    });
+  }
+
+  load();
+  setInterval(load, 30000);
 })();
 </script>

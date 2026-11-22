@@ -7,8 +7,7 @@ CREATE TABLE IF NOT EXISTS forestusers (
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-/* Ключи WebAuthn (Face ID / отпечаток). Хранится только публичный ключ. */
-CREATE TABLE IF NOT EXISTS forestwebauthn (
+/* Ключи WebAuthn (Face ID / отпечаток). Хранится только публичный ключ. */CREATE TABLE IF NOT EXISTS forestwebauthn (
   id INT AUTO_INCREMENT PRIMARY KEY,
   login VARCHAR(150) NOT NULL,
   cred_id VARCHAR(255) NOT NULL,
@@ -22,4 +21,15 @@ CREATE TABLE IF NOT EXISTS forestwebauthn (
   last_used_at TIMESTAMP NULL,
   UNIQUE KEY uniq_cred (cred_id),
   KEY idx_login (login)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+/* fail2ban: неудачные входы и блокировки по IP */
+CREATE TABLE IF NOT EXISTS forestbans (
+  ip VARCHAR(45) NOT NULL PRIMARY KEY,
+  failures INT NOT NULL DEFAULT 0,
+  first_at INT NOT NULL DEFAULT 0,
+  last_at INT NOT NULL DEFAULT 0,
+  banned_until INT NOT NULL DEFAULT 0,
+  bans INT NOT NULL DEFAULT 0,
+  last_login VARCHAR(150) NOT NULL DEFAULT ''
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

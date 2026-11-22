@@ -119,6 +119,11 @@ switch ($action) {
         if ($login === '' || !preg_match('/^[a-z0-9_\-\.]{3,64}$/', $login)) {
             wa_out(array('ok' => false, 'error' => 'bad_login'), 400);
         }
+        require_once $_SERVER['DOCUMENT_ROOT'] . '/system/core/library/bans.php';
+        $ban = ForestBans::check(ForestBans::ip());
+        if (!empty($ban['banned'])) {
+            wa_out(array('ok' => false, 'error' => 'banned', 'left' => (int)$ban['left']), 429);
+        }
         $res = ForestWebAuthn::beginAuth($login);
         wa_out($res, $res['ok'] ? 200 : 400);
     }
@@ -130,14 +135,25 @@ switch ($action) {
         if ($login === '' || !preg_match('/^[a-z0-9_\-\.]{3,64}$/', $login)) {
             wa_out(array('ok' => false, 'error' => 'bad_login'), 400);
         }
+        require_once $_SERVER['DOCUMENT_ROOT'] . '/system/core/library/bans.php';
+        $ip = ForestBans::ip();
+        $ban = ForestBans::check($ip);
+        if (!empty($ban['banned'])) {
+            wa_out(array('ok' => false, 'error' => 'banned', 'left' => (int)$ban['left']), 429);
+        }
         try {
             $res = ForestWebAuthn::finishAuth($login, $cred);
         } catch (Throwable $e) {
             $res = array('ok' => false, 'error' => 'server_error');
         }
         if (empty($res['ok'])) {
+            $st = ForestBans::fail($ip, $login);
+            if (!empty($st['banned'])) {
+                wa_out(array('ok' => false, 'error' => 'banned', 'left' => (int)$st['left']), 429);
+            }
             wa_out($res, 401);
         }
+        ForestBans::succeed($ip);
         /* сессия — как после пароля (см. AuthClassUser::auth) */
         $_SESSION['is_authuser'] = true;
         $_SESSION['loginuser'] = $login;

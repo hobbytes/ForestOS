@@ -13,6 +13,7 @@ if (!defined('FO_LOGIN_INCLUDED')) {
 
 /* первый запуск: пока нет администратора — мастер настройки */
 require_once $_SERVER['DOCUMENT_ROOT'] . '/system/core/library/install.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/system/core/library/bans.php';
 if (!fo_has_superuser()) {
     header('Location: setup.php');
     exit;
@@ -167,7 +168,10 @@ if (isset($_GET["exit"])) {
     $_SESSION['BlockDate'] = false;
 }
 
-if(!$_SESSION['BlockDate'] || date('d-m-y H:i:s') >= $_SESSION['BlockDate']){
+$foBan = ForestBans::check(ForestBans::ip());
+$foBanned = !empty($foBan['banned']);
+
+if(!$foBanned && (!$_SESSION['BlockDate'] || date('d-m-y H:i:s') >= $_SESSION['BlockDate'])){
   $_SESSION['BlockDate'] = false;
   $_SESSION['counter'] = 0;
   $gui = new gui;
@@ -176,6 +180,9 @@ if(!$_SESSION['BlockDate'] || date('d-m-y H:i:s') >= $_SESSION['BlockDate']){
   <input class="loginin input-login" id="loginin" placeholder="<?=$language[$_SESSION['locale'].'_login_input']?>" type="text" name="loginin" value="<?=isset($login_get) ? $login_get : ''?>" autocomplete="username" autocapitalize="off" autocorrect="off" spellcheck="false">
   <input class="passwordin input-login" id="passwordin" placeholder="<?=$language[$_SESSION['locale'].'_password_input']?>" type="password" name="passwordin" value="" autocomplete="current-password">
   <?
+}elseif($foBanned){
+  echo '<h2 class="error-layout">Слишком много неудачных попыток. Вход с этого IP заблокирован до '
+     . htmlspecialchars(ForestBans::untilText((int)$foBan['until'])) . '.</h2>';
 }else{
   $_date = strtotime($_SESSION['BlockDate']) - strtotime(date('d-m-y H:i:s'));
   $timeleft = round(abs($_date/60));
@@ -191,7 +198,7 @@ if(!$_SESSION['BlockDate'] || date('d-m-y H:i:s') >= $_SESSION['BlockDate']){
   <input class="keyaccess input-login" id="keyaccess" placeholder="Key Access" type="text" name="keyaccess" value="<?=isset($keyaccess) ? htmlspecialchars($keyaccess) : ''?>">
 </div>
 <?
-if(!$_SESSION['BlockDate']){
+if(!$_SESSION['BlockDate'] && !$foBanned){
   echo '<input class="buttoncustom" type="submit" name="logins" value="'.$language[$_SESSION['locale'].'_login_button'].'">';
   $gui->formend();
   /* вход по ключу устройства: Face ID / отпечаток / Windows Hello */

@@ -59,6 +59,28 @@ class AuthClassUser {
        */
       public function auth($login, $password, $keyaccess = NULL) {
 
+          require_once __DIR__ . '/bans.php';
+          $ip = ForestBans::ip();
+          $ban = ForestBans::check($ip);
+          if (!empty($ban['banned'])) {
+            $_SESSION['is_authuser'] = false;
+            $_SESSION['fo_ban_left'] = (int)$ban['left'];
+            return false;
+          }
+
+          $ok = $this->authInner($login, $password, $keyaccess);
+          if ($ok) {
+            unset($_SESSION['fo_ban_left']);
+            ForestBans::succeed($ip);
+          } else {
+            $st = ForestBans::fail($ip, (string)$login);
+            $_SESSION['fo_ban_left'] = !empty($st['banned']) ? (int)$st['left'] : 0;
+          }
+          return $ok;
+      }
+
+      private function authInner($login, $password, $keyaccess = NULL) {
+
           if(!empty($keyaccess)){
             $row = $this->byKey($keyaccess);
             if(!$row){
