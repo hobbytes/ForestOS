@@ -25,6 +25,26 @@ function write_if_missing(string $file, string $content): void {
     }
 }
 
+/**
+ * Печатает данные для первого входа: их видно в docker compose logs.
+ */
+function forest_banner(string $login, string $password, bool $isDefault): void
+{
+    $port = (string)envv('APP_PORT', '8080');
+    $line = str_repeat('=', 54);
+    echo "\n{$line}\n";
+    echo " Forest OS готова к работе\n";
+    echo " Адрес:  http://localhost:{$port}\n";
+    echo " Логин:  {$login}\n";
+    echo " Пароль: {$password}\n";
+    echo "{$line}\n";
+    if ($isDefault && in_array(strtolower($password), array('change_me_admin_password', 'admin12345', 'admin', 'password'), true)) {
+        echo " ! Это пароль-заглушка. Смените его: Настройки → Безопасность\n";
+        echo "{$line}\n";
+    }
+    echo "\n";
+}
+
 function legacy_crypt_s(string $string, string $salt): string {
     $crypt = crypt($string, '$2a$10$' . md5($salt));
     $crypt = str_replace('$2a$10$', '', $crypt);
@@ -94,6 +114,7 @@ if (!$stmt->fetch()) {
     $insert = $pdo->prepare('INSERT INTO forestusers (login, password, fuid, status, TempKey) VALUES (?, ?, ?, ?, NULL)');
     $insert->execute([$login, $passwordHash, $fuid, 'superuser']);
     echo "Created superuser: {$login}\n";
+    forest_banner($login, $password, $login === strtolower((string)envv('FOREST_ADMIN_LOGIN', 'admin')));
 } else {
     /* база уже есть: пароль из .env сам по себе не применяется — нужно разрешение */
     if (filter_var(envv('FOREST_ADMIN_PASSWORD_RESET', 'false'), FILTER_VALIDATE_BOOLEAN)) {
@@ -101,7 +122,9 @@ if (!$stmt->fetch()) {
             ->execute([$passwordHash, $login]);
         echo "Password updated for existing user: {$login}\n";
     } else {
-        echo "User already exists: {$login} (пароль не менялся; см. bin/forest-password.php)\n";
+        echo "\n  Учётная запись {$login} уже существует — пароль не менялся.\n";
+        echo "  Сменить пароль:  php bin/forest-password.php\n";
+        echo "  или поставить FOREST_ADMIN_PASSWORD_RESET=1 в .env и перезапустить контейнер.\n\n";
     }
 }
 
