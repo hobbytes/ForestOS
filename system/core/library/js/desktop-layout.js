@@ -232,6 +232,10 @@
       closeMenuOnOutside();
     }, 0);
 
+    menuItem($m, 'Поставить разделитель после', function () {
+      addSeparatorAfter($('.dock-icon[data-app="' + app + '"]'));
+    });
+
     // keep the menu on screen and above the dock when the icon sits in it
     var mw = $m.outerWidth() || 200;
     var mh = $m.outerHeight() || 120;
@@ -250,19 +254,179 @@
   }
 
   function bindDock() {
-    $('.dock-container').off('contextmenu.fo').on('contextmenu.fo', '.dock-icon[data-app]', function (e) {
+    var $dock = $('.dock-container');
+    $dock.off('contextmenu.fo').on('contextmenu.fo', '.dock-icon[data-app]', function (e) {
       e.preventDefault();
       e.stopPropagation();
       showDockMenu(e.pageX, e.pageY, $(this).attr('data-app'));
     });
-    $('.dock-container').off('contextmenu.fo-folder').on('contextmenu.fo-folder', '.dock-icon[data-folder]', function (e) {
+    $dock.off('contextmenu.fo-folder').on('contextmenu.fo-folder', '.dock-icon[data-folder]', function (e) {
       e.preventDefault();
       e.stopPropagation();
-      showFolderDockMenu(e.pageX, e.pageY, $(this).attr('data-folder'));
+      showFolderDockMenu(e.pageX, e.pageY, $(this).attr('data-folder'), $(this).attr('data-store') || '');
     });
+    $dock.off('contextmenu.fo-sep').on('contextmenu.fo-sep', '.dock-separator', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      showSeparatorMenu(e.pageX, e.pageY, $(this));
+    });
+    $dock.off('contextmenu.fo-bg').on('contextmenu.fo-bg', function (e) {
+      if ($(e.target).closest('.dock-icon, .dock-separator').length) { return; }
+      e.preventDefault();
+      showDockBgMenu(e.pageX, e.pageY);
+    });
+    bindDockSort();
   }
 
-  function showFolderDockMenu(x, y, rel) {
+  /* ---------------- порядок иконок в доке ---------------- */
+
+  var suppressDockClick = false;
+
+  function dockItems() {
+    return $('.dock-container').children('.dock-icon, .dock-separator');
+  }
+
+  function dockTokens() {
+    var out = [];
+    dockItems().each(function () {
+      var $e = $(this);
+      if ($e.hasClass('dock-separator')) { out.push('sep'); }
+      else if ($e.attr('data-app')) { out.push('app:' + $e.attr('data-app')); }
+      else if ($e.attr('data-store')) { out.push('folder:' + $e.attr('data-store')); }
+    });
+    return out;
+  }
+
+  function saveDockOrder() {
+    var order = dockTokens();
+    if (!order.length) { return; }
+    $.post('system/core/functions/dock-edit.php', { action: 'reorder', order: order })
+      .done(function (res) {
+        if (res && res.ok === false) { toast('Не удалось сохранить порядок'); return; }
+        /* сервер чистит лишние разделители — перерисовываем, чтобы совпадало */
+        if (window.FO_REFRESH_DOCK) { window.FO_REFRESH_DOCK(); }
+      })
+      .fail(function () { toast('Не удалось сохранить порядок'); });
+  }
+
+  function bindDockSort() {
+    var dock = document.querySelector('.dock-container');
+    if (!dock || dock.getAttribute('data-fo-sort') === '1') { return; }
+    dock.setAttribute('data-fo-sort', '1');
+    var dragEl = null, startX = 0, startY = 0, moved = false;
+
+    dock.addEventListener('mousedown', function (e) {
+      if (e.button !== 0) { return; }
+      var el = e.target.closest('.dock-icon, .dock-separator');
+      if (!el) { return; }
+      dragEl = el; startX = e.clientX; startY = e.clientY; moved = false;
+      document.addEventListener('mousemove', onMove, true);
+      document.addEventListener('mouseup', onUp, true);
+    });
+
+    function onMove(e) {
+      if (!dragEl) { return; }
+      if (!moved) {
+        if (Math.abs(e.clientX - startX) < 6 && Math.abs(e.clientY - startY) < 6) { return; }
+        moved = true;
+        dragEl.classList.add('dock-dragging');
+        dock.classList.add('dock-sorting');
+      }
+      e.preventDefault();
+      var over = document.elementFromPoint(e.clientX, e.clientY);
+      var target = over && over.closest ? over.closest('.dock-icon, .dock-separator') : null;
+      if (!target || target === dragEl || target.parentNode !== dock) { return; }
+      var r = target.getBoundingClientRect();
+      var before = (e.clientX - r.left) < r.width / 2;
+      dock.insertBefore(dragEl, before ? target : target.nextSibling);
+    }
+
+    function onUp() {
+      document.removeEventListener('mousemove', onMove, true);
+      document.removeEventListener('mouseup', onUp, true);
+      if (!dragEl) { return; }
+      dragEl.classList.remove('dock-dragging');
+      dock.classList.remove('dock-sorting');
+      if (moved) {
+        suppressDockClick = true;
+        setTimeout(function () { suppressDockClick = false; }, 80);
+        saveDockOrder();
+      }
+      dragEl = null; moved = false;
+    }
+  }
+
+  /* клик после перетаскивания не должен открывать приложение */
+  document.addEventListener('click', function (e) {
+    if (!suppressDockClick) { return; }
+    if (e.target.closest && e.target.closest('.dock-container')) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
+  }, true);
+
+  function menuItem($m, text, onClick) {
+    return $('<div></div>').text(text)
+      .css({ padding: '7px 11px', borderRadius: '6px', cursor: 'default',
+             overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' })
+      .hover(function () { $(this).css({ background: 'rgba(255,255,255,0.12)' }); },
+             function () { $(this).css({ background: 'transparent' }); })
+      .on('click', function () { closeMenu(); onClick(); })
+      .appendTo($m);
+  }
+
+  function addSeparatorAfter($el) {
+    var idx = dockItems().index($el) + 1;
+    $.post('system/core/functions/dock-edit.php', { action: 'sep-add', index: idx })
+      .done(function () { if (window.FO_REFRESH_DOCK) { window.FO_REFRESH_DOCK(); } toast('Разделитель добавлен'); })
+      .fail(function () { toast('Не удалось добавить разделитель'); });
+  }
+
+  function showSeparatorMenu(x, y, $sep) {
+    closeMenu();
+    var $m = $('<div id="fo-desk-menu"></div>').css({
+      position: 'absolute', left: x, top: y, zIndex: 100000,
+      background: 'rgba(24,24,26,0.96)', border: '1px solid rgba(255,255,255,0.14)',
+      borderRadius: '9px', boxShadow: '0 14px 38px rgba(0,0,0,0.5)', padding: '5px',
+      minWidth: '190px', backdropFilter: 'blur(16px)',
+      font: '500 12.5px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif',
+      color: '#f2f2f4'
+    }).appendTo('body');
+
+    var idx = dockItems().index($sep);
+    menuItem($m, 'Убрать разделитель', function () {
+      $.post('system/core/functions/dock-edit.php', { action: 'sep-del', index: idx })
+        .done(function () { if (window.FO_REFRESH_DOCK) { window.FO_REFRESH_DOCK(); } toast('Разделитель убран'); })
+        .fail(function () { toast('Не удалось убрать разделитель'); });
+    });
+    setTimeout(function () { closeMenuOnOutside(); }, 0);
+    $m.css({ left: Math.max(8, Math.min(x, window.innerWidth - ($m.outerWidth() || 200) - 8)),
+             top: Math.max(40, Math.min(y, window.innerHeight - ($m.outerHeight() || 90) - 8)) });
+  }
+
+  function showDockBgMenu(x, y) {
+    closeMenu();
+    var $m = $('<div id="fo-desk-menu"></div>').css({
+      position: 'absolute', left: x, top: y, zIndex: 100000,
+      background: 'rgba(24,24,26,0.96)', border: '1px solid rgba(255,255,255,0.14)',
+      borderRadius: '9px', boxShadow: '0 14px 38px rgba(0,0,0,0.5)', padding: '5px',
+      minWidth: '210px', backdropFilter: 'blur(16px)',
+      font: '500 12.5px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif',
+      color: '#f2f2f4'
+    }).appendTo('body');
+
+    menuItem($m, 'Добавить разделитель', function () {
+      var idx = dockItems().length;
+      $.post('system/core/functions/dock-edit.php', { action: 'sep-add', index: idx })
+        .done(function () { if (window.FO_REFRESH_DOCK) { window.FO_REFRESH_DOCK(); } toast('Разделитель добавлен'); })
+        .fail(function () { toast('Не удалось добавить разделитель'); });
+    });
+    setTimeout(function () { closeMenuOnOutside(); }, 0);
+    $m.css({ left: Math.max(8, Math.min(x, window.innerWidth - ($m.outerWidth() || 220) - 8)),
+             top: Math.max(40, Math.min(y, window.innerHeight - ($m.outerHeight() || 60) - 8)) });
+  }
+
+  function showFolderDockMenu(x, y, rel, store) {
     closeMenu();
     var $m = $('<div id="fo-desk-menu"></div>').css({
       position: 'absolute', left: x, top: y, zIndex: 100000,
@@ -289,12 +453,19 @@
              function () { $(this).css({ background: 'transparent' }); })
       .on('click', function () {
         closeMenu();
-        $.post('system/core/functions/dock-edit.php', { action: 'unpin', folder: rel }).done(function () {
-          if (window.FO_REFRESH_DOCK) { window.FO_REFRESH_DOCK(); } else { $('.dock-icon[data-folder]').remove(); }
-          toast('Папка убрана из дока');
-        });
+        $.post('system/core/functions/dock-edit.php', { action: 'unpin', folder: store || rel })
+          .done(function (res) {
+            if (res && res.ok === false) { toast('Не удалось убрать папку'); return; }
+            if (window.FO_REFRESH_DOCK) { window.FO_REFRESH_DOCK(); } else { $('.dock-icon[data-folder]').remove(); }
+            toast('Папка убрана из дока');
+          })
+          .fail(function () { toast('Не удалось убрать папку'); });
       })
       .appendTo($m);
+
+    menuItem($m, 'Поставить разделитель после', function () {
+      addSeparatorAfter($('.dock-icon[data-folder="' + rel.replace(/"/g, '\\"') + '"]'));
+    });
 
     setTimeout(function () {
       closeMenuOnOutside();
@@ -466,9 +637,7 @@
                 toast('Не удалось закрепить «' + app + '» в доке');
                 return;
               }
-              addDockIcon(app);
-              toast('«' + app + '» закреплён в доке');
-            })
+              toast('«' + app + '» закреплён в доке');            })
             .fail(function () { toast('Не удалось закрепить «' + app + '» в доке'); });
         } else if (onDock && !app) {
           toast('В док можно закрепить только приложение');

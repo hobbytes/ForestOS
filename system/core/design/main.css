@@ -996,3 +996,16 @@ body.fo-single-desktop .selector {
     bottom: 84px;
   }
 }
+
+/* ---------- перетаскивание иконок в доке -------------------------------- */
+.dock-container.dock-sorting .dock-icon,
+.dock-container.dock-sorting .dock-separator{ transition: none !important; }
+.dock-icon.dock-dragging{
+  opacity:.75;
+  transform: translateY(-6px) scale(1.06);
+  cursor:grabbing;
+  z-index:5;
+}
+.dock-container.dock-sorting{ cursor:grabbing; }
+.dock-separator{ cursor:grab; }
+.dock-separator:hover{ background:rgba(255,255,255,.35); }

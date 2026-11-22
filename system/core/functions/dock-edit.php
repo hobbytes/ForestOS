@@ -1,8 +1,13 @@
 <?php
 /**
- * Forest OS — pin/unpin applications and folders in the dock.
- * App pins:    settings/Dock/<group>/<App>       (empty file)
- * Folder pins: settings/Dock/<group>/folder_<md5> (file content = path inside the user home)
+ * Forest OS — закрепление приложений и папок в доке, порядок и разделители.
+ *
+ * Всё хранится в settings/Dock/layout.json (см. system/core/library/dock.php).
+ * Actions:
+ *   pin / unpin   + app=<App> | folder=<абсолютный или относительный путь>
+ *   reorder       + order[] = "app:Explorer", "sep", "folder:documents/images"
+ *   sep-add       + index=<позиция>
+ *   sep-del       + index=<позиция>
  */
 ini_set('display_errors', 'Off');
 
@@ -12,98 +17,166 @@ if (!isset($_SESSION)) {
 
 header('Content-Type: application/json; charset=utf-8');
 
-function fo_dock_fail($msg, $code = 400) {
+require_once $_SERVER['DOCUMENT_ROOT'] . '/system/core/library/dock.php';
+
+function fo_dock_out(array $d, int $code = 200): void
+{
     http_response_code($code);
-    echo json_encode(array('ok' => false, 'error' => $msg));
+    echo json_encode($d, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
 }
 
 if (empty($_SESSION['loginuser']) || !isset($_SESSION['is_authuser']) || $_SESSION['is_authuser'] !== true) {
-    fo_dock_fail('auth', 401);
+    fo_dock_out(array('ok' => false, 'error' => 'auth'), 401);
 }
 
-$doc = rtrim(str_replace('\\', '/', $_SERVER['DOCUMENT_ROOT']), '/');
+$doc   = Dock::docRoot();
 $login = (string)$_SESSION['loginuser'];
-$home = $doc . '/system/users/' . $login;
+$dir   = Dock::dir($doc, $login);
 
-$app = isset($_POST['app']) ? basename((string)$_POST['app']) : '';
-$folder = isset($_POST['folder']) ? (string)$_POST['folder'] : '';
 $action = isset($_POST['action']) ? (string)$_POST['action'] : '';
+$app    = isset($_POST['app']) ? basename((string)$_POST['app']) : '';
+$folder = isset($_POST['folder']) ? (string)$_POST['folder'] : '';
 
-$dock = $home . '/settings/Dock';
-if (!is_dir($dock . '/A')) {
-    @mkdir($dock . '/A', 0775, true);
+$items = Dock::readLayout($dir, $doc, $login);
+
+function dock_index_of_app(array $items, string $app): int
+{
+    foreach ($items as $i => $it) {
+        if ($it['t'] === 'app' && $it['name'] === $app) {
+            return (int)$i;
+        }
+    }
+    return -1;
 }
 
-/* ---------- folder pins ---------- */
-if ($folder !== '') {
-    $rel = str_replace('\\', '/', $folder);
-    $rel = preg_replace('#/+#', '/', $rel);
-    $rel = ltrim($rel, '/');
-    /* абсолютный путь внутри сайта приводим к виду от корня */
-    if (strpos($rel, $doc . '/') === 0) {
-        $rel = substr($rel, strlen($doc) + 1);
-    }
-    $rel = ltrim($rel, '/');
-
-    $homeRel = preg_replace('#^system/users/' . preg_quote($login, '#') . '/#', '', $rel);
-    $homeAbs = $doc . '/system/users/' . $login . '/' . $homeRel;
-    $docAbs  = $doc . '/' . $rel;
-
-    if (is_dir($homeAbs)) {
-        /* папка пользователя: храним путь от домашней папки */
-        $store = $homeRel;
-        $abs = $homeAbs;
-    } elseif (is_dir($docAbs)) {
-        /* системная папка: '@' — путь от корня сайта */
-        $store = '@' . $rel;
-        $abs = $docAbs;
-    } else {
-        fo_dock_fail('folder');
-    }
-    $name = 'folder_' . md5($store);
-
-    if ($action === 'pin') {
-        if (@file_put_contents($dock . '/A/' . $name, $store) === false) {
-            fo_dock_fail('write', 500);
+function dock_index_of_store(array $items, string $store): int
+{
+    foreach ($items as $i => $it) {
+        if ($it['t'] === 'folder' && $it['store'] === $store) {
+            return (int)$i;
         }
-        @chmod($dock . '/A/' . $name, 0666);
-        echo json_encode(array('ok' => true, 'pinned' => $name, 'folder' => $store, 'title' => basename($abs)), JSON_UNESCAPED_UNICODE);
-        exit;
+    }
+    return -1;
+}
+
+/* ---------- приложения ---------- */
+
+if ($app !== '') {
+    if (!preg_match('/^[A-Za-z0-9_\-]+$/', $app) || !is_file($doc . '/system/apps/' . $app . '/main.php')) {
+        fo_dock_out(array('ok' => false, 'error' => 'app'), 400);
+    }
+    if ($action === 'pin') {
+        if (dock_index_of_app($items, $app) < 0) {
+            /* новый значок встаёт после последнего приложения, перед разделителем */
+            $pos = 0;
+            foreach ($items as $i => $it) {
+                if ($it['t'] === 'app') {
+                    $pos = $i + 1;
+                }
+            }
+            array_splice($items, $pos, 0, array(array('t' => 'app', 'name' => $app)));
+            Dock::saveLayout($dir, $items);
+        }
+        fo_dock_out(array('ok' => true, 'pinned' => $app));
     }
     if ($action === 'unpin') {
-        $n = 0;
-        foreach (glob($dock . '/*/' . $name) as $file) {
-            if (@unlink($file)) { $n++; }
+        $items = array_values(array_filter($items, function ($it) use ($app) {
+            return !($it['t'] === 'app' && $it['name'] === $app);
+        }));
+        Dock::saveLayout($dir, Dock::normalize($items, $doc, $login));
+        fo_dock_out(array('ok' => true, 'unpinned' => $app));
+    }
+    fo_dock_out(array('ok' => false, 'error' => 'action'), 400);
+}
+
+/* ---------- папки ---------- */
+
+if ($folder !== '') {
+    $store = Dock::storeFromPath($folder, $doc, $login);
+    if ($store === null) {
+        fo_dock_out(array('ok' => false, 'error' => 'folder'), 400);
+    }
+    $abs = Dock::resolveStore($store, $doc, $login);
+
+    if ($action === 'pin') {
+        if ($abs === null || !is_dir($abs)) {
+            fo_dock_out(array('ok' => false, 'error' => 'folder'), 400);
         }
-        echo json_encode(array('ok' => true, 'unpinned' => $name, 'removed' => $n));
-        exit;
-    }
-    fo_dock_fail('action');
-}
-
-/* ---------- application pins ---------- */
-if ($app === '' || !preg_match('/^[A-Za-z0-9_\-]+$/', $app) || !is_file($doc . '/system/apps/' . $app . '/main.php')) {
-    fo_dock_fail('app');
-}
-
-if ($action === 'pin') {
-    if (@file_put_contents($dock . '/A/' . $app, '') === false) {
-        fo_dock_fail('write', 500);
-    }
-    echo json_encode(array('ok' => true, 'pinned' => $app));
-    exit;
-}
-
-if ($action === 'unpin') {
-    $removed = 0;
-    foreach (glob($dock . '/*/*') as $file) {
-        if (is_file($file) && basename($file) === $app) {
-            if (@unlink($file)) { $removed++; }
+        if (dock_index_of_store($items, $store) < 0) {
+            $items[] = array('t' => 'folder', 'store' => $store);
+            Dock::saveLayout($dir, $items);
         }
+        fo_dock_out(array('ok' => true, 'pinned' => $store, 'title' => basename($abs)));
     }
-    echo json_encode(array('ok' => true, 'unpinned' => $app, 'removed' => $removed));
-    exit;
+    if ($action === 'unpin') {
+        $items = array_values(array_filter($items, function ($it) use ($store) {
+            return !($it['t'] === 'folder' && $it['store'] === $store);
+        }));
+        Dock::saveLayout($dir, Dock::normalize($items, $doc, $login));
+        fo_dock_out(array('ok' => true, 'unpinned' => $store));
+    }
+    fo_dock_out(array('ok' => false, 'error' => 'action'), 400);
 }
 
-fo_dock_fail('action');
+/* ---------- порядок ---------- */
+
+if ($action === 'reorder') {
+    $order = isset($_POST['order']) && is_array($_POST['order']) ? $_POST['order'] : array();
+    $tokens = array();
+    foreach ($items as $it) {
+        $tokens[] = $it['t'] === 'app' ? 'app:' . $it['name']
+            : ($it['t'] === 'folder' ? 'folder:' . $it['store'] : 'sep');
+    }
+    $incoming = array();
+    foreach ($order as $tok) {
+        if (!is_string($tok) || $tok === '') {
+            continue;
+        }
+        $incoming[] = $tok;
+    }
+    $a = $tokens;
+    $b = $incoming;
+    sort($a);
+    sort($b);
+    if ($a !== $b) {
+        fo_dock_out(array('ok' => false, 'error' => 'order_mismatch'), 400);
+    }
+    $byToken = array();
+    foreach ($items as $it) {
+        $tok = $it['t'] === 'app' ? 'app:' . $it['name']
+            : ($it['t'] === 'folder' ? 'folder:' . $it['store'] : 'sep');
+        $byToken[$tok] = $it;
+    }
+    $new = array();
+    foreach ($incoming as $tok) {
+        $new[] = $byToken[$tok];
+    }
+    $new = Dock::normalize($new, $doc, $login);
+    Dock::saveLayout($dir, $new);
+    fo_dock_out(array('ok' => true, 'count' => count($new)));
+}
+
+/* ---------- разделители ---------- */
+
+if ($action === 'sep-add') {
+    $index = isset($_POST['index']) ? (int)$_POST['index'] : count($items);
+    $index = max(0, min($index, count($items)));
+    array_splice($items, $index, 0, array(array('t' => 'sep')));
+    $items = Dock::normalize($items, $doc, $login);
+    Dock::saveLayout($dir, $items);
+    fo_dock_out(array('ok' => true, 'items' => count($items)));
+}
+
+if ($action === 'sep-del') {
+    $index = isset($_POST['index']) ? (int)$_POST['index'] : -1;
+    if ($index < 0 || $index >= count($items) || $items[$index]['t'] !== 'sep') {
+        fo_dock_out(array('ok' => false, 'error' => 'not_separator'), 400);
+    }
+    array_splice($items, $index, 1);
+    $items = Dock::normalize($items, $doc, $login);
+    Dock::saveLayout($dir, $items);
+    fo_dock_out(array('ok' => true, 'items' => count($items)));
+}
+
+fo_dock_out(array('ok' => false, 'error' => 'action'), 400);
