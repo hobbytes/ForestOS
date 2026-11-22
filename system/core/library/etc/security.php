@@ -31,7 +31,10 @@ class security {
       session_start();
     }
 
-    if(!isset($_SESSION['loginuser'])){
+    /* Раньше хватало одного loginuser, а гостевая сессия (os.php) получает
+       loginuser администратора для отрисовки экрана входа — из-за этого любой
+       анонимный посетитель проходил сюда. Теперь нужен настоящий вход. */
+    if(empty($_SESSION['is_authuser']) || $_SESSION['is_authuser'] !== true || empty($_SESSION['loginuser'])){
       $backtrace = debug_backtrace();
       $File = $backtrace[1]['file'] ?? ($backtrace[0]['file'] ?? '');
       $File = $File ? ", FILE -> '$File'" : '';
@@ -47,6 +50,7 @@ class security {
           @$infob->writestat("ALARM! Unauthorized app launch access$File$AppName", $_SERVER['DOCUMENT_ROOT'].'/system/core/journal.mcj');
         }
       }
+      http_response_code(403);
       exit;
     }
   }

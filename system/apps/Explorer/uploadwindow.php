@@ -8,12 +8,21 @@ $security->appprepare();
 //Загружаем файл локализации
 $upload_lang  = parse_ini_file('assets/lang/etc.lang');
 $cl = $_SESSION['locale'];
+$homeRoot = realpath($_SERVER['DOCUMENT_ROOT'].'/system/users/'.$_SESSION['loginuser']);
+$defaultDir = $_SERVER['DOCUMENT_ROOT'].'/system/users/'.$_SESSION['loginuser'].'/documents/downloads/';
 if(isset($_GET['where'])){
-  $where = str_replace(' ', '_', strip_tags($_GET['where']));
+  $where = str_replace(' ', '_', strip_tags((string)$_GET['where']));
+  /* каталог загрузки обязан быть внутри домашней папки пользователя:
+     раньше в ?where= можно было подставить любой путь, вплоть до корня сайта */
+  $where = str_replace(array('\\', "\0"), array('/', ''), $where);
+  $real = realpath($where);
+  if($real === false || $homeRoot === false || strpos($real . '/', $homeRoot . '/') !== 0){
+    $where = $defaultDir;
+  }
 }else{
-  $where = $_SERVER['DOCUMENT_ROOT'].'/system/users/'.$_SESSION['loginuser'].'/documents/downloads/';
+  $where = $defaultDir;
   if(!is_dir($where)){
-    mkdir($where);
+    @mkdir($where, 0777, true);
   }
 }
 

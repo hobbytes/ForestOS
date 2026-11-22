@@ -50,15 +50,20 @@
 
       //  # get superuser
       $bd = new readbd;
-      $bd->readglobal2("status", "forestusers", "login", $_SESSION["loginuser"]);
+      if (empty($_SESSION['is_authuser']) || $_SESSION['is_authuser'] !== true) {
+        /* гостю нечего знать про администратора: раньше сюда попадал admin */
+        $_SESSION['superuser'] = '';
+      } else {
+        $bd->readglobal2("status", "forestusers", "login", $_SESSION["loginuser"]);
 
-      if($getdata != 'superuser'){
-        $bd->readglobal2("login", "forestusers", "status", 'superuser');
-      }else{
-        $getdata = $_SESSION["loginuser"];
+        if($getdata != 'superuser'){
+          $bd->readglobal2("login", "forestusers", "status", 'superuser');
+        }else{
+          $getdata = $_SESSION["loginuser"];
+        }
+
+        $_SESSION['superuser'] = $getdata;
       }
-
-      $_SESSION['superuser'] = $getdata;
 
       if($_SESSION["safemode"]  ==  'true'){
         file_put_contents($_SERVER['DOCUMENT_ROOT'].'/system/users/'.$_SESSION['loginuser'].'/settings/notifications/MainNotificationFile.hdf', '');

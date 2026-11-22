@@ -11,10 +11,39 @@ class AuthClassUser {
     		$this->_login = $bds->readglobal2("login", "forestusers", "login", $type, true);
     		$this->_password = $bds->readglobal2("password", "forestusers", "login", $type, true);
       }else{
-        $this->_login = $bds->readglobal2("login", "forestusers", "TempKey", $keyaccess, true, true);
-        $this->_password = $bds->readglobal2("password", "forestusers", "TempKey", $keyaccess, true, true);
+        $row = $this->byKey($keyaccess);
+        $this->_login = $row ? (string)$row['login'] : '';
+        $this->_password = $row ? (string)$row['password'] : '';
       }
   	}
+
+  /**
+   * Точный поиск по ключу доступа. TempKey хранится как «[ключ1][ключ2]».
+   * Раньше здесь был SQL LIKE '%ключ%', из-за чего ключ «%» совпадал с любой
+   * записью и пускал в чужую учётную запись без пароля.
+   */
+  private function byKey($keyaccess){
+      $keyaccess = (string)$keyaccess;
+      if($keyaccess === ''){
+          return null;
+      }
+      try {
+          $pdo = new PDO(DB_DSN, DB_USERNAME, DB_PASSWORD);
+          $st = $pdo->prepare('SELECT login, password, TempKey FROM forestusers WHERE TempKey LIKE ?');
+          $st->execute(array('%' . $keyaccess . '%'));
+          foreach ($st->fetchAll(PDO::FETCH_ASSOC) as $row) {
+              if (preg_match_all('/\[([^\]]+)\]/', (string)$row['TempKey'], $m)) {
+                  foreach ($m[1] as $k) {
+                      if (hash_equals((string)$k, $keyaccess)) {
+                          return $row;
+                      }
+                  }
+              }
+          }
+      } catch (Throwable $e) {
+      }
+      return null;
+  }
 
       public function isAuth() {
           if (isset($_SESSION["is_authuser"])) {
@@ -31,16 +60,17 @@ class AuthClassUser {
       public function auth($login, $password, $keyaccess = NULL) {
 
           if(!empty($keyaccess)){
-            $bds = new readbd;
-            //global $getdata;
-            $login = $bds->readglobal2("login", "forestusers", "TempKey", $keyaccess, true, true);
-            $password = $bds->readglobal2("password", "forestusers", "TempKey", $keyaccess, true, true);
-            if(empty($login) && empty($password)){
+            $row = $this->byKey($keyaccess);
+            if(!$row){
               global $infob;
-              $infob->writestat('WARNING! Wrong Access Key -> '.$keyaccess, 'system/core/journal.mcj');
-              $login = 'wrong access key!';
-              $password = '0';
+              if (isset($infob) && method_exists($infob, 'writestat')) {
+                $infob->writestat('WARNING! Wrong Access Key -> '.$keyaccess, 'system/core/journal.mcj');
+              }
+              $_SESSION["is_authuser"] = false;
+              return false;
             }
+            $login = (string)$row['login'];
+            $password = (string)$row['password'];
           }
 
           /* заблокированная учётная запись не может войти */
@@ -64,6 +94,10 @@ class AuthClassUser {
           if ($login == $this->_login && $password == $this->_password) {
             $_SESSION["is_authuser"] = true;
             $_SESSION["loginuser"] = $login;
+            /* новая сессия после входа — защита от фиксации */
+            if (session_status() === PHP_SESSION_ACTIVE) {
+                @session_regenerate_id(true);
+            }
             $forwardedFor = isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : '';
             $_SESSION["CookieIsMine"] = md5($login.$_SERVER['HTTP_USER_AGENT'].$_SERVER['REMOTE_ADDR'].$forwardedFor);
 
@@ -72,19 +106,24 @@ class AuthClassUser {
               $bds = new readbd;
               //global $getdata;
 
-              $TempKeyArray = $bds->readglobal2("TempKey", "forestusers", "login", $login, true);
+              $TempKeyArray = (string)$bds->readglobal2("TempKey", "forestusers", "login", $login, true);
 
-              $get_keys = explode("[", $TempKeyArray);
-
-              foreach ($get_keys as $key) {
-                if(!empty($key)){
-                  $key = str_replace(']', '', $key);
-                  if(preg_match("/$keyaccess/", $key)){
-                    $_TempKeyArray = str_replace('['.$key.']', '', $TempKeyArray);
-                    if($_TempKeyArray != $TempKeyArray){
-                      $bds->updatebd("forestusers", "TempKey", $_TempKeyArray, "login", $login);
-                    }
+              /* вычёркиваем ровно тот ключ, которым вошли (раньше — regexp по вводу) */
+              $left = array();
+              if (preg_match_all('/\[([^\]]+)\]/', $TempKeyArray, $m)) {
+                foreach ($m[1] as $k) {
+                  if (!hash_equals((string)$k, (string)$keyaccess)) {
+                    $left[] = '[' . $k . ']';
                   }
+                }
+              }
+              $newKeys = implode('', $left);
+              if ($newKeys !== $TempKeyArray) {
+                try {
+                  $pdo = new PDO(DB_DSN, DB_USERNAME, DB_PASSWORD);
+                  $pdo->prepare('UPDATE forestusers SET TempKey = ? WHERE login = ?')
+                      ->execute(array($newKeys, $login));
+                } catch (Throwable $e) {
                 }
               }
 

@@ -3,9 +3,21 @@
 if (!isset($_SESSION)) { session_start(); }
 
 $DOC = rtrim(str_replace('\\', '/', $_SERVER['DOCUMENT_ROOT']), '/');
-$me = (string)$_SESSION['loginuser'];
+$me = (string)($_SESSION['loginuser'] ?? '');
+
+/* страница меняет пароли и учётки: только для вошедшего администратора */
+if (empty($_SESSION['is_authuser']) || $_SESSION['is_authuser'] !== true || $me === '') {
+    http_response_code(403);
+    echo '<div class="set-hint" style="color:#a8332a">Нет доступа</div>';
+    exit;
+}
+
 $isSuper = ($me === ($_SESSION['superuser'] ?? ''));
 $token = (string)($_SESSION['fo_settings_csrf'] ?? '');
+if ($token === '') {
+    $token = bin2hex(random_bytes(16));
+    $_SESSION['fo_settings_csrf'] = $token;
+}
 
 require_once $DOC . '/system/core/library/bd.php';
 require_once $DOC . '/system/core/library/gui.php';
@@ -50,7 +62,7 @@ $user = isset($_GET['user']) ? preg_replace('/[^a-z0-9_]/', '', strtolower((stri
 $pass = isset($_GET['pass']) ? (string)$_GET['pass'] : '';
 $msg = '';
 
-if ($action !== '' && $_GET['token'] !== $token) {
+if ($action !== '' && (!isset($_GET['token']) || !hash_equals($token, (string)$_GET['token']))) {
     $msg = 'Сессия устарела, откройте окно заново';
     $action = '';
 }

@@ -141,6 +141,10 @@ switch ($action) {
         /* сессия — как после пароля (см. AuthClassUser::auth) */
         $_SESSION['is_authuser'] = true;
         $_SESSION['loginuser'] = $login;
+        /* новая сессия после входа — защита от фиксации */
+        if (session_status() === PHP_SESSION_ACTIVE) {
+            session_regenerate_id(true);
+        }
         $xff = (string)($_SERVER['HTTP_X_FORWARDED_FOR'] ?? '');
         $_SESSION['CookieIsMine'] = md5($login . (string)($_SERVER['HTTP_USER_AGENT'] ?? '')
             . (string)($_SERVER['REMOTE_ADDR'] ?? '') . $xff);

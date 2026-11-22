@@ -1,0 +1,18 @@
+# Каталог пользовательских данных: здесь не должно быть исполняемого кода.
+# Файлы (картинки, документы) отдаются как обычно, но .php/.phtml/.phar
+# не исполняются и не скачиваются — иначе загрузка файла давала бы RCE.
+<IfModule mod_php.c>
+  php_flag engine off
+</IfModule>
+<IfModule mod_php7.c>
+  php_flag engine off
+</IfModule>
+<IfModule mod_php8.c>
+  php_flag engine off
+</IfModule>
+RemoveHandler .php .phtml .phar .php3 .php4 .php5 .php7 .php8
+RemoveType .php .phtml .phar .php3 .php4 .php5 .php7 .php8
+<FilesMatch "\.(php|phtml|phar|php[0-9]|pl|py|cgi|sh|htaccess)$">
+  Require all denied
+</FilesMatch>
+Options -ExecCGI -Indexes
