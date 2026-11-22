@@ -147,6 +147,17 @@ if (fo_has_superuser($pdo) && !$resetWanted) {
 
 // Права для веб-процесса (Apache работает от www-data)
 chmod_tree($root . '/system/users');
+/* идентичность установки для Apps House: создаём сразу, чтобы её можно было менять */
+if (!is_file($root . '/system/instance.foc')) {
+    $instanceBody = "[instance]\n"
+        . 'instance_id="' . vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex(random_bytes(16)), 4)) . "\"\n"
+        . 'secret="' . bin2hex(random_bytes(32)) . "\"\n"
+        . 'hub="' . (getenv('FOREST_HUB_DEFAULT') ?: 'http://172.17.0.1:48090') . "\"\n"
+        . 'registered="0"' . "\n";
+    @file_put_contents($root . '/system/instance.foc', $instanceBody);
+    echo "Created system/instance.foc\n";
+}
+@chmod($root . '/system', 0777);
 @chmod($root . '/system/instance.foc', 0666);
 foreach (array('/system/core/osinfo.foc', '/system/core/extconfiguration.foc', '/system/core/journal.mcj', '/system/core/library/bd_inc.php') as $f) {
     @chmod($root . $f, 0666);
