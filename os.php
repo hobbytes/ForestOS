@@ -130,6 +130,7 @@ require 'system/core/library/js/core-js.php';
 $_SESSION['appid']  = '<script>document.writeln(id)</script>';
 $prepare->autorun();
 }else{
+  define('FO_LOGIN_INCLUDED', true);
   require 'login.php';
 }
 ?>

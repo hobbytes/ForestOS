@@ -3,6 +3,14 @@
    так же, как оболочка: та же кнопка, фокус и ссылки. */
 if (!isset($_SESSION)) { session_start(); }
 
+/* Прямой заход на /login (закладка, старая ссылка): библиотеки и язык
+   подключает os.php, поэтому без него страница обрывается. Отправляем на
+   канонический экран входа — это os.php в гостевом режиме. */
+if (!defined('FO_LOGIN_INCLUDED')) {
+    header('Location: /', true, 302);
+    exit;
+}
+
 /* первый запуск: пока нет администратора — мастер настройки */
 require_once $_SERVER['DOCUMENT_ROOT'] . '/system/core/library/install.php';
 if (!fo_has_superuser()) {
@@ -186,6 +194,12 @@ if(!$_SESSION['BlockDate'] || date('d-m-y H:i:s') >= $_SESSION['BlockDate']){
 if(!$_SESSION['BlockDate']){
   echo '<input class="buttoncustom" type="submit" name="logins" value="'.$language[$_SESSION['locale'].'_login_button'].'">';
   $gui->formend();
+  /* вход по ключу устройства: Face ID / отпечаток / Windows Hello */
+  echo '<div id="fo-faceid-wrap" class="fo-faceid-wrap" style="display:none">'
+     . '<button type="button" id="fo-faceid" class="fo-faceid-btn">'
+     . '<span class="fo-faceid-icon" aria-hidden="true">◉</span><span>Войти по Face ID</span></button>'
+     . '<div id="fo-faceid-msg" class="fo-faceid-msg"></div>'
+     . '</div>';
 }
 
 $timezone = $_SESSION['timezone'];
@@ -259,6 +273,101 @@ function showTime()
   setTimeout(showTime,1000);
 }
 showTime();
+</script>
+<script type="text/javascript">
+/* Вход по Face ID / отпечатку (WebAuthn). Пароль остаётся основным способом:
+   если ключа нет, кнопка просто не показывается. */
+(function(){
+  var API = 'system/core/functions/webauthn.php';
+  var wrap = document.getElementById('fo-faceid-wrap');
+  var btn = document.getElementById('fo-faceid');
+  var msg = document.getElementById('fo-faceid-msg');
+  var loginInput = document.getElementById('loginin');
+  if(!wrap || !btn || !loginInput){ return; }
+
+  var canWebAuthn = !!(window.PublicKeyCredential && navigator.credentials && window.isSecureContext);
+  var currentLogin = '';
+
+  function say(t, bad){ if(!msg) return; msg.textContent = t || ''; msg.className = 'fo-faceid-msg' + (bad ? ' bad' : ''); }
+  function b64(buf){ var s = '', b = new Uint8Array(buf); for(var i = 0; i < b.length; i++){ s += String.fromCharCode(b[i]); } return btoa(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
+  function unb64(t){ t = t.replace(/-/g, '+').replace(/_/g, '/'); while(t.length % 4){ t += '='; } var s = atob(t), o = new Uint8Array(s.length); for(var i = 0; i < s.length; i++){ o[i] = s.charCodeAt(i); } return o.buffer; }
+  function post(act, data){
+    return fetch(API + '?action=' + act, {
+      method: 'POST', credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data || {})
+    }).then(function(r){ return r.json(); });
+  }
+
+  function refresh(){
+    var login = (loginInput.value || '').trim().toLowerCase();
+    if(!canWebAuthn || login === ''){ wrap.style.display = 'none'; currentLogin = ''; return; }
+    if(login === currentLogin){ return; }
+    currentLogin = login;
+    fetch(API + '?action=status&login=' + encodeURIComponent(login), { credentials: 'same-origin' })
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        if(d && d.ok && d.available && d.allowed && d.has_keys){ wrap.style.display = 'block'; say(''); }
+        else { wrap.style.display = 'none'; }
+      })
+      .catch(function(){ wrap.style.display = 'none'; });
+  }
+
+  loginInput.addEventListener('input', function(){ setTimeout(refresh, 250); });
+  loginInput.addEventListener('blur', refresh);
+
+  btn.addEventListener('click', function(){
+    var login = (loginInput.value || '').trim().toLowerCase();
+    if(!login){ say('Сначала введите логин', true); loginInput.focus(); return; }
+    btn.disabled = true;
+    say('Запрашиваем Face ID…');
+    post('begin-login', { login: login })
+      .then(function(d){
+        if(!d || !d.ok){ var e = new Error((d && d.error) || 'begin_failed'); e.code = (d && d.error) || 'begin_failed'; throw e; }
+        var pk = d.publicKey;
+        return navigator.credentials.get({ publicKey: {
+          challenge: unb64(pk.challenge),
+          rpId: pk.rpId,
+          timeout: pk.timeout || 60000,
+          userVerification: pk.userVerification || 'required',
+          allowCredentials: (pk.allowCredentials || []).map(function(c){
+            return { type: c.type, id: unb64(c.id), transports: c.transports };
+          })
+        }});
+      })
+      .then(function(cred){
+        if(!cred){ var e = new Error('cancelled'); e.code = 'cancelled'; throw e; }
+        return post('finish-login', { login: login, credential: {
+          id: cred.id,
+          rawId: b64(cred.rawId),
+          type: cred.type,
+          clientDataJSON: b64(cred.response.clientDataJSON),
+          authenticatorData: b64(cred.response.authenticatorData),
+          signature: b64(cred.response.signature),
+          userHandle: cred.response.userHandle ? b64(cred.response.userHandle) : null
+        }});
+      })
+      .then(function(d){
+        if(!d || !d.ok){ var e = new Error((d && d.error) || 'auth_failed'); e.code = (d && d.error) || 'auth_failed'; throw e; }
+        say('Входим…');
+        window.location.replace('os.php');
+      })
+      .catch(function(err){
+        btn.disabled = false;
+        var name = (err && err.name) || '';
+        var code = (err && err.code) || '';
+        if(name === 'NotAllowedError'){ say('Отменено или не распознано', true); return; }
+        if(code === 'no_keys' || code === 'not_allowed'){ wrap.style.display = 'none'; return; }
+        if(code === 'challenge_expired'){ say('Истекло время — попробуйте ещё раз', true); return; }
+        if(code === 'too_many_attempts'){ say('Слишком много попыток, подождите пару минут', true); return; }
+        if(code === 'bad_signature' || code === 'unknown_key'){ say('Ключ не подошёл — войдите паролем', true); return; }
+        if(code === 'insecure_context'){ say('Вход по Face ID работает только по HTTPS', true); return; }
+        say('Не получилось: ' + (code || name || 'ошибка'), true);
+      });
+  });
+
+  refresh();
+})();
 </script>
 <div class="welcomescreen">
   <img src="system/core/design/images/forestosicon.png">
