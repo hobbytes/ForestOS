@@ -3,14 +3,14 @@ name: release
 # Собирает архив обновления и публикует его в GitHub Releases.
 # Достаточно поставить тег:  git tag v4.4 && git push --tags
 on:
-  push:
-    tags:
-      - 'v*'
   workflow_dispatch:
     inputs:
       version:
         description: 'Версия (например 4.4)'
         required: true
+      notes:
+        description: 'Что нового (если пусто — берётся из CHANGELOG)'
+        required: false
 
 permissions:
   contents: write

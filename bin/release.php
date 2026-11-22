@@ -147,8 +147,15 @@ function rl_build(string $version, string $notes, array $opts = array()): array
 
     /* 2. адрес, по которому этот сервер отдаёт архив */
     $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-    $host = $_SERVER['HTTP_HOST'] ?? rl_env('FOREST_PUBLIC_HOST', 'localhost');
+    $host = $_SERVER['HTTP_HOST'] ?? '';
     $port = rl_env('APP_PORT', '');
+    if ($host === '') {
+        /* CLI: берём публичный адрес из .env, иначе из окружения */
+        $envFile = $doc . '/.env';
+        $cfg = is_file($envFile) ? (array)@parse_ini_file($envFile) : array();
+        $host = (string)($cfg['FOREST_PUBLIC_HOST'] ?? rl_env('FOREST_PUBLIC_HOST', 'localhost'));
+        $port = (string)($cfg['APP_PORT'] ?? $port);
+    }
     if ($port !== '' && $port !== '80' && $port !== '443' && strpos($host, ':') === false) {
         $host .= ':' . $port;
     }

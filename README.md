@@ -169,6 +169,61 @@ docs/                      документация и скриншоты
 
 ---
 
+## Обновления системы
+
+Релиз собирается из GitHub в готовый архив и публикуется на этом же сервера —
+никаких внешних сервисов не нужно.
+
+### Как выпустить обновление
+
+Через командную строку:
+
+```bash
+php bin/release.php --version=4.4 --notes="Что нового"
+```
+
+Скрипт:
+1. скачивает архив ветки `master` из GitHub (`FOREST_REPO_OWNER`, `FOREST_REPO_NAME`, `FOREST_REPO_BRANCH`);
+2. перепаковывает его в `releases/forest-os-<версия>.zip`, выкидывая пользовательские
+   данные (`.env`, `system/users`, `data`, `bd_inc.php`, `instance.foc`, `docs/screenshots`);
+3. считает `sha256` и пишет `releases/update.json`;
+4. оставляет 5 последних архивов.
+
+Через интерфейс: **Update → «Опубликовать релиз»** (виден только суперпользователю) —
+вводите версию и описание, нажимаете кнопку, скрипт делает то же самое.
+
+### Как обновляется клиент
+
+Приложение **Update** читает `releases/update.json` на своём же сервере (если файла нет —
+ленту GitHub Releases). Показывает текущую сборку, доступную версию и описание.
+Суперпользователь нажимает «Установить»:
+
+* архив скачивается и проверяется по `sha256`;
+* распаковывается поверх, **не трогая** `.env`, `system/users`, `data`,
+  `system/instance.foc`, `system/core/library/bd_inc.php`;
+* `system/core/osinfo.foc` обновляется (версия, сборка, кодовое имя), старая копия
+  сохраняется как `osinfo.foc.bak-<дата>`.
+
+Внешние установки могут обновляться из GitHub Releases: в настройках сервера
+`system/core/update.json` можно указать другую ленту:
+
+```json
+{ "feed": "https://github.com/<owner>/<repo>/releases/latest/download/update.json" }
+```
+
+### Параметры окружения
+
+| Переменная | Зачем |
+|---|---|
+| `FOREST_REPO_OWNER` | владелец репозитория (по умолчанию `hobbytes`) |
+| `FOREST_REPO_NAME` | имя репозитория (по умолчанию `ForestOS`) |
+| `FOREST_REPO_BRANCH` | ветка для сборки (по умолчанию `master`) |
+| `FOREST_PUBLIC_HOST` | адрес, по которому сервер отдаёт `releases/` |
+| `FOREST_RELEASES_URL` | явный базовый URL архива обновлений |
+| `FOREST_UPDATE_FEED` | явная ссылка на `update.json` |
+
+---
+
 ## Лицензия
 
 См. [LICENSE](LICENSE).

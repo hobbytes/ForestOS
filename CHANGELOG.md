@@ -1,5 +1,16 @@
 # История изменений
 
+## 4.4 — доставка обновлений
+* `bin/release.php`: собирает пакет из GitHub и публикует `releases/forest-os-<версия>.zip`
+  + `releases/update.json` (sha256, размер, описание, дата);
+* приложение **Update** переписано: текущая сборка, доступная версия, описание,
+  установка в один клик; панель «Опубликовать релиз» для суперпользователя;
+* API `system/core/functions/osupdate.php`: `status` / `check` / `install` / `release`;
+* при установке сохраняются `.env`, `system/users`, `data`, `instance.foc`, `bd_inc.php`,
+  а `osinfo.foc` обновляется с резервной копией;
+* лента обновлений: свой `releases/update.json`, иначе GitHub Releases;
+* GitHub Actions workflow оставлен как альтернатива (ручной запуск).
+
 ## 4.3 — только четыре стандартных приложения
 * в системе остались Explorer, Settings, Apps House и Update (защищены от удаления);
 * остальные (Rich Text Editor, Image Viewer, Audio Player, Converter, Demo, Picker Test)
