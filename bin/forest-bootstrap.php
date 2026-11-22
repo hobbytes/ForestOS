@@ -78,6 +78,8 @@ function generate_fuid(string $login, string $passwordHash): string {
     return strtoupper(hash('sha256', $login . '|' . $passwordHash . '|' . bin2hex(random_bytes(16))));
 }
 
+require_once (realpath(__DIR__ . '/..') ?: getcwd()) . '/system/core/library/install.php';
+
 $root = realpath(__DIR__ . '/..') ?: getcwd();
 chdir($root);
 
@@ -86,11 +88,7 @@ $dbName = envv('DB_NAME', 'forestos');
 $dbUser = envv('DB_USER', 'forest');
 $dbPass = (string)envv('DB_PASSWORD', '');
 $login = strtolower(str_replace(' ', '_', envv('FOREST_ADMIN_LOGIN', 'admin')));
-$password = envv('FOREST_ADMIN_PASSWORD', '');
-if ($password === '' || strlen($password) < 8) {
-    fwrite(STDERR, "FOREST_ADMIN_PASSWORD must be set in .env (min 8 chars)\n");
-    exit(1);
-}
+$password = (string)envv('FOREST_ADMIN_PASSWORD', '');
 $lang = envv('FOREST_ADMIN_LANGUAGE', 'ru');
 $tz = envv('FOREST_ADMIN_TIMEZONE', envv('APP_TIMEZONE', 'Europe/Moscow'));
 
@@ -106,25 +104,25 @@ $pdo = new PDO("mysql:host={$dbHost};dbname={$dbName};charset=utf8mb4", $dbUser,
 $sql = file_get_contents($root . '/sql/001_forestusers.sql');
 $pdo->exec($sql);
 
-$passwordHash = legacy_crypt_s((string)$password, $login);
-$stmt = $pdo->prepare('SELECT login FROM forestusers WHERE login = ?');
-$stmt->execute([$login]);
-if (!$stmt->fetch()) {
-    $fuid = generate_fuid($login, $passwordHash);
-    $insert = $pdo->prepare('INSERT INTO forestusers (login, password, fuid, status, TempKey) VALUES (?, ?, ?, ?, NULL)');
-    $insert->execute([$login, $passwordHash, $fuid, 'superuser']);
-    echo "Created superuser: {$login}\n";
-    forest_banner($login, $password, $login === strtolower((string)envv('FOREST_ADMIN_LOGIN', 'admin')));
+$resetWanted = filter_var(envv('FOREST_ADMIN_PASSWORD_RESET', 'false'), FILTER_VALIDATE_BOOLEAN);
+
+if (fo_has_superuser($pdo) && !$resetWanted) {
+    /* система уже настроена: пароль из .env сам по себе не применяется */
+    echo "\n  Учётная запись уже создана — пароль не менялся.\n";
+    echo "  Сменить пароль:  php bin/forest-password.php\n";
+    echo "  или поставить FOREST_ADMIN_PASSWORD_RESET=1 в .env и перезапустить контейнер.\n\n";
+} elseif ($password === '' || strlen($password) < 8) {
+    /* пароль не задан — его создадут в браузере при первом запуске */
+    echo "\n  Учётная запись администратора ещё не создана.\n";
+    echo "  Откройте http://localhost:" . (string)envv('APP_PORT', '8080') . " и задайте логин и пароль.\n\n";
 } else {
-    /* база уже есть: пароль из .env сам по себе не применяется — нужно разрешение */
-    if (filter_var(envv('FOREST_ADMIN_PASSWORD_RESET', 'false'), FILTER_VALIDATE_BOOLEAN)) {
-        $pdo->prepare('UPDATE forestusers SET password = ?, TempKey = NULL WHERE login = ?')
-            ->execute([$passwordHash, $login]);
-        echo "Password updated for existing user: {$login}\n";
+    $res = fo_create_user($pdo, $login, $password, $lang, $tz, $root);
+    if (!empty($res['ok'])) {
+        echo ($res['created'] ? "Created superuser: " : "Password updated: ") . $login . "\n";
+        forest_banner($login, $password, !$resetWanted);
     } else {
-        echo "\n  Учётная запись {$login} уже существует — пароль не менялся.\n";
-        echo "  Сменить пароль:  php bin/forest-password.php\n";
-        echo "  или поставить FOREST_ADMIN_PASSWORD_RESET=1 в .env и перезапустить контейнер.\n\n";
+        fwrite(STDERR, "Не удалось создать администратора: " . ($res['error'] ?? 'unknown') . "\n");
+        exit(1);
     }
 }
 

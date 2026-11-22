@@ -2,6 +2,13 @@
 /* Системный акцент (Settings → Персонализация) — экран входа использует его
    так же, как оболочка: та же кнопка, фокус и ссылки. */
 if (!isset($_SESSION)) { session_start(); }
+
+/* первый запуск: пока нет администратора — мастер настройки */
+require_once $_SERVER['DOCUMENT_ROOT'] . '/system/core/library/install.php';
+if (!fo_has_superuser()) {
+    header('Location: setup.php');
+    exit;
+}
 $__accentUser = !empty($_SESSION['loginuser']) ? (string)$_SESSION['loginuser'] : (getenv('FOREST_ADMIN_LOGIN') ?: 'admin');
 $__accent = '';
 $__af = $_SERVER['DOCUMENT_ROOT'] . '/system/users/' . $__accentUser . '/settings/appearance.foc';

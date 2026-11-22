@@ -1,5 +1,16 @@
 <?
 
+/* первый запуск: пока нет ни одного администратора, ведём на мастер настройки.
+   Проверка стоит до подключения библиотек: prepare.php печатает <script> и
+   заголовки уже нельзя будет отправить. */
+if (!isset($_SESSION)) {
+  session_start();
+}
+require_once $_SERVER['DOCUMENT_ROOT'] . '/system/core/library/install.php';
+if (empty($_SESSION['is_authuser']) && !fo_has_superuser()) {
+  header('Location: setup.php');
+  exit;
+}
 
 /* #Display errors */
 ini_set('display_errors','Off');
@@ -16,6 +27,7 @@ require 'system/core/library/etc/security.php';
 if(!isset($_SESSION)){
   session_start();
 }
+
 
 $object = new gui;
 $infob = new info;
