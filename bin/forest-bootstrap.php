@@ -135,6 +135,8 @@ write_if_missing('system/core/extconfiguration.foc', "[AppExt]\n\n[AppKeys]\n");
 write_if_missing('system/core/journal.mcj', '');
 
 // User tree
+ensure_dir('system/users');
+@chmod($root . '/system/users', 0777);
 $userRoot = "system/users/{$login}";
 ensure_dir($userRoot . '/desktop');
 ensure_dir($userRoot . '/documents/images');

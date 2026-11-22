@@ -60,7 +60,12 @@ function fo_hash_password(string $password, string $salt): string
 function fo_user_tree(string $root, string $login, string $lang = 'ru', string $tz = 'Europe/Moscow'): void
 {
     $root = rtrim($root, '/');
-    $userRoot = $root . '/system/users/' . $login;
+    $usersRoot = $root . '/system/users';
+    if (!is_dir($usersRoot)) {
+        @mkdir($usersRoot, 0777, true);
+    }
+    @chmod($usersRoot, 0777);
+    $userRoot = $usersRoot . '/' . $login;
     $dirs = array(
         '/desktop', '/documents/images', '/trash',
         '/settings/etc', '/settings/notifications', '/settings/Dock/A',
