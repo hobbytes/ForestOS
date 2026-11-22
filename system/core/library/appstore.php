@@ -71,13 +71,93 @@ class AppStore
         return rtrim((string)$this->cfg['hub'], '/');
     }
 
-    public function setHub(string $url): bool
+    /** Приводит адрес к виду http://host:port без хвостового слэша. */
+    public static function normalizeUrl(string $url): string
     {
         $url = trim($url);
-        if (!preg_match('#^https?://[^\s"\']+$#i', $url)) {
+        if ($url === '') {
+            return '';
+        }
+        if (!preg_match('#^https?://#i', $url)) {
+            $url = 'http://' . $url;
+        }
+        return rtrim($url, '/');
+    }
+
+    /**
+     * Проверка хаба с объяснением причины: соединение, HTTP-коды, похоже ли на Apps House.
+     */
+    public function hubCheck(?string $url = null): array
+    {
+        $url = self::normalizeUrl($url ?? $this->hub());
+        $out = array(
+            'ok' => false,
+            'url' => $url,
+            'reachable' => false,
+            'is_hub' => false,
+            'status_root' => 0,
+            'status_repos' => 0,
+            'ms' => 0,
+            'error' => '',
+            'hint' => '',
+        );
+        if ($url === '') {
+            $out['error'] = 'no_url';
+            $out['hint'] = 'Адрес хаба пуст.';
+            return $out;
+        }
+
+        $t0 = microtime(true);
+        $root = self::http('GET', $url . '/', null, array('Accept: application/json, text/html'), 8);
+        $repos = self::http('GET', $url . '/api/v1/repos', null, array('Accept: application/json'), 8);
+        $out['ms'] = (int)round((microtime(true) - $t0) * 1000);
+        $out['status_root'] = (int)$root['status'];
+        $out['status_repos'] = (int)$repos['status'];
+        $out['reachable'] = $out['status_root'] > 0;
+
+        $json = json_decode((string)$repos['raw'], true);
+        $out['is_hub'] = is_array($json) && (array_key_exists('repos', $json) || (isset($json['ok']) && $json['ok'] === true));
+
+        $err = trim((string)$root['error']);
+        if ($err === '') {
+            $err = trim((string)$repos['error']);
+        }
+        $out['error'] = $err;
+
+        if (!$out['reachable']) {
+            if (stripos($err, 'resolve') !== false || stripos($err, 'getaddrinfo') !== false) {
+                $out['hint'] = 'Имя не резолвится. Проверьте адрес или используйте IP.';
+            } elseif (stripos($err, 'refused') !== false
+                || stripos($err, 'failed to connect') !== false
+                || stripos($err, 'could not connect') !== false) {
+                $out['hint'] = 'Соединение отклонено: сервис не запущен или слушает только 127.0.0.1.';
+            } elseif (stripos($err, 'timed out') !== false
+                || stripos($err, 'timeout') !== false
+                || stripos($err, 'operation timed out') !== false) {
+                $out['hint'] = 'Нет ответа за 8 секунд: порт закрыт файрволом или адрес недоступен.';
+            } else {
+                $out['hint'] = 'Сервер не ответил: ' . ($err !== '' ? $err : 'неизвестная ошибка сети');
+            }
+            return $out;
+        }
+
+        if (!$out['is_hub']) {
+            $out['hint'] = 'Сервер отвечает (HTTP ' . $out['status_root'] . '), но это не Apps House: '
+                . ($out['status_repos'] > 0 ? '/api/v1/repos вернул ' . $out['status_repos'] : 'нет /api/v1/repos');
+            return $out;
+        }
+
+        $out['ok'] = true;
+        return $out;
+    }
+
+    public function setHub(string $url): bool
+    {
+        $url = self::normalizeUrl($url);
+        if ($url === '' || !preg_match('#^https?://[^\s"\']+$#i', $url)) {
             return false;
         }
-        $this->cfg['hub'] = rtrim($url, '/');
+        $this->cfg['hub'] = $url;
         $this->cfg['registered'] = '0';
         $this->save();
         return true;

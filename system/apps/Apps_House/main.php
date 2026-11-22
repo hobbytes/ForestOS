@@ -85,6 +85,8 @@ $AppContainer->StartContainer();
 .st-form .wide{ grid-column:1 / -1; }
 .st-form .st-actions{ margin-top:0; justify-content:flex-end; grid-column:1 / -1; }
 .st-note{ color:#8b929a; font-size:11.5px; margin:6px 0 0; }
+.st-note.bad{ color:#c9524a; }
+.st-note.ok{ color:#2f8f4e; }
 .st-repo{ display:flex; align-items:center; gap:10px; padding:10px 12px; border:1px solid #e6e7ea; border-radius:12px; background:#fff; }
 .st-repo .st-main{ gap:2px; }
 .st-repo-url{ color:#6d747c; font-size:11.5px; word-break:break-all; }
@@ -163,7 +165,10 @@ $AppContainer->StartContainer();
       <div class="st-toolbar">
         <input class="st-search" id="st-hub-input<?echo $AppID?>" placeholder="Адрес хаба, например http://172.17.0.1:48090">
         <button type="button" class="st-btn" id="st-hub-save<?echo $AppID?>">Сохранить хаб</button>
+        <button type="button" class="st-btn" id="st-hub-test<?echo $AppID?>">Проверить связь</button>
+        <button type="button" class="st-btn" id="st-hub-find<?echo $AppID?>">Подобрать адрес</button>
       </div>
+      <p class="st-note" id="st-hub-state<?echo $AppID?>" style="display:none"></p>
       <p class="st-note">Официальный репозиторий живёт на хабе. Дополнительные репозитории — любой URL с парой <b>index.json</b> + <b>index.sig</b> (ed25519).</p>
       <div class="st-list" id="st-repos<?echo $AppID?>" style="margin-top:10px"></div>
       <div class="st-form">
@@ -288,12 +293,34 @@ $AppContainer->StartContainer();
       });
   }
 
+  function showHubState(d){
+    var n = el('hub-state');
+    if(!n) return;
+    if(d && d.ok){
+      n.style.display = 'block';
+      n.className = 'st-note ok';
+      n.textContent = 'Хаб доступен: ' + d.url + (d.ms ? '  ·  ' + d.ms + ' мс' : '');
+    } else {
+      n.style.display = 'block';
+      n.className = 'st-note bad';
+      n.textContent = 'Хаб недоступен. ' + ((d && (d.hint || d.error)) || 'причина неизвестна');
+    }
+  }
+
+  function checkHub(url){
+    var q = 'action=hub-check' + (url ? '&url=' + encodeURIComponent(url) : '');
+    return jsonGet(q).then(function(d){ showHubState(d); return d; })
+      .catch(function(){ showHubState({ ok:false, hint:'запрос не выполнился' }); });
+  }
+
   function refreshHubBadge(){
     jsonGet('action=status').then(function(s){
       var dot = el('hub-dot'), url = el('hub-url');
       if(!dot || !url) return;
       dot.className = 'st-dot ' + (s.hub_ok ? 'ok' : 'bad');
       url.textContent = s.hub + (s.hub_ok ? '' : ' · недоступен');
+      url.title = s.hub_hint || '';
+      if(!s.hub_ok && s.hub_hint){ showHubState({ ok:false, hint: s.hub_hint }); }
     });
   }
 
@@ -500,9 +527,42 @@ $AppContainer->StartContainer();
   el('hub-save').addEventListener('click', function(){
     var url = el('hub-input').value.trim();
     post({action:'hub-set', url:url}).then(function(d){
-      if(d.ok){ toast('Хаб: ' + d.hub); loadRepos(); loadCatalog(); }
-      else { toast('Не удалось: ' + (d.error || 'ошибка')); }
+      if(d.ok){
+        toast('Хаб: ' + d.hub);
+        checkHub(d.hub).then(function(){ loadRepos(); loadCatalog(); });
+      } else {
+        toast('Не удалось: ' + (d.error || 'ошибка'));
+      }
     });
+  });
+
+  var hubFind = el('hub-find');
+  if(hubFind) hubFind.addEventListener('click', function(){
+    hubFind.disabled = true;
+    var cur = el('hub-input').value.trim();
+    var m = cur.match(/:(\d{2,5})\s*$/);
+    var port = m ? m[1] : '48090';
+    jsonGet('action=hub-probe&port=' + encodeURIComponent(port)).then(function(d){
+      hubFind.disabled = false;
+      if(d.ok){
+        el('hub-input').value = d.url;
+        showHubState(d.check);
+        toast('Хаб найден: ' + d.url);
+      } else {
+        var lines = (d.tried || []).map(function(x){ return x.url + (x.ok ? ' — ок' : ' — нет'); });
+        showHubState({ ok:false, hint:'ни один адрес не ответил. Проверены: ' + lines.join(', ') });
+      }
+    }).catch(function(){
+      hubFind.disabled = false;
+      showHubState({ ok:false, hint:'подбор не удался' });
+    });
+  });
+
+  var hubTest = el('hub-test');
+  if(hubTest) hubTest.addEventListener('click', function(){
+    var u = el('hub-input').value.trim();
+    hubTest.disabled = true;
+    checkHub(u).then(function(){ hubTest.disabled = false; });
   });
 
   /* ---------- init ---------- */

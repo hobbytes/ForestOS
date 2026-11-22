@@ -231,7 +231,7 @@ if (empty($_SESSION['fo_store_csrf'])) {
 $CSRF = (string)$_SESSION['fo_store_csrf'];
 
 $action = isset($_POST['action']) ? (string)$_POST['action'] : (isset($_GET['action']) ? (string)$_GET['action'] : '');
-$readOnly = in_array($action, array('status', 'catalog', 'installed', 'repos', 'repo-apps', 'icon', 'preview'), true);
+$readOnly = in_array($action, array('status', 'catalog', 'installed', 'repos', 'repo-apps', 'icon', 'preview', 'hub-check', 'hub-probe'), true);
 
 if (!$readOnly) {
     $token = isset($_POST['token']) ? (string)$_POST['token'] : '';
@@ -242,16 +242,15 @@ if (!$readOnly) {
 
 /* ---------- actions ---------- */
 if ($action === 'status') {
-    $health = @file_get_contents($store->hub() . '/api/v1/health', false, stream_context_create(array(
-        'http' => array('timeout' => 6, 'ignore_errors' => true),
-    )));
-    $h = json_decode((string)$health, true);
+    $check = $store->hubCheck();
     st_out(array(
         'ok' => true,
         'hub' => $store->hub(),
         'instance_id' => $store->instanceId(),
-        'hub_ok' => is_array($h) && !empty($h['ok']) && !empty($h['db']),
-        'registered' => !empty($h),
+        'hub_ok' => !empty($check['ok']),
+        'hub_hint' => (string)($check['hint'] ?? ''),
+        'hub_ms' => (int)($check['ms'] ?? 0),
+        'registered' => !empty($check['ok']),
     ));
 }
 
@@ -293,7 +292,46 @@ if ($action === 'installed') {
 }
 
 if ($action === 'repos') {
-    st_out(array('ok' => true, 'hub' => $store->hub(), 'repos' => $store->repos()));
+    $check = $store->hubCheck();
+    st_out(array(
+        'ok' => true,
+        'hub' => $store->hub(),
+        'hub_ok' => !empty($check['ok']),
+        'hub_error' => (string)($check['error'] ?? ''),
+        'hub_hint' => (string)($check['hint'] ?? ''),
+        'hub_status' => (int)($check['status_root'] ?? 0),
+        'repos' => $store->repos(),
+    ));
+}
+
+if ($action === 'hub-probe') {
+    $port = isset($_GET['port']) ? (int)$_GET['port'] : 48090;
+    if ($port < 1 || $port > 65535) {
+        $port = 48090;
+    }
+    $candidates = array();
+    foreach (array('host.docker.internal', '172.17.0.1', '172.18.0.1', '172.19.0.1', '172.20.0.1') as $host) {
+        $candidates[] = 'http://' . $host . ':' . $port;
+    }
+    $candidates[] = $store->hub();
+    $tried = array();
+    foreach (array_unique($candidates) as $candidate) {
+        $check = $store->hubCheck($candidate);
+        $tried[] = array(
+            'url' => $candidate,
+            'ok' => !empty($check['ok']),
+            'hint' => (string)($check['hint'] ?? ''),
+        );
+        if (!empty($check['ok'])) {
+            st_out(array('ok' => true, 'url' => $candidate, 'check' => $check, 'tried' => $tried));
+        }
+    }
+    st_out(array('ok' => false, 'error' => 'no_hub_found', 'tried' => $tried));
+}
+
+if ($action === 'hub-check') {
+    $url = isset($_GET['url']) ? (string)$_GET['url'] : '';
+    st_out($store->hubCheck($url !== '' ? $url : null));
 }
 
 if ($action === 'repo-apps') {
