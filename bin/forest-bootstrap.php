@@ -147,10 +147,15 @@ if (fo_has_superuser($pdo) && !$resetWanted) {
 
 // Права для веб-процесса (Apache работает от www-data)
 chmod_tree($root . '/system/users');
-/* идентичность установки для Apps House: создаём сразу, чтобы её можно было менять */
+/* идентичность установки для Apps House: создаём сразу, чтобы её можно было менять.
+   id должен быть настоящим UUID v4 — хаб проверяет версию и вариант (иначе 400
+   bad_instance_id и каталог не грузится). */
 if (!is_file($root . '/system/instance.foc')) {
+    $b = random_bytes(16);
+    $b[6] = chr((ord($b[6]) & 0x0f) | 0x40);
+    $b[8] = chr((ord($b[8]) & 0x3f) | 0x80);
     $instanceBody = "[instance]\n"
-        . 'instance_id="' . vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex(random_bytes(16)), 4)) . "\"\n"
+        . 'instance_id="' . vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($b), 4)) . "\"\n"
         . 'secret="' . bin2hex(random_bytes(32)) . "\"\n"
         . 'hub="' . (getenv('FOREST_HUB_DEFAULT') ?: 'http://172.17.0.1:48090') . "\"\n"
         . 'registered="0"' . "\n";

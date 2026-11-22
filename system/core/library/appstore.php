@@ -32,8 +32,12 @@ class AppStore
         $this->cfg = is_array($ini) ? $ini : array();
         $changed = false;
 
-        if (empty($this->cfg['instance_id']) || !preg_match('/^[0-9a-f-]{36}$/i', (string)$this->cfg['instance_id'])) {
+        /* Хаб принимает только UUID v4 (Util::isUuid на хабе: `-4xxx-[89ab]xxx`).
+           Старый bootstrap писал «похожий на UUID» набор байт, и регистрация
+           отвечала 400 bad_instance_id — каталог не грузился вообще. */
+        if (!self::isValidInstanceId((string)($this->cfg['instance_id'] ?? ''))) {
             $this->cfg['instance_id'] = self::uuid4();
+            $this->cfg['registered'] = '0';
             $changed = true;
         }
         if (empty($this->cfg['secret']) || strlen((string)$this->cfg['secret']) < 32) {
@@ -45,13 +49,18 @@ class AppStore
             $this->cfg['hub'] = self::DEFAULT_HUB;
             $changed = true;
         }
-        if ($changed) {
-            $this->save();
+        if ($changed && !$this->save()) {
+            /* писать некуда: регистрироваться вслепую нельзя, иначе каждая
+               попытка плодит на хабе новую установку-призрак */
+            $this->identityPersisted = false;
         }
     }
 
     /** Последняя ошибка сохранения (для внятных сообщений в интерфейсе). */
     private string $saveError = '';
+
+    /** Удалось ли сохранить идентичность на диск. */
+    private bool $identityPersisted = true;
 
     public function lastSaveError(): string
     {
@@ -71,7 +80,20 @@ class AppStore
         if (!is_writable($this->file)) {
             @chmod($this->file, 0666);
         }
-        if (@file_put_contents($this->file, $body) === false) {
+        $written = @file_put_contents($this->file, $body);
+        if ($written === false) {
+            /* Прямая запись не прошла (файл root:0644). Каталог system/ обычно
+               доступен веб-процессу, поэтому пишем рядом и переименовываем:
+               rename не требует прав на сам файл, только на каталог. */
+            $tmp = $this->file . '.tmp' . bin2hex(random_bytes(4));
+            if (@file_put_contents($tmp, $body) !== false && @rename($tmp, $this->file)) {
+                $written = strlen($body);
+                @chmod($this->file, 0666);
+            } else {
+                @unlink($tmp);
+            }
+        }
+        if ($written === false) {
             $this->saveError = 'not_writable';
             return false;
         }
@@ -188,6 +210,12 @@ class AppStore
         return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($b), 4));
     }
 
+    /** Ровно то, что проверяет хаб (Auth/Util::isUuid): формат v4 + вариант RFC 4122. */
+    public static function isValidInstanceId(string $id): bool
+    {
+        return (bool)preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i', $id);
+    }
+
     /* ---------------- transport ---------------- */
 
     private function headers(string $method, string $path, string $body): array
@@ -246,8 +274,42 @@ class AppStore
     /** Registers this installation on the hub (once). */
     public function ensureRegistered(): array
     {
+        if (!$this->identityPersisted) {
+            return $this->identityNotSaved();
+        }
         if ((string)($this->cfg['registered'] ?? '0') === '1') {
             return array('ok' => true, 'registered' => true, 'instance_id' => $this->instanceId());
+        }
+        return $this->registerAttempt(0);
+    }
+
+    private function identityNotSaved(): array
+    {
+        return array(
+            'ok' => false,
+            'error' => 'identity_not_saved',
+            'hint' => 'Не удалось записать system/instance.foc. Перезапустите контейнер: '
+                . 'docker compose restart web — он выдаст права на файл.',
+            'hub_status' => 0,
+            'raw' => '',
+        );
+    }
+
+    /** Новая личность установки: старую хаб отверг (400/409). */
+    private function resetIdentity(): void
+    {
+        $this->cfg['instance_id'] = self::uuid4();
+        $this->cfg['secret'] = bin2hex(random_bytes(32));
+        $this->cfg['registered'] = '0';
+        if (!$this->save()) {
+            $this->identityPersisted = false;
+        }
+    }
+
+    private function registerAttempt(int $attempt): array
+    {
+        if (!$this->identityPersisted) {
+            return $this->identityNotSaved();
         }
         $body = json_encode(array(
             'instance_id' => $this->instanceId(),
@@ -259,24 +321,32 @@ class AppStore
         $res = self::http('POST', $this->hub() . '/api/v1/instances/register', $body,
             array('Content-Type: application/json', 'Accept: application/json'));
 
+        $json = json_decode((string)$res['raw'], true);
+        $hubError = is_array($json) ? (string)($json['error'] ?? '') : '';
+
         if ($res['status'] === 200) {
             $this->cfg['registered'] = '1';
-            $this->save();
+            if (!$this->save()) {
+                $this->identityPersisted = false;
+            }
             return array('ok' => true, 'registered' => true, 'instance_id' => $this->instanceId());
         }
-        if ($res['status'] === 409) {
-            // the hub already knows this id with another secret: take a new identity
-            $this->cfg['instance_id'] = self::uuid4();
-            $this->cfg['secret'] = bin2hex(random_bytes(32));
-            $this->cfg['registered'] = '0';
-            $this->save();
-            return $this->ensureRegistered();
+
+        /* Один повтор с новой личностью: хаб либо знает этот id с другим
+           секретом (409), либо не принимает сам id (400 bad_instance_id —
+           так отвечал старый bootstrap, писавший не-UUIDv4). */
+        if ($attempt < 1 && ($res['status'] === 409
+            || ($res['status'] === 400 && in_array($hubError, array('bad_instance_id', 'bad_secret'), true)))) {
+            $this->resetIdentity();
+            return $this->registerAttempt($attempt + 1);
         }
+
         return array(
             'ok' => false,
             'error' => $res['error'] !== '' ? 'hub_unreachable' : ('http_' . $res['status']),
             'hub_status' => (int)$res['status'],
-            'raw' => substr($res['raw'], 0, 300),
+            'hub_error' => $hubError,
+            'raw' => substr((string)$res['raw'], 0, 300),
         );
     }
 
@@ -292,7 +362,14 @@ class AppStore
     {
         $reg = $this->ensureRegistered();
         if (!$reg['ok']) {
-            return array('ok' => false, 'error' => $reg['error'], 'apps' => array());
+            return array(
+                'ok' => false,
+                'error' => $reg['error'],
+                'hint' => (string)($reg['hint'] ?? ''),
+                'hub_status' => (int)($reg['hub_status'] ?? 0),
+                'hub_body' => trim((string)($reg['raw'] ?? '')),
+                'apps' => array(),
+            );
         }
         $res = $this->call('POST', '/api/v1/catalog', array(
             'search' => $search, 'sort' => $sort, 'page' => $page, 'per_page' => $per,

@@ -289,9 +289,11 @@ $AppContainer->StartContainer();
         state.catalog = d.apps || [];
         if(!d.ok){
           state.catalog = [];
-          var why = d.error === 'hub_unreachable' ? 'хаб не отвечает — проверьте адрес на вкладке «Репозитории»'
+          var why = d.hint ? d.hint
+            : (d.error === 'hub_unreachable' ? 'хаб не отвечает — проверьте адрес на вкладке «Репозитории»'
             : (d.error === 'not_registered' ? 'хаб не принял регистрацию установки'
-            : (d.error || 'ошибка'));
+            : (String(d.error || '').indexOf('http_') === 0 ? 'хаб отклонил запрос'
+            : (d.error || 'ошибка'))));
           if(d.hub_status) why += ' (HTTP ' + d.hub_status + ')';
           if(d.hub_body) why += ': ' + String(d.hub_body).slice(0, 160);
           toast('Каталог не загрузился: ' + why);
