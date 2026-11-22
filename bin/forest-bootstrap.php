@@ -28,6 +28,25 @@ function write_if_missing(string $file, string $content): void {
 /**
  * Печатает данные для первого входа: их видно в docker compose logs.
  */
+/**
+ * Права на запись для веб-процесса: контейнер запускает bootstrap от root,
+ * а Apache работает от www-data, поэтому созданные файлы иначе недоступны.
+ */
+function chmod_tree(string $path): void
+{
+    if (is_dir($path)) {
+        @chmod($path, 0777);
+        foreach ((array)@scandir($path) as $entry) {
+            if ($entry === '.' || $entry === '..' || $entry === '') {
+                continue;
+            }
+            chmod_tree($path . '/' . $entry);
+        }
+    } elseif (is_file($path)) {
+        @chmod($path, 0666);
+    }
+}
+
 function forest_banner(string $login, string $password, bool $isDefault): void
 {
     $port = (string)envv('APP_PORT', '8080');
@@ -124,6 +143,12 @@ if (fo_has_superuser($pdo) && !$resetWanted) {
         fwrite(STDERR, "Не удалось создать администратора: " . ($res['error'] ?? 'unknown') . "\n");
         exit(1);
     }
+}
+
+// Права для веб-процесса (Apache работает от www-data)
+chmod_tree($root . '/system/users');
+foreach (array('/system/core/osinfo.foc', '/system/core/extconfiguration.foc', '/system/core/journal.mcj', '/system/core/library/bd_inc.php') as $f) {
+    @chmod($root . $f, 0666);
 }
 
 // Legacy DB include expected by system/core/library/bd.php

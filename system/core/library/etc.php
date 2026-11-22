@@ -77,17 +77,7 @@ class info{
       }
 
       $language  = parse_ini_file($_SERVER['DOCUMENT_ROOT'].'/system/core/os.lang');
-      if(!empty($login)){
-        $fuid = $bd->readglobal2("fuid", "forestusers", "login", $login, true);
-        $password = $bd->readglobal2("password", "forestusers", "login", $login, true);
-        $token = md5($fuid.$_SERVER['DOCUMENT_ROOT'].$password);
-        $data = http_build_query(array('token' => $token, 'user' => $login));
-        $check = file_get_contents('http://forest.hobbytes.com/media/os/ubase/lastseen.php?'.$data);
-        if($check == 'true'){
-          $message = '<div style="position:absolute; color:#fff; z-index:9999; background:linear-gradient(to right, #ff416c, #ff4b2b); padding: 10px 0; width:100%; text-align:center;">'.$language[$_SESSION['locale'].'_error_370'].'<div>';
-          exit($message);
-        }
-      }
+      /* прежняя проверка lastseen (forest.hobbytes.com) убрана: домен мёртв */
       unset($bd);
     }
 

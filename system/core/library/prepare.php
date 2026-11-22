@@ -66,14 +66,9 @@
         $_SESSION["safemode"] = 'false';
       }
 
-      if(isset($_SESSION["loginuser"])){
-        $pwd = $bd->readglobal2("password", "forestusers", "login", $_SESSION["loginuser"], true);
-        $fuid = $bd->readglobal2("fuid", "forestusers", "login", $_SESSION["loginuser"], true);
-        $doc_root = $_SERVER['DOCUMENT_ROOT'];
-        $hash = md5($fuid.$doc_root.$pwd);
-        $_SESSION['godmode'] = file_get_contents("https://forest.hobbytes.com/media/os/ubase/checkgodmode?userhash=$hash");
-        unset($pwd, $fuid, $doc_root, $hash);
-      }
+      /* прежняя проверка по forest.hobbytes.com убрана: домен мёртв, а запрос
+         блокировал страницу на время DNS-таймаута */
+      $_SESSION['godmode'] = 'true';
 
       // # check lang
       $_SESSION['locale'] = file_get_contents($dir.'language.foc');
@@ -776,7 +771,7 @@ function DisplaySettings(){
 
   }
 
-  $folder = $_SERVER['DOCUMENT_ROOT'].'/system/core/';
+  $folder = '/system/core/';
   if(!isset($_SESSION)){
     session_start();
   }
@@ -787,7 +782,7 @@ function DisplaySettings(){
 //Update desktop
 function UpdateDesktop(){
   $(".desktop").remove();
-  $("#desktops").load("<? echo $_SERVER['DOCUMENT_ROOT'] ?>/system/core/functions/UpdateDesktop.php", function(){
+  $("#desktops").load("/system/core/functions/UpdateDesktop.php", function(){
     SetTable();
     SetSelectors();
   });

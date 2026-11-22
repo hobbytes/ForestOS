@@ -408,7 +408,7 @@ function UpdateWindow(id, name, mode = 1){
     $(window).load(function(){
 
       <?
-      $folder = $_SERVER['DOCUMENT_ROOT'].'/system/core/';
+      $folder = '/system/core/';
       if(!isset($_SESSION)){
         session_start();
       }
