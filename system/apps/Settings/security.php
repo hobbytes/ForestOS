@@ -174,7 +174,10 @@ $waKeys = $waAllowed ? ForestWebAuthn::listKeys($me) : array();
         <? if (!$waAllowed): ?>
           Доступно только администратору.
         <? elseif (!$waAvailable): ?>
-          Нужен HTTPS: на http:// браузер не даст вызвать Face ID.
+          Браузер не даст вызвать Face ID: сервер видит запрос как
+          <b><? echo htmlspecialchars(ForestWebAuthn::origin()) ?></b>.
+          Нужен HTTPS-домен, а обратный прокси должен передавать заголовок
+          <code>X-Forwarded-Proto: https</code>.
         <? else: ?>
           Face ID / отпечаток / Windows Hello вместо пароля. Ключ остаётся на устройстве.
         <? endif; ?>

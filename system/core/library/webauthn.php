@@ -30,6 +30,8 @@ final class ForestWebAuthn
         return array(
             'enabled' => (string)($ini['enabled'] ?? '1') !== '0',
             'all_users' => (string)($ini['all_users'] ?? '0') === '1',
+            /* https=on — для прокси, который не умеет X-Forwarded-Proto */
+            'https' => (string)($ini['https'] ?? '') === 'on' || (string)($ini['https'] ?? '') === '1',
         );
     }
 
@@ -56,13 +58,34 @@ final class ForestWebAuthn
         return $p['all_users'] || self::isAdmin($login);
     }
 
+    /** Пришёл ли запрос по HTTPS (в том числе через обратный прокси). */
+    public static function isHttps(): bool
+    {
+        if (!empty($_SERVER['HTTPS']) && strtolower((string)$_SERVER['HTTPS']) !== 'off') {
+            return true;
+        }
+        if ((string)($_SERVER['SERVER_PORT'] ?? '') === '443') {
+            return true;
+        }
+        /* разные прокси называют это по-разному */
+        foreach (array('HTTP_X_FORWARDED_PROTO', 'HTTP_X_FORWARDED_PROTOCOL',
+                     'HTTP_X_FORWARDED_SSL', 'HTTP_FRONT_END_HTTPS', 'REDIRECT_HTTPS') as $k) {
+            $v = strtolower(trim((string)($_SERVER[$k] ?? '')));
+            if ($v === 'https' || $v === 'on' || $v === '1') {
+                return true;
+            }
+        }
+        if ((string)($_SERVER['HTTP_X_FORWARDED_PORT'] ?? '') === '443') {
+            return true;
+        }
+        $p = self::policy();
+        return !empty($p['https']);
+    }
+
     /** HTTPS или localhost — иначе браузер не даст вызвать Face ID. */
     public static function available(): bool
     {
-        $https = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
-            || strtolower((string)($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '')) === 'https'
-            || (string)($_SERVER['SERVER_PORT'] ?? '') === '443';
-        return $https || in_array(self::rpId(), array('localhost', '127.0.0.1', '::1'), true);
+        return self::isHttps() || in_array(self::rpId(), array('localhost', '127.0.0.1', '::1'), true);
     }
 
     public static function rpId(): string
@@ -73,10 +96,7 @@ final class ForestWebAuthn
 
     public static function origin(): string
     {
-        $https = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
-            || strtolower((string)($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '')) === 'https'
-            || (string)($_SERVER['SERVER_PORT'] ?? '') === '443';
-        return ($https ? 'https' : 'http') . '://' . (string)($_SERVER['HTTP_HOST'] ?? self::rpId());
+        return (self::isHttps() ? 'https' : 'http') . '://' . (string)($_SERVER['HTTP_HOST'] ?? self::rpId());
     }
 
     /* ---------------- хранилище ---------------- */
