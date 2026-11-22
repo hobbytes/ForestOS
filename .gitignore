@@ -34,3 +34,7 @@ desktop.ini
 .vscode/
 __pycache__/
 node_modules/
+
+# опубликованные релизы (собираются bin/release.php)
+/releases/
+

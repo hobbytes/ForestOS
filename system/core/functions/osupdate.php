@@ -60,4 +60,24 @@ if ($action === 'install') {
     exit;
 }
 
+if ($action === 'release') {
+    if ((string)($_SESSION['superuser'] ?? '') !== (string)$_SESSION['loginuser']) {
+        ou_fail('forbidden', 403);
+    }
+    $token = isset($_POST['token']) ? (string)$_POST['token'] : '';
+    $csrf = (string)($_SESSION['fo_update_csrf'] ?? '');
+    if ($csrf === '' || !hash_equals($csrf, $token)) {
+        ou_fail('csrf', 403);
+    }
+    $version = isset($_POST['version']) ? trim((string)$_POST['version']) : '';
+    $notes = isset($_POST['notes']) ? trim((string)$_POST['notes']) : '';
+    if ($version === '') {
+        ou_fail('no_version');
+    }
+    require_once $_SERVER['DOCUMENT_ROOT'] . '/bin/release.php';
+    $res = rl_build($version, $notes);
+    echo json_encode($res + array('ok' => !empty($res['ok'])), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    exit;
+}
+
 ou_fail('unknown_action', 404);

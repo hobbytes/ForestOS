@@ -53,9 +53,20 @@ class OsUpdate
         );
     }
 
-    /** Источник обновлений: системный конфиг → переменная окружения → значение по умолчанию. */
+    /** Абсолютный адрес этого сервера (для собственной ленты обновлений). */
+    private function selfBase(): string
+    {
+        $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+        $host = $_SERVER['HTTP_HOST'] ?? (getenv('FOREST_PUBLIC_HOST') ?: 'localhost');
+        return $scheme . '://' . $host;
+    }
+
+    /** Источник обновлений: своя лента releases/ → конфиг → окружение → значение по умолчанию. */
     public function feedUrl(): string
     {
+        if (is_file($this->doc . '/releases/update.json')) {
+            return $this->selfBase() . '/releases/update.json';
+        }
         $cfgFile = $this->doc . '/system/core/update.json';
         if (is_file($cfgFile)) {
             $j = json_decode((string)@file_get_contents($cfgFile), true);

@@ -116,6 +116,15 @@ $isSuper = ((string)($_SESSION['superuser'] ?? '') === (string)$_SESSION['loginu
     <? endif; ?>
   </div>
 
+  <? if ($isSuper): ?>
+  <details class="upd-card" style="gap:10px">
+    <summary style="cursor:default;font-weight:600;font-size:12.5px">Опубликовать релиз</summary>
+    <div class="upd-row" style="margin-top:8px"><span>Версия</span><input id="upd-rel-ver<?echo $AppID?>" placeholder="4.4" style="width:110px;text-align:right"></div>
+    <div class="upd-row" style="align-items:flex-start"><span>Что нового</span><input id="upd-rel-notes<?echo $AppID?>" placeholder="краткое описание" style="flex:1"></div>
+    <div class="upd-actions"><button type="button" class="upd-btn ghost" id="upd-release<?echo $AppID?>">Собрать из GitHub и опубликовать</button></div>
+  </details>
+  <? endif; ?>
+
   <div class="upd-note">
     Обновления собираются автоматически при публикации релиза в GitHub
     (тег <b>vX.Y</b> → zip + update.json). Пользовательские файлы, настройки и база
@@ -217,6 +226,29 @@ $isSuper = ((string)($_SESSION['superuser'] ?? '') === (string)$_SESSION['loginu
     })
     .catch(function(){});
 
+  function publish(){
+    var v = el('upd-rel-ver'), n = el('upd-rel-notes'), b = el('upd-release');
+    if(!b) return;
+    if(!v.value.trim()){ v.focus(); return; }
+    b.disabled = true; b.textContent = 'Собираем пакет из GitHub…';
+    var body = new URLSearchParams();
+    body.append('action', 'release');
+    body.append('token', TOKEN);
+    body.append('version', v.value.trim());
+    body.append('notes', n.value.trim());
+    fetch(API, {method:'POST', credentials:'same-origin', body: body})
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        b.disabled = false; b.textContent = 'Собрать из GitHub и опубликовать';
+        if(d.ok){
+          if(window.FO_TOAST) FO_TOAST('Релиз ' + d.version + ' опубликован (' + bytes(d.size) + ')');
+          check();
+        } else if(window.FO_TOAST){ FO_TOAST('Не удалось: ' + (d.error || 'ошибка')); }
+      })
+      .catch(function(){ b.disabled = false; b.textContent = 'Собрать из GitHub и опубликовать'; });
+  }
+
+  var rb = el('upd-release'); if(rb) rb.addEventListener('click', publish);
   var cb = el('upd-check'); if(cb) cb.addEventListener('click', check);
   var ib = el('upd-install'); if(ib) ib.addEventListener('click', install);
 
