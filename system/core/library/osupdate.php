@@ -256,9 +256,7 @@ class OsUpdate
         $cfg['version'] = $latest['version'];
         $cfg['subversion'] = $latest['version'];
         $cfg['revision'] = $latest['file'] !== '' ? $latest['file'] : $latest['version'];
-        if ($latest['name'] !== '') {
-            $cfg['codename'] = $latest['name'];
-        }
+        /* кодовое имя не трогаем: оно про ветку разработки, а не про версию */
         $this->writeIni($this->osInfo, $cfg);
         @chmod($this->osInfo, 0666);
 
