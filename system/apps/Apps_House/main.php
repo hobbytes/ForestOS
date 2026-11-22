@@ -223,8 +223,13 @@ $AppContainer->StartContainer();
   function toast(msg){
     if(window.FO_TOAST){ window.FO_TOAST(msg); } else { alert(msg); }
   }
-  function iconFor(hash){
-    if(hash){ return API + '?action=icon&hash=' + encodeURIComponent(hash) + '&t=' + Date.now(); }
+  function iconFor(app){
+    if(app && typeof app === 'object'){
+      if(app.icon){ return app.icon; }
+      if(app.hash){ return API + '?action=icon&hash=' + encodeURIComponent(app.hash) + '&t=' + Date.now(); }
+    } else if(app){
+      return API + '?action=icon&hash=' + encodeURIComponent(app) + '&t=' + Date.now();
+    }
     return 'system/core/design/images/app.png';
   }
 
@@ -249,7 +254,7 @@ $AppContainer->StartContainer();
     box.innerHTML = list.map(function(a){
       var installed = state.installed.some(function(i){ return i.hash === a.hash; });
       return '<div class="st-card">' +
-        '<div class="st-ico" style="background-image:url(' + iconFor(a.hash) + ')"></div>' +
+        '<div class="st-ico" style="background-image:url(' + iconFor(a) + ')"></div>' +
         '<div class="st-main">' +
           '<div class="st-name">' + esc(a.second_name || a.name) + '</div>' +
           '<div class="st-sub">' + esc(a.name) + ' · v' + esc(a.version) + '</div>' +
@@ -523,6 +528,7 @@ $AppContainer->StartContainer();
     get: jsonGet
   };
 
+  loadRepos();
   loadInstalled();
   loadCatalog();
 })();
