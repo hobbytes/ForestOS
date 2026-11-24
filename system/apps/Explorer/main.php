@@ -631,7 +631,8 @@ if ($action === 'upload-chunk' || $action === 'upload-cancel') {
         fo_json(array('ok' => false, 'error' => 'bad_upload'));
     }
 
-    $partsDir = $home . '/settings/uploads';
+    /* куски складываем во временный каталог сервера, а не в домашнюю папку */
+    $partsDir = rtrim(sys_get_temp_dir(), '/') . '/fo-uploads';
     if (!is_dir($partsDir)) {
         @mkdir($partsDir, 0777, true);
     }
@@ -665,6 +666,14 @@ if ($action === 'upload-chunk' || $action === 'upload-cancel') {
             if (@filemtime($old) < time() - 7200) {
                 @unlink($old);
             }
+        }
+        /* старый каталог кусков (до переезда в /tmp) */
+        $legacyParts = $home . '/settings/uploads';
+        if (is_dir($legacyParts)) {
+            foreach ((array)@glob($legacyParts . '/*') as $old) {
+                @unlink($old);
+            }
+            @rmdir($legacyParts);
         }
     }
     if (!is_file($part)) {
