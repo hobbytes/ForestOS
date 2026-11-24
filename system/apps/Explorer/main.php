@@ -614,6 +614,86 @@ if ($action === 'raw' || $action === 'text' || $action === 'info') {
     exit;
 }
 
+/* ---------- chunked upload (тело запроса — сырые байты) ----------------- */
+if ($action === 'upload-chunk' || $action === 'upload-cancel') {
+    if (!hash_equals($TOKEN, isset($_GET['token']) ? (string)$_GET['token'] : '')) {
+        fo_json(array('ok' => false, 'error' => $L['err_token']));
+    }
+    $uploadDir = fo_resolve($home, isset($_GET['dir']) ? (string)$_GET['dir'] : '', $allowSystem);
+    if ($uploadDir === null || !is_dir($uploadDir)) {
+        fo_json(array('ok' => false, 'error' => $L['err_path']));
+    }
+    if (!fo_in_home($uploadDir, $home) && !$allowSystem) {
+        fo_json(array('ok' => false, 'error' => 'Только чтение'));
+    }
+    $uid = isset($_GET['upload_id']) ? (string)$_GET['upload_id'] : '';
+    if (!preg_match('/^[a-f0-9]{16,64}$/', $uid)) {
+        fo_json(array('ok' => false, 'error' => 'bad_upload'));
+    }
+
+    $partsDir = $home . '/settings/uploads';
+    if (!is_dir($partsDir)) {
+        @mkdir($partsDir, 0777, true);
+    }
+    $part = $partsDir . '/' . $uid . '.part';
+
+    if ($action === 'upload-cancel') {
+        @unlink($part);
+        fo_json(array('ok' => true, 'cancelled' => true));
+    }
+
+    $name = fo_clean_name(isset($_GET['name']) ? (string)$_GET['name'] : '');
+    if ($name === '') {
+        fo_json(array('ok' => false, 'error' => 'Недопустимое имя файла'));
+    }
+    $index = isset($_GET['index']) ? (int)$_GET['index'] : 0;
+    $total = isset($_GET['total']) ? max(1, (int)$_GET['total']) : 1;
+    if ($index < 0 || $index >= $total) {
+        fo_json(array('ok' => false, 'error' => 'bad_chunk'));
+    }
+
+    $raw = file_get_contents('php://input');
+    if ($raw === false) {
+        $raw = '';
+    }
+
+    if ($index === 0) {
+        @unlink($part);
+        @touch($part);
+        /* подчищаем брошенные загрузки, чтобы не копить мусор */
+        foreach ((array)@glob($partsDir . '/*.part') as $old) {
+            if (@filemtime($old) < time() - 7200) {
+                @unlink($old);
+            }
+        }
+    }
+    if (!is_file($part)) {
+        fo_json(array('ok' => false, 'error' => 'chunk_lost'));
+    }
+    if ($raw !== '') {
+        $fh = @fopen($part, 'ab');
+        if (!$fh) {
+            fo_json(array('ok' => false, 'error' => $L['err_perm']));
+        }
+        $wrote = fwrite($fh, $raw);
+        fclose($fh);
+        if ($wrote === false) {
+            fo_json(array('ok' => false, 'error' => $L['err_perm']));
+        }
+    }
+
+    if ($index + 1 >= $total) {
+        $target = fo_unique($uploadDir, $name);
+        if (!@rename($part, $target)) {
+            @unlink($part);
+            fo_json(array('ok' => false, 'error' => $L['err_perm']));
+        }
+        @chmod($target, 0664);
+        fo_json(array('ok' => true, 'done' => true, 'name' => basename($target), 'size' => (int)@filesize($target)));
+    }
+    fo_json(array('ok' => true, 'done' => false, 'received' => (int)@filesize($part)));
+}
+
 /* ---------- state-changing actions -------------------------------------- */
 $postAction = isset($_POST['action']) ? (string)$_POST['action'] : '';
 if ($postAction !== '') {
@@ -881,16 +961,27 @@ if ($postAction !== '') {
     }
 
     if ($postAction === 'upload') {
+        /* если POST превысил post_max_size, PHP отдаёт пустые $_POST и $_FILES */
+        if (empty($_FILES) && empty($_POST) && (int)($_SERVER['CONTENT_LENGTH'] ?? 0) > 0) {
+            fo_json(array('ok' => false, 'error' => 'Файл больше лимита сервера (64 МБ). Используйте загрузку по частям.'));
+        }
         if (empty($_FILES['files']) || !isset($_FILES['files']['name'])) {
             fo_json(array('ok' => false, 'error' => 'Нет файлов'));
         }
         $names = (array)$_FILES['files']['name'];
         $tmps  = (array)$_FILES['files']['tmp_name'];
         $errs  = (array)$_FILES['files']['error'];
-        $uploaded = 0; $failed = array();
+        $uploaded = 0; $failed = array(); $reasons = array();
         foreach ($names as $i => $rawName) {
             if (!isset($tmps[$i], $errs[$i]) || $errs[$i] !== UPLOAD_ERR_OK || !is_uploaded_file($tmps[$i])) {
-                $failed[] = $rawName; continue;
+                $failed[] = $rawName;
+                $code = isset($errs[$i]) ? (int)$errs[$i] : -1;
+                if ($code === UPLOAD_ERR_INI_SIZE || $code === UPLOAD_ERR_FORM_SIZE) {
+                    $reasons[] = 'слишком большой файл';
+                } elseif ($code === UPLOAD_ERR_PARTIAL) {
+                    $reasons[] = 'загрузка оборвалась';
+                }
+                continue;
             }
             $clean = fo_clean_name($rawName);
             if ($clean === '') { $failed[] = $rawName; continue; }
@@ -899,7 +990,10 @@ if ($postAction !== '') {
             @chmod($target, 0664);
             $uploaded++;
         }
-        if ($uploaded === 0) fo_json(array('ok' => false, 'error' => $L['err_perm'], 'failed' => $failed));
+        if ($uploaded === 0) {
+            $msg = $reasons ? implode(', ', array_unique($reasons)) : $L['err_perm'];
+            fo_json(array('ok' => false, 'error' => $msg, 'failed' => $failed));
+        }
         fo_json(array('ok' => true, 'uploaded' => $uploaded, 'failed' => $failed));
     }
 

@@ -515,21 +515,149 @@
     }
 
     /* ---------- upload --------------------------------------------------- */
+    /* Файл уходит кусками по 4 МБ: видно прогресс, работает отмена и не
+       упираемся в post_max_size сервера (64 МБ на запрос). */
+    var UPLOAD_CHUNK = 4 * 1024 * 1024;
+    var uploadJob = null;
+
+    function humanSize(n) {
+      n = Number(n) || 0;
+      if (n < 1024) return n + ' Б';
+      if (n < 1024 * 1024) return (n / 1024).toFixed(0) + ' КБ';
+      if (n < 1024 * 1024 * 1024) return (n / (1024 * 1024)).toFixed(1) + ' МБ';
+      return (n / (1024 * 1024 * 1024)).toFixed(2) + ' ГБ';
+    }
+
+    function uploadPanel() {
+      var old = document.getElementById('fo-upload-panel');
+      if (old) old.remove();
+      var el = document.createElement('div');
+      el.id = 'fo-upload-panel';
+      el.className = 'fo-up';
+      el.innerHTML = '<div class="fo-up-head"><span class="fo-up-title">Загрузка</span>' +
+        '<button type="button" class="fo-up-cancel">Отмена</button></div>' +
+        '<div class="fo-up-name"></div>' +
+        '<div class="fo-up-bar"><i></i></div>' +
+        '<div class="fo-up-meta"></div>';
+      document.body.appendChild(el);
+      return el;
+    }
+
     function uploadFiles(files) {
       if (!files || !files.length) return;
-      var fd = new FormData();
-      fd.append('action', 'upload');
-      fd.append('token', token || '');
-      fd.append('dir', currentDir());
-      for (var i = 0; i < files.length; i++) fd.append('files[]', files[i]);
-      toast('Загрузка: ' + files.length + ' файл(ов)…');
-      fetch(url({}), { method: 'POST', body: fd, credentials: 'same-origin' })
-        .then(function (r) { return r.json().catch(function () { return { ok: false }; }); })
-        .then(function (res) {
-          if (res && res.ok) { toast('Загружено: ' + res.uploaded); load(currentDir(), false); }
-          else toast((res && res.error) || 'Ошибка загрузки', true);
-        })
-        .catch(function () { toast('Ошибка загрузки', true); });
+      if (uploadJob) { toast('Уже идёт загрузка', true); return; }
+
+      var list = Array.prototype.slice.call(files);
+      var panel = uploadPanel();
+      var nameEl = panel.querySelector('.fo-up-name');
+      var barEl = panel.querySelector('.fo-up-bar i');
+      var metaEl = panel.querySelector('.fo-up-meta');
+      var cancelBtn = panel.querySelector('.fo-up-cancel');
+
+      var job = uploadJob = { cancelled: false, xhr: null, uid: '' };
+      var totalBytes = 0;
+      list.forEach(function (f) { totalBytes += f.size; });
+      var doneBytes = 0;
+      var index = 0;
+      var started = Date.now();
+
+      function refresh(currentLoaded) {
+        var loaded = doneBytes + currentLoaded;
+        var pct = totalBytes > 0 ? Math.min(100, Math.round(loaded / totalBytes * 100)) : 0;
+        barEl.style.width = pct + '%';
+        var secs = Math.max(0.3, (Date.now() - started) / 1000);
+        var speed = loaded / secs;
+        var left = speed > 0 ? Math.max(0, Math.round((totalBytes - loaded) / speed)) : 0;
+        metaEl.textContent = pct + '% · ' + humanSize(loaded) + ' из ' + humanSize(totalBytes) +
+          (loaded > 0 ? ' · ' + humanSize(speed) + '/с' : '') +
+          (pct < 100 && left > 0 ? ' · ~' + (left < 60 ? left + ' с' : Math.round(left / 60) + ' мин') : '');
+      }
+
+      function finish(err) {
+        if (job.xhr) { try { job.xhr.abort(); } catch (e) {} }
+        uploadJob = null;
+        panel.remove();
+        if (err === 'cancelled') { toast('Загрузка отменена'); return; }
+        if (err) { toast('Ошибка загрузки: ' + err, true); return; }
+        toast('Загружено: ' + list.length + ' файл(ов)');
+        load(currentDir(), false);
+      }
+
+      cancelBtn.addEventListener('click', function () {
+        job.cancelled = true;
+        var uid = job.uid;
+        if (job.xhr) { try { job.xhr.abort(); } catch (e) {} }
+        if (uid) {
+          var cancelUrl = url({ action: 'upload-cancel', dir: currentDir(), upload_id: uid, token: token });
+          fetch(cancelUrl, { credentials: 'same-origin' }).catch(function () {});
+          /* оборванный кусок может дописаться уже после abort — просим ещё раз */
+          setTimeout(function () { fetch(cancelUrl, { credentials: 'same-origin' }).catch(function () {}); }, 1200);
+        }
+        finish('cancelled');
+      });
+
+      function nextFile() {
+        if (job.cancelled) return;
+        if (index >= list.length) { finish(null); return; }
+        var file = list[index];
+        nameEl.textContent = file.name + ' (' + (index + 1) + ' из ' + list.length + ')';
+        refresh(0);
+        sendFile(file, function (loaded) {
+          refresh(loaded);
+        }, function (err) {
+          if (err) { finish(err); return; }
+          doneBytes += file.size;
+          index++;
+          nextFile();
+        });
+      }
+
+      function sendFile(file, onProgress, done) {
+        var uid = job.uid = randomHex(32);
+        var total = Math.max(1, Math.ceil(file.size / UPLOAD_CHUNK));
+        var chunk = 0;
+
+        function sendChunk() {
+          if (job.cancelled) return;
+          var start = chunk * UPLOAD_CHUNK;
+          var blob = file.slice(start, Math.min(start + UPLOAD_CHUNK, file.size));
+          var xhr = new XMLHttpRequest();
+          job.xhr = xhr;
+          xhr.open('POST', url({
+            action: 'upload-chunk', dir: currentDir(), name: file.name,
+            upload_id: uid, index: chunk, total: total, token: token
+          }), true);
+          xhr.setRequestHeader('Content-Type', 'application/octet-stream');
+          xhr.upload.onprogress = function (e) {
+            if (e.lengthComputable) onProgress(start + e.loaded);
+          };
+          xhr.onload = function () {
+            var res = null;
+            try { res = JSON.parse(xhr.responseText); } catch (e) {}
+            if (!res || !res.ok) {
+              done((res && res.error) || ('сервер ответил ' + xhr.status));
+              return;
+            }
+            chunk++;
+            if (chunk >= total) { onProgress(file.size); done(null); return; }
+            sendChunk();
+          };
+          xhr.onerror = function () { done('сеть недоступна'); };
+          xhr.onabort = function () { /* отмену обрабатывает кнопка */ };
+          xhr.send(blob);
+        }
+
+        sendChunk();
+      }
+
+      nextFile();
+    }
+
+    function randomHex(len) {
+      var out = '';
+      var chars = 'abcdef0123456789';
+      for (var i = 0; i < len; i++) out += chars.charAt(Math.floor(Math.random() * 16));
+      return out;
     }
 
     /* ---------- commands ------------------------------------------------- */
