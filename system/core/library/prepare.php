@@ -467,10 +467,15 @@ function topbar(){
       <div class="fo-launcher-foot">
         <span class="fo-launcher-hint">↑ ↓ — выбор · Enter — открыть</span>
         <div class="fo-launcher-power">
-          <button type="button" class="fo-power" data-power="restart" title="<?echo $language[$_SESSION['locale'].'_restart']?>">R</button>
-          <button type="button" class="fo-power" data-power="sleep" title="<?echo $language[$_SESSION['locale'].'_memoryrestart']?>">S</button>
-          <button type="button" class="fo-power" data-power="hibernate" title="<?echo $language[$_SESSION['locale'].'_hibernation']?>">H</button>
-          <button type="button" class="fo-power" data-power="logout" title="<?echo $exit_name?>">E</button>
+          <button type="button" class="fo-power" data-power="exit" title="Exit / Выход — сохранить и выйти">
+            <span class="fo-p-ru">Выход</span><span class="fo-p-en">Exit</span>
+          </button>
+          <button type="button" class="fo-power" data-power="reload" title="Reload / Перезагрузка — сохранить и перезагрузить">
+            <span class="fo-p-ru">Перезагрузка</span><span class="fo-p-en">Reload</span>
+          </button>
+          <button type="button" class="fo-power" data-power="shutdown" title="Shut Down / Выключение — выйти без сохранения">
+            <span class="fo-p-ru">Выключение</span><span class="fo-p-en">Shut Down</span>
+          </button>
         </div>
       </div>
     </div>

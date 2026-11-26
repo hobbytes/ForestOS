@@ -60,7 +60,7 @@ if(isset($_SESSION['loginuser'])){
     if(!preg_match('/^[A-Za-z0-9_\-]+$/', $__app)){ $__app = ''; }
 
     echo '
-    <div id=app'.$idprocess.' tabindex="'.$idprocess.'" style="max-width:'.$maxwidth.'; position:absolute; left:'.$left.'; top:'.$top.'; overflow:hidden; outline: none !important;" data-app="'.$__app.'" class="ui-widget-content window windownormal windowborder" wh="" ww="" applength-'.$idprocess.'="0">
+    <div id=app'.$idprocess.' tabindex="'.$idprocess.'" style="max-width:'.$maxwidth.'; position:absolute; left:'.$left.'; top:'.$top.'; overflow:hidden; outline: none !important;" data-app="'.$__app.'" data-dest="'.htmlspecialchars((string)$destination, ENT_QUOTES).'" data-title="'.htmlspecialchars((string)$__title, ENT_QUOTES).'" data-param="'.htmlspecialchars((string)$param, ENT_QUOTES).'" data-key="'.htmlspecialchars((string)$key, ENT_QUOTES).'" class="ui-widget-content window windownormal windowborder" wh="" ww="" applength-'.$idprocess.'="0">
     <div id=drag'.$idprocess.' class="dragwindow '.$__ctrl.'" title="'.$__title.'">
         <div class="process-title">
           <span class="process-title-icon" style="background-image: url('.$appicon.');"></span>

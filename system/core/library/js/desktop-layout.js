@@ -742,16 +742,11 @@
       });
       $('<div></div>').css({ height: '1px', margin: '5px 8px', background: 'rgba(255,255,255,0.12)' }).appendTo($m);
 
-      add('Спящий режим', function () {
-        if (typeof window.hibernation === 'function') { window.hibernation('false'); }
-      });
-      add('Гибернация', function () {
-        if (typeof window.hibernation === 'function') { window.hibernation('true'); }
-      });
-      add('Перезагрузить', function () { window.location.href = 'os.php'; });
+      add('Выход · Exit', function () { if (window.FO_POWER) { window.FO_POWER('exit'); } else { window.location.href = '?action=logout'; } });
+      add('Перезагрузка · Reload', function () { if (window.FO_POWER) { window.FO_POWER('reload'); } else { window.location.href = 'os.php'; } });
 
       $('<div></div>').css({ height: '1px', margin: '5px 8px', background: 'rgba(255,255,255,0.12)' }).appendTo($m);
-      add('Выход', function () { window.location.href = '?action=logout'; }, true);
+      add('Выключение · Shut Down', function () { if (window.FO_POWER) { window.FO_POWER('shutdown'); } }, true);
     }
 
     var mw = $m.outerWidth() || 210;
@@ -838,5 +833,160 @@
     });
 
     if (window.FO_DOCK_SYNC) { window.FO_DOCK_SYNC(); }
+  });
+})();
+
+/* ==========================================================================
+   Рабочее пространство: открытые окна переживают выход и переезжают между
+   устройствами. Состояние лежит на сервере (settings/workspace.json),
+   запись атомарная, у файла есть ревизия — старая вкладка не затрёт новое.
+   ========================================================================== */
+(function () {
+  'use strict';
+
+  var API = 'system/core/functions/workspace.php';
+  var token = '';
+  var rev = 0;
+  var ready = null;
+  var timer = null;
+  var restoring = false;
+  var shuttingDown = false;
+  var dirty = false;
+
+  function wsUrl(action) {
+    return API + '?action=' + action + '&token=' + encodeURIComponent(token);
+  }
+
+  function loadState() {
+    return fetch(API + '?action=get', { credentials: 'same-origin' })
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (!d || !d.ok) { return { windows: [] }; }
+        token = d.token || '';
+        var ws = d.workspace || {};
+        rev = Number(ws.rev) || 0;
+        return ws;
+      })
+      .catch(function () { return { windows: [] }; });
+  }
+
+  function collect() {
+    var windows = [];
+    $('.window[data-app]').each(function () {
+      var $w = $(this);
+      var dest = $w.attr('data-dest') || '';
+      if (!dest) { return; }
+      var pos = $w.position();
+      windows.push({
+        dest: dest,
+        name: $w.attr('data-title') || $w.attr('data-app') || 'App',
+        param: $w.attr('data-param') || '',
+        key: $w.attr('data-key') || '',
+        x: Math.round(pos.left || 0),
+        y: Math.round(pos.top || 0),
+        w: Math.round($w.outerWidth() || 0),
+        h: Math.round($w.outerHeight() || 0),
+        max: $w.hasClass('windowfullscreen'),
+        shaded: $w.attr('data-minimized') === '1'
+      });
+    });
+    return { rev: rev, active: $('.window.windowactive').first().attr('data-app') || '', windows: windows };
+  }
+
+  function saveNow() {
+    if (restoring || shuttingDown) { return Promise.resolve(false); }
+    return Promise.resolve(ready).then(function () {
+      return fetch(wsUrl('save'), {
+        method: 'POST', credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(collect())
+      }).then(function (r) { return r.json(); }).then(function (d) {
+        if (d && d.ok) {
+          rev = Number(d.rev) || rev;
+          dirty = false;
+          return true;
+        }
+        return false;
+      });
+    }).catch(function () { return false; });
+  }
+
+  function scheduleSave() {
+    if (restoring || shuttingDown) { return; }
+    dirty = true;
+    clearTimeout(timer);
+    timer = setTimeout(saveNow, 1200);
+  }
+
+  function beaconSave() {
+    if (restoring || shuttingDown || !token || !dirty) { return; }
+    try {
+      navigator.sendBeacon(wsUrl('save'), new Blob([JSON.stringify(collect())], { type: 'application/json' }));
+    } catch (e) { /* ignore */ }
+  }
+
+  function applyGeometry($w, item) {
+    var vw = $(window).width() || 1200;
+    var vh = $(window).height() || 800;
+    var w = Math.max(240, Math.min(item.w || 900, vw - 20));
+    var h = Math.max(160, Math.min(item.h || 600, vh - 80));
+    var x = Math.max(0, Math.min(item.x || 0, vw - 120));
+    var y = Math.max(28, Math.min(item.y || 0, vh - 60));
+    $w.css({ position: 'absolute', left: x + 'px', top: y + 'px', width: w + 'px', height: h + 'px' });
+    if (item.max) { $w.addClass('windowfullscreen'); }
+    if (item.shaded && typeof window.foMinimizeWindow === 'function') {
+      try { window.foMinimizeWindow(String($w.attr('id') || '').replace('app', '')); } catch (e) {}
+    }
+  }
+
+  function restore(ws) {
+    var list = (ws && ws.windows) || [];
+    if (!list.length || typeof window.makeprocess !== 'function') { return; }
+    restoring = true;
+    var before = $('.window[data-app]').length;
+    list.forEach(function (item) {
+      try { window.makeprocess(item.dest, item.param || '', item.key || '', item.name || 'App'); } catch (e) {}
+    });
+    var tries = 0;
+    var poll = setInterval(function () {
+      var $ws = $('.window[data-app]');
+      if ($ws.length - before >= list.length || ++tries > 50) {
+        clearInterval(poll);
+        $ws.slice(before).each(function (i) {
+          if (list[i]) { applyGeometry($(this), list[i]); }
+        });
+        restoring = false;
+      }
+    }, 200);
+  }
+
+  /* Exit / Reload / Shut Down */
+  window.FO_POWER = function (kind) {
+    var go = function () {
+      window.location.href = (kind === 'reload') ? 'os.php' : '?action=logout';
+    };
+    if (kind === 'shutdown') {
+      shuttingDown = true;
+      fetch(wsUrl('clear'), { method: 'POST', credentials: 'same-origin' })
+        .catch(function () { })
+        .then(go);
+      return;
+    }
+    saveNow().then(go).catch(go);
+  };
+
+  window.FO_WORKSPACE_SAVE = saveNow;
+
+  $(function () {
+    if (!document.getElementById('proceses')) { return; }
+    ready = loadState();
+    ready.then(restore);
+
+    var target = document.getElementById('proceses');
+    if (target && window.MutationObserver) {
+      new MutationObserver(function () { scheduleSave(); }).observe(target, { childList: true });
+    }
+    $(document).on('mouseup', '.window', scheduleSave);
+    $(window).on('pagehide beforeunload', beaconSave);
   });
 })();

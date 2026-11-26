@@ -117,10 +117,10 @@
       var p = $(this).attr('data-power');
       closeLauncher();
       if (window.SaveNotification) { try { window.SaveNotification(); } catch (err) {} }
-      if (p === 'restart') { location.href = 'os.php'; }
-      else if (p === 'sleep') { if (window.hibernation) window.hibernation('false'); }
-      else if (p === 'hibernate') { if (window.hibernation) window.hibernation('true'); }
-      else if (p === 'logout') { location.href = '?action=logout'; }
+      /* exit / reload / shutdown — общая логика в desktop-layout.js */
+      if (window.FO_POWER) { window.FO_POWER(p); return; }
+      if (p === 'reload') { location.href = 'os.php'; }
+      else { location.href = '?action=logout'; }
     })
     .on('click', '#fo-user-btn', function (e) {
       e.stopPropagation();

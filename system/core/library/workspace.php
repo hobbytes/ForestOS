@@ -1,0 +1,160 @@
+<?php
+/**
+ * Forest OS — «рабочее пространство»: какие окна открыты и где они стоят.
+ *
+ * Хранится per-user в system/users/<login>/settings/workspace.json.
+ * Запись атомарная (tmp + rename), предыдущая версия остаётся в .bak,
+ * у файла есть номер ревизии — старый браузер не затрёт новое состояние
+ * молча (получит conflict и переспросит).
+ */
+final class ForestWorkspace
+{
+    public const MAX_WINDOWS = 24;
+    public const MAX_BYTES = 262144;
+
+    public static function file(string $login): string
+    {
+        $doc = rtrim(str_replace('\\', '/', (string)$_SERVER['DOCUMENT_ROOT']), '/');
+        return $doc . '/system/users/' . $login . '/settings/workspace.json';
+    }
+
+    public static function load(string $login): array
+    {
+        $empty = array('rev' => 0, 'updated_at' => 0, 'active' => '', 'windows' => array());
+        $file = self::file($login);
+        if (!is_file($file)) {
+            return $empty;
+        }
+        $raw = (string)@file_get_contents($file);
+        $data = json_decode($raw, true);
+        if (!is_array($data) && is_file($file . '.bak')) {
+            /* основной файл побился — пробуем резервную копию */
+            $data = json_decode((string)@file_get_contents($file . '.bak'), true);
+        }
+        if (!is_array($data)) {
+            return $empty;
+        }
+        return self::normalize($data);
+    }
+
+    /** Приводит входные данные к безопасному виду. */
+    public static function normalize(array $data): array
+    {
+        $out = array(
+            'rev' => max(0, (int)($data['rev'] ?? 0)),
+            'updated_at' => max(0, (int)($data['updated_at'] ?? 0)),
+            'active' => self::cleanApp((string)($data['active'] ?? '')),
+            'windows' => array(),
+        );
+        $windows = is_array($data['windows'] ?? null) ? $data['windows'] : array();
+        foreach ($windows as $w) {
+            if (!is_array($w)) {
+                continue;
+            }
+            $dest = (string)($w['dest'] ?? '');
+            if (!preg_match('#^system/apps/[A-Za-z0-9_.\-]+/main\.php$#', $dest)) {
+                continue;
+            }
+            $doc = rtrim(str_replace('\\', '/', (string)$_SERVER['DOCUMENT_ROOT']), '/');
+            if (!is_file($doc . '/' . $dest)) {
+                /* приложение удалили — не тянем его в новую сессию */
+                continue;
+            }
+            $name = preg_replace('/[^\p{L}\p{N}_ .\-]/u', '', (string)($w['name'] ?? ''));
+            $param = (string)($w['param'] ?? '');
+            $key = (string)($w['key'] ?? '');
+            if (strlen($param) > 400) {
+                $param = '';
+            }
+            if (strlen($key) > 120) {
+                $key = '';
+            }
+            $geom = function ($v, $min, $max, $def) {
+                $n = is_numeric($v) ? (int)round($v) : $def;
+                return max($min, min($max, $n));
+            };
+            $out['windows'][] = array(
+                'dest' => $dest,
+                'name' => mb_substr(trim($name) !== '' ? trim($name) : 'App', 0, 60, 'UTF-8'),
+                'param' => $param,
+                'key' => $key,
+                'x' => $geom($w['x'] ?? null, -4000, 20000, 120),
+                'y' => $geom($w['y'] ?? null, -4000, 20000, 90),
+                'w' => $geom($w['w'] ?? null, 240, 8000, 900),
+                'h' => $geom($w['h'] ?? null, 160, 8000, 600),
+                'max' => !empty($w['max']),
+                'shaded' => !empty($w['shaded']),
+            );
+            if (count($out['windows']) >= self::MAX_WINDOWS) {
+                break;
+            }
+        }
+        return $out;
+    }
+
+    private static function cleanApp(string $app): string
+    {
+        $app = preg_replace('/[^\p{L}\p{N}_ .\-]/u', '', $app);
+        return mb_substr(trim((string)$app), 0, 60, 'UTF-8');
+    }
+
+    /**
+     * Сохраняет состояние. Возвращает ['ok'=>bool, 'rev'=>int, 'conflict'=>bool, 'workspace'=>array].
+     * Если клиент пришёл со старой ревизией — не пишем, отдаём серверное состояние.
+     */
+    public static function save(string $login, array $data): array
+    {
+        $current = self::load($login);
+        $clientRev = max(0, (int)($data['rev'] ?? 0));
+        if ($clientRev < $current['rev'] && !empty($data['force'])) {
+            $clientRev = $current['rev'];
+        }
+        if ($clientRev < $current['rev']) {
+            return array('ok' => false, 'conflict' => true, 'rev' => $current['rev'], 'workspace' => $current);
+        }
+        $clean = self::normalize($data);
+        $clean['rev'] = max($current['rev'], $clientRev) + 1;
+        $clean['updated_at'] = time();
+        $json = json_encode($clean, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        if ($json === false || strlen($json) > self::MAX_BYTES) {
+            return array('ok' => false, 'error' => 'too_large', 'rev' => $current['rev']);
+        }
+        if (!self::writeAtomic(self::file($login), $json)) {
+            return array('ok' => false, 'error' => 'write_failed', 'rev' => $current['rev']);
+        }
+        return array('ok' => true, 'conflict' => false, 'rev' => $clean['rev'], 'workspace' => $clean);
+    }
+
+    public static function clear(string $login): bool
+    {
+        $file = self::file($login);
+        $ok = true;
+        if (is_file($file) && !@unlink($file)) {
+            $ok = false;
+        }
+        @unlink($file . '.bak');
+        return $ok;
+    }
+
+    private static function writeAtomic(string $file, string $json): bool
+    {
+        $dir = dirname($file);
+        if (!is_dir($dir)) {
+            @mkdir($dir, 0777, true);
+        }
+        if (is_file($file)) {
+            @copy($file, $file . '.bak');
+        }
+        $tmp = $file . '.tmp' . bin2hex(random_bytes(4));
+        if (@file_put_contents($tmp, $json) === false) {
+            @unlink($tmp);
+            return false;
+        }
+        @chmod($tmp, 0666);
+        if (!@rename($tmp, $file)) {
+            @unlink($tmp);
+            return false;
+        }
+        return true;
+    }
+}
