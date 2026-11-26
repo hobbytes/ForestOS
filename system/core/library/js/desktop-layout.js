@@ -854,6 +854,31 @@
   var shuttingDown = false;
   var dirty = false;
 
+  /* «вид» приложения: первый URL — тот, с которым окно создали, дальше —
+     куда приложение ушло само (ловится на $.fn.load, ничего в приложениях
+     менять не нужно) */
+  var INIT_URL = {};
+  var VIEW_URL = {};
+
+  (function captureViews() {
+    if (!window.jQuery || !$.fn || !$.fn.load || $.fn.load.__foWrapped) { return; }
+    var orig = $.fn.load;
+    var wrapped = function (url) {
+      try {
+        if (typeof url === 'string' && /^system\/apps\//.test(url) && this.length) {
+          var el = this[0];
+          if (el && el.id) {
+            if (!(el.id in INIT_URL)) { INIT_URL[el.id] = url; }
+            else if (url !== INIT_URL[el.id]) { VIEW_URL[el.id] = url; }
+          }
+        }
+      } catch (e) { /* ignore */ }
+      return orig.apply(this, arguments);
+    };
+    wrapped.__foWrapped = true;
+    $.fn.load = wrapped;
+  })();
+
   function wsUrl(action) {
     return API + '?action=' + action + '&token=' + encodeURIComponent(token);
   }
@@ -895,11 +920,17 @@
       var dest = $w.attr('data-dest') || '';
       if (!dest) { return; }
       var pos = $w.position();
+      var pid = String($w.attr('id') || '').replace('app', '');
+      var dir = '';
+      var $content = $w.find('.fo-content');
+      if ($content.length) { dir = $content.first().attr('data-dir') || ''; }
       windows.push({
         dest: dest,
         name: $w.attr('data-title') || $w.attr('data-app') || 'App',
         param: $w.attr('data-param') || '',
         key: $w.attr('data-key') || '',
+        view: VIEW_URL[pid] || '',
+        dir: dir,
         x: Math.round(pos.left || 0),
         y: Math.round(pos.top || 0),
         w: Math.round($w.outerWidth() || 0),
@@ -971,7 +1002,12 @@
     restoring = true;
     var before = $('.window[data-app]').length;
     list.forEach(function (item) {
-      try { window.makeprocess(item.dest, item.param || '', item.key || '', item.name || 'App'); } catch (e) {}
+      var param = item.param || '';
+      var key = item.key || '';
+      /* Проводник: восстановить папку, в которой работали (даже если внутрь
+         неё зашли уже после открытия окна) */
+      if (item.dir) { param = item.dir; key = 'defaultloader'; }
+      try { window.makeprocess(item.dest, param, key, item.name || 'App'); } catch (e) {}
     });
     var tries = 0;
     var poll = setInterval(function () {
@@ -979,7 +1015,13 @@
       if ($ws.length - before >= list.length || ++tries > 50) {
         clearInterval(poll);
         $ws.slice(before).each(function (i) {
-          if (list[i]) { applyGeometry($(this), list[i]); }
+          if (!list[i]) { return; }
+          applyGeometry($(this), list[i]);
+          /* приложение само ушло на другую страницу — вернуть этот вид */
+          if (list[i].view) {
+            var $c = $(this).find('.process-container').first();
+            if ($c.length) { try { $c.load(list[i].view); } catch (e) {} }
+          }
         });
         restoring = false;
       }
@@ -1003,6 +1045,19 @@
 
   window.FO_WORKSPACE_SAVE = saveNow;
   window.FO_SESSION_CHECK = checkSession;
+
+  /* приложения ходят по страницам без пересоздания окна: следим за «видом»
+     (папка Проводника, загруженный URL) и сохраняем, когда он меняется */
+  function viewSignature() {
+    var out = [];
+    $('.window[data-app]').each(function () {
+      var $w = $(this);
+      var pid = String($w.attr('id') || '').replace('app', '');
+      var dir = $w.find('.fo-content').first().attr('data-dir') || '';
+      out.push(dir + '~' + (VIEW_URL[pid] || ''));
+    });
+    return out.join('|');
+  }
 
   /* Черновик приложения: любое приложение может сохранить своё состояние
      на сервере и восстановить его на другом устройстве.
@@ -1045,6 +1100,13 @@
       if (document.visibilityState === 'visible') { checkSession(); }
     });
     window.addEventListener('focus', checkSession);
+
+    var lastView = viewSignature();
+    setInterval(function () {
+      if (restoring) { return; }
+      var now = viewSignature();
+      if (now !== lastView) { lastView = now; scheduleSave(); }
+    }, 5000);
 
     var target = document.getElementById('proceses');
     if (target && window.MutationObserver) {

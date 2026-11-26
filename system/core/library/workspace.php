@@ -88,11 +88,23 @@ final class ForestWorkspace
             /* старый формат (плоские x/y/w/h) считаем десктопным */
             $desk = is_array($w['desk'] ?? null) ? $w['desk'] : $w;
             $mob = is_array($w['mob'] ?? null) ? $w['mob'] : array();
+            /* «вид» приложения: последняя загруженная страница (для legacy-приложений,
+               которые навигируют через $().load) и папка Проводника */
+            $view = (string)($w['view'] ?? '');
+            if ($view !== '' && (!preg_match('#^system/apps/[A-Za-z0-9_.\-]+/[A-Za-z0-9_.\-]+\.php(\?[^\s\'"<>]*)?$#', $view) || strlen($view) > 400)) {
+                $view = '';
+            }
+            $dir = (string)($w['dir'] ?? '');
+            if (strpos($dir, '..') !== false || strlen($dir) > 400) {
+                $dir = '';
+            }
             $out['windows'][] = array(
                 'dest' => $dest,
                 'name' => mb_substr(trim($name) !== '' ? trim($name) : 'App', 0, 60, 'UTF-8'),
                 'param' => $param,
                 'key' => $key,
+                'view' => $view,
+                'dir' => $dir,
                 'desk' => $box($desk),
                 'mob' => $box($mob),
             );
@@ -128,7 +140,7 @@ final class ForestWorkspace
         $mode = ((string)($data['mode'] ?? 'desk')) === 'mob' ? 'mob' : 'desk';
         $byKey = array();
         foreach ($current['windows'] as $cw) {
-            $byKey[$cw['dest'] . '|' . $cw['param'] . '|' . $cw['key']] = $cw;
+            $byKey[$cw['dest'] . '|' . $cw['param'] . '|' . $cw['key'] . '|' . (string)($cw['dir'] ?? '')] = $cw;
         }
         $incoming = array();
         $seen = array();
@@ -136,7 +148,8 @@ final class ForestWorkspace
             if (!is_array($w)) {
                 continue;
             }
-            $k = ((string)($w['dest'] ?? '')) . '|' . ((string)($w['param'] ?? '')) . '|' . ((string)($w['key'] ?? ''));
+            $k = ((string)($w['dest'] ?? '')) . '|' . ((string)($w['param'] ?? '')) . '|'
+                . ((string)($w['key'] ?? '')) . '|' . ((string)($w['dir'] ?? ''));
             if (isset($seen[$k])) {
                 /* два одинаковых окна (то же приложение, тот же параметр)
                    неразличимы между сессиями — оставляем одно */
@@ -154,6 +167,8 @@ final class ForestWorkspace
                 'w' => $w['w'] ?? null, 'h' => $w['h'] ?? null,
                 'max' => !empty($w['max']), 'shaded' => !empty($w['shaded']),
             );
+            $entry['view'] = (string)($w['view'] ?? '');
+            $entry['dir'] = (string)($w['dir'] ?? '');
             if (!isset($entry['desk']) || !is_array($entry['desk'])) {
                 $entry['desk'] = array();
             }
