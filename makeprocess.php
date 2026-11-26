@@ -5,6 +5,13 @@ if(!isset($_SESSION)){
 }
 
 if(isset($_SESSION['loginuser'])){
+  /* если вошли на другом устройстве — закрываем оболочку и уводим на вход */
+  require_once 'system/core/library/session.php';
+  if (empty($_SESSION['is_authuser']) || $_SESSION['is_authuser'] !== true
+      || !ForestSession::validate((string)$_SESSION['loginuser'], (string)($_SESSION['fo_session_token'] ?? ''))) {
+    echo '<script>try{window.top.location=\'/?kicked=1\';}catch(e){window.location=\'/?kicked=1\';}</script>';
+    exit;
+  }
   require_once 'system/core/library/etc.php';
   require_once 'system/core/library/filesystem.php';
   $infob = new info;

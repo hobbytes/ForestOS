@@ -225,6 +225,12 @@ if (empty($_SESSION['loginuser']) || !isset($_SESSION['is_authuser']) || $_SESSI
     st_fail('auth', 401);
 }
 
+/* одна активная сессия: работа со старой вкладки не должна продолжаться */
+require_once $_SERVER['DOCUMENT_ROOT'] . '/system/core/library/session.php';
+if (!ForestSession::validate((string)$_SESSION['loginuser'], (string)($_SESSION['fo_session_token'] ?? ''))) {
+    st_fail('kicked', 401);
+}
+
 require_once $_SERVER['DOCUMENT_ROOT'] . '/system/core/library/appstore.php';
 
 $login = (string)$_SESSION['loginuser'];

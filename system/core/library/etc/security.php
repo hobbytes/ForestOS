@@ -53,6 +53,13 @@ class security {
       http_response_code(403);
       exit;
     }
+
+    /* одна активная сессия: вход на другом устройстве обнуляет эту */
+    require_once __DIR__ . '/../session.php';
+    if (!ForestSession::validate((string)$_SESSION['loginuser'], (string)($_SESSION['fo_session_token'] ?? ''))) {
+      http_response_code(401);
+      exit;
+    }
   }
 
   function crypt_s($string, $salt){
