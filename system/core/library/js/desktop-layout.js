@@ -1004,6 +1004,35 @@
   window.FO_WORKSPACE_SAVE = saveNow;
   window.FO_SESSION_CHECK = checkSession;
 
+  /* Черновик приложения: любое приложение может сохранить своё состояние
+     на сервере и восстановить его на другом устройстве.
+       FO_APP_STATE.load('App')  -> Promise<state|null>
+       FO_APP_STATE.save('App', state)
+       FO_APP_STATE.clear('App')                                          */
+  window.FO_APP_STATE = {
+    load: function (app) {
+      return fetch('system/core/functions/app-state.php?action=get&app=' + encodeURIComponent(app),
+        { credentials: 'same-origin', cache: 'no-store' })
+        .then(function (r) { return r.json(); })
+        .then(function (d) { return d && d.ok ? d.state : null; })
+        .catch(function () { return null; });
+    },
+    save: function (app, state) {
+      return fetch('system/core/functions/app-state.php?action=save', {
+        method: 'POST', credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ app: app, state: state })
+      }).then(function (r) { return r.json(); }).catch(function () { return null; });
+    },
+    clear: function (app) {
+      var body = new URLSearchParams();
+      body.append('app', app);
+      return fetch('system/core/functions/app-state.php?action=clear', {
+        method: 'POST', credentials: 'same-origin', body: body
+      }).then(function (r) { return r.json(); }).catch(function () { return null; });
+    }
+  };
+
   $(function () {
     if (!document.getElementById('proceses')) { return; }
     ready = loadState();
