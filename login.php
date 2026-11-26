@@ -171,6 +171,11 @@ if (isset($_GET["exit"])) {
 $foBan = ForestBans::check(ForestBans::ip());
 $foBanned = !empty($foBan['banned']);
 
+/* сеанс закрыт, потому что вошли на другом устройстве */
+if (!empty($_GET['kicked']) && !$foBanned) {
+  echo '<h2 class="error-layout">Сеанс завершён: вы вошли в систему на другом устройстве.</h2>';
+}
+
 if(!$foBanned && (!$_SESSION['BlockDate'] || date('d-m-y H:i:s') >= $_SESSION['BlockDate'])){
   $_SESSION['BlockDate'] = false;
   $_SESSION['counter'] = 0;

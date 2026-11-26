@@ -12,6 +12,19 @@ if (empty($_SESSION['is_authuser']) && !fo_has_superuser()) {
   exit;
 }
 
+/* одна активная сессия: если вошли на другом устройстве — этот сеанс закрыт */
+if (!empty($_SESSION['is_authuser']) && !empty($_SESSION['loginuser'])) {
+  require_once $_SERVER['DOCUMENT_ROOT'] . '/system/core/library/session.php';
+  if (!ForestSession::validate((string)$_SESSION['loginuser'], (string)($_SESSION['fo_session_token'] ?? ''))) {
+    $_SESSION = array();
+    if (function_exists('session_status') && session_status() === PHP_SESSION_ACTIVE) {
+      session_destroy();
+    }
+    header('Location: /?kicked=1');
+    exit;
+  }
+}
+
 /* #Display errors */
 ini_set('display_errors','Off');
 

@@ -116,6 +116,9 @@ class AuthClassUser {
           if ($login == $this->_login && $password == $this->_password) {
             $_SESSION["is_authuser"] = true;
             $_SESSION["loginuser"] = $login;
+            /* одна активная сессия: вход здесь завершает сессии на других устройствах */
+            require_once __DIR__ . '/session.php';
+            $_SESSION['fo_session_token'] = ForestSession::begin((string)$login);
             /* новая сессия после входа — защита от фиксации */
             if (session_status() === PHP_SESSION_ACTIVE) {
                 @session_regenerate_id(true);
@@ -166,6 +169,8 @@ class AuthClassUser {
 
 
       public function out() {
+          require_once __DIR__ . '/session.php';
+          ForestSession::end((string)($_SESSION['loginuser'] ?? ''));
           $_SESSION = array();
           session_destroy();
       }

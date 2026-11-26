@@ -157,6 +157,9 @@ switch ($action) {
         /* сессия — как после пароля (см. AuthClassUser::auth) */
         $_SESSION['is_authuser'] = true;
         $_SESSION['loginuser'] = $login;
+        /* одна активная сессия: вход по Face ID тоже завершает другие */
+        require_once $_SERVER['DOCUMENT_ROOT'] . '/system/core/library/session.php';
+        $_SESSION['fo_session_token'] = ForestSession::begin($login);
         /* новая сессия после входа — защита от фиксации */
         if (session_status() === PHP_SESSION_ACTIVE) {
             session_regenerate_id(true);
