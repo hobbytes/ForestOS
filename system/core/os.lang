@@ -7,6 +7,8 @@ ru_restart = перезагрузка
 ru_memoryrestart = мягкая перезагрузка
 ru_hibernation = гибернация
 ru_exit = выход
+ru_reload = перезагрузка
+ru_shutdown = выключение
 ru_notification_label = Центр уведомлений
 ru_notification_clear = Отчистить
 
@@ -20,6 +22,8 @@ en_restart = reset
 en_memoryrestart = soft reset
 en_hibernation = hibernation
 en_exit = exit
+en_reload = reload
+en_shutdown = Shut Down
 en_notification_label = Notification Center
 en_notification_clear = Clear All
 

@@ -419,6 +419,17 @@ function topbar(){
   $settings_name = $language[$_SESSION['locale'].'_settings_menu'];
   $about_name = $language[$_SESSION['locale'].'_about_menu'];
   $exit_name = isset($language[$_SESSION['locale'].'_exit']) ? $language[$_SESSION['locale'].'_exit'] : 'Выход';
+
+  /* подписи кнопок питания — из языкового файла, с заглавной буквы */
+  $__pwLabel = function (string $key, string $fallback) use ($language) {
+      $v = trim((string)($language[$_SESSION['locale'] . '_' . $key] ?? ''));
+      if ($v === '') { $v = $fallback; }
+      return mb_strtoupper(mb_substr($v, 0, 1, 'UTF-8'), 'UTF-8') . mb_substr($v, 1, null, 'UTF-8');
+  };
+  $__pwExit = $__pwLabel('exit', 'Выход');
+  $__pwReload = $__pwLabel('reload', 'Перезагрузка');
+  $__pwShutdown = $__pwLabel('shutdown', 'Выключение');
+
   $apps = $this->appcatalog($login, $language);
   ?>
   <div id="topbar" class="fo-bar topbartheme" style="display:none;">
@@ -467,15 +478,9 @@ function topbar(){
       <div class="fo-launcher-foot">
         <span class="fo-launcher-hint">↑ ↓ — выбор · Enter — открыть</span>
         <div class="fo-launcher-power">
-          <button type="button" class="fo-power" data-power="exit" title="Exit / Выход — сохранить и выйти">
-            <span class="fo-p-ru">Выход</span><span class="fo-p-en">Exit</span>
-          </button>
-          <button type="button" class="fo-power" data-power="reload" title="Reload / Перезагрузка — сохранить и перезагрузить">
-            <span class="fo-p-ru">Перезагрузка</span><span class="fo-p-en">Reload</span>
-          </button>
-          <button type="button" class="fo-power" data-power="shutdown" title="Shut Down / Выключение — выйти без сохранения">
-            <span class="fo-p-ru">Выключение</span><span class="fo-p-en">Shut Down</span>
-          </button>
+          <button type="button" class="fo-power" data-power="exit" title="<?echo htmlspecialchars($__pwExit)?>"><?echo htmlspecialchars($__pwExit)?></button>
+          <button type="button" class="fo-power" data-power="reload" title="<?echo htmlspecialchars($__pwReload)?>"><?echo htmlspecialchars($__pwReload)?></button>
+          <button type="button" class="fo-power" data-power="shutdown" title="<?echo htmlspecialchars($__pwShutdown)?>"><?echo htmlspecialchars($__pwShutdown)?></button>
         </div>
       </div>
     </div>
@@ -483,6 +488,11 @@ function topbar(){
   <script>
   window.FO_APPS = <? echo json_encode(array_values($apps), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP); ?>;
   window.FO_LOGIN = <? echo json_encode($login); ?>;
+  window.FO_I18N = <? echo json_encode(array(
+      'exit' => $__pwExit,
+      'reload' => $__pwReload,
+      'shutdown' => $__pwShutdown,
+  ), JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP); ?>;
   function hide_menu(){ $('#fo-launcher').removeClass('is-open').attr('aria-hidden','true'); }
   </script>
   <?

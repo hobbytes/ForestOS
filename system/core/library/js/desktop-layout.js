@@ -742,11 +742,12 @@
       });
       $('<div></div>').css({ height: '1px', margin: '5px 8px', background: 'rgba(255,255,255,0.12)' }).appendTo($m);
 
-      add('Выход · Exit', function () { if (window.FO_POWER) { window.FO_POWER('exit'); } else { window.location.href = '?action=logout'; } });
-      add('Перезагрузка · Reload', function () { if (window.FO_POWER) { window.FO_POWER('reload'); } else { window.location.href = 'os.php'; } });
+      var L = window.FO_I18N || {};
+      add(L.exit || 'Выход', function () { if (window.FO_POWER) { window.FO_POWER('exit'); } else { window.location.href = '?action=logout'; } });
+      add(L.reload || 'Перезагрузка', function () { if (window.FO_POWER) { window.FO_POWER('reload'); } else { window.location.href = 'os.php'; } });
 
       $('<div></div>').css({ height: '1px', margin: '5px 8px', background: 'rgba(255,255,255,0.12)' }).appendTo($m);
-      add('Выключение · Shut Down', function () { if (window.FO_POWER) { window.FO_POWER('shutdown'); } }, true);
+      add(L.shutdown || 'Выключение', function () { if (window.FO_POWER) { window.FO_POWER('shutdown'); } }, true);
     }
 
     var mw = $m.outerWidth() || 210;

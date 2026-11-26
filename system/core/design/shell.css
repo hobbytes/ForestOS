@@ -1738,11 +1738,9 @@ body.fo-grid-drag #fo-desktop-grid { opacity: 1; }
   }
 }
 
-/* силовые кнопки в меню: три действия, подписи на двух языках */
+/* силовые кнопки в меню: три действия, подпись из языка системы */
 .fo-power{
-  width:auto; min-width:52px; height:30px; padding:2px 7px;
-  display:inline-flex; flex-direction:column; align-items:center; justify-content:center; gap:1px;
-  font:700 9px/1.05 var(--fo-font); letter-spacing:.01em;
+  width:auto; min-width:24px; height:24px; padding:0 9px;
+  font:700 10.5px/1 var(--fo-font); letter-spacing:.02em;
 }
-.fo-power .fo-p-en{ opacity:.62; font:600 8px/1 var(--fo-font); text-transform:uppercase; letter-spacing:.06em; }
 .fo-power[data-power="shutdown"]:hover{ border-color: rgba(255,90,80,.5); color:#ff9d95; }
