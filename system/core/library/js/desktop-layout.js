@@ -858,9 +858,26 @@
     return API + '?action=' + action + '&token=' + encodeURIComponent(token);
   }
 
+  function kicked() {
+    window.location.href = '/?kicked=1';
+  }
+
+  /* периодическая проверка: если вошли на другом устройстве — на экран входа */
+  function checkSession() {
+    return fetch(API + '?action=get', { credentials: 'same-origin', cache: 'no-store' })
+      .then(function (r) {
+        if (r.status === 401) { kicked(); return false; }
+        return true;
+      })
+      .catch(function () { return true; });
+  }
+
   function loadState() {
     return fetch(API + '?action=get', { credentials: 'same-origin' })
-      .then(function (r) { return r.json(); })
+      .then(function (r) {
+        if (r.status === 401) { kicked(); return { windows: [] }; }
+        return r.json();
+      })
       .then(function (d) {
         if (!d || !d.ok) { return { windows: [] }; }
         token = d.token || '';
@@ -985,11 +1002,20 @@
   };
 
   window.FO_WORKSPACE_SAVE = saveNow;
+  window.FO_SESSION_CHECK = checkSession;
 
   $(function () {
     if (!document.getElementById('proceses')) { return; }
     ready = loadState();
     ready.then(restore);
+
+    /* выкидываем на вход, как только сессия стала чужой: при возврате на
+       вкладку и раз в 30 секунд, не дожидаясь действий пользователя */
+    setInterval(checkSession, 30000);
+    document.addEventListener('visibilitychange', function () {
+      if (document.visibilityState === 'visible') { checkSession(); }
+    });
+    window.addEventListener('focus', checkSession);
 
     var target = document.getElementById('proceses');
     if (target && window.MutationObserver) {
