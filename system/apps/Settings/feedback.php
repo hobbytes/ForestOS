@@ -28,9 +28,7 @@ $gui = new gui;
 if(!empty($_GET['t']) && !empty($_GET['m'])){
   // The central feedback endpoint (forest.hobbytes.com) no longer exists in
   // this local installation, so messages cannot be delivered remotely.
-  $msg = ($_SESSION['locale'] == 'en')
-    ? 'The feedback service is unavailable in this local build. Your message was not sent.'
-    : 'Сервис обратной связи недоступен в локальной сборке. Сообщение не отправлено.';
+  $msg = $language[$_SESSION['locale'].'_unavailable'];
   $gui->errorLayot($msg);
 }
 

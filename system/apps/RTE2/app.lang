@@ -45,8 +45,8 @@ en_toast_saved_as = Saved as: {file}
 ru_toast_draft_restored = Черновик восстановлен
 en_toast_draft_restored = Draft restored
 
-ru_counts = {chars} символов · {words} слов
-en_counts = {chars} characters · {words} words
+ru_counts = Символов: {chars} · Слов: {words}
+en_counts = Characters: {chars} · Words: {words}
 
 ru_mode_html = HTML-документ
 en_mode_html = HTML document

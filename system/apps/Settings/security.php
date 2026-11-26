@@ -1,5 +1,5 @@
 <?
-/* Settings → Безопасность (единый дизайн) */
+/* Settings — Security */
 if (!isset($_SESSION)) { session_start(); }
 
 $DOC = rtrim(str_replace('\\', '/', $_SERVER['DOCUMENT_ROOT']), '/');
@@ -7,6 +7,9 @@ $me = (string)$_SESSION['loginuser'];
 $token = (string)($_SESSION['fo_settings_csrf'] ?? '');
 $appid = (string)($_GET['appid'] ?? '');
 $msg = '';
+
+require __DIR__ . '/_i18n.php';
+list($T, $lc) = fo_settings_lang('security');
 
 require_once $DOC . '/system/core/library/bd.php';
 require_once $DOC . '/system/core/library/etc/security.php';
@@ -59,7 +62,7 @@ function sec_set_keys(string $login, array $keys): void
 
 $action = isset($_GET['action']) ? (string)$_GET['action'] : '';
 if ($action !== '' && ($_GET['token'] ?? '') !== $token) {
-    $msg = 'Сессия устарела, откройте окно заново';
+    $msg = $T('msg_session_expired');
     $action = '';
 }
 
@@ -71,9 +74,9 @@ if ($action === 'key') {
     $keys[] = $key;
     try {
         sec_set_keys($me, $keys);
-        $msg = 'Ключ создан: ' . $key;
+        $msg = $T('msg_key_created') . ' ' . $key;
     } catch (Throwable $e) {
-        $msg = 'Не удалось сохранить ключ';
+        $msg = $T('msg_key_save_fail');
     }
 }
 
@@ -82,18 +85,18 @@ if ($action === 'keydel') {
     $keys = array_values(array_filter(sec_keys($me), function ($k) use ($key) { return $k !== $key; }));
     try {
         sec_set_keys($me, $keys);
-        $msg = 'Ключ удалён';
+        $msg = $T('msg_key_deleted');
     } catch (Throwable $e) {
-        $msg = 'Не удалось удалить ключ';
+        $msg = $T('msg_key_delete_fail');
     }
 }
 
 if ($action === 'keyclear') {
     try {
         sec_set_keys($me, array());
-        $msg = 'Все ключи удалены';
+        $msg = $T('msg_keys_cleared');
     } catch (Throwable $e) {
-        $msg = 'Не удалось удалить ключи';
+        $msg = $T('msg_keys_clear_fail');
     }
 }
 
@@ -103,21 +106,21 @@ if ($action === 'password') {
     $repeat = (string)($_GET['repeat'] ?? '');
     $stored = sec_pass($me);
     if ($stored === '') {
-        $msg = 'Не удалось прочитать учётную запись';
+        $msg = $T('msg_account_read_fail');
     } elseif (!hash_equals($stored, $security->crypt_s($old, $me))) {
-        $msg = 'Текущий пароль неверен';
+        $msg = $T('msg_old_wrong');
     } elseif (strlen($new) < 4) {
-        $msg = 'Новый пароль слишком короткий';
+        $msg = $T('msg_new_short');
     } elseif ($new !== $repeat) {
-        $msg = 'Пароли не совпадают';
+        $msg = $T('msg_mismatch');
     } else {
         try {
             $pdo = new PDO(DB_DSN, DB_USERNAME, DB_PASSWORD);
             $pdo->prepare('UPDATE forestusers SET password = ? WHERE login = ?')
                 ->execute(array($security->crypt_s($new, $me), $me));
-            $msg = 'Пароль изменён';
+            $msg = $T('msg_password_changed');
         } catch (Throwable $e) {
-            $msg = 'Не удалось изменить пароль';
+            $msg = $T('msg_password_fail');
         }
     }
 }
@@ -127,9 +130,9 @@ if ($action === 'journal' && $me === ($_SESSION['superuser'] ?? '')) {
     if (is_file($journal)) {
         @file_put_contents($journal, '');
         @chmod($journal, 0666);
-        $msg = 'Журнал очищен';
+        $msg = $T('msg_journal_cleared');
     } else {
-        $msg = 'Журнал не найден';
+        $msg = $T('msg_journal_missing');
     }
 }
 
@@ -137,8 +140,8 @@ $journalSize = is_file($DOC . '/system/core/journal.mcj') ? (int)@filesize($DOC 
 $keys = sec_keys($me);
 ?>
 
-<h2 class="set-h">Безопасность</h2>
-<p class="set-sub">Пароль учётной записи и системный журнал</p>
+<h2 class="set-h"><? echo htmlspecialchars($T('title')) ?></h2>
+<p class="set-sub"><? echo htmlspecialchars($T('subtitle')) ?></p>
 
 <? if ($msg !== ''): ?>
   <div class="set-card" style="border-color:color-mix(in srgb, var(--set-accent) 40%, #e6e7ea); background:color-mix(in srgb, var(--set-accent) 10%, #fff)">
@@ -147,16 +150,16 @@ $keys = sec_keys($me);
 <? endif; ?>
 
 <div class="set-card">
-  <div class="set-lbl">Смена пароля</div>
+  <div class="set-lbl"><? echo htmlspecialchars($T('password_title')) ?></div>
   <div class="set-row" style="margin-top:10px;border-top:0;padding-top:0">
-    <input class="set-btn grow" id="sec-old" type="password" placeholder="текущий пароль" style="height:32px">
+    <input class="set-btn grow" id="sec-old" type="password" placeholder="<? echo htmlspecialchars($T('ph_current')) ?>" style="height:32px">
   </div>
   <div class="set-row" style="border-top:0;padding-top:8px;margin-top:0">
-    <input class="set-btn grow" id="sec-new" type="password" placeholder="новый пароль" style="height:32px">
-    <input class="set-btn grow" id="sec-repeat" type="password" placeholder="повторите" style="height:32px">
+    <input class="set-btn grow" id="sec-new" type="password" placeholder="<? echo htmlspecialchars($T('ph_new')) ?>" style="height:32px">
+    <input class="set-btn grow" id="sec-repeat" type="password" placeholder="<? echo htmlspecialchars($T('ph_repeat')) ?>" style="height:32px">
   </div>
   <div class="set-row" style="border-top:0;padding-top:10px;margin-top:0">
-    <button type="button" class="set-btn primary" id="sec-save">Изменить пароль</button>
+    <button type="button" class="set-btn primary" id="sec-save"><? echo htmlspecialchars($T('change_button')) ?></button>
   </div>
 </div>
 
@@ -169,24 +172,19 @@ $waKeys = $waAllowed ? ForestWebAuthn::listKeys($me) : array();
 <div class="set-card" id="sec-faceid-card">
   <div class="set-row" style="border-top:0;padding-top:0;margin-top:0">
     <div class="grow">
-      <div class="set-lbl">Вход по Face ID</div>
+      <div class="set-lbl"><? echo htmlspecialchars($T('faceid_title')) ?></div>
       <div class="set-hint">
         <? if (!$waAllowed): ?>
-          Доступно только администратору.
+          <? echo htmlspecialchars($T('faceid_admin_only')) ?>
         <? elseif (!$waAvailable): ?>
-          Браузер не даст вызвать Face ID: сервер видит запрос как
-          <b><? echo htmlspecialchars(ForestWebAuthn::origin()) ?></b>.
-          Нужен HTTPS-домен, а обратный прокси должен передавать заголовок
-          <code>X-Forwarded-Proto: https</code>.
+          <? echo str_replace('{origin}', htmlspecialchars(ForestWebAuthn::origin()), $T('faceid_https')) ?>
         <? else: ?>
-          Face ID / отпечаток / Windows Hello вместо пароля. Ключ создаётся на этом
-          устройстве и остаётся на нём — добавляйте его на телефоне, с которого
-          собираетесь входить.
+          <? echo htmlspecialchars($T('faceid_help')) ?>
         <? endif; ?>
       </div>
     </div>
     <? if ($waAllowed && $waAvailable): ?>
-      <button type="button" class="set-btn primary" id="sec-faceid-add">Добавить</button>
+      <button type="button" class="set-btn primary" id="sec-faceid-add"><? echo htmlspecialchars($T('faceid_add')) ?></button>
     <? endif; ?>
   </div>
   <? if (count($waKeys)): ?>
@@ -194,10 +192,10 @@ $waKeys = $waAllowed ? ForestWebAuthn::listKeys($me) : array();
       <? foreach ($waKeys as $k): ?>
         <div class="set-item">
           <span class="grow">
-            <span class="set-lbl" style="display:block"><? echo htmlspecialchars((string)$k['label'] !== '' ? (string)$k['label'] : 'Устройство') ?></span>
-            <span class="set-hint" style="display:block">ключ от <? echo htmlspecialchars((string)$k['created_at']) ?><? echo !empty($k['last_used_at']) ? ' · вход ' . htmlspecialchars((string)$k['last_used_at']) : '' ?></span>
+            <span class="set-lbl" style="display:block"><? echo htmlspecialchars((string)$k['label'] !== '' ? (string)$k['label'] : htmlspecialchars($T('device_default'))) ?></span>
+            <span class="set-hint" style="display:block"><? echo htmlspecialchars($T('key_created_at')) ?> <? echo htmlspecialchars((string)$k['created_at']) ?><? echo !empty($k['last_used_at']) ? ' · ' . htmlspecialchars($T('key_last_used')) . ' ' . htmlspecialchars((string)$k['last_used_at']) : '' ?></span>
           </span>
-          <button type="button" class="set-btn danger" data-faceid-del="<? echo (int)$k['id'] ?>">Удалить</button>
+          <button type="button" class="set-btn danger" data-faceid-del="<? echo (int)$k['id'] ?>"><? echo htmlspecialchars($T('delete')) ?></button>
         </div>
       <? endforeach; ?>
     </div>
@@ -214,13 +212,10 @@ $bans = $isSuperUser ? ForestBans::active() : array();
 <div class="set-card" id="sec-bans-card">
   <div class="set-row" style="border-top:0;padding-top:0;margin-top:0">
     <div class="grow">
-      <div class="set-lbl">Блокировка IP</div>
-      <div class="set-hint">
-        3 неудачных входа в течение 15 минут — IP блокируется на 15 минут.
-        Повторно: 1 час, 6 часов, 24 часа. Успешный вход сбрасывает счётчик.
-      </div>
+      <div class="set-lbl"><? echo htmlspecialchars($T('bans_title')) ?></div>
+      <div class="set-hint"><? echo htmlspecialchars($T('bans_help')) ?></div>
     </div>
-    <button type="button" class="set-btn danger" id="sec-bans-clear" style="<? echo count($bans) ? '' : 'display:none' ?>">Разбанить всех</button>
+    <button type="button" class="set-btn danger" id="sec-bans-clear" style="<? echo count($bans) ? '' : 'display:none' ?>"><? echo htmlspecialchars($T('bans_clear_all')) ?></button>
   </div>
   <div class="set-list" id="sec-bans-list" style="margin-top:10px;<? echo count($bans) ? '' : 'display:none' ?>">
     <? foreach ($bans as $b): ?>
@@ -229,20 +224,20 @@ $bans = $isSuperUser ? ForestBans::active() : array();
           <span class="set-lbl" style="display:block;font-family:ui-monospace,Consolas,monospace"><? echo htmlspecialchars($b['ip']) ?></span>
           <span class="set-hint" style="display:block">
             <? if ($b['banned']): ?>
-              заблокирован до <? echo htmlspecialchars(ForestBans::untilText((int)$b['until'])) ?>
+              <? echo htmlspecialchars($T('banned_until')) ?> <? echo htmlspecialchars(ForestBans::untilText((int)$b['until'])) ?>
             <? else: ?>
-              неудачные попытки
+              <? echo htmlspecialchars($T('failed_attempts')) ?>
             <? endif; ?>
-            · неудач: <? echo (int)$b['failures'] ?>
-            · всего блокировок: <? echo (int)$b['bans'] ?>
-            <? if ($b['last_login'] !== ''): ?> · логин: <? echo htmlspecialchars($b['last_login']) ?><? endif; ?>
+            · <? echo htmlspecialchars($T('failures_label')) ?> <? echo (int)$b['failures'] ?>
+            · <? echo htmlspecialchars($T('bans_count_label')) ?> <? echo (int)$b['bans'] ?>
+            <? if ($b['last_login'] !== ''): ?> · <? echo htmlspecialchars($T('login_label')) ?> <? echo htmlspecialchars($b['last_login']) ?><? endif; ?>
           </span>
         </span>
-        <button type="button" class="set-btn" data-ban-clear="<? echo htmlspecialchars($b['ip']) ?>">Разбанить</button>
+        <button type="button" class="set-btn" data-ban-clear="<? echo htmlspecialchars($b['ip']) ?>"><? echo htmlspecialchars($T('unban')) ?></button>
       </div>
     <? endforeach; ?>
   </div>
-  <div class="set-hint" id="sec-bans-empty" style="margin-top:8px;<? echo count($bans) ? 'display:none' : '' ?>">Активных блокировок нет</div>
+  <div class="set-hint" id="sec-bans-empty" style="margin-top:8px;<? echo count($bans) ? 'display:none' : '' ?>"><? echo htmlspecialchars($T('bans_empty')) ?></div>
   <div id="sec-bans-msg" class="set-hint" style="margin-top:8px"></div>
 </div>
 <? endif; ?>
@@ -250,20 +245,20 @@ $bans = $isSuperUser ? ForestBans::active() : array();
 <div class="set-card">
   <div class="set-row" style="border-top:0;padding-top:0;margin-top:0">
     <div class="grow">
-      <div class="set-lbl">Системный журнал</div>
-      <div class="set-hint"><? echo $journalSize > 0 ? round($journalSize / 1024, 1) . ' КБ записей' : 'пусто' ?></div>
+      <div class="set-lbl"><? echo htmlspecialchars($T('journal_title')) ?></div>
+      <div class="set-hint"><? echo $journalSize > 0 ? round($journalSize / 1024, 1) . ' ' . htmlspecialchars($T('journal_size_unit')) : htmlspecialchars($T('journal_empty')) ?></div>
     </div>
     <? if ($me === ($_SESSION['superuser'] ?? '')): ?>
-      <button type="button" class="set-btn danger" id="sec-journal">Очистить</button>
+      <button type="button" class="set-btn danger" id="sec-journal"><? echo htmlspecialchars($T('clear')) ?></button>
     <? endif; ?>
   </div>
   <div class="set-row">
     <div class="grow">
-      <div class="set-lbl">Ключи доступа</div>
-      <div class="set-hint">Для приложений, которым нужен доступ к вашей учётной записи</div>
+      <div class="set-lbl"><? echo htmlspecialchars($T('keys_title')) ?></div>
+      <div class="set-hint"><? echo htmlspecialchars($T('keys_help')) ?></div>
     </div>
     <? if (count($keys)): ?>
-      <button type="button" class="set-btn danger" id="sec-keyclear">Удалить все</button>
+      <button type="button" class="set-btn danger" id="sec-keyclear"><? echo htmlspecialchars($T('delete_all')) ?></button>
     <? endif; ?>
   </div>
 
@@ -275,22 +270,25 @@ $bans = $isSuperUser ? ForestBans::active() : array();
             <span class="set-lbl set-keyval" data-key="<? echo htmlspecialchars($k) ?>" data-shown="0"
                   style="font-family:ui-monospace,Consolas,monospace;font-size:11.5px;word-break:break-all">••••••••••••••••</span>
           </span>
-          <button type="button" class="set-btn" data-key-copy="<? echo htmlspecialchars($k) ?>">Копировать</button>
-          <button type="button" class="set-btn" data-key-show="<? echo htmlspecialchars($k) ?>">Показать</button>
-          <button type="button" class="set-btn danger" data-key-del="<? echo htmlspecialchars($k) ?>">Удалить</button>
+          <button type="button" class="set-btn" data-key-copy="<? echo htmlspecialchars($k) ?>"><? echo htmlspecialchars($T('copy')) ?></button>
+          <button type="button" class="set-btn" data-key-show="<? echo htmlspecialchars($k) ?>"><? echo htmlspecialchars($T('show')) ?></button>
+          <button type="button" class="set-btn danger" data-key-del="<? echo htmlspecialchars($k) ?>"><? echo htmlspecialchars($T('delete')) ?></button>
         </div>
       <? endforeach; ?>
     </div>
   <? endif; ?>
 
   <div class="set-row" style="border-top:0;padding-top:10px;margin-top:0">
-    <input class="set-btn grow" id="sec-keyname" placeholder="название ключа (например telegram)" style="height:32px">
-    <button type="button" class="set-btn primary" id="sec-keyadd">Создать ключ</button>
+    <input class="set-btn grow" id="sec-keyname" placeholder="<? echo htmlspecialchars($T('key_name_ph')) ?>" style="height:32px">
+    <button type="button" class="set-btn primary" id="sec-keyadd"><? echo htmlspecialchars($T('key_create')) ?></button>
   </div>
 </div>
 
 <script>
+var FO_SEC_I18N = <? echo fo_settings_js($T, array('confirm_journal','confirm_key_del','confirm_keys_clear','copied','copy','show','hide','delete','device_default','key_created_at','key_last_used','delete_fail','faceid_need_https','faceid_waiting','faceid_done','key_added','faceid_cancelled','faceid_failed','error_word','confirm_revoke','bans_blocked_min','bans_confirm_unban','bans_unbanned','failed_attempts','failures_label','bans_count_label','login_label','unban','bans_error','bans_error_short','bans_confirm_clear','bans_cleared')) ?>;
+var FO_SEC_DATELOCALE = <? echo json_encode($lc === 'en' ? 'en-GB' : 'ru-RU') ?>;
 (function(){
+  var T = FO_SEC_I18N;
   var pane = document.getElementById('set-legacy' + <? echo json_encode($appid) ?>);
   var base = <? echo json_encode('system/apps/Settings/security.php?appid=' . $appid . '&appname=Settings&destination=' . urlencode((string)($_GET['destination'] ?? ''))) ?>;
   var token = <? echo json_encode($token) ?>;
@@ -313,7 +311,7 @@ $bans = $isSuperUser ? ForestBans::active() : array();
   var j = document.getElementById('sec-journal');
   if(j){
     j.addEventListener('click', function(){
-      if(!confirm('Очистить системный журнал?')) return;
+      if(!confirm(T.confirm_journal)) return;
       go('&action=journal');
     });
   }
@@ -326,7 +324,7 @@ $bans = $isSuperUser ? ForestBans::active() : array();
   }
   document.querySelectorAll('[data-key-del]').forEach(function(b){
     b.addEventListener('click', function(){
-      if(!confirm('Удалить ключ?')) return;
+      if(!confirm(T.confirm_key_del)) return;
       go('&action=keydel&key=' + encodeURIComponent(b.getAttribute('data-key-del')));
     });
   });
@@ -344,8 +342,8 @@ $bans = $isSuperUser ? ForestBans::active() : array();
     b.addEventListener('click', function(){
       var key = b.getAttribute('data-key-copy');
       copyText(key).then(function(){
-        b.textContent = 'Скопировано';
-        setTimeout(function(){ b.textContent = 'Копировать'; }, 1400);
+        b.textContent = T.copied;
+        setTimeout(function(){ b.textContent = T.copy; }, 1400);
       });
     });
   });
@@ -357,21 +355,22 @@ $bans = $isSuperUser ? ForestBans::active() : array();
       var shown = val.getAttribute('data-shown') === '1';
       val.textContent = shown ? '••••••••••••••••' : key;
       val.setAttribute('data-shown', shown ? '0' : '1');
-      b.textContent = shown ? 'Показать' : 'Скрыть';
+      b.textContent = shown ? T.show : T.hide;
     });
   });
   var clear = document.getElementById('sec-keyclear');
   if(clear){
     clear.addEventListener('click', function(){
-      if(!confirm('Удалить все ключи доступа?')) return;
+      if(!confirm(T.confirm_keys_clear)) return;
       go('&action=keyclear');
     });
   }
 })();
 </script>
 <script>
-/* Вход по Face ID: привязка и отзыв ключей WebAuthn */
+/* Face ID sign-in: registering and revoking WebAuthn keys */
 (function(){
+  var T = FO_SEC_I18N;
   var API = 'system/core/functions/webauthn.php';
   var add = document.getElementById('sec-faceid-add');
   var msg = document.getElementById('sec-faceid-msg');
@@ -400,21 +399,21 @@ $bans = $isSuperUser ? ForestBans::active() : array();
       var lbl = document.createElement('span');
       lbl.className = 'set-lbl';
       lbl.style.display = 'block';
-      lbl.textContent = k.label || 'Устройство';
+      lbl.textContent = k.label || T.device_default;
       var hint = document.createElement('span');
       hint.className = 'set-hint';
       hint.style.display = 'block';
-      hint.textContent = 'ключ от ' + (k.created_at || '').slice(0, 10) + (k.last_used_at ? ' · вход ' + k.last_used_at : '');
+      hint.textContent = T.key_created_at + ' ' + (k.created_at || '').slice(0, 10) + (k.last_used_at ? ' · ' + T.key_last_used + ' ' + k.last_used_at : '');
       span.appendChild(lbl);
       span.appendChild(hint);
       var del = document.createElement('button');
       del.type = 'button';
       del.className = 'set-btn danger';
-      del.textContent = 'Удалить';
+      del.textContent = T.delete;
       del.addEventListener('click', function(){
-        if(!confirm('Отозвать этот ключ? Вход по Face ID с него перестанет работать.')) return;
+        if(!confirm(T.confirm_revoke)) return;
         post('delete', { id: k.id }).then(function(d){
-          if(d && d.ok){ refresh(); } else { say('Не удалось удалить', true); }
+          if(d && d.ok){ refresh(); } else { say(T.delete_fail, true); }
         });
       });
       item.appendChild(span);
@@ -432,9 +431,9 @@ $bans = $isSuperUser ? ForestBans::active() : array();
 
   if(add){
     add.addEventListener('click', function(){
-      if(!window.PublicKeyCredential || !window.isSecureContext){ say('Нужен HTTPS и поддерживаемый браузер', true); return; }
-      add.disabled = true; say('Ожидаем Face ID…');
-      var label = 'Устройство ' + new Date().toLocaleDateString('ru-RU');
+      if(!window.PublicKeyCredential || !window.isSecureContext){ say(T.faceid_need_https, true); return; }
+      add.disabled = true; say(T.faceid_waiting);
+      var label = T.device_default + ' ' + new Date().toLocaleDateString(FO_SEC_DATELOCALE);
       post('begin-register', { label: label })
         .then(function(d){
           if(!d || !d.ok){ throw new Error((d && d.error) || 'begin_failed'); }
@@ -467,32 +466,33 @@ $bans = $isSuperUser ? ForestBans::active() : array();
         })
         .then(function(d){
           if(!d || !d.ok){ throw new Error((d && d.error) || 'failed'); }
-          say('Готово: ' + (d.label || 'ключ добавлен'));
+          say(T.faceid_done + ' ' + (d.label || T.key_added));
           add.disabled = false;
           refresh();
         })
         .catch(function(e){
           add.disabled = false;
-          if((e && e.name) === 'NotAllowedError'){ say('Отменено или не распознано', true); return; }
-          say('Не получилось: ' + ((e && e.message) || 'ошибка'), true);
+          if((e && e.name) === 'NotAllowedError'){ say(T.faceid_cancelled, true); return; }
+          say(T.faceid_failed + ' ' + ((e && e.message) || T.error_word), true);
         });
     });
   }
 
   document.querySelectorAll('[data-faceid-del]').forEach(function(b){
     b.addEventListener('click', function(){
-      if(!confirm('Отозвать этот ключ? Вход по Face ID с него перестанет работать.')) return;
+      if(!confirm(T.confirm_revoke)) return;
       post('delete', { id: parseInt(b.getAttribute('data-faceid-del'), 10) })
-        .then(function(d){ if(d && d.ok){ reload(); } else { say('Не удалось удалить', true); } })
-        .catch(function(){ say('Не удалось удалить', true); });
+        .then(function(d){ if(d && d.ok){ reload(); } else { say(T.delete_fail, true); } })
+        .catch(function(){ say(T.delete_fail, true); });
     });
   });
 })();
 </script>
 
 <script>
-/* Блокировка IP (fail2ban): список и снятие блокировок без перезагрузки окна */
+/* IP blocking (fail2ban): list and removal of blocks without a page reload */
 (function(){
+  var T = FO_SEC_I18N;
   var API = 'system/core/functions/bans.php';
   var token = <? echo json_encode($token) ?>;
   var msg = document.getElementById('sec-bans-msg');
@@ -523,9 +523,9 @@ $bans = $isSuperUser ? ForestBans::active() : array();
       var hint = document.createElement('span');
       hint.className = 'set-hint';
       hint.style.display = 'block';
-      hint.textContent = (b.banned ? 'заблокирован ещё ' + minutes(b.left) + ' мин' : 'неудачные попытки') +
-        ' · неудач: ' + b.failures + ' · всего блокировок: ' + b.bans +
-        (b.last_login ? ' · логин: ' + b.last_login : '');
+      hint.textContent = (b.banned ? T.bans_blocked_min.replace('{min}', String(minutes(b.left))) : T.failed_attempts) +
+        ' · ' + T.failures_label + ' ' + b.failures + ' · ' + T.bans_count_label + ' ' + b.bans +
+        (b.last_login ? ' · ' + T.login_label + ' ' + b.last_login : '');
 
       span.appendChild(ip);
       span.appendChild(hint);
@@ -534,7 +534,7 @@ $bans = $isSuperUser ? ForestBans::active() : array();
       btn.type = 'button';
       btn.className = 'set-btn';
       btn.setAttribute('data-ban-clear', b.ip);
-      btn.textContent = 'Разбанить';
+      btn.textContent = T.unban;
       btn.addEventListener('click', function(){ unban(b.ip); });
 
       item.appendChild(span);
@@ -563,20 +563,20 @@ $bans = $isSuperUser ? ForestBans::active() : array();
   }
 
   function unban(ip){
-    if(!confirm('Разблокировать ' + ip + '?')){ return; }
+    if(!confirm(T.bans_confirm_unban.replace('{ip}', ip))){ return; }
     post('unban', { ip: ip }).then(function(d){
-      if(d && d.ok){ say('Разблокирован: ' + ip); load(); }
-      else { say('Не удалось: ' + ((d && d.error) || 'ошибка'), true); }
-    }).catch(function(){ say('Не удалось', true); });
+      if(d && d.ok){ say(T.bans_unbanned + ' ' + ip); load(); }
+      else { say(T.bans_error + ' ' + ((d && d.error) || T.error_word), true); }
+    }).catch(function(){ say(T.bans_error_short, true); });
   }
 
   var clear = document.getElementById('sec-bans-clear');
   if(clear){
     clear.addEventListener('click', function(){
-      if(!confirm('Снять все блокировки IP?')){ return; }
+      if(!confirm(T.bans_confirm_clear)){ return; }
       post('unban-all').then(function(d){
-        if(d && d.ok){ say('Блокировки сняты'); load(); }
-        else { say('Не удалось', true); }
+        if(d && d.ok){ say(T.bans_cleared); load(); }
+        else { say(T.bans_error_short, true); }
       });
     });
   }

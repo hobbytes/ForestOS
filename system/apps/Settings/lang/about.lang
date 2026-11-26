@@ -1,4 +1,5 @@
 [about]
+ru_settings_label = Параметры
 ru_settings_about = О системе
 ru_version_label  = Версия
 ru_revision_label = сборка
@@ -10,8 +11,9 @@ ru_capacityused_label  = Занято
 ru_gpu_label = Графический процессор
 
 en_settings_label = Settings
+en_settings_about = About
 en_version_label  = Version
-en_revision_label = build name
+en_revision_label = build
 en_subversion_label = build version
 en_user_label = User
 en_username_label = User name

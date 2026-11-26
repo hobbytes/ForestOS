@@ -19,6 +19,26 @@
     bad_name: 'err_name', too_large: 'err_too_large', save: 'err_save',
     parse: 'err_save', network: 'err_network', open: 'err_open'
   };
+  /* tags allowed inside the document; everything else is unwrapped or removed.
+     Attributes are copied only for links and images (see sanitizeNode), so
+     scripts, styles, event handlers, ids and classes never reach the shell. */
+  var DOC_ALLOWED = {
+    P: 1, DIV: 1, BR: 1, B: 1, STRONG: 1, I: 1, EM: 1, U: 1, S: 1, STRIKE: 1,
+    SMALL: 1, MARK: 1, SUB: 1, SUP: 1,
+    H1: 1, H2: 1, H3: 1, H4: 1, H5: 1, H6: 1,
+    UL: 1, OL: 1, LI: 1, DL: 1, DT: 1, DD: 1,
+    BLOCKQUOTE: 1, PRE: 1, CODE: 1, HR: 1,
+    A: 1, IMG: 1, SPAN: 1,
+    TABLE: 1, THEAD: 1, TBODY: 1, TFOOT: 1, TR: 1, TD: 1, TH: 1,
+    FIGURE: 1, FIGCAPTION: 1
+  };
+  /* only harmless formatting declarations survive a load / paste */
+  var DOC_STYLE = {
+    'text-align': /^(left|right|center|justify)$/,
+    'font-weight': /^(normal|bold|[1-9]00)$/,
+    'font-style': /^(normal|italic)$/,
+    'text-decoration': /^(none|underline|line-through)$/
+  };
 
   var boots = document.querySelectorAll('script.rte2-boot');
   for (var i = 0; i < boots.length; i++) {
@@ -27,6 +47,7 @@
     try {
       init(boots[i]);
     } catch (err) {
+      boots[i].setAttribute('data-init-error', String((err && err.stack) || err));
       if (window.console) { console.error('RTE2 init:', err); }
     }
   }
@@ -72,6 +93,7 @@
     var saving = false;
     var draftTimer = null;
     var lastDraft = null;
+    var lastSaved = '';
     var selection = null;
     var dialogKind = '';
     var dialogOnOk = null;
@@ -148,7 +170,7 @@
     }
 
     function setHtml(html) {
-      ed.innerHTML = String(html || '');
+      ed.innerHTML = cleanDocumentHtml(html);
       normalize();
     }
 
@@ -594,7 +616,16 @@
     }
 
     function openSaveAs() {
-      var ext = format === 'text' ? 'txt' : 'html';
+      var ext = '';
+      if (target) {
+        var match = /\.([A-Za-z0-9]{1,8})$/.exec(nameOf(target));
+        ext = match ? match[1].toLowerCase() : '';
+      }
+      if (ext === 'htm' || ext === 'xhtml') { ext = 'html'; }
+      if (ext !== 'html' && ext !== 'txt' && ext !== 'md') {
+        ext = format === 'text' ? 'txt' : 'html';
+      }
+      var selectValue = (ext === 'html') ? 'html' : ext;
       var base = target ? nameOf(target).replace(/\.[A-Za-z0-9]{1,8}$/, '') : T('default_name');
       var hint = T('save_as_hint')
         .replace('{folder}', String(boot.documents || 'Documents'))
@@ -606,7 +637,7 @@
         value: base + '.' + ext,
         hint: hint,
         formats: true,
-        format: ext,
+        format: selectValue,
         okText: T('ok'),
         onOk: function (value, chosenFormat) {
           var name = String(value || '').trim();
@@ -655,6 +686,23 @@
 
     /* ---------------- paste sanitizer ---------------- */
 
+    function safeStyle(node) {
+      var style = node.getAttribute ? node.getAttribute('style') : '';
+      if (!style) { return ''; }
+      var out = [];
+      var parts = String(style).split(';');
+      for (var i = 0; i < parts.length; i++) {
+        var cut = parts[i].indexOf(':');
+        if (cut < 0) { continue; }
+        var name = parts[i].slice(0, cut).replace(/^\s+|\s+$/g, '').toLowerCase();
+        var value = parts[i].slice(cut + 1).replace(/^\s+|\s+$/g, '').toLowerCase();
+        if (DOC_STYLE[name] && DOC_STYLE[name].test(value)) {
+          out.push(name + ': ' + value);
+        }
+      }
+      return out.join('; ');
+    }
+
     function unwrap(node, allowed) {
       var frag = document.createDocumentFragment();
       for (var c = node.firstChild; c; c = c.nextSibling) {
@@ -697,11 +745,36 @@
         return img;
       }
       var out = document.createElement(tag);
+      var style = safeStyle(node);
+      if (style) { out.setAttribute('style', style); }
+      var align = node.getAttribute ? node.getAttribute('align') : '';
+      if (align && /^(left|right|center|justify)$/i.test(align)) {
+        out.setAttribute('align', String(align).toLowerCase());
+      }
       for (var c = node.firstChild; c; c = c.nextSibling) {
         var clean = sanitizeNode(c, allowed);
         if (clean) { out.appendChild(clean); }
       }
       return out;
+    }
+
+    function cleanDocumentHtml(html) {
+      var text = String(html == null ? '' : html);
+      if (text === '') { return ''; }
+      var doc;
+      try {
+        doc = new DOMParser().parseFromString(text, 'text/html');
+      } catch (e) {
+        return '';
+      }
+      var body = doc.body;
+      if (!body) { return ''; }
+      var holder = document.createElement('div');
+      for (var i = 0; i < body.childNodes.length; i++) {
+        var clean = sanitizeNode(body.childNodes[i], DOC_ALLOWED);
+        if (clean) { holder.appendChild(clean); }
+      }
+      return holder.innerHTML;
     }
 
     function insertCleanHtml(html) {
@@ -711,15 +784,10 @@
       } catch (e) {
         return false;
       }
-      var allowed = {
-        P: 1, DIV: 1, BR: 1, B: 1, STRONG: 1, I: 1, EM: 1, U: 1, S: 1, STRIKE: 1,
-        H1: 1, H2: 1, H3: 1, UL: 1, OL: 1, LI: 1, BLOCKQUOTE: 1, PRE: 1, CODE: 1,
-        A: 1, IMG: 1, HR: 1, SPAN: 1, TABLE: 1, THEAD: 1, TBODY: 1, TR: 1, TD: 1, TH: 1
-      };
       var frag = document.createDocumentFragment();
       var body = doc.body;
       for (var i = 0; i < body.childNodes.length; i++) {
-        var clean = sanitizeNode(body.childNodes[i], allowed);
+        var clean = sanitizeNode(body.childNodes[i], DOC_ALLOWED);
         if (clean) { frag.appendChild(clean); }
       }
       if (!frag.childNodes.length) { return false; }
@@ -836,7 +904,7 @@
 
     if (boot.error) {
       var message = errorText(boot.error);
-      if (boot.requested) { message += ': ' + String(boot.requested); }
+      if (boot.requested) { message += ' · ' + String(boot.requested); }
       showBanner(message);
       setState('error', message);
       toast(message);

@@ -7,7 +7,7 @@ $AppName  = $_GET['appname'];
 $Folder = $_GET['destination'];
 
 /* get localization file */
-$language  = parse_ini_file('lang/feedback.lang');
+$language  = parse_ini_file(__DIR__ . '/lang/dock.lang');
 
 require $_SERVER['DOCUMENT_ROOT'].'/system/core/library/Mercury/AppContainer.php';
 
@@ -22,7 +22,7 @@ $AppContainer->StartContainer();
 $gui = new gui;
 ?>
 <div style="width:100%; text-align:left; padding-bottom:10px; font-size:30px; border-bottom:#d8d8d8 solid 2px; text-overflow:ellipsis; overflow:hidden;">
-<span onClick="back<?echo $AppID;?>();" class="ui-forest" style="background-color:#d8d8d8; color:#000; border-radius:30%; cursor:pointer; font-size:25px; margin-left:5px;"> &#9668; </span><?echo $language[$_SESSION['locale'].'_feedback']?></div>
+<span onClick="back<?echo $AppID;?>();" class="ui-forest" style="background-color:#d8d8d8; color:#000; border-radius:30%; cursor:pointer; font-size:25px; margin-left:5px;"> &#9668; </span><?echo $language[$_SESSION['locale'].'_settings_dock']?></div>
 
 <script>
   $( function() {
@@ -122,12 +122,12 @@ foreach ($FoldersArray as $keydir => $valuedir) {
 if (is_dir_empty($valuedir)) {
   echo '
   <div id="sortable'.$dir_array[$keydir].'" class="connectedSortable">
-    <div style="padding: 10px; background-color: #b1b1b1; color: #242424; font-size: 20px;">Разделитель '.$dir_array[$keydir].'</div>';
+    <div style="padding: 10px; background-color: #b1b1b1; color: #242424; font-size: 20px;">'.$language[$_SESSION['locale'].'_separator'].' '.$dir_array[$keydir].'</div>';
 }
 else{
   echo '
   <div id="sortable'.$dir_array[$keydir].'" class="connectedSortable">
-    <div style="padding: 10px; background-color: #6ab6ff; color: #142b60; font-size: 20px;">Разделитель '.$dir_array[$keydir].'</div>';
+    <div style="padding: 10px; background-color: #6ab6ff; color: #142b60; font-size: 20px;">'.$language[$_SESSION['locale'].'_separator'].' '.$dir_array[$keydir].'</div>';
 
   foreach (glob($valuedir.'*') as $key => $object) {
 

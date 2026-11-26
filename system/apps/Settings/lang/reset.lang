@@ -16,3 +16,6 @@ en_messageTitle = 'Remove Forest OS'
 en_messageBody = 'Are you sure you want to completely remove the system?'
 en_okButton = 'Remove'
 en_cancelButton = 'Cancel'
+
+ru_unavailable = 'Сброс системы недоступен в локальной сборке: центральный установщик Forest OS больше не существует. Данные не изменены.'
+en_unavailable = 'System reset is unavailable in this local build: the central Forest OS installer no longer exists. Nothing was changed.'

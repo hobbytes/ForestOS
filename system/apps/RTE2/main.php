@@ -242,6 +242,7 @@ $icoCenter = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.6 4.1h10.8
 $icoRight = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.6 4.1h10.8M6.5 8h6.9M4.2 11.9h9.2"/></svg>';
 $icoJustify = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.6 4.1h10.8M2.6 8h10.8M2.6 11.9h10.8"/></svg>';
 $icoClear = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3.4 4.2h7M6.9 4.2v7"/><path d="M10.6 10.4l3 3M13.6 10.4l-3 3"/></svg>';
+$icoQuote = '<svg viewBox="0 0 16 16" aria-hidden="true"><path class="rte2-fill" d="M3.4 7.7c0-2.1 1.3-3.5 3.4-4l.4 1.3c-1.2.4-1.8 1.1-1.9 2.2h1.6v3.5H3.4z"/><path class="rte2-fill" d="M9.2 7.7c0-2.1 1.3-3.5 3.4-4l.4 1.3c-1.2.4-1.8 1.1-1.9 2.2h1.6v3.5H9.2z"/></svg>';
 
 function rte2_tool(string $cmd, string $title, string $inner): string
 {
@@ -324,7 +325,7 @@ $AppContainer->StartContainer();
     <div class="rte2-group">
       <?php echo rte2_tool('insertUnorderedList', t('ul'), $icoUl); ?>
       <?php echo rte2_tool('insertOrderedList', t('ol'), $icoOl); ?>
-      <?php echo rte2_block('blockquote', t('quote'), '<span class="rte2-glyph rte2-g-quote">&#10077;</span>'); ?>
+      <?php echo rte2_block('blockquote', t('quote'), $icoQuote); ?>
       <?php echo rte2_block('pre', t('code'), '<span class="rte2-glyph rte2-g-code">&lt;/&gt;</span>'); ?>
     </div>
     <span class="rte2-sep" aria-hidden="true"></span>

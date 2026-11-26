@@ -69,8 +69,8 @@ function tz_list() {
     <?echo $language_lang[$_SESSION['locale'].'_label_choose']?>
   </div>
 <select id="selectlang<?echo $AppID?>" style="margin:10px; width:200px; font-size:20px; padding:10px; -webkit-appearance:none;">
-  <option value="ru">Русский</option>
-  <option value="en">English</option>
+  <option value="ru"><?echo $language_lang[$_SESSION['locale'].'_lang_ru']?></option>
+  <option value="en"><?echo $language_lang[$_SESSION['locale'].'_lang_en']?></option>
 </select>
 </div>
 

@@ -25,9 +25,7 @@ $language = parse_ini_file('lang/reset.lang');
 /* Delete system */
 $DeleteStatus = $AppContainer->GetAnyRequest('reset');
 
-$resetMsg = ($_SESSION['locale'] == 'en')
-  ? 'System reset is unavailable in this local build: the central Forest OS installer no longer exists. Nothing was changed.'
-  : 'Сброс системы недоступен в локальной сборке: центральный установщик Forest OS больше не существует. Данные не изменены.';
+$resetMsg = $language[$_SESSION['locale'].'_unavailable'];
 
 if($DeleteStatus){
   // Legacy flow did TRUNCATE TABLE forestusers and then wiped system/.

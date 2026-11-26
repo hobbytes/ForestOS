@@ -14,3 +14,8 @@ en_save_lang  = 'The language and timezone of the system was changed. Restart th
 [etc]
 ru_restart  = Перезагрузить
 en_restart  = Restart
+
+ru_lang_ru = Русский
+ru_lang_en = English
+en_lang_ru = Russian
+en_lang_en = English

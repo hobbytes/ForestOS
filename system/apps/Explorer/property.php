@@ -20,6 +20,19 @@ $folder=$_GET['destination'];
 /*--------Загружаем файл локализации--------*/
 $prop_lang  = parse_ini_file(__DIR__.'/assets/lang/etc.lang');
 $cl = (isset($_SESSION['locale']) && $_SESSION['locale'] === 'en') ? 'en' : 'ru';
+
+/* Размер с единицами из словаря (ядро отдаёт английские "Bytes/KB"). */
+function prop_format_size($bytes, $lang, $cl) {
+  $bytes = (int)$bytes;
+  $unit = function ($key, $fallback) use ($lang, $cl) {
+    $name = $cl.'_'.$key;
+    return (isset($lang[$name]) && $lang[$name] !== '') ? $lang[$name] : $fallback;
+  };
+  if ($bytes < 1024) return $bytes.' '.$unit('unit_b', 'B');
+  if ($bytes < 1048576) return round($bytes / 1024, 1).' '.$unit('unit_kb', 'KB');
+  if ($bytes < 1073741824) return round($bytes / 1048576, 1).' '.$unit('unit_mb', 'MB');
+  return round($bytes / 1073741824, 2).' '.$unit('unit_gb', 'GB');
+}
 /*--------Логика--------*/
 
 $get_object = iconv( "UTF8", "UTF8//TRANSLIT", $_GET['object'] );
@@ -42,17 +55,14 @@ if(is_file($get_object)){
   $extension	=	stristr($get_object, '.');
   $extension	=	str_replace('.','',$extension);
   $type = '*.'.$extension;
-  $fo->format(filesize(realpath($get_object)));
+  $format = prop_format_size(@filesize(realpath($get_object)), $prop_lang, $cl);
 
 }else{
   $type = $prop_lang[$cl.'_prop_type'];
+  $format = $prop_lang[$cl.'_prop_zero_bytes'];
   try {
     $fo->size_check(realpath(realpath($get_object)));
-    $fo->format($size);
-    if (empty($size)){
-      $format	= $prop_lang[$cl.'_prop_zero_bytes'];
-    }
-    $format = $format;
+    $format = prop_format_size(isset($size) ? $size : 0, $prop_lang, $cl);
   } catch (Exception $e) {
     echo $e->getMessage();
   }

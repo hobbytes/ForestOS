@@ -1,0 +1,6 @@
+[dock]
+ru_settings_dock = 'Док'
+ru_separator = 'Разделитель'
+
+en_settings_dock = 'Dock'
+en_separator = 'Separator'

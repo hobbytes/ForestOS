@@ -252,7 +252,7 @@
 .rte2-doc {
   display: flex;
   flex-direction: column;
-  min-height: 100%;
+  min-height: max(100%, 360px);
   padding: 16px 14px 28px;
 }
 
