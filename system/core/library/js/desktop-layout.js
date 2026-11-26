@@ -965,17 +965,21 @@
     }).catch(function () { return false; });
   }
 
-  function scheduleSave() {
+  function scheduleSave(immediate) {
     if (restoring || shuttingDown) { return; }
     dirty = true;
     clearTimeout(timer);
-    timer = setTimeout(saveNow, 1200);
+    /* навигация внутри приложения сохраняется почти сразу: пользователь может
+       тут же уйти на другое устройство, и состояние должно быть на сервере */
+    timer = setTimeout(saveNow, immediate ? 120 : 1200);
   }
 
-  function beaconSave() {
-    if (restoring || shuttingDown || !token || !dirty) { return; }
+  function beaconSave(force) {
+    if (restoring || shuttingDown || !token) { return; }
+    if (!force && !dirty) { return; }
     try {
       navigator.sendBeacon(wsUrl('save'), new Blob([JSON.stringify(collect())], { type: 'application/json' }));
+      dirty = false;
     } catch (e) { /* ignore */ }
   }
 
@@ -1102,17 +1106,27 @@
     window.addEventListener('focus', checkSession);
 
     var lastView = viewSignature();
-    setInterval(function () {
+    function watchView() {
       if (restoring) { return; }
       var now = viewSignature();
-      if (now !== lastView) { lastView = now; scheduleSave(); }
-    }, 5000);
+      if (now !== lastView) { lastView = now; scheduleSave(true); }
+    }
+    setInterval(watchView, 2000);
+    /* клики внутри окна (переход по папкам, выбор вкладки) — повод сохранить */
+    $(document).on('click dblclick', '.window', function () {
+      setTimeout(watchView, 350);
+    });
 
     var target = document.getElementById('proceses');
     if (target && window.MutationObserver) {
       new MutationObserver(function () { scheduleSave(); }).observe(target, { childList: true });
     }
     $(document).on('mouseup', '.window', scheduleSave);
-    $(window).on('pagehide beforeunload', beaconSave);
+    $(window).on('pagehide beforeunload', function () { beaconSave(false); });
+    document.addEventListener('visibilitychange', function () {
+      /* уходя со вкладки, страхуем последние изменения (но не перезаписываем
+         состояние, если ничего не меняли) */
+      if (document.visibilityState === 'hidden') { beaconSave(false); }
+    });
   });
 })();
