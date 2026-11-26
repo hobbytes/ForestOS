@@ -891,7 +891,12 @@
         shaded: $w.attr('data-minimized') === '1'
       });
     });
-    return { rev: rev, active: $('.window.windowactive').first().attr('data-app') || '', windows: windows };
+    return {
+      rev: rev,
+      mode: document.body.classList.contains('fo-mobile') ? 'mob' : 'desk',
+      active: $('.window.windowactive').first().attr('data-app') || '',
+      windows: windows
+    };
   }
 
   function saveNow() {
@@ -927,15 +932,18 @@
   }
 
   function applyGeometry($w, item) {
+    /* на телефоне окно полноэкранное — геометрию не навязываем */
+    if (document.body.classList.contains('fo-mobile')) { return; }
+    var g = item.desk || item;
     var vw = $(window).width() || 1200;
     var vh = $(window).height() || 800;
-    var w = Math.max(240, Math.min(item.w || 900, vw - 20));
-    var h = Math.max(160, Math.min(item.h || 600, vh - 80));
-    var x = Math.max(0, Math.min(item.x || 0, vw - 120));
-    var y = Math.max(28, Math.min(item.y || 0, vh - 60));
+    var w = Math.max(240, Math.min(g.w || 900, vw - 20));
+    var h = Math.max(160, Math.min(g.h || 600, vh - 80));
+    var x = Math.max(0, Math.min(g.x || 0, vw - 120));
+    var y = Math.max(28, Math.min(g.y || 0, vh - 60));
     $w.css({ position: 'absolute', left: x + 'px', top: y + 'px', width: w + 'px', height: h + 'px' });
-    if (item.max) { $w.addClass('windowfullscreen'); }
-    if (item.shaded && typeof window.foMinimizeWindow === 'function') {
+    if (g.max) { $w.addClass('windowfullscreen'); }
+    if (g.shaded && typeof window.foMinimizeWindow === 'function') {
       try { window.foMinimizeWindow(String($w.attr('id') || '').replace('app', '')); } catch (e) {}
     }
   }

@@ -73,17 +73,28 @@ final class ForestWorkspace
                 $n = is_numeric($v) ? (int)round($v) : $def;
                 return max($min, min($max, $n));
             };
+            /* геометрия отдельно для десктопа и телефона: на телефоне окно
+               полноэкранное, и его размеры не должны «ужимать» окно на ПК */
+            $box = function (array $g) use ($geom) {
+                return array(
+                    'x' => $geom($g['x'] ?? null, -4000, 20000, 120),
+                    'y' => $geom($g['y'] ?? null, -4000, 20000, 90),
+                    'w' => $geom($g['w'] ?? null, 240, 8000, 900),
+                    'h' => $geom($g['h'] ?? null, 160, 8000, 600),
+                    'max' => !empty($g['max']),
+                    'shaded' => !empty($g['shaded']),
+                );
+            };
+            /* старый формат (плоские x/y/w/h) считаем десктопным */
+            $desk = is_array($w['desk'] ?? null) ? $w['desk'] : $w;
+            $mob = is_array($w['mob'] ?? null) ? $w['mob'] : array();
             $out['windows'][] = array(
                 'dest' => $dest,
                 'name' => mb_substr(trim($name) !== '' ? trim($name) : 'App', 0, 60, 'UTF-8'),
                 'param' => $param,
                 'key' => $key,
-                'x' => $geom($w['x'] ?? null, -4000, 20000, 120),
-                'y' => $geom($w['y'] ?? null, -4000, 20000, 90),
-                'w' => $geom($w['w'] ?? null, 240, 8000, 900),
-                'h' => $geom($w['h'] ?? null, 160, 8000, 600),
-                'max' => !empty($w['max']),
-                'shaded' => !empty($w['shaded']),
+                'desk' => $box($desk),
+                'mob' => $box($mob),
             );
             if (count($out['windows']) >= self::MAX_WINDOWS) {
                 break;
@@ -112,6 +123,46 @@ final class ForestWorkspace
         if ($clientRev < $current['rev']) {
             return array('ok' => false, 'conflict' => true, 'rev' => $current['rev'], 'workspace' => $current);
         }
+        /* клиент присылает геометрию только для своего типа устройства:
+           вторую (десктопную или мобильную) сохраняем из текущего состояния */
+        $mode = ((string)($data['mode'] ?? 'desk')) === 'mob' ? 'mob' : 'desk';
+        $byKey = array();
+        foreach ($current['windows'] as $cw) {
+            $byKey[$cw['dest'] . '|' . $cw['param'] . '|' . $cw['key']] = $cw;
+        }
+        $incoming = array();
+        $seen = array();
+        foreach ((array)($data['windows'] ?? array()) as $w) {
+            if (!is_array($w)) {
+                continue;
+            }
+            $k = ((string)($w['dest'] ?? '')) . '|' . ((string)($w['param'] ?? '')) . '|' . ((string)($w['key'] ?? ''));
+            if (isset($seen[$k])) {
+                /* два одинаковых окна (то же приложение, тот же параметр)
+                   неразличимы между сессиями — оставляем одно */
+                continue;
+            }
+            $seen[$k] = true;
+            $entry = isset($byKey[$k]) ? $byKey[$k] : array(
+                'dest' => (string)($w['dest'] ?? ''),
+                'param' => (string)($w['param'] ?? ''),
+                'key' => (string)($w['key'] ?? ''),
+                'name' => (string)($w['name'] ?? 'App'),
+            );
+            $entry[$mode] = array(
+                'x' => $w['x'] ?? null, 'y' => $w['y'] ?? null,
+                'w' => $w['w'] ?? null, 'h' => $w['h'] ?? null,
+                'max' => !empty($w['max']), 'shaded' => !empty($w['shaded']),
+            );
+            if (!isset($entry['desk']) || !is_array($entry['desk'])) {
+                $entry['desk'] = array();
+            }
+            if (!isset($entry['mob']) || !is_array($entry['mob'])) {
+                $entry['mob'] = array();
+            }
+            $incoming[] = $entry;
+        }
+        $data['windows'] = $incoming;
         $clean = self::normalize($data);
         $clean['rev'] = max($current['rev'], $clientRev) + 1;
         $clean['updated_at'] = time();

@@ -66,8 +66,16 @@
       }
 
       if($_SESSION["safemode"]  ==  'true'){
-        file_put_contents($_SERVER['DOCUMENT_ROOT'].'/system/users/'.$_SESSION['loginuser'].'/settings/notifications/MainNotificationFile.hdf', '');
-        file_put_contents($_SERVER['DOCUMENT_ROOT'].'/system/users/'.$_SESSION['loginuser'].'/settings/autorun.foc', '');
+        $__u = $_SERVER['DOCUMENT_ROOT'].'/system/users/'.$_SESSION['loginuser'];
+        file_put_contents($__u.'/settings/notifications/MainNotificationFile.hdf', '');
+        file_put_contents($__u.'/settings/autorun.foc', '');
+        /* безопасный режим: никакого прежнего состояния — окна, раскладка,
+           отложенная гибернация. Сессия одна, вход уже выбил остальные. */
+        require_once $_SERVER['DOCUMENT_ROOT'].'/system/core/library/workspace.php';
+        ForestWorkspace::clear((string)$_SESSION['loginuser']);
+        @unlink($__u.'/settings/desktop-desktop.json');
+        @unlink($__u.'/settings/desktop-mobile.json');
+        @unlink($__u.'/settings/state.hdf');
         $_SESSION["safemode"] = 'false';
       }
 
