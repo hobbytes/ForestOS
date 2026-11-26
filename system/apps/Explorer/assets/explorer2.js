@@ -12,6 +12,43 @@
     });
   }
 
+  /* ---------- localization ------------------------------------------------
+     The dictionary is emitted by main.php as window.FO_EXPLORER_I18N for the
+     current session locale (see assets/lang/<locale>.lang). No visible text
+     lives in this file: every label comes from T()/TP(). */
+  var I18N_ROOT = window.FO_EXPLORER_I18N || {};
+  var LOCALE = I18N_ROOT.locale || 'ru';
+  var DICT = I18N_ROOT.strings || window.FO_EX || {};
+
+  function T(key, vars) {
+    var text = DICT[key];
+    if (text === undefined || text === null || text === '') text = key;
+    text = String(text);
+    if (vars) {
+      Object.keys(vars).forEach(function (name) {
+        text = text.split('{' + name + '}').join(String(vars[name]));
+      });
+    }
+    return text;
+  }
+
+  function pluralForm(n) {
+    n = Math.abs(parseInt(n, 10) || 0);
+    if (LOCALE === 'en') return n === 1 ? 'one' : 'many';
+    if (n % 10 === 1 && n % 100 !== 11) return 'one';
+    if (n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14)) return 'few';
+    return 'many';
+  }
+
+  /* TP(count, 'items') → "объект" / "объекта" / "объектов" (or item/items). */
+  function TP(n, base, vars) {
+    var key = base + '_' + pluralForm(n);
+    if (DICT[key] === undefined) key = base + '_many';
+    var data = vars || {};
+    data.n = n;
+    return T(key, data);
+  }
+
   function init(root) {
     if (!root || root.getAttribute('data-ready') === '1') return;
     root.setAttribute('data-ready', '1');
@@ -172,7 +209,7 @@
           syncSidebar();
           maybeAutoOpen();
         })
-        .catch(function () { toast('Не удалось открыть папку', true); });
+        .catch(function () { toast(T('err_load'), true); });
     }
 
     /* a shortcut to a file opens the Explorer with ?open=<path> */
@@ -232,18 +269,18 @@
       }
       return fetch(url({}), { method: 'POST', body: fd, credentials: 'same-origin' })
         .then(function (r) {
-          return r.json().catch(function () { return { ok: false, error: 'Некорректный ответ сервера' }; });
+          return r.json().catch(function () { return { ok: false, error: T('bad_response') }; });
         });
     }
 
     function runAction(name, data, successText) {
       return callAction(name, data).then(function (res) {
         if (res && res.ok) {
-          toast(successText || 'Готово');
+          toast(successText || T('done'));
           load(currentDir(), false);
           if (name === 'link') refreshDesktop();
         } else {
-          toast((res && res.error) || 'Не удалось выполнить действие', true);
+          toast((res && res.error) || T('err_action'), true);
         }
         return res;
       });
@@ -266,11 +303,11 @@
       }
       html += '<div class="fo-modal-buttons">';
       if (opts.cancel !== false) {
-        html += '<button type="button" class="fo-btn" data-modal-cancel>' + esc(opts.cancelText || 'Отмена') + '</button>';
+        html += '<button type="button" class="fo-btn" data-modal-cancel>' + esc(opts.cancelText || T('cancel')) + '</button>';
       }
       if (opts.ok !== false) {
         html += '<button type="button" class="fo-btn ' + (opts.danger ? 'fo-btn-danger' : 'fo-btn-primary') +
-                '" data-modal-ok>' + esc(opts.okText || 'ОК') + '</button>';
+                '" data-modal-ok>' + esc(opts.okText || T('ok')) + '</button>';
       }
       html += '</div></div>';
       modal.innerHTML = html;
@@ -333,41 +370,41 @@
       var isDir = el.getAttribute('data-isdir') === '1';
       var ext = (el.getAttribute('data-ext') || '').toLowerCase();
       var html = '';
-      html += menuItem('open', 'Открыть', '⌘O');
-      if (!isDir) html += menuItem('openwith', 'Открыть с помощью', '›');
-      if (!isDir && ext === 'php') html += menuItem('viewcode', 'Показать код', '');
+      html += menuItem('open', T('open'), '⌘O');
+      if (!isDir) html += menuItem('openwith', T('open_with'), '›');
+      if (!isDir && ext === 'php') html += menuItem('viewcode', T('view_code'), '');
       html += '<div class="fo-menu-sep"></div>';
-      html += menuItem('copy', 'Копировать', '⌘C');
-      html += menuItem('cut', 'Вырезать', '⌘X');
-      if (state.clipboard) html += menuItem('paste', 'Вставить', '⌘V');
+      html += menuItem('copy', T('copy'), '⌘C');
+      html += menuItem('cut', T('cut'), '⌘X');
+      if (state.clipboard) html += menuItem('paste', T('paste'), '⌘V');
       html += '<div class="fo-menu-sep"></div>';
-      html += menuItem('rename', 'Переименовать', '↩');
-      html += menuItem('info', 'Свойства', '⌘I');
-      html += menuItem('zip', 'Сжать в ZIP', '');
-      if (ext === 'zip') html += menuItem('unzip', 'Распаковать', '');
-      html += menuItem('link', 'Создать ярлык', '');
+      html += menuItem('rename', T('rename'), '↩');
+      html += menuItem('info', T('info'), '⌘I');
+      html += menuItem('zip', T('compress'), '');
+      if (ext === 'zip') html += menuItem('unzip', T('extract'), '');
+      html += menuItem('link', T('shortcut'), '');
       if (isDir) {
-        html += menuItem('favadd', 'Добавить в избранное', '');
-        html += menuItem('pinFolder', 'Закрепить в доке', '');
+        html += menuItem('favadd', T('fav_add'), '');
+        html += menuItem('pinFolder', T('pin_dock'), '');
       }
-      if (!isDir) html += menuItem('download', 'Скачать', '');
+      if (!isDir) html += menuItem('download', T('download'), '');
       html += '<div class="fo-menu-sep"></div>';
-      html += menuItem('delete', 'Переместить в корзину', '⌘⌫');
-      html += menuItem('deleteperm', 'Удалить окончательно', '⇧⌘⌫', true);
+      html += menuItem('delete', T('move_trash'), '⌘⌫');
+      html += menuItem('deleteperm', T('delete_forever'), '⇧⌘⌫', true);
       return html;
     }
 
     function emptyMenu() {
       var html = '';
-      html += menuItem('mkdir', 'Новая папка', '⇧⌘N');
-      html += menuItem('newfile', 'Новый файл', '');
-      html += menuItem('upload', 'Загрузить…', '');
-      if (state.clipboard) html += menuItem('paste', 'Вставить', '⌘V');
+      html += menuItem('mkdir', T('new_folder'), '⇧⌘N');
+      html += menuItem('newfile', T('new_file'), '');
+      html += menuItem('upload', T('upload_menu'), '');
+      if (state.clipboard) html += menuItem('paste', T('paste'), '⌘V');
       html += '<div class="fo-menu-sep"></div>';
-      html += menuItem('selectall', 'Выбрать все', '⌘A');
+      html += menuItem('selectall', T('select_all'), '⌘A');
       if (currentDir() && currentDir().replace(/\/$/, '') === home + '/trash') {
         html += '<div class="fo-menu-sep"></div>';
-        html += menuItem('emptytrash', 'Очистить корзину', '', true);
+        html += menuItem('emptytrash', T('empty_trash'), '', true);
       }
       return html;
     }
@@ -414,7 +451,7 @@
         openModal({
           title: name,
           contentHtml: '<img class="fo-preview" alt="" src="' + esc(url({ action: 'raw', path: path })) + '">',
-          ok: false, cancelText: 'Закрыть'
+          ok: false, cancelText: T('close')
         });
         return;
       }
@@ -425,18 +462,18 @@
             openModal({
               title: name,
               contentHtml: '<pre class="fo-pre">' + esc(text) + '</pre>',
-              ok: false, cancelText: 'Закрыть'
+              ok: false, cancelText: T('close')
             });
           })
-          .catch(function () { toast('Не удалось прочитать файл', true); });
+          .catch(function () { toast(T('err_read'), true); });
         return;
       }
       if (ext === 'zip') {
         openModal({
           title: name,
-          text: 'Архив. Распаковать в папку рядом?',
-          okText: 'Распаковать',
-          onOk: function () { runAction('unzip', { paths: [path] }, 'Архив распакован'); }
+          text: T('unzip_confirm'),
+          okText: T('extract'),
+          onOk: function () { runAction('unzip', { paths: [path] }, T('unzip_done')); }
         });
         return;
       }
@@ -451,21 +488,21 @@
           openModal({
             title: el.getAttribute('data-name'),
             contentHtml: '<pre class="fo-pre">' + esc(text) + '</pre>',
-            ok: false, cancelText: 'Закрыть'
+            ok: false, cancelText: T('close')
           });
         })
-        .catch(function () { toast('Не удалось прочитать файл', true); });
+        .catch(function () { toast(T('err_read'), true); });
     }
 
     function openWith(el) {
-      if (!apps.length) { toast('Приложения не найдены', true); return; }
+      if (!apps.length) { toast(T('no_apps'), true); return; }
       var path = el.getAttribute('data-path');
       var html = '<div class="fo-applist">';
       apps.forEach(function (a, i) {
         html += '<button type="button" class="fo-approw" data-app="' + i + '">' + esc(a.name) + '</button>';
       });
       html += '</div>';
-      openModal({ title: 'Открыть с помощью', contentHtml: html, ok: false, cancelText: 'Отмена' });
+      openModal({ title: T('open_with'), contentHtml: html, ok: false, cancelText: T('cancel') });
       Array.prototype.forEach.call(modal.querySelectorAll('[data-app]'), function (b) {
         b.addEventListener('click', function () {
           var a = apps[parseInt(b.getAttribute('data-app'), 10)];
@@ -473,7 +510,7 @@
           if (a && typeof window.makeprocess === 'function') {
             window.makeprocess(a.path, relPath(path), 'defaultloader', a.name);
           } else {
-            toast('Оболочка недоступна', true);
+            toast(T('shell_unavailable'), true);
           }
         });
       });
@@ -484,15 +521,15 @@
       fetch(url({ action: 'info', path: path }), { credentials: 'same-origin' })
         .then(function (r) { return r.json(); })
         .then(function (d) {
-          if (!d || !d.ok) { toast('Не удалось получить свойства', true); return; }
+          if (!d || !d.ok) { toast(T('err_info'), true); return; }
           var rows = [
-            ['Имя', d.name],
-            ['Тип', d.kind],
-            ['Размер', d.size_text + (d.dir ? ' (' + d.count + ' файлов)' : '')],
-            ['Изменён', d.mtime],
-            ['Создан', d.ctime],
-            ['Права', d.perms],
-            ['Путь', d.path]
+            [T('prop_name'), d.name],
+            [T('prop_type'), d.kind],
+            [T('prop_size'), d.size_text + (d.dir ? ' (' + d.count + ' ' + TP(d.count, 'files') + ')' : '')],
+            [T('prop_modified'), d.mtime],
+            [T('prop_created'), d.ctime],
+            [T('prop_perms'), d.perms],
+            [T('prop_path'), d.path]
           ];
           var html = '<div class="fo-info">';
           rows.forEach(function (r) {
@@ -500,7 +537,7 @@
           });
           html += '</div>';
           html += '<div class="fo-qrblock"><div class="fo-qr"></div><div class="fo-qrpath">' + esc(d.url || d.path) + '</div></div>';
-          openModal({ title: 'Свойства', contentHtml: html, ok: false, cancelText: 'Закрыть' });
+          openModal({ title: T('prop_title'), contentHtml: html, ok: false, cancelText: T('close') });
           try {
             if (window.qrcode) {
               var qr = window.qrcode(0, 'M');
@@ -511,7 +548,7 @@
             }
           } catch (e) { /* QR is optional */ }
         })
-        .catch(function () { toast('Ошибка', true); });
+        .catch(function () { toast(T('error'), true); });
     }
 
     /* ---------- upload --------------------------------------------------- */
@@ -522,10 +559,10 @@
 
     function humanSize(n) {
       n = Number(n) || 0;
-      if (n < 1024) return n + ' Б';
-      if (n < 1024 * 1024) return (n / 1024).toFixed(0) + ' КБ';
-      if (n < 1024 * 1024 * 1024) return (n / (1024 * 1024)).toFixed(1) + ' МБ';
-      return (n / (1024 * 1024 * 1024)).toFixed(2) + ' ГБ';
+      if (n < 1024) return n + ' ' + T('unit_b');
+      if (n < 1024 * 1024) return (n / 1024).toFixed(0) + ' ' + T('unit_kb');
+      if (n < 1024 * 1024 * 1024) return (n / (1024 * 1024)).toFixed(1) + ' ' + T('unit_mb');
+      return (n / (1024 * 1024 * 1024)).toFixed(2) + ' ' + T('unit_gb');
     }
 
     function uploadPanel() {
@@ -534,8 +571,8 @@
       var el = document.createElement('div');
       el.id = 'fo-upload-panel';
       el.className = 'fo-up';
-      el.innerHTML = '<div class="fo-up-head"><span class="fo-up-title">Загрузка</span>' +
-        '<button type="button" class="fo-up-cancel">Отмена</button></div>' +
+      el.innerHTML = '<div class="fo-up-head"><span class="fo-up-title">' + esc(T('upload_title')) + '</span>' +
+        '<button type="button" class="fo-up-cancel">' + esc(T('cancel')) + '</button></div>' +
         '<div class="fo-up-name"></div>' +
         '<div class="fo-up-bar"><i></i></div>' +
         '<div class="fo-up-meta"></div>';
@@ -545,7 +582,7 @@
 
     function uploadFiles(files) {
       if (!files || !files.length) return;
-      if (uploadJob) { toast('Уже идёт загрузка', true); return; }
+      if (uploadJob) { toast(T('upload_busy'), true); return; }
 
       var list = Array.prototype.slice.call(files);
       var panel = uploadPanel();
@@ -568,18 +605,18 @@
         var secs = Math.max(0.3, (Date.now() - started) / 1000);
         var speed = loaded / secs;
         var left = speed > 0 ? Math.max(0, Math.round((totalBytes - loaded) / speed)) : 0;
-        metaEl.textContent = pct + '% · ' + humanSize(loaded) + ' из ' + humanSize(totalBytes) +
-          (loaded > 0 ? ' · ' + humanSize(speed) + '/с' : '') +
-          (pct < 100 && left > 0 ? ' · ~' + (left < 60 ? left + ' с' : Math.round(left / 60) + ' мин') : '');
+        metaEl.textContent = pct + '% · ' + humanSize(loaded) + ' ' + T('upload_of') + ' ' + humanSize(totalBytes) +
+          (loaded > 0 ? ' · ' + humanSize(speed) + T('upload_per_sec') : '') +
+          (pct < 100 && left > 0 ? ' · ~' + (left < 60 ? left + ' ' + T('upload_sec') : Math.round(left / 60) + ' ' + T('upload_min')) : '');
       }
 
       function finish(err) {
         if (job.xhr) { try { job.xhr.abort(); } catch (e) {} }
         uploadJob = null;
         panel.remove();
-        if (err === 'cancelled') { toast('Загрузка отменена'); return; }
-        if (err) { toast('Ошибка загрузки: ' + err, true); return; }
-        toast('Загружено: ' + list.length + ' файл(ов)');
+        if (err === 'cancelled') { toast(T('upload_cancelled')); return; }
+        if (err) { toast(T('upload_error', { msg: err }), true); return; }
+        toast(TP(list.length, 'upload_done'));
         load(currentDir(), false);
       }
 
@@ -600,7 +637,7 @@
         if (job.cancelled) return;
         if (index >= list.length) { finish(null); return; }
         var file = list[index];
-        nameEl.textContent = file.name + ' (' + (index + 1) + ' из ' + list.length + ')';
+        nameEl.textContent = file.name + ' (' + (index + 1) + ' ' + T('upload_of') + ' ' + list.length + ')';
         refresh(0);
         sendFile(file, function (loaded) {
           refresh(loaded);
@@ -635,14 +672,14 @@
             var res = null;
             try { res = JSON.parse(xhr.responseText); } catch (e) {}
             if (!res || !res.ok) {
-              done((res && res.error) || ('сервер ответил ' + xhr.status));
+              done((res && res.error) || T('server_replied', { code: xhr.status }));
               return;
             }
             chunk++;
             if (chunk >= total) { onProgress(file.size); done(null); return; }
             sendChunk();
           };
-          xhr.onerror = function () { done('сеть недоступна'); };
+          xhr.onerror = function () { done(T('network_error')); };
           xhr.onabort = function () { /* отмену обрабатывает кнопка */ };
           xhr.send(blob);
         }
@@ -673,7 +710,7 @@
 
       if (cmd === 'selectfile') {
         var pick = selectedItems()[0];
-        if (!pick) { toast('Сначала выберите файл', true); return; }
+        if (!pick) { toast(T('select_first'), true); return; }
         var pickPath = pick.getAttribute('data-path');
         if (callback) {
           try {
@@ -694,7 +731,7 @@
         Array.prototype.forEach.call(root.querySelectorAll('[data-cmd="selectmode"]'), function (b) {
           b.classList.toggle('is-on', state.multi);
         });
-        toast(state.multi ? 'Режим выбора включён' : 'Режим выбора выключен');
+        toast(state.multi ? T('select_mode_on') : T('select_mode_off'));
         return;
       }
 
@@ -710,13 +747,15 @@
       if (cmd === 'mkdir' || cmd === 'newfile') {
         var isDir = cmd === 'mkdir';
         openModal({
-          title: isDir ? 'Новая папка' : 'Новый файл',
+          title: isDir ? T('new_folder') : T('new_file'),
           input: true,
-          placeholder: isDir ? 'Имя папки' : 'Имя файла',
-          okText: 'Создать',
+          placeholder: isDir ? T('folder_name') : T('file_name'),
+          okText: T('create'),
           inputFull: true,
           onOk: function (name) {
-            if (name && name.trim()) runAction(cmd, { name: name.trim() }, isDir ? 'Папка создана' : 'Файл создан');
+            if (name && name.trim()) {
+              runAction(cmd, { name: name.trim() }, isDir ? T('folder_created') : T('file_created'));
+            }
           }
         });
         return;
@@ -727,14 +766,14 @@
         if (!first) return;
         var oldName = first.getAttribute('data-name');
         openModal({
-          title: 'Переименовать',
+          title: T('rename'),
           input: true,
           value: oldName,
-          okText: 'Сохранить',
+          okText: T('save'),
           inputFull: true,
           onOk: function (name) {
             if (name && name.trim() && name.trim() !== oldName) {
-              runAction('rename', { paths: paths, name: name.trim() }, 'Переименовано');
+              runAction('rename', { paths: paths, name: name.trim() }, T('renamed'));
             }
           }
         });
@@ -744,13 +783,13 @@
       if (cmd === 'copy' || cmd === 'cut') {
         if (!paths.length) return;
         state.clipboard = { mode: cmd, paths: paths.slice() };
-        toast(cmd === 'copy' ? 'Скопировано: ' + paths.length : 'Вырезано: ' + paths.length);
+        toast(cmd === 'copy' ? T('copied', { n: paths.length }) : T('cut_toast', { n: paths.length }));
         return;
       }
       if (cmd === 'paste') {
-        if (!state.clipboard) { toast('Буфер обмена пуст', true); return; }
+        if (!state.clipboard) { toast(T('clipboard_empty'), true); return; }
         runAction('paste', { paths: state.clipboard.paths, mode: state.clipboard.mode },
-          state.clipboard.mode === 'cut' ? 'Перемещено' : 'Скопировано').then(function (res) {
+          state.clipboard.mode === 'cut' ? T('moved_done') : T('copied_done')).then(function (res) {
           if (res && res.ok && state.clipboard && state.clipboard.mode === 'cut') state.clipboard = null;
         });
         return;
@@ -758,45 +797,45 @@
       if (cmd === 'delete') {
         if (!paths.length) return;
         openModal({
-          title: 'Переместить в корзину?',
-          text: paths.length + ' объект(ов) будет перемещено в корзину.',
-          okText: 'Переместить', danger: true,
-          onOk: function () { runAction('delete', { paths: paths }, 'Перемещено в корзину'); }
+          title: T('confirm_trash_title'),
+          text: TP(paths.length, 'trash_text'),
+          okText: T('trash_ok'), danger: true,
+          onOk: function () { runAction('delete', { paths: paths }, T('trash_done')); }
         });
         return;
       }
       if (cmd === 'deleteperm') {
         if (!paths.length) return;
         openModal({
-          title: 'Удалить окончательно?',
-          text: 'Действие необратимо.',
-          okText: 'Удалить', danger: true,
-          onOk: function () { runAction('deleteperm', { paths: paths }, 'Удалено'); }
+          title: T('confirm_delete_title'),
+          text: T('delete_text'),
+          okText: T('delete'), danger: true,
+          onOk: function () { runAction('deleteperm', { paths: paths }, T('delete_done')); }
         });
         return;
       }
       if (cmd === 'emptytrash') {
         openModal({
-          title: 'Очистить корзину?',
-          text: 'Это действие необратимо.',
-          okText: 'Очистить', danger: true,
-          onOk: function () { runAction('emptytrash', {}, 'Корзина очищена'); }
+          title: T('confirm_empty_title'),
+          text: T('empty_text'),
+          okText: T('empty_ok'), danger: true,
+          onOk: function () { runAction('emptytrash', {}, T('empty_done')); }
         });
         return;
       }
       if (cmd === 'zip') {
         if (!paths.length) return;
-        runAction('zip', { paths: paths }, 'Архив создан');
+        runAction('zip', { paths: paths }, T('zip_done'));
         return;
       }
       if (cmd === 'unzip') {
         if (!first) return;
-        runAction('unzip', { paths: [first.getAttribute('data-path')] }, 'Архив распакован');
+        runAction('unzip', { paths: [first.getAttribute('data-path')] }, T('unzip_done'));
         return;
       }
       if (cmd === 'link') {
         if (!first) return;
-        runAction('link', { paths: [first.getAttribute('data-path')] }, 'Ярлык создан на рабочем столе');
+        runAction('link', { paths: [first.getAttribute('data-path')] }, T('link_done'));
         return;
       }
       if (cmd === 'favadd') {
@@ -806,9 +845,9 @@
           if (res && res.ok) {
             state.favs = res.favs || [];
             renderFavs();
-            toast('Папка в избранном');
+            toast(T('fav_added'));
           } else {
-            toast((res && res.error) || 'Не удалось добавить', true);
+            toast((res && res.error) || T('fav_failed'), true);
           }
         });
         return;
@@ -821,8 +860,8 @@
           credentials: 'same-origin',
           body: new URLSearchParams({ action: 'pin', folder: pinPath })
         }).then(function (r) { return r.json(); })
-          .then(function (res) { toast((res && res.ok) ? 'Папка закреплена в доке' : 'Не удалось закрепить', !(res && res.ok)); })
-          .catch(function () { toast('Не удалось закрепить', true); });
+          .then(function (res) { toast((res && res.ok) ? T('pinned') : T('pin_failed'), !(res && res.ok)); })
+          .catch(function () { toast(T('pin_failed'), true); });
         return;
       }
       if (cmd === 'download') {
@@ -839,13 +878,13 @@
       var box = root.querySelector('.fo-favlist');
       if (!box) return;
       if (!state.favs.length) {
-        box.innerHTML = '<div class="fo-fav-empty">Правый клик по папке → «В избранное»</div>';
+        box.innerHTML = '<div class="fo-fav-empty">' + esc(T('fav_empty')) + '</div>';
         return;
       }
       box.innerHTML = state.favs.map(function (f) {
         return '<button type="button" class="fo-side-item fo-fav" data-nav="' + esc(f.path) + '">' +
           '<span class="fo-fav-name">' + esc(f.name || f.path) + '</span>' +
-          '<span class="fo-fav-x" data-favdel="' + esc(f.path) + '" title="Убрать из избранного">×</span></button>';
+          '<span class="fo-fav-x" data-favdel="' + esc(f.path) + '" title="' + esc(T('fav_remove')) + '">×</span></button>';
       }).join('');
     }
 

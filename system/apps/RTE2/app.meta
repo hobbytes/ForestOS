@@ -1,0 +1,11 @@
+{
+    "name": "RTE2",
+    "title": "Rich Text Editor 2.0",
+    "description": "Аккуратный rich-text редактор: форматирование, заголовки, списки, ссылки, картинки, черновики и сохранение в файл.",
+    "os_version": "",
+    "version": "2.0.0",
+    "repo": "bundled",
+    "author": "Forest OS",
+    "installed_at": "2026-11-26 20:35:00",
+    "downloads": 0
+}

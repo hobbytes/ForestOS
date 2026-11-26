@@ -31,6 +31,10 @@ $locale = isset($_SESSION['locale']) ? (string)$_SESSION['locale'] : 'ru';
 $zoneFile = $settings . '/timezone.foc';
 $timezone = is_file($zoneFile) ? trim((string)@file_get_contents($zoneFile)) : (isset($_SESSION['timezone']) ? $_SESSION['timezone'] : 'Europe/Moscow');
 
+/* localization */
+require __DIR__ . '/_i18n.php';
+list($T, $lc) = fo_settings_lang('main');
+
 $apps = array();
 foreach (glob($DOC . '/system/apps/*/main.php') as $f) {
     $slug = basename(dirname($f));
@@ -69,7 +73,7 @@ require $DOC . '/system/core/library/Mercury/AppContainer.php';
 
 $AppContainer = new AppContainer;
 $AppContainer->AppNameInfo = 'Settings';
-$AppContainer->SecondNameInfo = 'Параметры';
+$AppContainer->SecondNameInfo = $T('settings_label');
 $AppContainer->VersionInfo = '2.0.0';
 $AppContainer->AuthorInfo = 'Forest Media';
 $AppContainer->LibraryArray = array();
@@ -154,25 +158,25 @@ $AppContainer->StartContainer();
 
 <div id="set<?echo $AppID?>">
   <aside class="set-side">
-    <div class="set-side-title">Параметры</div>
-    <button type="button" class="set-nav is-on" data-nav="look"><span class="dot"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.2"/><circle cx="9" cy="9.6" r="1.17" fill="currentColor" stroke="none"/><circle cx="14.6" cy="9.6" r="1.17" fill="currentColor" stroke="none"/><circle cx="12" cy="14.6" r="1.17" fill="currentColor" stroke="none"/></svg></span>Внешний вид</button>
-    <button type="button" class="set-nav" data-nav="dock"><span class="dot"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="8.4" width="18" height="7.4" rx="3.6"/><circle cx="8" cy="12.1" r="1.15" fill="currentColor" stroke="none"/><circle cx="12" cy="12.1" r="1.15" fill="currentColor" stroke="none"/><circle cx="16" cy="12.1" r="1.15" fill="currentColor" stroke="none"/></svg></span>Док</button>
-    <button type="button" class="set-nav" data-nav="autorun"><span class="dot"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.2"/><path d="M10.4 9 15 12l-4.6 3z" fill="currentColor" stroke="none"/></svg></span>Автозапуск</button>
-    <button type="button" class="set-nav" data-nav="lang"><span class="dot"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.2"/><path d="M3.8 12h16.4M12 3.8c2.3 2.3 3.4 5.1 3.4 8.2s-1.1 5.9-3.4 8.2c-2.3-2.3-3.4-5.1-3.4-8.2S9.7 6.1 12 3.8z"/></svg></span>Язык и время</button>
-    <button type="button" class="set-nav" data-nav="about"><span class="dot"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.2"/><path d="M12 10.6v6"/><circle cx="12" cy="7.9" r="1.1" fill="currentColor" stroke="none"/></svg></span>О системе</button>
-    <div class="set-side-title">Администрирование</div>
-    <button type="button" class="set-nav" data-legacy="users"><span class="dot"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9.2" cy="8.6" r="3"/><path d="M3.8 19.2c0-3 2.4-5.1 5.4-5.1s5.4 2.1 5.4 5.1"/><path d="M15.6 6.1a2.6 2.6 0 0 1 0 5"/><path d="M16.4 14.3c2.3.3 3.9 2.1 3.9 4.9"/></svg></span>Пользователи</button>
-    <button type="button" class="set-nav" data-legacy="security"><span class="dot"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.6 18.9 6v6.1c0 4-2.8 6.9-6.9 8.3-4.1-1.4-6.9-4.3-6.9-8.3V6z"/><path d="m9.2 11.9 2 2 3.6-3.9"/></svg></span>Безопасность</button>
-    <button type="button" class="set-nav" data-legacy="appmanager"><span class="dot"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.6" y="3.6" width="7.2" height="7.2" rx="2"/><rect x="13.2" y="3.6" width="7.2" height="7.2" rx="2"/><rect x="3.6" y="13.2" width="7.2" height="7.2" rx="2"/><rect x="13.2" y="13.2" width="7.2" height="7.2" rx="2"/></svg></span>Приложения</button>
+    <div class="set-side-title"><? echo htmlspecialchars($T('settings_label')) ?></div>
+    <button type="button" class="set-nav is-on" data-nav="look"><span class="dot"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.2"/><circle cx="9" cy="9.6" r="1.17" fill="currentColor" stroke="none"/><circle cx="14.6" cy="9.6" r="1.17" fill="currentColor" stroke="none"/><circle cx="12" cy="14.6" r="1.17" fill="currentColor" stroke="none"/></svg></span><? echo htmlspecialchars($T('nav_look')) ?></button>
+    <button type="button" class="set-nav" data-nav="dock"><span class="dot"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="8.4" width="18" height="7.4" rx="3.6"/><circle cx="8" cy="12.1" r="1.15" fill="currentColor" stroke="none"/><circle cx="12" cy="12.1" r="1.15" fill="currentColor" stroke="none"/><circle cx="16" cy="12.1" r="1.15" fill="currentColor" stroke="none"/></svg></span><? echo htmlspecialchars($T('nav_dock')) ?></button>
+    <button type="button" class="set-nav" data-nav="autorun"><span class="dot"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.2"/><path d="M10.4 9 15 12l-4.6 3z" fill="currentColor" stroke="none"/></svg></span><? echo htmlspecialchars($T('nav_autorun')) ?></button>
+    <button type="button" class="set-nav" data-nav="lang"><span class="dot"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.2"/><path d="M3.8 12h16.4M12 3.8c2.3 2.3 3.4 5.1 3.4 8.2s-1.1 5.9-3.4 8.2c-2.3-2.3-3.4-5.1-3.4-8.2S9.7 6.1 12 3.8z"/></svg></span><? echo htmlspecialchars($T('nav_lang')) ?></button>
+    <button type="button" class="set-nav" data-nav="about"><span class="dot"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.2"/><path d="M12 10.6v6"/><circle cx="12" cy="7.9" r="1.1" fill="currentColor" stroke="none"/></svg></span><? echo htmlspecialchars($T('nav_about')) ?></button>
+    <div class="set-side-title"><? echo htmlspecialchars($T('nav_admin')) ?></div>
+    <button type="button" class="set-nav" data-legacy="users"><span class="dot"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9.2" cy="8.6" r="3"/><path d="M3.8 19.2c0-3 2.4-5.1 5.4-5.1s5.4 2.1 5.4 5.1"/><path d="M15.6 6.1a2.6 2.6 0 0 1 0 5"/><path d="M16.4 14.3c2.3.3 3.9 2.1 3.9 4.9"/></svg></span><? echo htmlspecialchars($T('nav_users')) ?></button>
+    <button type="button" class="set-nav" data-legacy="security"><span class="dot"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.6 18.9 6v6.1c0 4-2.8 6.9-6.9 8.3-4.1-1.4-6.9-4.3-6.9-8.3V6z"/><path d="m9.2 11.9 2 2 3.6-3.9"/></svg></span><? echo htmlspecialchars($T('nav_security')) ?></button>
+    <button type="button" class="set-nav" data-legacy="appmanager"><span class="dot"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.6" y="3.6" width="7.2" height="7.2" rx="2"/><rect x="13.2" y="3.6" width="7.2" height="7.2" rx="2"/><rect x="3.6" y="13.2" width="7.2" height="7.2" rx="2"/><rect x="13.2" y="13.2" width="7.2" height="7.2" rx="2"/></svg></span><? echo htmlspecialchars($T('nav_apps')) ?></button>
   </aside>
 
   <div class="set-body">
     <section class="set-pane is-on" data-pane="look">
-      <h2 class="set-h">Внешний вид</h2>
-      <p class="set-sub">Акцент применяется ко всей системе: док, кнопки, переключатели, каталог.</p>
+      <h2 class="set-h"><? echo htmlspecialchars($T('look_title')) ?></h2>
+      <p class="set-sub"><? echo htmlspecialchars($T('look_sub')) ?></p>
 
       <div class="set-card">
-        <div class="set-lbl">Акцентный цвет</div>
+        <div class="set-lbl"><? echo htmlspecialchars($T('accent_color')) ?></div>
         <div class="set-swatches" id="set-swatches<?echo $AppID?>">
           <? foreach ($swatches as $c): ?>
             <button type="button" class="set-sw<? echo (strcasecmp($c, $accent) === 0 ? ' is-on' : '') ?>" data-color="<? echo $c ?>" style="background:<? echo $c ?>"></button>
@@ -184,18 +188,18 @@ $AppContainer->StartContainer();
       <div class="set-card">
         <div class="set-row">
           <div class="grow">
-            <div class="set-lbl">Тёмная тема</div>
-            <div class="set-hint">Тёмный интерфейс окон и приложений — меньше нагрузки на глаза</div>
+            <div class="set-lbl"><? echo htmlspecialchars($T('dark_theme')) ?></div>
+            <div class="set-hint"><? echo htmlspecialchars($T('dark_theme_hint')) ?></div>
           </div>
           <label class="set-seg" id="set-dark<?echo $AppID?>">
-            <button type="button" class="<? echo $dark ? '' : 'is-on' ?>" data-dark="0">Светлая</button>
-            <button type="button" class="<? echo $dark ? 'is-on' : '' ?>" data-dark="1">Тёмная</button>
+            <button type="button" class="<? echo $dark ? '' : 'is-on' ?>" data-dark="0"><? echo htmlspecialchars($T('theme_light')) ?></button>
+            <button type="button" class="<? echo $dark ? 'is-on' : '' ?>" data-dark="1"><? echo htmlspecialchars($T('theme_dark')) ?></button>
           </label>
         </div>
       </div>
 
       <div class="set-card">
-        <div class="set-lbl">Тема</div>
+        <div class="set-lbl"><? echo htmlspecialchars($T('theme_label')) ?></div>
         <div class="set-themes" id="set-themes<?echo $AppID?>">
           <? foreach ($themes as $t): ?>
             <button type="button" class="set-theme<? echo ($t['file'] === $currentThemeFile ? ' is-on' : '') ?>" data-theme="<? echo htmlspecialchars($t['file']) ?>">
@@ -209,12 +213,12 @@ $AppContainer->StartContainer();
       <div class="set-card">
         <div class="set-row">
           <div class="grow">
-            <div class="set-lbl">Рамка окна</div>
-            <div class="set-hint">Тонкая акцентная обводка вокруг активного окна</div>
+            <div class="set-lbl"><? echo htmlspecialchars($T('frame_label')) ?></div>
+            <div class="set-hint"><? echo htmlspecialchars($T('frame_hint')) ?></div>
           </div>
           <label class="set-seg">
-            <button type="button" class="<? echo $frame ? '' : 'is-on' ?>" data-frame="0">Нет</button>
-            <button type="button" class="<? echo $frame ? 'is-on' : '' ?>" data-frame="1">Акцент</button>
+            <button type="button" class="<? echo $frame ? '' : 'is-on' ?>" data-frame="0"><? echo htmlspecialchars($T('frame_none')) ?></button>
+            <button type="button" class="<? echo $frame ? 'is-on' : '' ?>" data-frame="1"><? echo htmlspecialchars($T('frame_accent')) ?></button>
           </label>
         </div>
       </div>
@@ -222,26 +226,26 @@ $AppContainer->StartContainer();
       <div class="set-card">
         <div class="set-row">
           <div class="grow">
-            <div class="set-lbl">Кнопки управления</div>
-            <div class="set-hint">Слева или справа в заголовке окна</div>
+            <div class="set-lbl"><? echo htmlspecialchars($T('ctrl_label')) ?></div>
+            <div class="set-hint"><? echo htmlspecialchars($T('ctrl_hint')) ?></div>
           </div>
           <label class="set-seg" id="set-ctrl<?echo $AppID?>">
-            <button type="button" class="<? echo $ctrlMode === '2' ? 'is-on' : '' ?>" data-ctrl="2">Слева</button>
-            <button type="button" class="<? echo $ctrlMode === '2' ? '' : 'is-on' ?>" data-ctrl="1">Справа</button>
+            <button type="button" class="<? echo $ctrlMode === '2' ? 'is-on' : '' ?>" data-ctrl="2"><? echo htmlspecialchars($T('ctrl_left')) ?></button>
+            <button type="button" class="<? echo $ctrlMode === '2' ? '' : 'is-on' ?>" data-ctrl="1"><? echo htmlspecialchars($T('ctrl_right')) ?></button>
           </label>
         </div>
         <div class="set-row">
           <div class="grow">
-            <div class="set-lbl">Ширина окна</div>
-            <div class="set-hint">Базовый размер новых окон</div>
+            <div class="set-lbl"><? echo htmlspecialchars($T('win_width')) ?></div>
+            <div class="set-hint"><? echo htmlspecialchars($T('win_width_hint')) ?></div>
           </div>
           <input type="range" class="set-slider" id="set-wsize<?echo $AppID?>" min="6" max="14" step="1" value="<? echo $winSize ?>">
           <span class="set-val" id="set-wsize-val<?echo $AppID?>"><? echo $winSize ?></span>
         </div>
         <div class="set-row">
           <div class="grow">
-            <div class="set-lbl">Размер кнопок</div>
-            <div class="set-hint">Значков «свернуть / развернуть / закрыть»</div>
+            <div class="set-lbl"><? echo htmlspecialchars($T('btn_size')) ?></div>
+            <div class="set-hint"><? echo htmlspecialchars($T('btn_size_hint')) ?></div>
           </div>
           <input type="range" class="set-slider" id="set-bsize<?echo $AppID?>" min="8" max="18" step="1" value="<? echo $btnSize ?>">
           <span class="set-val" id="set-bsize-val<?echo $AppID?>"><? echo $btnSize ?></span>
@@ -250,36 +254,36 @@ $AppContainer->StartContainer();
     </section>
 
     <section class="set-pane" data-pane="dock">
-      <h2 class="set-h">Док</h2>
-      <p class="set-sub">Приложения, закреплённые внизу экрана.</p>
+      <h2 class="set-h"><? echo htmlspecialchars($T('dock_title')) ?></h2>
+      <p class="set-sub"><? echo htmlspecialchars($T('dock_sub')) ?></p>
       <div class="set-card">
         <div class="set-list" id="set-dock<?echo $AppID?>">
           <? foreach ($pinned as $p): if (!is_file($DOC . '/system/apps/' . $p . '/main.php')) continue; ?>
             <div class="set-item" data-app="<? echo htmlspecialchars($p) ?>">
               <span class="set-ico" style="background-image:url(system/apps/<? echo htmlspecialchars($p) ?>/app.png)"></span>
               <span class="grow"><? echo htmlspecialchars(str_replace('_', ' ', $p)) ?></span>
-              <button type="button" class="set-btn danger" data-unpin="<? echo htmlspecialchars($p) ?>">Убрать</button>
+              <button type="button" class="set-btn danger" data-unpin="<? echo htmlspecialchars($p) ?>"><? echo htmlspecialchars($T('dock_remove')) ?></button>
             </div>
           <? endforeach; ?>
-          <? if (!$pinned): ?><div class="set-hint" id="set-dock-empty<?echo $AppID?>">В доке пока ничего нет</div><? endif; ?>
+          <? if (!$pinned): ?><div class="set-hint" id="set-dock-empty<?echo $AppID?>"><? echo htmlspecialchars($T('dock_empty')) ?></div><? endif; ?>
         </div>
       </div>
       <div class="set-card">
-        <div class="set-lbl">Добавить приложение</div>
+        <div class="set-lbl"><? echo htmlspecialchars($T('dock_add')) ?></div>
         <div class="set-row" style="margin-top:8px">
           <select class="set-btn grow" id="set-dock-add<?echo $AppID?>" style="height:32px">
             <? foreach ($apps as $a): ?>
               <option value="<? echo htmlspecialchars($a['slug']) ?>"><? echo htmlspecialchars($a['title']) ?></option>
             <? endforeach; ?>
           </select>
-          <button type="button" class="set-btn primary" id="set-dock-pin<?echo $AppID?>">Закрепить</button>
+          <button type="button" class="set-btn primary" id="set-dock-pin<?echo $AppID?>"><? echo htmlspecialchars($T('dock_pin')) ?></button>
         </div>
       </div>
     </section>
 
     <section class="set-pane" data-pane="autorun">
-      <h2 class="set-h">Автозапуск</h2>
-      <p class="set-sub">Эти приложения откроются при входе в систему.</p>
+      <h2 class="set-h"><? echo htmlspecialchars($T('autorun_title')) ?></h2>
+      <p class="set-sub"><? echo htmlspecialchars($T('autorun_sub')) ?></p>
       <div class="set-card">
         <? foreach ($apps as $a): ?>
           <label class="set-chk">
@@ -288,24 +292,24 @@ $AppContainer->StartContainer();
           </label>
         <? endforeach; ?>
         <div class="set-row" style="margin-top:12px; border-top:0; padding-top:0">
-          <button type="button" class="set-btn primary" id="set-autorun-save<?echo $AppID?>">Сохранить</button>
+          <button type="button" class="set-btn primary" id="set-autorun-save<?echo $AppID?>"><? echo htmlspecialchars($T('save')) ?></button>
         </div>
       </div>
     </section>
 
     <section class="set-pane" data-pane="lang">
-      <h2 class="set-h">Язык и время</h2>
-      <p class="set-sub">Интерфейс и часовой пояс оболочки.</p>
+      <h2 class="set-h"><? echo htmlspecialchars($T('lang_title')) ?></h2>
+      <p class="set-sub"><? echo htmlspecialchars($T('lang_sub')) ?></p>
       <div class="set-card">
         <div class="set-row">
-          <div class="grow"><div class="set-lbl">Язык</div><div class="set-hint">Нужен перезапуск оболочки</div></div>
+          <div class="grow"><div class="set-lbl"><? echo htmlspecialchars($T('language_label')) ?></div><div class="set-hint"><? echo htmlspecialchars($T('language_hint')) ?></div></div>
           <label class="set-seg" id="set-lang<?echo $AppID?>">
-            <button type="button" class="<? echo $locale === 'ru' ? 'is-on' : '' ?>" data-lang="ru">Русский</button>
-            <button type="button" class="<? echo $locale === 'en' ? 'is-on' : '' ?>" data-lang="en">English</button>
+            <button type="button" class="<? echo $locale === 'ru' ? 'is-on' : '' ?>" data-lang="ru"><? echo htmlspecialchars($T('lang_ru')) ?></button>
+            <button type="button" class="<? echo $locale === 'en' ? 'is-on' : '' ?>" data-lang="en"><? echo htmlspecialchars($T('lang_en')) ?></button>
           </label>
         </div>
         <div class="set-row">
-          <div class="grow"><div class="set-lbl">Часовой пояс</div><div class="set-hint">Время в верхней панели</div></div>
+          <div class="grow"><div class="set-lbl"><? echo htmlspecialchars($T('timezone_label')) ?></div><div class="set-hint"><? echo htmlspecialchars($T('timezone_hint')) ?></div></div>
           <select class="set-btn" id="set-zone<?echo $AppID?>" style="height:32px">
             <? foreach ($zones as $z): ?>
               <option value="<? echo $z ?>" <? echo $z === $timezone ? 'selected' : '' ?>><? echo $z ?></option>
@@ -316,25 +320,25 @@ $AppContainer->StartContainer();
     </section>
 
     <section class="set-pane" data-pane="about">
-      <h2 class="set-h">О системе</h2>
-      <p class="set-sub">Forest OS — веб-операционная система.</p>
+      <h2 class="set-h"><? echo htmlspecialchars($T('about_title')) ?></h2>
+      <p class="set-sub"><? echo htmlspecialchars($T('about_sub')) ?></p>
       <div class="set-card set-about">
         <dl>
-          <dt>Версия</dt><dd><? echo htmlspecialchars(($osinfo['codename'] ?? 'Forest') . ' ' . ($osinfo['subversion'] ?? '')) ?></dd>
+          <dt><? echo htmlspecialchars($T('version')) ?></dt><dd><? echo htmlspecialchars(($osinfo['codename'] ?? 'Forest') . ' ' . ($osinfo['subversion'] ?? '')) ?></dd>
           <dt>PHP</dt><dd><? echo PHP_VERSION ?></dd>
-          <dt>Пользователь</dt><dd><? echo htmlspecialchars($login) ?></dd>
-          <dt>Свободно на диске</dt><dd><? echo $free ? round($free / 1073741824, 1) . ' ГБ' : 'нет данных' ?></dd>
-          <dt>Устройство</dt><dd><? echo !empty($_SESSION['is_mobile']) ? 'смартфон' : 'компьютер' ?></dd>
+          <dt><? echo htmlspecialchars($T('user')) ?></dt><dd><? echo htmlspecialchars($login) ?></dd>
+          <dt><? echo htmlspecialchars($T('disk_free')) ?></dt><dd><? echo $free ? round($free / 1073741824, 1) . ' ' . htmlspecialchars($T('gb')) : htmlspecialchars($T('no_data')) ?></dd>
+          <dt><? echo htmlspecialchars($T('device')) ?></dt><dd><? echo !empty($_SESSION['is_mobile']) ? htmlspecialchars($T('device_phone')) : htmlspecialchars($T('device_desktop')) ?></dd>
         </dl>
       </div>
       <div class="set-card">
         <div class="set-row">
-          <div class="grow"><div class="set-lbl">Корзина</div><div class="set-hint">Очистить удалённые файлы</div></div>
-          <button type="button" class="set-btn danger" id="set-empty-trash<?echo $AppID?>">Очистить</button>
+          <div class="grow"><div class="set-lbl"><? echo htmlspecialchars($T('trash')) ?></div><div class="set-hint"><? echo htmlspecialchars($T('trash_hint')) ?></div></div>
+          <button type="button" class="set-btn danger" id="set-empty-trash<?echo $AppID?>"><? echo htmlspecialchars($T('empty')) ?></button>
         </div>
         <div class="set-row">
-          <div class="grow"><div class="set-lbl">Сбросить оформление</div><div class="set-hint">Акцент, рамка и размеры окон — по умолчанию</div></div>
-          <button type="button" class="set-btn" id="set-reset-look<?echo $AppID?>">Сбросить</button>
+          <div class="grow"><div class="set-lbl"><? echo htmlspecialchars($T('reset_look')) ?></div><div class="set-hint"><? echo htmlspecialchars($T('reset_look_hint')) ?></div></div>
+          <button type="button" class="set-btn" id="set-reset-look<?echo $AppID?>"><? echo htmlspecialchars($T('reset')) ?></button>
         </div>
       </div>
     </section>
@@ -353,6 +357,7 @@ $AppContainer->StartContainer();
   var FOLDER = <?echo json_encode($Folder);?>;
   var ACCENT = <?echo json_encode($accent);?>;
   var toastTimer = null;
+  var T = <? echo fo_settings_js($T, array('js_loading','js_open_fail','toast_save_fail','toast_accent_saved','toast_frame_on','toast_frame_off','toast_chrome_saved','toast_pinned','toast_pin_fail','toast_unpinned','toast_autorun_saved','toast_lang_saved','toast_zone_saved','toast_trash_confirm','toast_trash_done','toast_trash_fail','toast_dark_on','toast_dark_off','toast_theme_prefix','toast_theme_fail','toast_look_reset','dock_remove','dock_empty')) ?>;
 
   function el(n){ return document.getElementById(n + id); }
   function toast(msg){
@@ -384,14 +389,14 @@ $AppContainer->StartContainer();
         var box = root.querySelector('[data-pane="legacy"]');
         box.classList.add('is-on');
         var pane = box.querySelector('#set-legacy' + id);
-        pane.innerHTML = '<div class="set-hint">Загрузка…</div>';
+        pane.innerHTML = '<div class="set-hint">' + T.js_loading + '</div>';
         fetch(FOLDER + legacy + '.php?appid=' + id + '&appname=Settings&destination=' + encodeURIComponent(FOLDER), {credentials:'same-origin'})
           .then(function(r){ return r.text(); })
           .then(function(html){
             // jQuery executes the inline scripts of the fragment
             if(window.jQuery){ window.jQuery(pane).html(html); } else { pane.innerHTML = html; }
           })
-          .catch(function(){ pane.innerHTML = '<div class="set-hint">Не удалось открыть раздел</div>'; });
+          .catch(function(){ pane.innerHTML = '<div class="set-hint">' + T.js_open_fail + '</div>'; });
         return;
       }
       root.querySelector('[data-pane="' + pane + '"]').classList.add('is-on');
@@ -409,7 +414,7 @@ $AppContainer->StartContainer();
   }
   function saveAppearance(frame){
     return post('system/core/functions/appearance.php', { accent: ACCENT, frame: frame ? 1 : 0 })
-      .then(function(res){ if(res && res.ok === false){ toast('Не удалось сохранить'); } });
+      .then(function(res){ if(res && res.ok === false){ toast(T.toast_save_fail); } });
   }
   var frameOn = <?echo $frame ? 'true' : 'false';?>;
 
@@ -417,7 +422,7 @@ $AppContainer->StartContainer();
     s.addEventListener('click', function(){
       applyAccent(s.getAttribute('data-color'));
       el('set-accent').value = ACCENT;
-      saveAppearance(frameOn).then(function(){ toast('Акцент сохранён'); });
+      saveAppearance(frameOn).then(function(){ toast(T.toast_accent_saved); });
     });
   });
   el('set-accent').addEventListener('input', function(){
@@ -429,7 +434,7 @@ $AppContainer->StartContainer();
       frameOn = b.getAttribute('data-frame') === '1';
       root.querySelectorAll('[data-frame]').forEach(function(x){ x.classList.toggle('is-on', x === b); });
       document.documentElement.setAttribute('data-fo-frame', frameOn ? 'accent' : 'plain');
-      saveAppearance(frameOn).then(function(){ toast(frameOn ? 'Рамка включена' : 'Рамка выключена'); });
+      saveAppearance(frameOn).then(function(){ toast(frameOn ? T.toast_frame_on : T.toast_frame_off); });
     });
   });
 
@@ -448,7 +453,7 @@ $AppContainer->StartContainer();
     var btn = parseInt(el('set-bsize').value, 10);
     applyChrome(ctrl, size, btn);
     post('system/core/functions/window-settings.php', { controlmode: ctrl, windowsize: size, buttonsize: btn })
-      .then(function(res){ if(res && res.ok === false){ toast('Не удалось сохранить'); } else { toast('Оформление окна сохранено'); } });
+      .then(function(res){ if(res && res.ok === false){ toast(T.toast_save_fail); } else { toast(T.toast_chrome_saved); } });
   }
   root.querySelectorAll('[data-ctrl]').forEach(function(b){
     b.addEventListener('click', function(){
@@ -472,14 +477,14 @@ $AppContainer->StartContainer();
           return '<div class="set-item" data-app="' + a.app + '">' +
             '<span class="set-ico" style="background-image:url(system/apps/' + a.app + '/app.png)"></span>' +
             '<span class="grow">' + a.title + '</span>' +
-            '<button type="button" class="set-btn danger" data-unpin="' + a.app + '">Убрать</button></div>';
-        }).join('') || '<div class="set-hint">В доке пока ничего нет</div>';
+            '<button type="button" class="set-btn danger" data-unpin="' + a.app + '">' + T.dock_remove + '</button></div>';
+        }).join('') || '<div class="set-hint">' + T.dock_empty + '</div>';
       });
   }
   el('set-dock-pin').addEventListener('click', function(){
     var app = el('set-dock-add').value;
     post('system/core/functions/dock-edit.php', { action:'pin', app: app }).then(function(d){
-      toast(d && d.ok ? 'Закреплено: ' + app : 'Не удалось закрепить');
+      toast(d && d.ok ? T.toast_pinned + app : T.toast_pin_fail);
       renderDock();
     });
   });
@@ -488,7 +493,7 @@ $AppContainer->StartContainer();
     if(u){
       var app = u.getAttribute('data-unpin');
       post('system/core/functions/dock-edit.php', { action:'unpin', app: app }).then(function(){
-        toast('Убрано из дока');
+        toast(T.toast_unpinned);
         renderDock();
       });
     }
@@ -501,7 +506,7 @@ $AppContainer->StartContainer();
       if(c.checked) apps.push(c.getAttribute('data-app'));
     });
     save({ action:'autorun', apps: apps.join(',') }).then(function(d){
-      toast(d && d.ok ? 'Автозапуск сохранён' : 'Не удалось сохранить');
+      toast(d && d.ok ? T.toast_autorun_saved : T.toast_save_fail);
     });
   });
 
@@ -511,21 +516,21 @@ $AppContainer->StartContainer();
       var lang = b.getAttribute('data-lang');
       root.querySelectorAll('[data-lang]').forEach(function(x){ x.classList.toggle('is-on', x === b); });
       save({ action:'locale', locale: lang }).then(function(d){
-        toast(d && d.ok ? 'Язык сохранён' : 'Не удалось сохранить');
+        toast(d && d.ok ? T.toast_lang_saved : T.toast_save_fail);
       });
     });
   });
   el('set-zone').addEventListener('change', function(){
     save({ action:'timezone', timezone: this.value }).then(function(d){
-      toast(d && d.ok ? 'Часовой пояс сохранён' : 'Не удалось сохранить');
+      toast(d && d.ok ? T.toast_zone_saved : T.toast_save_fail);
     });
   });
 
   /* trash */
   el('set-empty-trash').addEventListener('click', function(){
-    if(!confirm('Очистить корзину? Это необратимо.')) return;
+    if(!confirm(T.toast_trash_confirm)) return;
     save({ action:'emptrash' }).then(function(d){
-      toast(d && d.ok ? 'Корзина очищена' : 'Не удалось очистить');
+      toast(d && d.ok ? T.toast_trash_done : T.toast_trash_fail);
     });
   });
 
@@ -536,7 +541,7 @@ $AppContainer->StartContainer();
       root.querySelectorAll('[data-dark]').forEach(function(x){ x.classList.toggle('is-on', x === b); });
       document.documentElement.setAttribute('data-fo-dark', on ? '1' : '0');
       save({ action:'dark', value: on ? '1' : '0' }).then(function(d){
-        toast(d && d.ok ? (on ? 'Тёмная тема включена' : 'Тёмная тема выключена') : 'Не удалось сохранить');
+        toast(d && d.ok ? (on ? T.toast_dark_on : T.toast_dark_off) : T.toast_save_fail);
       });
     });
   });
@@ -556,8 +561,8 @@ $AppContainer->StartContainer();
       var file = b.getAttribute('data-theme');
       root.querySelectorAll('[data-theme]').forEach(function(x){ x.classList.toggle('is-on', x === b); });
       post('system/core/functions/theme-set.php', { theme: file }).then(function(t){
-        if(t && t.ok){ applyThemeVars(t); toast('Тема: ' + t.name); }
-        else { toast('Не удалось применить тему'); }
+        if(t && t.ok){ applyThemeVars(t); toast(T.toast_theme_prefix + t.name); }
+        else { toast(T.toast_theme_fail); }
       });
     });
   });
@@ -575,7 +580,7 @@ $AppContainer->StartContainer();
     applyChrome('1', 8, 12);
     saveAppearance(false);
     post('system/core/functions/window-settings.php', { controlmode: '1', windowsize: 8, buttonsize: 12 })
-      .then(function(){ toast('Оформление сброшено'); });
+      .then(function(){ toast(T.toast_look_reset); });
   });
 
   applyChrome(<?echo json_encode($ctrlMode)?>, <?echo $winSize?>, <?echo $btnSize?>);

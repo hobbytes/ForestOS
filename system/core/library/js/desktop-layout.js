@@ -723,21 +723,21 @@
           .fail(function () { toast('Не удалось удалить ярлык'); });
       }, true);
     } else {
-      add('Создать папку', function () { if (window.FO_DESKTOP_NEW_FOLDER) { window.FO_DESKTOP_NEW_FOLDER(); } });
-      add('Создать файл', function () { if (window.FO_DESKTOP_NEW_FILE) { window.FO_DESKTOP_NEW_FILE(); } });
+      add((window.FO_T ? FO_T('new_folder', 'Создать папку') : 'Создать папку'), function () { if (window.FO_DESKTOP_NEW_FOLDER) { window.FO_DESKTOP_NEW_FOLDER(); } });
+      add((window.FO_T ? FO_T('new_file', 'Создать файл') : 'Создать файл'), function () { if (window.FO_DESKTOP_NEW_FILE) { window.FO_DESKTOP_NEW_FILE(); } });
       $('<div></div>').css({ height: '1px', margin: '5px 8px', background: 'rgba(255,255,255,0.12)' }).appendTo($m);
-      add('Обновить', function () { if (window.FO_REFRESH_SHELL) { window.FO_REFRESH_SHELL(); } else { window.location.reload(); } });
-      add('Персонализация', function () {
+      add((window.FO_T ? FO_T('refresh', 'Обновить') : 'Обновить'), function () { if (window.FO_REFRESH_SHELL) { window.FO_REFRESH_SHELL(); } else { window.location.reload(); } });
+      add((window.FO_T ? FO_T('personalization', 'Персонализация') : 'Персонализация'), function () {
         if (typeof window.makeprocess === 'function') {
           window.makeprocess('system/apps/Settings/main.php', '', '', 'Settings');
         }
       });
-      add('Каталог приложений', function () {
+      add((window.FO_T ? FO_T('app_catalog', 'Каталог приложений') : 'Каталог приложений'), function () {
         if (typeof window.makeprocess === 'function') {
           window.makeprocess('system/apps/Apps_House/main.php', '', '', 'Apps_House');
         }
       });
-      add('Node-режим', function () {
+      add((window.FO_T ? FO_T('node', 'Node-режим') : 'Node-режим'), function () {
         if (window.FONode) { window.FONode.toggle(); }
       });
       $('<div></div>').css({ height: '1px', margin: '5px 8px', background: 'rgba(255,255,255,0.12)' }).appendTo($m);

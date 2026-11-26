@@ -1,4 +1,185 @@
+; Forest OS — Проводник (Explorer 2.0)
+; Русский словарь интерфейса. Набор ключей должен совпадать с en.lang.
+
 [Explorer]
+; --- боковая панель / места -------------------------------------------------
+favorites = Избранное
+home = Домой
+desktop = Рабочий стол
+documents = Документы
+downloads = Загрузки
+trash = Корзина
+system = Система
+my_folders = Мои папки
+read_only = Только чтение
+
+; --- панель инструментов ----------------------------------------------------
+back = Назад
+forward = Вперёд
+up = Наверх
+refresh = Обновить
+icons = Значки
+list = Список
+search = Поиск
+new_folder = Новая папка
+new_file = Новый файл
+upload = Загрузить
+upload_menu = Загрузить…
+download = Скачать
+
+; --- колонки и типы ---------------------------------------------------------
+name = Имя
+date = Дата изменения
+size = Размер
+kind = Тип
+folder = Папка
+file = Файл
+kind_image = Изображение
+kind_text = Текст
+kind_code = Код
+kind_archive = Архив
+kind_pdf = PDF
+kind_audio = Аудио
+kind_video = Видео
+
+; --- строка состояния -------------------------------------------------------
+empty = Папка пуста
+items_one = объект
+items_few = объекта
+items_many = объектов
+free = свободно
+select = Выбрать
+select_file = Выбрать файл
+empty_trash = Очистить корзину
+
+; --- общие кнопки -----------------------------------------------------------
+ok = ОК
+cancel = Отмена
+create = Создать
+save = Сохранить
+close = Закрыть
+delete = Удалить
+done = Готово
+
+; --- контекстное меню -------------------------------------------------------
+open = Открыть
+open_with = Открыть с помощью
+view_code = Показать код
+copy = Копировать
+cut = Вырезать
+paste = Вставить
+rename = Переименовать
+info = Свойства
+compress = Сжать в ZIP
+extract = Распаковать
+shortcut = Создать ярлык
+move_trash = Переместить в корзину
+delete_forever = Удалить окончательно
+fav_add = Добавить в избранное
+fav_remove = Убрать из избранного
+fav_empty = Правый клик по папке → «В избранное»
+pin_dock = Закрепить в доке
+select_all = Выбрать все
+
+; --- диалоги: создание, переименование, архивы ------------------------------
+folder_name = Имя папки
+file_name = Имя файла
+folder_created = Папка создана
+file_created = Файл создан
+renamed = Переименовано
+archive_name = Архив
+unzip_confirm = Архив. Распаковать в папку рядом?
+unzip_done = Архив распакован
+zip_done = Архив создан
+link_done = Ярлык создан на рабочем столе
+fav_added = Папка в избранном
+fav_failed = Не удалось добавить
+pinned = Папка закреплена в доке
+pin_failed = Не удалось закрепить
+
+; --- подтверждения ----------------------------------------------------------
+confirm_trash_title = Переместить в корзину?
+trash_text_one = Объект будет перемещён в корзину.
+trash_text_few = {n} объекта будут перемещены в корзину.
+trash_text_many = {n} объектов будут перемещены в корзину.
+trash_ok = Переместить
+trash_done = Перемещено в корзину
+confirm_delete_title = Удалить окончательно?
+delete_text = Действие необратимо.
+delete_done = Удалено
+confirm_empty_title = Очистить корзину?
+empty_text = Это действие необратимо.
+empty_ok = Очистить
+empty_done = Корзина очищена
+
+; --- буфер обмена -----------------------------------------------------------
+copied = Скопировано: {n}
+cut_toast = Вырезано: {n}
+copied_done = Скопировано
+moved_done = Перемещено
+clipboard_empty = Буфер обмена пуст
+
+; --- загрузка файлов --------------------------------------------------------
+upload_title = Загрузка
+upload_busy = Уже идёт загрузка
+upload_cancelled = Загрузка отменена
+upload_error = Ошибка загрузки: {msg}
+upload_done_one = Загружен 1 файл
+upload_done_few = Загружено файлов: {n}
+upload_done_many = Загружено файлов: {n}
+upload_of = из
+upload_per_sec = /с
+upload_sec = с
+upload_min = мин
+upload_server_limit = Файл больше лимита сервера (64 МБ). Используйте загрузку по частям.
+no_files = Нет файлов
+err_file_name = Недопустимое имя файла
+err_unsafe_archive = Небезопасный архив
+err_too_large = слишком большой файл
+err_partial = загрузка оборвалась
+network_error = сеть недоступна
+server_replied = сервер ответил {code}
+bad_response = Некорректный ответ сервера
+
+; --- ошибки и служебные сообщения ------------------------------------------
+err_unknown_action = Неизвестное действие
+err_load = Не удалось открыть папку
+err_action = Не удалось выполнить действие
+err_read = Не удалось прочитать файл
+err_info = Не удалось получить свойства
+error = Ошибка
+no_apps = Приложения не найдены
+shell_unavailable = Оболочка недоступна
+select_first = Сначала выберите файл
+select_mode_on = Режим выбора включён
+select_mode_off = Режим выбора выключен
+session = Сессия истекла. Войдите заново.
+err_path = Недоступный путь
+err_name = Недопустимое имя
+err_exists = Уже существует
+err_perm = Нет прав на запись
+err_token = Сессия устарела, обновите окно
+
+; --- свойства объекта -------------------------------------------------------
+prop_name = Имя
+prop_type = Тип
+prop_size = Размер
+prop_modified = Изменён
+prop_created = Создан
+prop_perms = Права
+prop_path = Путь
+prop_title = Свойства
+files_one = файл
+files_few = файла
+files_many = файлов
+
+; --- единицы размера --------------------------------------------------------
+unit_b = Б
+unit_kb = КБ
+unit_mb = МБ
+unit_gb = ГБ
+
+; --- старые ключи меню (совместимость) -------------------------------------
 menu_file_label = Файл
 menu_open_label = Открыть
 menu_openas_label = Открыть с помощью
@@ -6,52 +187,16 @@ menu_newfile_label = Новый файл
 menu_rename_label = Переименовать
 menu_md_label = Создать папку
 menu_ml_label = Создать ярлык
-menu_trash_label = Отправить в корзинку
+menu_trash_label = Отправить в корзину
 menu_delete_label = Удалить
 menu_loadfile_label = Загрузить файл
 menu_property_label = Свойства
 menu_zip_label = Добавить в архив
 menu_zip_unpack = Распаковать архив
-selectButton = Выбрать
-selectButtonFile = Выбрать файл
-cancelButton = Отменить
-
 menu_edit_label = Изменить
 menu_copy_label = Копировать
 menu_paste_label = Вставить
 menu_cut_label = Вырезать
-
-error_open = "Не могу открыть файл с расширением <b style='text-transform:uppercase;'>"
-error_label  = "Ошибка чтения файла"
-
-[makedir]
-mdir_label = Введите название папки
-mdir_okbtn = Ок
-mdir_cancelbtn = Отмена
-msg_1  = Папка
-msg_2  = ' не создана!'
-msg_3  = 'Такая папка уже существует!'
-
-[makefile]
-mfile_label = Введите название файла
-mfile_okbtn = Ок
-mfile_cancelbtn = Отмена
-mfile_msg_1  = 'Такой файл уже существует!'
-
-[trash]
-trash_label  = Очистить корзину
-
-[folder]
-size = размер
-date = Дата
-use_label = Занято
-
-[delete_function]
-mt_delete = 'Удалить объект'
-mb_delete = 'Вы действительно хотите удалить этот объект?'
-btn_delete_ok = Удалить
-
-[trash_function]
-mt_trash = 'Отправить в корзину'
-mb_trash = 'Вы действительно хотите отправить этот объект в корзину?'
-btn_trash_ok = Отправить
+selectButton = Выбрать
+selectButtonFile = Выбрать файл
+cancelButton = Отмена

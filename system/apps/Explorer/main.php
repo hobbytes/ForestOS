@@ -31,53 +31,113 @@ $defaultDirectory = isset($_GET['defaultdirectory']) ? (string)$_GET['defaultdir
 $ENDPOINT = 'system/apps/Explorer/main.php';
 
 $locale = isset($_SESSION['locale']) ? (string)$_SESSION['locale'] : 'ru';
-$L = ($locale === 'en') ? array(
-    'favorites' => 'Favorites', 'home' => 'Home', 'desktop' => 'Desktop',
-    'documents' => 'Documents', 'downloads' => 'Downloads', 'trash' => 'Trash',
-    'open' => 'Open', 'open_with' => 'Open With', 'rename' => 'Rename',
-    'new_folder' => 'New Folder', 'new_file' => 'New File', 'copy' => 'Copy',
-    'cut' => 'Cut', 'paste' => 'Paste', 'compress' => 'Compress',
-    'extract' => 'Extract', 'shortcut' => 'Make Alias', 'info' => 'Get Info',
-    'download' => 'Download', 'move_trash' => 'Move to Trash',
-    'delete_forever' => 'Delete Immediately', 'empty_trash' => 'Empty Trash',
-    'upload' => 'Upload', 'back' => 'Back', 'forward' => 'Forward',
-    'icons' => 'Icons', 'list' => 'List', 'search' => 'Search',
-    'empty' => 'This folder is empty', 'items' => 'items', 'free' => 'free',
-    'name' => 'Name', 'date' => 'Date Modified', 'size' => 'Size', 'kind' => 'Kind',
-    'folder' => 'Folder', 'file' => 'File', 'cancel' => 'Cancel', 'ok' => 'OK',
-    'create' => 'Create', 'save' => 'Save', 'close' => 'Close', 'delete' => 'Delete',
-    'select_file' => 'Choose File', 'select' => 'Select',
-    'session' => 'Your session has expired. Please sign in again.',
-    'err_path' => 'That path is not available', 'err_name' => 'Invalid name',
-    'err_exists' => 'Already exists', 'err_perm' => 'Cannot write here',
-    'err_token' => 'Session expired, please reopen the window',
-    'clipboard_empty' => 'Clipboard is empty', 'done' => 'Done',
-    'confirm_trash' => 'Move to Trash?', 'confirm_delete' => 'Delete permanently?',
-    'confirm_empty' => 'Empty the Trash? This cannot be undone.',
-) : array(
+if (!in_array($locale, array('ru', 'en'), true)) {
+    $locale = 'ru';
+}
+
+/* ---------- localization ---------------------------------------------------
+   All visible Explorer strings live in assets/lang/<locale>.lang (INI with an
+   [Explorer] section). Russian is the master dictionary: a key missing from
+   en.lang falls back to Russian, and a missing/broken file falls back to the
+   inline defaults below, so labels are never blank. */
+/* Plain "key = value" INI reader. parse_ini_file() rejects values with
+   parentheses, braces or words like "on", which are normal in UI copy. */
+function fo_lang_read($file) {
+    $out = array();
+    if (!is_file($file) || !is_readable($file)) {
+        return $out;
+    }
+    $lines = @file($file, FILE_IGNORE_NEW_LINES);
+    if (!is_array($lines)) {
+        return $out;
+    }
+    foreach ($lines as $line) {
+        $line = trim($line);
+        if ($line === '' || $line[0] === ';' || $line[0] === '[') {
+            continue;
+        }
+        $pos = strpos($line, '=');
+        if ($pos === false) {
+            continue;
+        }
+        $key = trim(substr($line, 0, $pos));
+        if ($key === '') {
+            continue;
+        }
+        $value = trim(substr($line, $pos + 1));
+        $len = strlen($value);
+        if ($len >= 2 && (($value[0] === '"' && $value[$len - 1] === '"') ||
+                          ($value[0] === "'" && $value[$len - 1] === "'"))) {
+            $value = substr($value, 1, -1);
+        }
+        $out[$key] = $value;
+    }
+    return $out;
+}
+
+function fo_lang_pack($locale, $dir) {
+    $strings = fo_lang_read($dir . '/ru.lang');
+    if ($locale !== 'ru') {
+        $strings = array_merge($strings, fo_lang_read($dir . '/' . $locale . '.lang'));
+    }
+    return $strings;
+}
+
+/* Fallback dictionary: used only when the .lang files are unreadable. */
+$FO_LANG_DEFAULT = array(
     'favorites' => 'Избранное', 'home' => 'Домой', 'desktop' => 'Рабочий стол',
     'documents' => 'Документы', 'downloads' => 'Загрузки', 'trash' => 'Корзина',
-    'open' => 'Открыть', 'open_with' => 'Открыть с помощью', 'rename' => 'Переименовать',
-    'new_folder' => 'Новая папка', 'new_file' => 'Новый файл', 'copy' => 'Копировать',
-    'cut' => 'Вырезать', 'paste' => 'Вставить', 'compress' => 'Сжать в ZIP',
-    'extract' => 'Распаковать', 'shortcut' => 'Создать ярлык', 'info' => 'Свойства',
-    'download' => 'Скачать', 'move_trash' => 'Переместить в корзину',
-    'delete_forever' => 'Удалить окончательно', 'empty_trash' => 'Очистить корзину',
-    'upload' => 'Загрузить', 'back' => 'Назад', 'forward' => 'Вперёд',
-    'icons' => 'Значки', 'list' => 'Список', 'search' => 'Поиск',
-    'empty' => 'Папка пуста', 'items' => 'объектов', 'free' => 'свободно',
-    'name' => 'Имя', 'date' => 'Дата изменения', 'size' => 'Размер', 'kind' => 'Тип',
-    'folder' => 'Папка', 'file' => 'Файл', 'cancel' => 'Отмена', 'ok' => 'ОК',
-    'create' => 'Создать', 'save' => 'Сохранить', 'close' => 'Закрыть', 'delete' => 'Удалить',
-    'select_file' => 'Выбрать файл', 'select' => 'Выбрать',
+    'system' => 'Система', 'my_folders' => 'Мои папки', 'read_only' => 'Только чтение',
+    'back' => 'Назад', 'forward' => 'Вперёд', 'icons' => 'Значки', 'list' => 'Список',
+    'search' => 'Поиск', 'new_folder' => 'Новая папка', 'new_file' => 'Новый файл',
+    'upload' => 'Загрузить', 'name' => 'Имя', 'date' => 'Дата изменения',
+    'size' => 'Размер', 'kind' => 'Тип', 'folder' => 'Папка', 'file' => 'Файл',
+    'empty' => 'Папка пуста', 'free' => 'свободно', 'select' => 'Выбрать',
+    'select_file' => 'Выбрать файл', 'empty_trash' => 'Очистить корзину',
+    'cancel' => 'Отмена', 'ok' => 'ОК', 'create' => 'Создать', 'save' => 'Сохранить',
+    'close' => 'Закрыть', 'delete' => 'Удалить', 'done' => 'Готово',
     'session' => 'Сессия истекла. Войдите заново.',
     'err_path' => 'Недоступный путь', 'err_name' => 'Недопустимое имя',
     'err_exists' => 'Уже существует', 'err_perm' => 'Нет прав на запись',
     'err_token' => 'Сессия устарела, обновите окно',
-    'clipboard_empty' => 'Буфер обмена пуст', 'done' => 'Готово',
-    'confirm_trash' => 'Переместить в корзину?', 'confirm_delete' => 'Удалить окончательно?',
-    'confirm_empty' => 'Очистить корзину? Это действие необратимо.',
+    'clipboard_empty' => 'Буфер обмена пуст',
+    'err_unknown_action' => 'Неизвестное действие',
+    'upload_server_limit' => 'Файл больше лимита сервера (64 МБ). Используйте загрузку по частям.',
+    'no_files' => 'Нет файлов', 'err_file_name' => 'Недопустимое имя файла',
+    'err_unsafe_archive' => 'Небезопасный архив', 'err_too_large' => 'слишком большой файл',
+    'err_partial' => 'загрузка оборвалась', 'archive_name' => 'Архив',
+    'kind_image' => 'Изображение', 'kind_text' => 'Текст', 'kind_code' => 'Код',
+    'kind_archive' => 'Архив', 'kind_pdf' => 'PDF', 'kind_audio' => 'Аудио',
+    'kind_video' => 'Видео', 'items_one' => 'объект', 'items_few' => 'объекта',
+    'items_many' => 'объектов', 'unit_b' => 'Б', 'unit_kb' => 'КБ',
+    'unit_mb' => 'МБ', 'unit_gb' => 'ГБ',
 );
+
+$L = array_merge($FO_LANG_DEFAULT, fo_lang_pack($locale, __DIR__ . '/assets/lang'));
+
+/* Russian plural rules (one/few/many); English uses one/many. */
+function fo_plural_form($count, $locale = 'ru') {
+    $n = abs((int)$count);
+    if ($locale === 'en') {
+        return $n === 1 ? 'one' : 'many';
+    }
+    if ($n % 10 === 1 && $n % 100 !== 11) {
+        return 'one';
+    }
+    if ($n % 10 >= 2 && $n % 10 <= 4 && ($n % 100 < 12 || $n % 100 > 14)) {
+        return 'few';
+    }
+    return 'many';
+}
+
+function fo_plural($count, $base, $L, $locale = 'ru') {
+    $key = $base . '_' . fo_plural_form($count, $locale);
+    if (isset($L[$key]) && $L[$key] !== '') {
+        return $L[$key];
+    }
+    $fallback = $base . '_many';
+    return isset($L[$fallback]) ? $L[$fallback] : $base;
+}
 
 function h($s) {
     return htmlspecialchars((string)$s, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
@@ -165,12 +225,15 @@ function fo_rel($path, $home) {
     return '';
 }
 
-function fo_size($bytes) {
+function fo_size($bytes, $L = array()) {
     $bytes = (int)$bytes;
-    if ($bytes < 1024) return $bytes . ' B';
-    if ($bytes < 1048576) return round($bytes / 1024, 1) . ' KB';
-    if ($bytes < 1073741824) return round($bytes / 1048576, 1) . ' MB';
-    return round($bytes / 1073741824, 2) . ' GB';
+    $unit = function ($key, $fallback) use ($L) {
+        return (isset($L[$key]) && $L[$key] !== '') ? $L[$key] : $fallback;
+    };
+    if ($bytes < 1024) return $bytes . ' ' . $unit('unit_b', 'B');
+    if ($bytes < 1048576) return round($bytes / 1024, 1) . ' ' . $unit('unit_kb', 'KB');
+    if ($bytes < 1073741824) return round($bytes / 1048576, 1) . ' ' . $unit('unit_mb', 'MB');
+    return round($bytes / 1073741824, 2) . ' ' . $unit('unit_gb', 'GB');
 }
 
 function fo_ext($name) {
@@ -320,9 +383,9 @@ function fo_thumb($item) {
 function fo_kind_label($item, $L) {
     if ($item['dir']) return $L['folder'];
     $labels = array(
-        'image' => 'Изображение', 'text' => 'Текст', 'code' => 'Код',
-        'archive' => 'Архив', 'pdf' => 'PDF', 'audio' => 'Аудио',
-        'video' => 'Видео', 'file' => $L['file'],
+        'image' => $L['kind_image'], 'text' => $L['kind_text'], 'code' => $L['kind_code'],
+        'archive' => $L['kind_archive'], 'pdf' => $L['kind_pdf'], 'audio' => $L['kind_audio'],
+        'video' => $L['kind_video'], 'file' => $L['file'],
     );
     return isset($labels[$item['kind']]) ? $labels[$item['kind']] : $L['file'];
 }
@@ -391,7 +454,7 @@ function fo_favs_public(string $home, array $list): array
     return $out;
 }
 
-function fo_render_main($dir, $home, $L, $showonly = '', $view = 'icons', $mobile = 'false', $selectorMode = '', $callback = '', $allowSystem = false) {
+function fo_render_main($dir, $home, $L, $locale, $showonly = '', $view = 'icons', $mobile = 'false', $selectorMode = '', $callback = '', $allowSystem = false) {
     $doc = rtrim(str_replace('\\', '/', $_SERVER['DOCUMENT_ROOT']), '/');
     $systemRoot = $doc . '/system';
     $inHome = fo_in_home($dir, $home);
@@ -399,11 +462,14 @@ function fo_render_main($dir, $home, $L, $showonly = '', $view = 'icons', $mobil
     $items = fo_list($dir, $showonly);
     $rel = fo_rel($dir, $base);
     $parent = ($dir === $base) ? $dir : dirname($dir);
-    $name = ($dir === $home) ? $L['home'] : (($dir === $systemRoot) ? 'Система' : basename($dir));
+    $name = ($dir === $home) ? $L['home'] : (($dir === $systemRoot) ? $L['system'] : basename($dir));
     $isTrash = $inHome && basename($dir) === 'trash' && dirname($dir) === $home;
+    if ($isTrash) {
+        $name = $L['trash'];
+    }
     $readonly = !$inHome && !$allowSystem;
 
-    $crumbs = array(array('name' => $inHome ? $L['home'] : 'Система', 'path' => $base));
+    $crumbs = array(array('name' => $inHome ? $L['home'] : $L['system'], 'path' => $base));
     if ($rel !== '') {
         $acc = $base;
         foreach (explode('/', $rel) as $seg) {
@@ -421,7 +487,7 @@ function fo_render_main($dir, $home, $L, $showonly = '', $view = 'icons', $mobil
     <button type="button" class="fo-tb" data-cmd="forward" title="<?php echo h($L['forward']); ?>"><?php echo fo_svg('chevron-right'); ?></button>
   </div>
   <div class="fo-title" title="<?php echo h($name); ?>"><?php echo h($name); ?></div>
-  <?php if ($readonly): ?><span class="fo-ro">Только чтение</span><?php endif; ?>
+  <?php if ($readonly): ?><span class="fo-ro"><?php echo h($L['read_only']); ?></span><?php endif; ?>
   <div class="fo-tools">
     <div class="fo-seg" role="group">
       <button type="button" class="fo-segbtn<?php echo $view === 'icons' ? ' is-on' : ''; ?>" data-view="icons" title="<?php echo h($L['icons']); ?>"><?php echo fo_svg('grid'); ?></button>
@@ -464,7 +530,7 @@ function fo_render_main($dir, $home, $L, $showonly = '', $view = 'icons', $mobil
             <div class="fo-name"><?php echo h($it['name']); ?></div>
           </div>
           <div class="fo-date"><?php echo $it['mtime'] ? date('d.m.y H:i', $it['mtime']) : '—'; ?></div>
-          <div class="fo-size"><?php echo $it['dir'] ? '—' : h(fo_size($it['size'])); ?></div>
+          <div class="fo-size"><?php echo $it['dir'] ? '—' : h(fo_size($it['size'], $L)); ?></div>
           <div class="fo-kind"><?php echo h(fo_kind_label($it, $L)); ?></div>
         </div>
       <?php endforeach; ?>
@@ -473,7 +539,7 @@ function fo_render_main($dir, $home, $L, $showonly = '', $view = 'icons', $mobil
 </div>
 
 <div class="fo-status">
-  <span class="fo-status-count"><?php echo count($items); ?> <?php echo h($L['items']); ?></span>
+  <span class="fo-status-count"><?php echo count($items); ?> <?php echo h(fo_plural(count($items), 'items', $L, $locale)); ?></span>
   <?php if ($isTrash): ?>
     <button type="button" class="fo-linkbtn" data-cmd="emptytrash"><?php echo h($L['empty_trash']); ?></button>
   <?php endif; ?>
@@ -484,7 +550,7 @@ function fo_render_main($dir, $home, $L, $showonly = '', $view = 'icons', $mobil
     <button type="button" class="fo-linkbtn" data-cmd="selectmode"><?php echo h($L['select']); ?></button>
   <?php endif; ?>
   <span class="fo-status-spacer"></span>
-  <?php if ($free !== false): ?><span class="fo-status-free"><?php echo h(fo_size($free)); ?> <?php echo h($L['free']); ?></span><?php endif; ?>
+  <?php if ($free !== false): ?><span class="fo-status-free"><?php echo h(fo_size($free, $L)); ?> <?php echo h($L['free']); ?></span><?php endif; ?>
 </div>
     <?php
     return ob_get_clean();
@@ -553,6 +619,7 @@ if ($action === 'raw' || $action === 'text' || $action === 'info') {
             list($size, $count) = fo_dir_stats($path);
         }
         $item = array('dir' => $isDir, 'ext' => $isDir ? '' : fo_ext(basename($path)));
+        $item['kind'] = fo_kind($item);
 
         $docRoot = rtrim(str_replace('\\', '/', $_SERVER['DOCUMENT_ROOT']), '/');
         $rel = (strpos($path, $docRoot . '/') === 0) ? substr($path, strlen($docRoot) + 1) : '';
@@ -568,7 +635,7 @@ if ($action === 'raw' || $action === 'text' || $action === 'info') {
             'url' => $url,
             'dir' => $isDir,
             'size' => $size,
-            'size_text' => fo_size($size),
+            'size_text' => fo_size($size, $L),
             'count' => $count,
             'mtime' => date('d.m.Y H:i:s', (int)@filemtime($path)),
             'ctime' => date('d.m.Y H:i:s', (int)@filectime($path)),
@@ -624,7 +691,7 @@ if ($action === 'upload-chunk' || $action === 'upload-cancel') {
         fo_json(array('ok' => false, 'error' => $L['err_path']));
     }
     if (!fo_in_home($uploadDir, $home) && !$allowSystem) {
-        fo_json(array('ok' => false, 'error' => 'Только чтение'));
+        fo_json(array('ok' => false, 'error' => $L['read_only']));
     }
     $uid = isset($_GET['upload_id']) ? (string)$_GET['upload_id'] : '';
     if (!preg_match('/^[a-f0-9]{16,64}$/', $uid)) {
@@ -645,7 +712,7 @@ if ($action === 'upload-chunk' || $action === 'upload-cancel') {
 
     $name = fo_clean_name(isset($_GET['name']) ? (string)$_GET['name'] : '');
     if ($name === '') {
-        fo_json(array('ok' => false, 'error' => 'Недопустимое имя файла'));
+        fo_json(array('ok' => false, 'error' => $L['err_file_name']));
     }
     $index = isset($_GET['index']) ? (int)$_GET['index'] : 0;
     $total = isset($_GET['total']) ? max(1, (int)$_GET['total']) : 1;
@@ -714,7 +781,7 @@ if ($postAction !== '') {
         fo_json(array('ok' => false, 'error' => $L['err_path']));
     }
     if (!fo_in_home($dir, $home) && !$allowSystem) {
-        fo_json(array('ok' => false, 'error' => 'Только чтение'));
+        fo_json(array('ok' => false, 'error' => $L['read_only']));
     }
 
     $paths = array();
@@ -733,7 +800,7 @@ if ($postAction !== '') {
             fo_json(array('ok' => false, 'error' => $L['err_path']));
         }
         if (!fo_in_home($target, $home) && !$allowSystem) {
-            fo_json(array('ok' => false, 'error' => 'Только чтение'));
+            fo_json(array('ok' => false, 'error' => $L['read_only']));
         }
         /* храним путь от корня сайта — так работают и системные папки */
         $rel = ltrim(str_replace($DOC, '', $target), '/');
@@ -839,7 +906,7 @@ if ($postAction !== '') {
         if (!$paths) fo_json(array('ok' => false, 'error' => $L['err_path']));
         $baseName = (count($paths) === 1)
             ? preg_replace('/\.[^.\/]+$/', '', basename($paths[0])) . '.zip'
-            : 'Архив.zip';
+            : $L['archive_name'] . '.zip';
         $zipPath = fo_unique($dir, $baseName);
         $zip = new ZipArchive();
         if ($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {
@@ -882,7 +949,7 @@ if ($postAction !== '') {
             $n = $zip->getNameIndex($i);
             if ($n === false || $n === '' || $n[0] === '/' || strpos($n, '..') !== false) {
                 $zip->close();
-                fo_json(array('ok' => false, 'error' => 'Небезопасный архив'));
+                fo_json(array('ok' => false, 'error' => $L['err_unsafe_archive']));
             }
         }
         $target = fo_unique(dirname($src), preg_replace('/\.zip$/i', '', basename($src)));
@@ -972,10 +1039,10 @@ if ($postAction !== '') {
     if ($postAction === 'upload') {
         /* если POST превысил post_max_size, PHP отдаёт пустые $_POST и $_FILES */
         if (empty($_FILES) && empty($_POST) && (int)($_SERVER['CONTENT_LENGTH'] ?? 0) > 0) {
-            fo_json(array('ok' => false, 'error' => 'Файл больше лимита сервера (64 МБ). Используйте загрузку по частям.'));
+            fo_json(array('ok' => false, 'error' => $L['upload_server_limit']));
         }
         if (empty($_FILES['files']) || !isset($_FILES['files']['name'])) {
-            fo_json(array('ok' => false, 'error' => 'Нет файлов'));
+            fo_json(array('ok' => false, 'error' => $L['no_files']));
         }
         $names = (array)$_FILES['files']['name'];
         $tmps  = (array)$_FILES['files']['tmp_name'];
@@ -986,9 +1053,9 @@ if ($postAction !== '') {
                 $failed[] = $rawName;
                 $code = isset($errs[$i]) ? (int)$errs[$i] : -1;
                 if ($code === UPLOAD_ERR_INI_SIZE || $code === UPLOAD_ERR_FORM_SIZE) {
-                    $reasons[] = 'слишком большой файл';
+                    $reasons[] = $L['err_too_large'];
                 } elseif ($code === UPLOAD_ERR_PARTIAL) {
-                    $reasons[] = 'загрузка оборвалась';
+                    $reasons[] = $L['err_partial'];
                 }
                 continue;
             }
@@ -1057,14 +1124,14 @@ if (is_array($assocCfg)) {
 
 if (isset($_GET['partial'])) {
     header('Content-Type: text/html; charset=utf-8');
-    echo fo_render_main($dir, $home, $L, $showonly, $view, $mobile, $explorerMode, $callback, $allowSystem);
+    echo fo_render_main($dir, $home, $L, $locale, $showonly, $view, $mobile, $explorerMode, $callback, $allowSystem);
     exit;
 }
 
 require_once $DOC . '/system/core/library/Mercury/AppContainer.php';
 $AppContainer = new AppContainer;
 $AppContainer->AppNameInfo = 'Explorer';
-$AppContainer->SecondNameInfo = 'Проводник';
+$AppContainer->SecondNameInfo = ($locale === 'en') ? 'Explorer' : 'Проводник';
 $AppContainer->VersionInfo = '2.1.0';
 $AppContainer->AuthorInfo = 'Forest Media';
 $AppContainer->LibraryArray = array();
@@ -1108,7 +1175,7 @@ $rootId = 'fo-app-' . $AppID;
     <?php endforeach; ?>
     <button type="button" class="fo-mnav-item" data-nav="<?php echo h($home . '/trash'); ?>"><?php echo fo_svg('trash'); ?><span><?php echo h($L['trash']); ?></span></button>
     <?php if ($allowSystem): ?>
-      <button type="button" class="fo-mnav-item" data-nav="<?php echo h($DOC . '/system'); ?>"><?php echo fo_svg('folder'); ?><span>Система</span></button>
+      <button type="button" class="fo-mnav-item" data-nav="<?php echo h($DOC . '/system'); ?>"><?php echo fo_svg('folder'); ?><span><?php echo h($L['system']); ?></span></button>
     <?php endif; ?>
   </div>
   <div class="fo-window">
@@ -1120,17 +1187,17 @@ $rootId = 'fo-app-' . $AppID;
           <button type="button" class="fo-side-item" data-nav="<?php echo h($home . '/' . $sub); ?>"><?php echo fo_svg($icon); ?><span><?php echo h($L[$sub]); ?></span></button>
         <?php endif; ?>
       <?php endforeach; ?>
-      <div class="fo-side-title">Мои папки</div>
+      <div class="fo-side-title"><?php echo h($L['my_folders']); ?></div>
       <div class="fo-favlist"></div>
       <?php if ($allowSystem): ?>
-      <div class="fo-side-title">Система</div>
-      <button type="button" class="fo-side-item" data-nav="<?php echo h($DOC . '/system'); ?>"><?php echo fo_svg('folder'); ?><span>Система</span></button>
+      <div class="fo-side-title"><?php echo h($L['system']); ?></div>
+      <button type="button" class="fo-side-item" data-nav="<?php echo h($DOC . '/system'); ?>"><?php echo fo_svg('folder'); ?><span><?php echo h($L['system']); ?></span></button>
       <?php endif; ?>
       <div class="fo-side-title"><?php echo h($L['trash']); ?></div>
       <button type="button" class="fo-side-item" data-nav="<?php echo h($home . '/trash'); ?>"><?php echo fo_svg('trash'); ?><span><?php echo h($L['trash']); ?></span></button>
     </aside>
     <section class="fo-main">
-      <?php echo fo_render_main($dir, $home, $L, $showonly, $view, $mobile, $explorerMode, $callback, $allowSystem); ?>
+      <?php echo fo_render_main($dir, $home, $L, $locale, $showonly, $view, $mobile, $explorerMode, $callback, $allowSystem); ?>
     </section>
   </div>
   <div class="fo-modal" hidden></div>
@@ -1138,6 +1205,8 @@ $rootId = 'fo-app-' . $AppID;
   <div class="fo-toast" hidden></div>
   <input type="file" class="fo-file" multiple hidden>
 </div>
+<script>window.FO_EXPLORER_I18N = <?php echo json_encode(array('locale' => $locale, 'strings' => $L), JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;</script>
+<script>window.FO_EX = window.FO_EXPLORER_I18N.strings || {};</script>
 <script><?php echo $qrjs; ?></script>
 <script><?php echo $js; ?></script>
 <script>if (window.ForestExplorer) { ForestExplorer.init(document.getElementById(<?php echo json_encode($rootId); ?>)); }</script>

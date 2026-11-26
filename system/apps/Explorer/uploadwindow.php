@@ -6,8 +6,8 @@ $security	=	new security;
 $security->appprepare();
 
 //Загружаем файл локализации
-$upload_lang  = parse_ini_file('assets/lang/etc.lang');
-$cl = $_SESSION['locale'];
+$upload_lang  = parse_ini_file(__DIR__.'/assets/lang/etc.lang');
+$cl = (isset($_SESSION['locale']) && $_SESSION['locale'] === 'en') ? 'en' : 'ru';
 $homeRoot = realpath($_SERVER['DOCUMENT_ROOT'].'/system/users/'.$_SESSION['loginuser']);
 $defaultDir = $_SERVER['DOCUMENT_ROOT'].'/system/users/'.$_SESSION['loginuser'].'/documents/downloads/';
 if(isset($_GET['where'])){
@@ -47,7 +47,7 @@ if(isset($_GET['uploadfiles'])){
         }
     }
 
-    $data = $error ? array('error' => 'Error') : array('files' => $files );
+    $data = $error ? array('error' => $upload_lang[$cl.'_upload_failed']) : array('files' => $files );
 
     $response = json_encode( $data );
     header('Content-Type: application/json');
@@ -55,7 +55,7 @@ if(isset($_GET['uploadfiles'])){
     header('Content-Length: '. mb_strlen($response, 'UTF-8'));
     echo $response;
   }else{
-    echo 'private error!';
+    echo $upload_lang[$cl.'_access_denied'];
     exit;
   }
 }

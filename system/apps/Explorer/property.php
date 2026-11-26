@@ -18,8 +18,8 @@ $fo = new filecalc;
 $click=$_GET['mobile'];
 $folder=$_GET['destination'];
 /*--------Загружаем файл локализации--------*/
-$prop_lang  = parse_ini_file('assets/lang/etc.lang');
-$cl = $_SESSION['locale'];
+$prop_lang  = parse_ini_file(__DIR__.'/assets/lang/etc.lang');
+$cl = (isset($_SESSION['locale']) && $_SESSION['locale'] === 'en') ? 'en' : 'ru';
 /*--------Логика--------*/
 
 $get_object = iconv( "UTF8", "UTF8//TRANSLIT", $_GET['object'] );
@@ -27,7 +27,7 @@ $get_object = iconv( "UTF8", "UTF8//TRANSLIT", $_GET['object'] );
 /*rename object*/
 if(isset($_GET['rename']) && !preg_match('/os.php/',$get_object) && !preg_match('/login.php/',$get_object) && !preg_match('/makeprocess.php/',$get_object) && !preg_match('/system/core/',$get_object)){
   if($_SESSION['superuser'] != $_SESSION['loginuser'] && !preg_match('%system/users/'.$_SESSION['loginuser'].'%',$get_object) || $_SESSION['superuser'] != $_SESSION['loginuser'] && !preg_match('%system/core%',$get_object)){
-    exit('wrong');
+    exit($prop_lang[$cl.'_access_denied']);
   }else{
     $newname  = preg_replace_callback('#%u([0-9A-F]{4})#s', function($matches) {
       return iconv("UTF-16BE","UTF-8",pack("H4",$matches[1]));
@@ -50,7 +50,7 @@ if(is_file($get_object)){
     $fo->size_check(realpath(realpath($get_object)));
     $fo->format($size);
     if (empty($size)){
-      $format	= '0 Bytes';
+      $format	= $prop_lang[$cl.'_prop_zero_bytes'];
     }
     $format = $format;
   } catch (Exception $e) {
@@ -115,7 +115,7 @@ if(is_file($_SERVER['DOCUMENT_ROOT'].$pathmain)){
     <?
     echo "<b>".$prop_lang[$cl.'_prop_attr_label'].":</b>";
     echo "<br>(<i>".substr(sprintf('%o', fileperms($get_object)), -4).'</i>)';
-    echo "<br>-".(is_readable($get_object) ? "" : $prop_lang[$cl.'_attr_false']).$prop_lang[$cl.'_attr_1']."<br>-".(is_writable($get_object) ? "" : $prop_lang[$cl.'_attr_false']).$prop_lang[$cl.'_attr_2'];
+    echo "<br>-".(is_readable($get_object) ? "" : $prop_lang[$cl.'_attr_false'].' ').$prop_lang[$cl.'_attr_1']."<br>-".(is_writable($get_object) ? "" : $prop_lang[$cl.'_attr_false'].' ').$prop_lang[$cl.'_attr_2'];
     ?>
   </div>
   <div style="margin:10px auto; border-bottom:2px solid #c5bbbb; padding:5px 0; text-align:center;">

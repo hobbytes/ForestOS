@@ -14,6 +14,7 @@ if (!defined('FO_LOGIN_INCLUDED')) {
 /* первый запуск: пока нет администратора — мастер настройки */
 require_once $_SERVER['DOCUMENT_ROOT'] . '/system/core/library/install.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/system/core/library/bans.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/system/core/library/i18n.php';
 if (!fo_has_superuser()) {
     header('Location: setup.php');
     exit;
@@ -173,7 +174,7 @@ $foBanned = !empty($foBan['banned']);
 
 /* сеанс закрыт, потому что вошли на другом устройстве */
 if (!empty($_GET['kicked']) && !$foBanned) {
-  echo '<h2 class="error-layout">Сеанс завершён: вы вошли в систему на другом устройстве.</h2>';
+  echo '<h2 class="error-layout">' . htmlspecialchars(fo_t('kicked', 'Сеанс завершён: вы вошли в систему на другом устройстве.')) . '</h2>';
 }
 
 if(!$foBanned && (!$_SESSION['BlockDate'] || date('d-m-y H:i:s') >= $_SESSION['BlockDate'])){
@@ -186,7 +187,7 @@ if(!$foBanned && (!$_SESSION['BlockDate'] || date('d-m-y H:i:s') >= $_SESSION['B
   <input class="passwordin input-login" id="passwordin" placeholder="<?=$language[$_SESSION['locale'].'_password_input']?>" type="password" name="passwordin" value="" autocomplete="current-password">
   <?
 }elseif($foBanned){
-  echo '<h2 class="error-layout">Слишком много неудачных попыток. Вход с этого IP заблокирован до '
+  echo '<h2 class="error-layout">' . htmlspecialchars(fo_t('banned', 'Слишком много неудачных попыток. Вход с этого IP заблокирован до')) . ' '
      . htmlspecialchars(ForestBans::untilText((int)$foBan['until'])) . '.</h2>';
 }else{
   $_date = strtotime($_SESSION['BlockDate']) - strtotime(date('d-m-y H:i:s'));
@@ -209,7 +210,7 @@ if(!$_SESSION['BlockDate'] && !$foBanned){
   /* вход по ключу устройства: Face ID / отпечаток / Windows Hello */
   echo '<div id="fo-faceid-wrap" class="fo-faceid-wrap" style="display:none">'
      . '<button type="button" id="fo-faceid" class="fo-faceid-btn">'
-     . '<span class="fo-faceid-icon" aria-hidden="true">◉</span><span>Войти по Face ID</span></button>'
+     . '<span class="fo-faceid-icon" aria-hidden="true">◉</span><span>' . htmlspecialchars(fo_t('faceid_login', 'Войти по Face ID')) . '</span></button>'
      . '<div id="fo-faceid-msg" class="fo-faceid-msg"></div>'
      . '</div>';
 }
@@ -290,6 +291,14 @@ showTime();
 /* Вход по Face ID / отпечатку (WebAuthn). Пароль остаётся основным способом:
    если ключа нет, кнопка просто не показывается. */
 (function(){
+  window.FO_I18N = <? echo json_encode(fo_lang(), JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP); ?>;
+  if (typeof window.FO_T !== 'function') {
+    window.FO_T = function (k, d) {
+      var v = window.FO_I18N ? window.FO_I18N[k] : '';
+      return (v !== undefined && v !== '') ? v : (d !== undefined ? d : k);
+    };
+  }
+  var T = window.FO_T;
   var API = 'system/core/functions/webauthn.php';
   var wrap = document.getElementById('fo-faceid-wrap');
   var btn = document.getElementById('fo-faceid');
@@ -330,9 +339,9 @@ showTime();
 
   btn.addEventListener('click', function(){
     var login = (loginInput.value || '').trim().toLowerCase();
-    if(!login){ say('Сначала введите логин', true); loginInput.focus(); return; }
+    if(!login){ say(T('faceid_need_login', 'Сначала введите логин'), true); loginInput.focus(); return; }
     btn.disabled = true;
-    say('Запрашиваем Face ID…');
+    say(T('faceid_requesting', 'Запрашиваем Face ID…'));
     post('begin-login', { login: login })
       .then(function(d){
         if(!d || !d.ok){ var e = new Error((d && d.error) || 'begin_failed'); e.code = (d && d.error) || 'begin_failed'; throw e; }
@@ -361,20 +370,20 @@ showTime();
       })
       .then(function(d){
         if(!d || !d.ok){ var e = new Error((d && d.error) || 'auth_failed'); e.code = (d && d.error) || 'auth_failed'; throw e; }
-        say('Входим…');
+        say(T('signing_in', 'Входим…'));
         window.location.replace('os.php');
       })
       .catch(function(err){
         btn.disabled = false;
         var name = (err && err.name) || '';
         var code = (err && err.code) || '';
-        if(name === 'NotAllowedError'){ say('На этом устройстве нет ключа Face ID. Войдите паролем — и добавьте ключ: Settings → Безопасность.', true); return; }
+        if(name === 'NotAllowedError'){ say(T('faceid_no_key', 'На этом устройстве нет ключа Face ID. Войдите паролем — и добавьте ключ: Settings → Безопасность.'), true); return; }
         if(code === 'no_keys' || code === 'not_allowed'){ wrap.style.display = 'none'; return; }
-        if(code === 'challenge_expired'){ say('Истекло время — попробуйте ещё раз', true); return; }
-        if(code === 'too_many_attempts'){ say('Слишком много попыток, подождите пару минут', true); return; }
-        if(code === 'bad_signature' || code === 'unknown_key'){ say('Ключ не подошёл — войдите паролем', true); return; }
-        if(code === 'insecure_context'){ say('Вход по Face ID работает только по HTTPS', true); return; }
-        say('Не получилось: ' + (code || name || 'ошибка'), true);
+        if(code === 'challenge_expired'){ say(T('faceid_expired', 'Истекло время — попробуйте ещё раз'), true); return; }
+        if(code === 'too_many_attempts'){ say(T('faceid_toomany', 'Слишком много попыток, подождите пару минут'), true); return; }
+        if(code === 'bad_signature' || code === 'unknown_key'){ say(T('faceid_badkey', 'Ключ не подошёл — войдите паролем'), true); return; }
+        if(code === 'insecure_context'){ say(T('faceid_insecure', 'Вход по Face ID работает только по HTTPS'), true); return; }
+        say(T('faceid_failed', 'Не получилось: ') + (code || name || 'ошибка'), true);
       });
   });
 

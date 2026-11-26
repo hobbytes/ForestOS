@@ -1,57 +1,202 @@
+; Forest OS — Explorer 2.0
+; English interface dictionary. The key set must match ru.lang.
+
 [Explorer]
+; --- sidebar / places -------------------------------------------------------
+favorites = Favorites
+home = Home
+desktop = Desktop
+documents = Documents
+downloads = Downloads
+trash = Trash
+system = System
+my_folders = My Folders
+read_only = Read only
+
+; --- toolbar ----------------------------------------------------------------
+back = Back
+forward = Forward
+up = Up
+refresh = Refresh
+icons = Icons
+list = List
+search = Search
+new_folder = New Folder
+new_file = New File
+upload = Upload
+upload_menu = Upload…
+download = Download
+
+; --- columns and kinds ------------------------------------------------------
+name = Name
+date = Date Modified
+size = Size
+kind = Kind
+folder = Folder
+file = File
+kind_image = Image
+kind_text = Text
+kind_code = Code
+kind_archive = Archive
+kind_pdf = PDF
+kind_audio = Audio
+kind_video = Video
+
+; --- status bar -------------------------------------------------------------
+empty = This folder is empty
+items_one = item
+items_few = items
+items_many = items
+free = free
+select = Select
+select_file = Choose File
+empty_trash = Empty Trash
+
+; --- common buttons ---------------------------------------------------------
+ok = OK
+cancel = Cancel
+create = Create
+save = Save
+close = Close
+delete = Delete
+done = Done
+
+; --- context menu -----------------------------------------------------------
+open = Open
+open_with = Open With
+view_code = View Code
+copy = Copy
+cut = Cut
+paste = Paste
+rename = Rename
+info = Get Info
+compress = Compress
+extract = Extract
+shortcut = Make Alias
+move_trash = Move to Trash
+delete_forever = Delete Immediately
+fav_add = Add to Favorites
+fav_remove = Remove from Favorites
+fav_empty = Right-click a folder to add it to Favorites
+pin_dock = Pin to Dock
+select_all = Select All
+
+; --- dialogs: create, rename, archives --------------------------------------
+folder_name = Folder name
+file_name = File name
+folder_created = Folder created
+file_created = File created
+renamed = Renamed
+archive_name = Archive
+unzip_confirm = Archive. Extract it to a folder next to it?
+unzip_done = Archive extracted
+zip_done = Archive created
+link_done = Shortcut created on the Desktop
+fav_added = Folder added to Favorites
+fav_failed = Could not add the folder
+pinned = Folder pinned to the Dock
+pin_failed = Could not pin the folder
+
+; --- confirmations ----------------------------------------------------------
+confirm_trash_title = Move to Trash?
+trash_text_one = The item will be moved to the Trash.
+trash_text_few = {n} items will be moved to the Trash.
+trash_text_many = {n} items will be moved to the Trash.
+trash_ok = Move
+trash_done = Moved to the Trash
+confirm_delete_title = Delete Immediately?
+delete_text = This action cannot be undone.
+delete_done = Deleted
+confirm_empty_title = Empty the Trash?
+empty_text = This action cannot be undone.
+empty_ok = Empty
+empty_done = Trash emptied
+
+; --- clipboard --------------------------------------------------------------
+copied = Copied: {n}
+cut_toast = Cut: {n}
+copied_done = Copied
+moved_done = Moved
+clipboard_empty = Clipboard is empty
+
+; --- file upload ------------------------------------------------------------
+upload_title = Uploading
+upload_busy = An upload is already in progress
+upload_cancelled = Upload cancelled
+upload_error = Upload failed: {msg}
+upload_done_one = 1 file uploaded
+upload_done_few = {n} files uploaded
+upload_done_many = {n} files uploaded
+upload_of = of
+upload_per_sec = /s
+upload_sec = s
+upload_min = min
+upload_server_limit = The file is larger than the server limit (64 MB). Use chunked upload instead.
+no_files = No files
+err_file_name = Invalid file name
+err_unsafe_archive = Unsafe archive
+err_too_large = file is too large
+err_partial = the upload was interrupted
+network_error = network unavailable
+server_replied = server responded {code}
+bad_response = Invalid server response
+
+; --- errors and service messages -------------------------------------------
+err_unknown_action = Unknown action
+err_load = Could not open the folder
+err_action = Could not perform the action
+err_read = Could not read the file
+err_info = Could not load properties
+error = Error
+no_apps = No applications found
+shell_unavailable = The shell is unavailable
+select_first = Select a file first
+select_mode_on = Selection mode on
+select_mode_off = Selection mode off
+session = Your session has expired. Please sign in again.
+err_path = That path is not available
+err_name = Invalid name
+err_exists = Already exists
+err_perm = Cannot write here
+err_token = Session expired, please reopen the window
+
+; --- object properties ------------------------------------------------------
+prop_name = Name
+prop_type = Type
+prop_size = Size
+prop_modified = Modified
+prop_created = Created
+prop_perms = Permissions
+prop_path = Path
+prop_title = Properties
+files_one = file
+files_few = files
+files_many = files
+
+; --- size units -------------------------------------------------------------
+unit_b = B
+unit_kb = KB
+unit_mb = MB
+unit_gb = GB
+
+; --- legacy menu keys (compatibility) ---------------------------------------
 menu_file_label = File
 menu_open_label = Open
-menu_openas_label = Open As
-menu_newfile_label = New file
+menu_openas_label = Open With
+menu_newfile_label = New File
 menu_rename_label = Rename
 menu_md_label = Create Folder
 menu_ml_label = Create Shortcut
-menu_trash_label = Send to trash
+menu_trash_label = Send to Trash
 menu_delete_label = Delete
-menu_loadfile_label = Upload file
+menu_loadfile_label = Upload File
 menu_property_label = Properties
-menu_zip_label = Add to archive
-menu_zip_unpack = Unpack the archive
-selectButton = Select
-selectButtonFile = Select file
-cancelButton = Cancel
-
+menu_zip_label = Add to Archive
+menu_zip_unpack = Extract Archive
 menu_edit_label = Edit
 menu_copy_label = Copy
 menu_paste_label = Paste
 menu_cut_label = Cut
-
-error_open = "Can not open file with extension <b style='text-transform:uppercase;'>"
-error_label  = "Error reading file"
-
-[makedir]
-mdir_label = Enter folder name
-mdir_okbtn = Ok
-mdir_cancelbtn = Cancel
-msg_1 = Folder
-msg_2 = ' not created!'
-msg_3 = 'This folder already exists!'
-
-[makefile]
-mfile_label = Enter file name
-mfile_okbtn = Ok
-mfile_cancelbtn = Cancel
-mfile_msg_1  = 'This file already exists!'
-
-[trash]
-trash_label  = Empty trash
-
-[folder]
-size = size
-date = Date
-use_label = Used
-
-[delete_function]
-mt_delete = 'Delete object'
-mb_delete = 'Do you really want to delete this object?'
-btn_delete_ok = Delete
-
-[trash_function]
-mt_trash = 'Send to trash'
-mb_trash = 'Do you really want to send this object to the trash?'
-btn_trash_ok = Send
+selectButton = Select
+selectButtonFile = Choose File
+cancelButton = Cancel

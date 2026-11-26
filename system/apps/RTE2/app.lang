@@ -1,0 +1,177 @@
+; Forest OS — Rich Text Editor 2.0
+; Формат: секция [RTE2], ключи ru_<key> / en_<key>.
+[RTE2]
+ru_title = Редактор текста 2.0
+en_title = Rich Text Editor 2.0
+
+ru_untitled = Без имени
+en_untitled = Untitled
+ru_draft_hint = Ещё не сохранено в файл · черновик хранится автоматически
+en_draft_hint = Not saved to a file yet · the draft is kept automatically
+ru_draft_target = Черновик файла {file}
+en_draft_target = Draft of {file}
+
+ru_new = Новый
+en_new = New
+ru_save = Сохранить
+en_save = Save
+ru_save_as = Сохранить как
+en_save_as = Save as
+
+ru_placeholder = Начните печатать…
+en_placeholder = Start typing…
+ru_editor_aria = Текст документа
+en_editor_aria = Document body
+ru_toolbar_aria = Форматирование
+en_toolbar_aria = Formatting
+
+ru_status_new = Новый документ · не сохранён
+en_status_new = New document · not saved
+ru_status_saved = Сохранено
+en_status_saved = Saved
+ru_status_unsaved = Есть несохранённые изменения
+en_status_unsaved = Unsaved changes
+ru_status_draft = Черновик сохранён
+en_status_draft = Draft saved
+ru_status_saving = Сохранение…
+en_status_saving = Saving…
+ru_status_draft_restored = Черновик восстановлен
+en_status_draft_restored = Draft restored
+
+ru_toast_saved = Сохранено: {file}
+en_toast_saved = Saved: {file}
+ru_toast_saved_as = Сохранено как: {file}
+en_toast_saved_as = Saved as: {file}
+ru_toast_draft_restored = Черновик восстановлен
+en_toast_draft_restored = Draft restored
+
+ru_counts = {chars} символов · {words} слов
+en_counts = {chars} characters · {words} words
+
+ru_mode_html = HTML-документ
+en_mode_html = HTML document
+ru_mode_text = Обычный текст
+en_mode_text = Plain text
+
+ru_bold = Полужирный (Ctrl+B)
+en_bold = Bold (Ctrl+B)
+ru_italic = Курсив (Ctrl+I)
+en_italic = Italic (Ctrl+I)
+ru_underline = Подчёркнутый (Ctrl+U)
+en_underline = Underline (Ctrl+U)
+ru_strike = Зачёркнутый
+en_strike = Strikethrough
+ru_h1 = Заголовок 1
+en_h1 = Heading 1
+ru_h2 = Заголовок 2
+en_h2 = Heading 2
+ru_h3 = Заголовок 3
+en_h3 = Heading 3
+ru_paragraph = Обычный абзац
+en_paragraph = Normal paragraph
+ru_ul = Маркированный список
+en_ul = Bulleted list
+ru_ol = Нумерованный список
+en_ol = Numbered list
+ru_quote = Цитата
+en_quote = Quote
+ru_code = Блок кода
+en_code = Code block
+ru_link = Вставить ссылку
+en_link = Insert link
+ru_unlink = Убрать ссылку
+en_unlink = Remove link
+ru_image = Вставить картинку по адресу
+en_image = Insert image by URL
+ru_align_left = По левому краю
+en_align_left = Align left
+ru_align_center = По центру
+en_align_center = Align center
+ru_align_right = По правому краю
+en_align_right = Align right
+ru_align_justify = По ширине
+en_align_justify = Justify
+ru_clear = Очистить форматирование
+en_clear = Clear formatting
+ru_undo = Отменить
+en_undo = Undo
+ru_redo = Повторить
+en_redo = Redo
+
+ru_link_title = Вставить ссылку
+en_link_title = Insert link
+ru_link_label = Адрес ссылки
+en_link_label = Link address
+ru_link_hint = Выделенный текст станет ссылкой. Без выделения текстом ссылки будет сам адрес.
+en_link_hint = The selected text becomes the link. With no selection the address itself is used as the text.
+ru_image_title = Вставить картинку
+en_image_title = Insert image
+ru_image_label = Адрес картинки
+en_image_label = Image URL
+ru_image_hint = Прямая ссылка на изображение: http, https или путь от корня сайта.
+en_image_hint = A direct image link: http, https or a path from the site root.
+ru_err_url = Введите корректный адрес
+en_err_url = Enter a valid address
+
+ru_save_as_title = Сохранить как
+en_save_as_title = Save as
+ru_save_as_name = Имя файла
+en_save_as_name = File name
+ru_save_as_hint = Папка: {folder}. Если расширение не указано, будет добавлено {ext}.
+en_save_as_hint = Folder: {folder}. If you omit the extension, {ext} is added.
+ru_save_as_format = Формат
+en_save_as_format = Format
+ru_default_name = Документ
+en_default_name = Document
+ru_fmt_html = HTML-документ
+en_fmt_html = HTML document
+ru_fmt_txt = Обычный текст
+en_fmt_txt = Plain text
+ru_fmt_md = Markdown
+en_fmt_md = Markdown
+
+ru_overwrite_title = Файл уже существует
+en_overwrite_title = File already exists
+ru_overwrite_text = Файл {file} уже есть в папке документов. Перезаписать его?
+en_overwrite_text = {file} already exists in Documents. Overwrite it?
+ru_overwrite_ok = Перезаписать
+en_overwrite_ok = Overwrite
+
+ru_new_title = Новый документ
+en_new_title = New document
+ru_new_text = Очистить редактор? Несохранённые изменения будут потеряны.
+en_new_text = Clear the editor? Unsaved changes will be lost.
+ru_new_ok = Очистить
+en_new_ok = Clear
+
+ru_ok = Сохранить
+en_ok = Save
+ru_cancel = Отмена
+en_cancel = Cancel
+ru_close = Закрыть
+en_close = Close
+
+ru_err_auth = Сессия истекла. Войдите в систему заново.
+en_err_auth = Your session has expired. Please sign in again.
+ru_err_token = Сессия устарела. Перезапустите приложение.
+en_err_token = Session expired. Please reopen the app.
+ru_err_path = Недопустимый путь к файлу.
+en_err_path = That file path is not allowed.
+ru_err_forbidden = Системные файлы изменять нельзя.
+en_err_forbidden = System files cannot be modified.
+ru_err_not_found = Файл не найден.
+en_err_not_found = File not found.
+ru_err_write = Не удалось записать файл. Проверьте права.
+en_err_write = Could not write the file. Check permissions.
+ru_err_exists = Файл с таким именем уже существует.
+en_err_exists = A file with that name already exists.
+ru_err_name = Недопустимое имя файла.
+en_err_name = Invalid file name.
+ru_err_too_large = Файл слишком большой для редактора.
+en_err_too_large = The file is too large for the editor.
+ru_err_save = Не удалось сохранить файл.
+en_err_save = Could not save the file.
+ru_err_network = Нет связи с сервером.
+en_err_network = Cannot reach the server.
+ru_err_open = Не удалось открыть файл
+en_err_open = Could not open the file

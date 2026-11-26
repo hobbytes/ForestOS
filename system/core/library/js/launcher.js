@@ -28,7 +28,7 @@
 
     var $list = $('#fo-launcher-list');
     if (!filtered.length) {
-      $list.html('<div class="fo-launcher-empty">Ничего не найдено</div>');
+      $list.html('<div class="fo-launcher-empty">' + esc(window.FO_T ? FO_T('no_results', 'Ничего не найдено') : 'Ничего не найдено') + '</div>');
       return;
     }
     $list.html(filtered.map(function (a, i) {
@@ -86,7 +86,7 @@
     $sel.each(function (i) { if (!$(this).hasClass('selector-hidden')) activeIdx = i; });
     $ws.addClass('is-visible').html($sel.map(function (i) {
       return '<button type="button" class="fo-ws-dot' + (i === activeIdx ? ' is-active' : '') +
-        '" data-ws="' + i + '" title="Рабочий стол ' + (i + 1) + '"></button>';
+        '" data-ws="' + i + '" title="' + esc(window.FO_T ? FO_T('desktop', 'Рабочий стол') : 'Рабочий стол') + ' ' + (i + 1) + '"></button>';
     }).get().join(''));
   }
 

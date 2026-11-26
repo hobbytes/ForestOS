@@ -438,30 +438,36 @@ function topbar(){
   $__pwReload = $__pwLabel('reload', 'Перезагрузка');
   $__pwShutdown = $__pwLabel('shutdown', 'Выключение');
 
+  require_once __DIR__ . '/i18n.php';
+  /* день недели — из языкового файла, а не только по-русски */
+  $__dayKey = strtolower((string)date('l'));
+  $__dayName = fo_t($__dayKey, $object->getDayRus());
+  if (trim((string)$__dayName) === '') { $__dayName = $object->getDayRus(); }
+
   $apps = $this->appcatalog($login, $language);
   ?>
   <div id="topbar" class="fo-bar topbartheme" style="display:none;">
     <div class="fo-bar-side fo-bar-left">
-      <button type="button" id="fo-launcher-btn" class="fo-bar-btn" title="Приложения (Ctrl+K)" aria-label="Приложения">
+      <button type="button" id="fo-launcher-btn" class="fo-bar-btn" title="<?echo htmlspecialchars(fo_t('apps', 'Приложения'))?> (Ctrl+K)" aria-label="<?echo htmlspecialchars(fo_t('apps', 'Приложения'))?>">
         <span class="fo-ico-grid"></span>
       </button>
       <div id="fo-bar-workspaces" class="fo-ws" aria-hidden="true"></div>
       <div id="fo-bar-title" class="fo-bar-title">Forest OS</div>
     </div>
     <div class="fo-bar-center">
-      <button type="button" id="fo-bar-clock" class="fo-bar-clock" title="Дата и время">
+      <button type="button" id="fo-bar-clock" class="fo-bar-clock" title="<?echo htmlspecialchars(fo_t('date_time', 'Дата и время'))?>">
         <span id="time" class="fo-bar-time">--:--</span>
-        <span class="fo-bar-date"><?echo $object->getDayRus().', '.date('d');?></span>
+        <span class="fo-bar-date"><?echo $__dayName.', '.date('d');?></span>
       </button>
     </div>
     <div class="fo-bar-side fo-bar-right">
       <div id="fastbuttons" class="fo-bar-group fo-hidden">
-        <button type="button" id="hideall" class="fo-bar-btn" title="Свернуть все окна">−</button>
-        <button type="button" id="closeall" class="fo-bar-btn" title="Закрыть все окна" onclick="$('.process').remove(); $('#fastbuttons').addClass('fo-hidden');">×</button>
+        <button type="button" id="hideall" class="fo-bar-btn" title="<?echo htmlspecialchars(fo_t('minimize_all', 'Свернуть все окна'))?>">−</button>
+        <button type="button" id="closeall" class="fo-bar-btn" title="<?echo htmlspecialchars(fo_t('close_all', 'Закрыть все окна'))?>" onclick="$('.process').remove(); $('#fastbuttons').addClass('fo-hidden');">×</button>
       </div>
-      <button type="button" id="notificationsbtn" class="fo-bar-btn fo-bar-bell not-btn" title="Уведомления">N</button>
-      <button type="button" id="fo-mb-close" class="fo-bar-btn fo-bar-mbclose" title="Закрыть приложение">×</button>
-      <button type="button" id="fo-node-btn" class="fo-bar-btn fo-bar-node" title="Node-режим (Ctrl+Shift+N)" onclick="if(window.FONode){window.FONode.toggle();}">&#9095;</button>
+      <button type="button" id="notificationsbtn" class="fo-bar-btn fo-bar-bell not-btn" title="<?echo htmlspecialchars(fo_t('notifications', 'Уведомления'))?>">N</button>
+      <button type="button" id="fo-mb-close" class="fo-bar-btn fo-bar-mbclose" title="<?echo htmlspecialchars(fo_t('close_app', 'Закрыть приложение'))?>">×</button>
+      <button type="button" id="fo-node-btn" class="fo-bar-btn fo-bar-node" title="<?echo htmlspecialchars(fo_t('node_mode', 'Node-режим (Ctrl+Shift+N)'))?>" onclick="if(window.FONode){window.FONode.toggle();}">&#9095;</button>
       <button type="button" id="fo-user-btn" class="fo-bar-user" title="<?echo str_replace('_',' ',$login)?>">
         <span class="fo-avatar"><?echo strtoupper(substr($login, 0, 1))?></span>
       </button>
@@ -469,22 +475,22 @@ function topbar(){
   </div>
 
   <div id="fo-usermenu" class="fo-popover fo-hidden" role="menu">
-    <div class="fo-popover-head"><b><?echo str_replace('_',' ',$login)?></b><span>Администратор</span></div>
-    <button type="button" class="fo-popover-item" data-act="accounts">Учётные записи</button>
+    <div class="fo-popover-head"><b><?echo str_replace('_',' ',$login)?></b><span><?echo htmlspecialchars(fo_t('admin', 'Администратор'))?></span></div>
+    <button type="button" class="fo-popover-item" data-act="accounts"><?echo htmlspecialchars(fo_t('accounts', 'Учётные записи'))?></button>
     <button type="button" class="fo-popover-item" data-act="about"><?echo $about_name?></button>
     <button type="button" class="fo-popover-item fo-danger" data-act="logout"><?echo $exit_name?></button>
   </div>
 
   <div id="fo-launcher" class="fo-launcher" aria-hidden="true">
-    <div class="fo-launcher-card" role="dialog" aria-modal="true" aria-label="Приложения">
+    <div class="fo-launcher-card" role="dialog" aria-modal="true" aria-label="<?echo htmlspecialchars(fo_t('apps', 'Приложения'))?>">
       <div class="fo-launcher-search">
         <span class="fo-ico-search"></span>
-        <input id="fo-launcher-input" type="text" placeholder="Поиск приложений и действий…" autocomplete="off" spellcheck="false">
+        <input id="fo-launcher-input" type="text" placeholder="<?echo htmlspecialchars(fo_t('search_placeholder', 'Поиск приложений и действий…'))?>" autocomplete="off" spellcheck="false">
         <kbd>esc</kbd>
       </div>
       <div id="fo-launcher-list" class="fo-launcher-list fo-scroll"></div>
       <div class="fo-launcher-foot">
-        <span class="fo-launcher-hint">↑ ↓ — выбор · Enter — открыть</span>
+        <span class="fo-launcher-hint"><?echo htmlspecialchars(fo_t('search_hint', '↑ ↓ — выбор · Enter — открыть'))?></span>
         <div class="fo-launcher-power">
           <button type="button" class="fo-power" data-power="exit" title="<?echo htmlspecialchars($__pwExit)?>"><?echo htmlspecialchars($__pwExit)?></button>
           <button type="button" class="fo-power" data-power="reload" title="<?echo htmlspecialchars($__pwReload)?>"><?echo htmlspecialchars($__pwReload)?></button>
@@ -496,11 +502,14 @@ function topbar(){
   <script>
   window.FO_APPS = <? echo json_encode(array_values($apps), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP); ?>;
   window.FO_LOGIN = <? echo json_encode($login); ?>;
-  window.FO_I18N = <? echo json_encode(array(
-      'exit' => $__pwExit,
-      'reload' => $__pwReload,
-      'shutdown' => $__pwShutdown,
+  window.FO_I18N = <? echo json_encode(array_merge(
+      fo_lang(),
+      array('exit' => $__pwExit, 'reload' => $__pwReload, 'shutdown' => $__pwShutdown)
   ), JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP); ?>;
+  window.FO_T = function (k, d) {
+    var v = window.FO_I18N ? window.FO_I18N[k] : '';
+    return (v !== undefined && v !== '') ? v : (d !== undefined ? d : k);
+  };
   function hide_menu(){ $('#fo-launcher').removeClass('is-open').attr('aria-hidden','true'); }
   </script>
   <?
@@ -510,17 +519,18 @@ function topbar(){
 function appcatalog($login, $language){
   $loc = $_SESSION['locale'];
   $doc = $_SERVER['DOCUMENT_ROOT'];
+  require_once __DIR__ . '/i18n.php';
   $names = array(
     'Explorer'   => isset($language[$loc.'_explorer_menu']) ? $language[$loc.'_explorer_menu'] : 'Explorer',
     'Settings'   => isset($language[$loc.'_settings_menu']) ? $language[$loc.'_settings_menu'] : 'Settings',
     'Apps_House' => isset($language[$loc.'_store_menu']) ? $language[$loc.'_store_menu'] : 'Store',
-    'update'     => 'Обновления'
+    'update'     => fo_t('updates', 'Обновления')
   );
   $hints = array(
-    'Explorer'   => 'Файлы и папки',
-    'Settings'   => 'Параметры системы',
-    'Apps_House' => 'Каталог приложений',
-    'update'     => 'Центр обновлений'
+    'Explorer'   => fo_t('files_folders', 'Файлы и папки'),
+    'Settings'   => fo_t('system_settings', 'Параметры системы'),
+    'Apps_House' => fo_t('app_catalog', 'Каталог приложений'),
+    'update'     => fo_t('update_center', 'Центр обновлений')
   );
   $out = array();
   foreach (glob($doc.'/system/apps/*', GLOB_ONLYDIR) as $dir) {
@@ -531,18 +541,18 @@ function appcatalog($login, $language){
     $out[] = array(
       'id'   => $app,
       'name' => isset($names[$app]) ? $names[$app] : $app,
-      'hint' => isset($hints[$app]) ? $hints[$app] : 'Приложение',
+      'hint' => isset($hints[$app]) ? $hints[$app] : fo_t('app_hint', 'Приложение'),
       'icon' => $icon,
       'path' => 'system/apps/'.$app.'/main.php'
     );
   }
   $out[] = array(
-    'id' => 'accounts', 'name' => 'Учётные записи', 'hint' => 'Пользователи системы',
+    'id' => 'accounts', 'name' => fo_t('accounts', 'Учётные записи'), 'hint' => fo_t('system_users', 'Пользователи системы'),
     'icon' => 'system/apps/Settings/app.png', 'path' => 'system/apps/Settings/users.php',
     'param' => $login, 'key' => 'selectuser'
   );
   $out[] = array(
-    'id' => 'about', 'name' => 'О системе', 'hint' => 'Версия и сведения',
+    'id' => 'about', 'name' => fo_t('about', 'О системе'), 'hint' => fo_t('version_info', 'Версия и сведения'),
     'icon' => 'system/core/design/images/forestosicon.png', 'path' => 'system/apps/Settings/about.php'
   );
   return $out;
